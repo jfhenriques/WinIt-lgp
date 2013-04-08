@@ -1,0 +1,18 @@
+Options -Indexes
+
+RewriteEngine On
+RewriteBase /billsystem
+
+
+RewriteRule		^$	    		home		[R,L]
+#RewriteRule		^index\.php$	-		[R=404,L]
+RewriteRule		^(.*)$			public/$1	[L]
+
+ErrorDocument 404 /404.html
+
+
+#RewriteCond %{QUERY_STRING} ^(.*)$
+#RewriteRule ^([a-zA-Z0-9_-]+)(/([a-zA-Z0-9_-]*))?.*$ index.php?z_cat=$1&z_page=$3&%1 [L]
+
+#RewriteRule ^([^/]+)(/([^/]*))?.*$ index.php?z_cat=$1&z_page=$3&%1 [L]
+#RewriteRule ^([^/]+/?[^/]*)?.*$ index.php?z_page=$1&%1 [L]
