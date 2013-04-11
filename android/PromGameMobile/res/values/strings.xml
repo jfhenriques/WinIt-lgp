@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="app_name">PromGame Mobile</string>
+    <string name="sign_in_with_facebook">Sign in with Facebook</string>
+    <string name="or">or</string>
+    <string name="email">e-mail</string>
+    <string name="password">password</string>
+    <string name="log_in">log in</string>
+    <string name="sign_up">sign up</string>
+    <string name="forgot">forgot?</string>
+
+</resources>
