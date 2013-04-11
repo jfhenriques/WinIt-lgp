@@ -39,6 +39,8 @@
 				$this->buildRoutes( $GLOBALS['routes'] , $lastMod !== false ? $lastMod : 0 , $cache);
 
 				$cc->set( self::CACHE_ROUTE_KEY, $cache );
+				
+				//var_dump( $cache );
 			}
 
 			$this->cachedRoutes = $cache ;
@@ -64,7 +66,7 @@
 			return false;
 		}
 		
-		public static function fix_key_is_array( $key, &$arr )
+		public static function add_key_to_array( $key, &$arr )
 		{
 			if( is_array( $arr ) && !is_null( $key ) )
 			{
@@ -89,6 +91,14 @@
 			return $this->controllerFound ;
 		}
 		
+		
+		/**
+		 *
+		 *	Build routes
+		 *
+		 */
+		
+		
 		private function buildRoutes($routes, $version, &$cached)
 		{
 			
@@ -108,8 +118,8 @@
 					
 				$key = '#' . strtoupper( $method ) ;
 
-				Router::fix_key_is_array( $name, $output );
-				Router::fix_key_is_array( $key, $output[$name] );
+				Router::add_key_to_array( $name, $output );
+				Router::add_key_to_array( $key, $output[$name] );
 			
 				$output[$name][$key] = array( 'c' => strtolower( $controller ),
 											  'a' => $action 		);
@@ -128,7 +138,7 @@
 								
 					$only = ( isset( $arr['only'] ) && count( $arr['only'] ) > 0 ) ? $arr['only'] : null ;
 					
-					Router::fix_key_is_array( $name, $output );
+					Router::add_key_to_array( $name, $output );
 					
 					if( checkInArray('index', $only) )
 						insertMethod($controller, $name, 'get', 'index', $output);
@@ -150,7 +160,7 @@
 						
 					if( checkInArray('edit', $only) )
 					{
-						Router::fix_key_is_array( $id, $output[$name] );
+						Router::add_key_to_array( $id, $output[$name] );
 							
 						insertMethod($controller, 'edit', 'get', 'edit', $output[$name][$id]);
 					}
@@ -180,11 +190,11 @@
 						
 						processAtom( $val, true, $name, $name, $output );
 						
-						Router::fix_key_is_array( $name, $output );
+						Router::add_key_to_array( $name, $output );
 							
 						if( is_array( $val ) && count( $val ) > 0 )
 						{
-							Router::fix_key_is_array( $key, $output[$name] );
+							Router::add_key_to_array( $key, $output[$name] );
 								
 							processResources( $val, $output[$name][$key] );
 						}
@@ -194,19 +204,61 @@
 				}	
 			}
 			
+			
+			/***************************************************************************************************
+			 *	Processa recursivamente o namespace e os seus recursos
+			 ***************************************************************************************************/
+			 
+			function processNamespace( $arr, &$output )
+			{
+				if( isset( $arr['namespace'] ) && is_array( $arr['namespace'] ) )
+				{
+					$arr_recur = &$arr['namespace'];
+					
+					if( isset( $arr_recur['name'] ) )
+					{
+						Router::add_key_to_array( $arr_recur['name'], $output );
+						
+						processNamespace( $arr_recur, $output[ $arr_recur['name'] ] );
+					}
+				}
+				
+				if( isset( $arr['resources'] ) && is_array( $arr['resources'] ) )
+					processResources( $arr['resources'], $output );
+					
+			}
+			
+			
 			function recursiveArrayClean( &$arr )
 			{
 				if( !is_array( $arr ) )
 					return;
 				
+				
 				foreach( $arr as $k => $v )
 				{
-					if( is_null( $v ) || ( is_array( $v ) && count($v) == 0 ) )
-						unset( $arr[$k] );
-					else	
-						recursiveArrayClean( $v );			
+					if( is_null( $v ) )
+						unset( $arr[ $k ] );
+						
+					else
+					{
+						if( is_array( $arr[ $k ] ) )
+						{
+							if( count( $arr[ $k ] ) > 0 )
+								recursiveArrayClean( $arr[ $k ] );
+								
+							if( count( $arr[ $k ] ) == 0 )
+								unset( $arr[ $k ] );
+						}
+					}
 				}
 			}
+			
+
+			
+			/***************************************************************************************************
+			 *	Inícia o processo de análise
+			 ***************************************************************************************************/
 			
 			if( !is_array($cached) )
 				$cached = array();
@@ -214,10 +266,11 @@
 				
 			$cached['rules'] = array();
 			$cached['version'] = $version;
+			$cached['root'] = ( isset($routes['root']) && is_string( $routes['root'] ) ) ? $routes['root'] : null;
 			
 			
-			if( isset( $routes['resources'] ) && is_array( $routes['resources'] ) )
-				processResources( $routes['resources'], $cached['rules'] );
+			processNamespace(  $routes, $cached['rules'] );
+			
 			
 			if( isset( $routes['matches'] ) && is_array( $routes['matches'] ) )
 			{
@@ -244,7 +297,7 @@
 						if( is_null( $controller ) )
 							$controller = $val;
 						
-						static::fix_key_is_array( $val, $lastLevel );
+						static::add_key_to_array( $val, $lastLevel );
 						
 						if( static::hasNext( $i, $exp ) === false )
 						{
@@ -260,15 +313,38 @@
 			}
 			
 			recursiveArrayClean( $cached );
+			
 		}
 		
 		public function route()
 		{
+		
+			function is_root( $url )
+			{
+				return strlen( str_replace(array('/', ' ', "\t"), '', $url) ) == 0 ;
+			}
+			function is_default_root_valid($where)
+			{
+				return @(isset( $where['root'] )
+							&& is_string( $where['root'] )
+							&& ( strlen( $where['root'] ) > 0 )) ;
+			}
+			
+			if(  is_default_root_valid( $this->cachedRoutes ) && is_root( $this->url ) )
+			{
+				header('Location: ' . $this->cachedRoutes['root'], true);
+			
+				return;
+			}
+			
+			
 			$i = 0;
 			$next = 0;
 			$found = false;
 			$lastValue = &$this->cachedRoutes['rules'] ;
+			
 			$exp = explode('/', $this->url) ;
+
 			
 			while( ($next = static::hasNext( $i, $exp )) !== false )
 			{

@@ -10,7 +10,7 @@
 	require('../views/home/home.html.php');
 	require('../views/footer.html.php');*/
 	
-	require('../../bootstrap.php');
+	require('../bootstrap.php');
 
 	if( MEASURE_TIME )
 	{
