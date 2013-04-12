@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">PromGame Mobile</string>
+    
     <string name="sign_in_with_facebook">Sign in with Facebook</string>
     <string name="or">or</string>
     <string name="email">e-mail</string>
@@ -9,4 +10,12 @@
     <string name="sign_up">sign up</string>
     <string name="forgot">forgot?</string>
 
+    <string name="dashboard">Dashboard</string>
+    <string name="single_player">Single Player</string>
+    <string name="cooperative">Cooperative</string>
+    <string name="competitive">Competitive</string>
+    <string name="trading">Trading</string>
+    
+    <string name="profile">Profile</string>
+    
 </resources>

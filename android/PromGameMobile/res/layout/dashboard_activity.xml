@@ -2,7 +2,94 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="@dimen/default_padding" >
+
+    <LinearLayout
+        android:id="@+id/single_player_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dashboard_icon_text_margin" >
+
+        <View
+            android:layout_width="@dimen/dashboard_icon_size"
+            android:layout_height="@dimen/dashboard_icon_size"
+            android:background="@color/blue" />
+
+        <TextView
+            android:id="@+id/single_player_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/single_player"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_marginLeft="@dimen/dashboard_icon_text_margin" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cooperative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dashboard_icon_text_margin" >
+
+        <View
+            android:layout_width="@dimen/dashboard_icon_size"
+            android:layout_height="@dimen/dashboard_icon_size"
+            android:background="@color/orange" />
+
+        <TextView
+            android:id="@+id/cooperative_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/dashboard_icon_text_margin"
+            android:text="@string/cooperative"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/competitive_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dashboard_icon_text_margin" >
+
+        <View
+            android:layout_width="@dimen/dashboard_icon_size"
+            android:layout_height="@dimen/dashboard_icon_size"
+            android:background="@color/red" />
+
+        <TextView
+            android:id="@+id/competitive_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/dashboard_icon_text_margin"
+            android:text="@string/competitive"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id=""
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <View
+            android:layout_width="@dimen/dashboard_icon_size"
+            android:layout_height="@dimen/dashboard_icon_size"
+            android:background="@color/green" />
+
+        <TextView
+            android:id="@+id/trading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/dashboard_icon_text_margin"
+            android:text="@string/trading"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </LinearLayout>
 
 </LinearLayout>
