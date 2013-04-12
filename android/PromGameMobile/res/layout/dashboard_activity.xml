@@ -2,20 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical"
-    android:orientation="vertical"
-    android:padding="@dimen/default_padding" >
+    android:weightSum="1"
+    android:orientation="vertical" >
 
     <LinearLayout
         android:id="@+id/single_player_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dashboard_icon_text_margin" >
-
-        <View
-            android:layout_width="@dimen/dashboard_icon_size"
-            android:layout_height="@dimen/dashboard_icon_size"
-            android:background="@color/blue" />
+        android:layout_height="0dp"
+        android:layout_weight="0.25"
+        android:background="@color/blue" >
 
         <TextView
             android:id="@+id/single_player_text"
@@ -24,27 +19,24 @@
             android:layout_gravity="center_vertical"
             android:text="@string/single_player"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_marginLeft="@dimen/dashboard_icon_text_margin" />
+            android:textColor="@color/white" />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/cooperative_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dashboard_icon_text_margin" >
-
-        <View
-            android:layout_width="@dimen/dashboard_icon_size"
-            android:layout_height="@dimen/dashboard_icon_size"
-            android:background="@color/orange" />
+        android:layout_height="0dp"
+        android:layout_weight="0.25"
+        android:background="@color/orange" >
 
         <TextView
             android:id="@+id/cooperative_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/dashboard_icon_text_margin"
             android:text="@string/cooperative"
+            android:textColor="@color/white"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
     </LinearLayout>
@@ -52,42 +44,35 @@
     <LinearLayout
         android:id="@+id/competitive_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dashboard_icon_text_margin" >
-
-        <View
-            android:layout_width="@dimen/dashboard_icon_size"
-            android:layout_height="@dimen/dashboard_icon_size"
-            android:background="@color/red" />
+        android:layout_height="0dp"
+        android:layout_weight="0.25"
+        android:background="@color/red" >
 
         <TextView
             android:id="@+id/competitive_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/dashboard_icon_text_margin"
             android:text="@string/competitive"
+            android:textColor="@color/white"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id=""
+        android:id="@+id/trading_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <View
-            android:layout_width="@dimen/dashboard_icon_size"
-            android:layout_height="@dimen/dashboard_icon_size"
-            android:background="@color/green" />
-
+        android:layout_height="0dp"
+        android:layout_weight="0.25"
+        android:background="@color/green" >
+        
         <TextView
             android:id="@+id/trading_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/dashboard_icon_text_margin"
             android:text="@string/trading"
+            android:textColor="@color/white"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
     </LinearLayout>
