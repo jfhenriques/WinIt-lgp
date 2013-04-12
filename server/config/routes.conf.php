@@ -23,6 +23,30 @@
 			'name' => 'api',		// Sem barras nem espaços, de preferência só letras
 
 			'resources' => array(
+			
+				':user' => array(
+					':tag' => null,
+					':promotion' => null,
+					':badge' => null,
+				), 
+				// considerar o id do user que esta logado
+				':promotion' => array(
+					':tag' => null,
+					':game' => array(
+						':quizgame' => array(
+							':question' => null,
+							':answer' => null,
+						),
+						':proximtygame' => null,
+					),
+				),
+				
+				':tag' => null,
+				
+				':trade' => array(
+					':promotion' => null,
+					':sugestion' => null,
+				),
 				
 			),
 		),
