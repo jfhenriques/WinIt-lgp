@@ -24,8 +24,7 @@
             android:noHistory="true"
             android:excludeFromRecents="true" />
         
-        <activity android:name="pt.techzebra.promgamemobile.ui.ProfileActivity"
-            android:label="Profile" />
+        <activity android:name="pt.techzebra.promgamemobile.ui.ProfileActivity" />
     </application>
 
 </manifest>
