@@ -1,11 +1,11 @@
 package pt.techzebra.promgamemobile.ui;
 
 import pt.techzebra.promgamemobile.Constants;
+import pt.techzebra.promgamemobile.R;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
@@ -28,9 +28,7 @@ public class DashboardActivity extends SherlockActivity {
             return;
         }
         
-        TextView text = new TextView(this);
-        text.setText("Hello World!");
-        setContentView(text);
+        setContentView(R.layout.dashboard_activity);
     }
     
    
