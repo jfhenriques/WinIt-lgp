@@ -26,26 +26,34 @@
 			return static::$instance;
 		}
 		
+
 		public function evalLogin()
 		{
+			function checkValidity($val)
+			{
+				return ( TOKEN_VALIDITY == 0 || ( $val + TOKEN_VALIDITY ) <= time() ) ;
+			}
+		
+		
+			$_REQUEST['token'] = "12erwer23r23er3r2r23";
+			
 			if( isset( $_REQUEST['token'] ) && strlen( $_REQUEST['token'] ) > 0 )
 			{
 				$token = $_REQUEST['token'];
-				$token_key = AUTH_PREFIX . $token ;
+				$token_key = AUTH_PREFIX . '.' . $token ;
 				$cc = CommonCache::getInstance();
 				
-				$aInfo = $cc-get( $token_key );
+				$aInfo = $cc->get( $token_key );
 				
 				if( $aInfo !== false && is_array( $aInfo )
 						&& isset( $aInfo[ TOKEN_ID_KEY ] ) )
 				{
 					if( TOKEN_VALIDITY == 0 ||
-							( isset( $aInfo[ TOKEN_VALIDITY_KEY ] )
-								&& ( $aInfo[ TOKEN_VALIDITY_KEY ] + TOKEN_VALIDITY ) < time() ) )
+							( isset( $aInfo[ TOKEN_VALIDITY_KEY ] ) && checkValidity( $aInfo[ TOKEN_VALIDITY_KEY ] ) ) )
 					{
 						$this->token = $token;
 						$this->userId = $aInfo[ TOKEN_ID_KEY ];
-					
+						
 						return true;
 					}
 					else
@@ -53,11 +61,23 @@
 				}
 				else
 				{
-					// do mysql
-				
-				}
-				
+					$sess = Session::getByToken( $token );
+					if( !is_null( $sess ) )
+					{
+						$arr = array( TOKEN_ID_KEY => $sess->getUserId(),
+									  TOKEN_VALIDITY_KEY => $sess->getValidity() );
 
+						$cc->set( $token_key, $arr ) ;
+						
+						if( checkValidity( $sess->getValidity() ) )
+						{
+							$this->token = $sess->getToken();
+							$this->userId = $sess->getUserId();
+							
+							return true;
+						}
+					}
+				}
 			}
 			
 			return false;
@@ -68,7 +88,7 @@
 			if( is_null( $this->token ) )
 				return false;
 				
-			return $token;
+			return $this->token;
 		}
 		
 		public function getUserId()
@@ -76,7 +96,7 @@
 			if( is_null( $this->userId ) )
 				return false;
 				
-			return $userId;
+			return $this->userId;
 		}
 	
 	}
