@@ -15,7 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/sign_in_with_facebook" />
+        android:text="@string/sign_in_with_facebook"
+        android:onClick="handleFacebookConnection"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -57,13 +58,15 @@
             android:id="@+id/sign_up_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sign_up" />
+            android:text="@string/sign_up"
+        	android:onClick="handleSignUp" />
 
         <Button
             android:id="@+id/forgot_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/forgot" />
+            android:text="@string/forgot"
+        	android:onClick="handleForgotPassword" />
     </LinearLayout>
 
 </LinearLayout>
