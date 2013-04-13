@@ -24,11 +24,14 @@
 
 			'resources' => array(
 			
+				':session' => null, //rray( 'controller' => 'sessiona' ),//'only' => array( 'create', 'destroy' ) ),
+				
 				':user' => array(
 					':tag' => null,
 					':promotion' => null,
 					':badge' => null,
 				), 
+				
 				// considerar o id do user que esta logado
 				':promotion' => array(
 					':tag' => null,

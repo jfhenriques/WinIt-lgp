@@ -123,6 +123,21 @@
 			}
 		}
 		
+		public function delete($var)
+		{
+			switch( $this->TYPE )
+			{
+				case COMMON_CACHE_APC:
+					return apc_delete( $var );
+					
+				case COMMON_CACHE_MEMCACHED:
+					return $this->mc->delete( $var ) ;
+					
+				default:
+					return false;
+			}
+		}
+		
 		/*public function get($var)
 		{
 			$st = microtime( true );
@@ -243,7 +258,8 @@
 				else
 				{
 					include_once( $file );
-					$loaded = true;
+					
+					$loaded = class_exists( $name ) ;
 				}
 			}
 			
