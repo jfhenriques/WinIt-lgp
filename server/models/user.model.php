@@ -1,7 +1,7 @@
 <?php
 	
 	class User extends SQLModel {
-		private $utilizadorid;
+		private $utilizadorid = null;
 		private $nome;
 		private $email;
 		private $password;
@@ -14,40 +14,53 @@
 		function __construct() {}
 		
 		public static function getUser($id) {
-			if($id = $utilizadorid) {
-				return $this;
-			}
-		}
-		
-		public static function showUser($id) {
 			
 			$dbh = DbConn::getInstance()->getDB();
 			
-			$sth = $dbh->prepare('SELECT * FROM utilizador WHERE utilizador.id = :id');
+			$sth = $dbh->prepare('SELECT * FROM utilizador WHERE utilizadorid = :id');
 			$sth->bindParam(':id', $id, PDO::PARAM_INT);
 			$sth->execute();
 				
 			$result = $sth->fetch();
 			
-			echo json_encode($result);
+			$user = new User();
+			
+			$this->nome = $result['nome'];
+			$this->email = $result['email'];
+			$this->password = $result['password'];
+			$this->cp4 = $result['cp4'];
+			$this->cp3 = $result['cp3'];
+			$this->porta_andar = $result['porta_andar'];
+			$this->token_facebook = $result['token_facebook'];
+			$this->token_twitter = $result['token_twitter'];
+			this->utilizadorid = $id;
+			
+			return $user;
 		}
 		
-		public static function newUser($nome, $email, $password, $cp4, $cp3, $porta_andar, $token_facebook, $token_twitter) {
+		public function save() {
 			$dbh = DbConn::getInstance()->getDB();
 			
-			$sth = $dbh->prepare('INSERT INTO users VALUES(:nome, :email, :password, :cp4, :cp3, :porta_andar, :token_facebook, :token_twitter, NULL)');
-			$sth->bindParam(':nome', $nome, PDO::PARAM_STR);
-			$sth->bindParam(':email', $email, PDO::PARAM_STR);
-			$sth->bindParam(':password', $password, PDO::PARAM_STR);
-			$sth->bindParam(':cp4', $cp4, PDO::PARAM_INT);
-			$sth->bindParam(':cp3', $cp3, PDO::PARAM_INT);
-			$sth->bindParam(':porta_andar', $porta_andar, PDO::PARAM_STR);
-			$sth->bindParam(':token_facebook', $token_facebook, PDO::PARAM_STR);
-			$sth->bindParam(':token_twitter', $token_twitter, PDO::PARAM_STR);			
+			$sth = null;
+			
+			if( is_null($utilizadorid))
+				$sth = $dbh->prepare('INSERT INTO users VALUES(:nome, :email, :password, :cp4, :cp3, :porta_andar, :token_facebook, :token_twitter, NULL)');
+			else
+				$sth = $dbh->prepare('UPDATE users SET nome = :nome, email = :email, password = :password, cp4 = :cp4, cp3 =:cp3, porta_andar = :porta_andar, token_facebook = :token_facebook, token_twitter = :token_twitter, NULL)');
+			
+			$sth->bindParam(':nome', $this->nome, PDO::PARAM_STR);
+			$sth->bindParam(':email', $this->email, PDO::PARAM_STR);
+			$sth->bindParam(':password', $this->password, PDO::PARAM_STR);
+			$sth->bindParam(':cp4', $this->cp4, PDO::PARAM_INT);
+			$sth->bindParam(':cp3', $this->cp3, PDO::PARAM_INT);
+			$sth->bindParam(':porta_andar', $this->porta_andar, PDO::PARAM_STR);
+			$sth->bindParam(':token_facebook', $this->token_facebook, PDO::PARAM_STR);
+			$sth->bindParam(':token_twitter', $this->token_twitter, PDO::PARAM_STR);			
 			
 			$sth->execute();
-				
-			$result = $sth->fetch();
+			
+			if( is_null($utilizadorid))
+				$this->utilizadorid = $dbh->lastInsertId();
 		}
 		
 		/* GET's and SET's*/
