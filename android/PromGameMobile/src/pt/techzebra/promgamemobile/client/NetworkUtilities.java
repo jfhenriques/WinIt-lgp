@@ -22,14 +22,16 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pt.techzebra.promgamemobile.Constants;
+import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.ui.AuthenticationActivity;
 
 import android.accounts.Account;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 
@@ -52,11 +54,10 @@ public class NetworkUtilities {
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
     // TODO: change to the correct URL
-    public static final String BASE_URL = "https://api.tlantic.techzebra.pt";
+    public static final String BASE_URL = "https://lgptlantic.fe.up.pt/api";
 
     public static final String AUTH_URI = BASE_URL + "/session";
     public static final String FETCH_USER_URI = BASE_URL + "/users";
-    
     public static final String NEW_USER_URI = FETCH_USER_URI + "/new";
 
     private static HttpClient http_client_;
@@ -105,9 +106,10 @@ public class NetworkUtilities {
      *            The context of the calling Activity.
      * @return boolean The boolean result indicating whether the user was
      *         successfully authenticated.
+     * @throws JSONException 
      */
     public static boolean authenticate(String username, String password,
-            Handler handler, final Context context) {
+            Handler handler, final Context context) throws JSONException {
         final HttpResponse http_response;
 
         final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -131,7 +133,15 @@ public class NetworkUtilities {
             if (http_response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
                     Log.v(TAG, "Successful authentication");
+                    
                 }
+                final String response = EntityUtils.toString(http_response.getEntity());
+                JSONObject auth_json = new JSONObject(response);
+                String auth_token = auth_json.getString("token");
+                SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
+                        Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
+                preferences_editor.putString(Constants.PREF_AUTH_TOKEN, auth_token);
+                preferences_editor.commit();
                 sendResultToAuthenticationActivity(true, handler, context);
                 return true;
             } else {
@@ -187,18 +197,23 @@ public class NetworkUtilities {
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                authenticate(username, password, handler, context);
+                try {
+					authenticate(username, password, handler, context);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         };
 
         return NetworkUtilities.performOnBackgroundThread(runnable);
     }
 
-    public static User fetchUserInformation(Account account, String auth_token,
+    public static User fetchUserInformation(String email, String auth_token,
             Date last_updated) throws ClientProtocolException, IOException,
             JSONException, AuthenticationException {
         final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(PARAM_USERNAME, account.name));
+        //params.add(new BasicNameValuePair(PARAM_USERNAME, email));
         params.add(new BasicNameValuePair(PARAM_PASSWORD, auth_token));
         if (last_updated != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat(
@@ -210,7 +225,7 @@ public class NetworkUtilities {
 
         Log.i(TAG, params.toString());
 
-        final HttpPost post = new HttpPost(FETCH_USER_URI);
+        final HttpPost post = new HttpPost(FETCH_USER_URI + "?token=" + auth_token);
         HttpEntity entity = new UrlEncodedFormEntity(params);
         post.addHeader(entity.getContentType());
         post.setEntity(entity);
@@ -275,10 +290,10 @@ public class NetworkUtilities {
             }else{
                 //TODO ver JSONArray com os erros que o servidor deteta
                 if(resp.getStatusLine().getStatusCode() == HttpStatus.SC_UNAUTHORIZED){
-                    Log.e(TAG, "Register exception in fecting remote");
+                    Log.e(TAG, "Register exception in fetching remote");
                     return false;
                 }else{
-                    Log.e(TAG, "Server erro in fetching remote info" + resp.getStatusLine());
+                    Log.e(TAG, "Server error in fetching remote info" + resp.getStatusLine());
                     return false;
                 }
             }

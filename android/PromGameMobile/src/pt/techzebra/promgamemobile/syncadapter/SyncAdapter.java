@@ -39,7 +39,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             auth_token = account_manager_.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true);
             
             // Fetch the user information
-            user = NetworkUtilities.fetchUserInformation(account, auth_token, last_updated_);
+            user = NetworkUtilities.fetchUserInformation("", auth_token, last_updated_);
             // Update the last synced date
             last_updated_ = new Date();
             
