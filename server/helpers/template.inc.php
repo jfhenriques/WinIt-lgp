@@ -42,7 +42,7 @@
 		{
 			$jsonEnc = null;
 			
-			$arrOut = array( 's' => $status,
+			$arrOut = array( 's' => (int)$status,
 							 'm' => $message,
 							 'r' => $arr );
 			

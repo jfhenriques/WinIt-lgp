@@ -28,7 +28,7 @@
 		public function getnome() {
 			return $this->nome;
 		}		
-		public function setNome($nome) {
+		public function setnome($nome) {
 			$this->nome = $nome;
 		}
 		
@@ -43,7 +43,7 @@
 			return $this->password;
 		}
 		public function setPassword($password) {
-			$this->password = password;
+			$this->password = $password;
 		}
 		
 		public function getCP4() {
@@ -90,7 +90,7 @@
 			
 			$sth = null;
 			
-			if( is_null($utilizadorid) )
+			if( is_null($this->utilizadorid) )
 				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME .
 										' VALUES(:nome, :email, :password, :cp4, :cp3, :porta_andar, :token_facebook, :token_twitter, NULL)');
 			else
@@ -108,7 +108,7 @@
 			
 			$ret = $sth->execute();
 			
-			if( $ret && is_null($utilizadorid) )
+			if( $ret && is_null($this->utilizadorid) )
 				$this->utilizadorid = $dbh->lastInsertId();
 
 			return $ret;
