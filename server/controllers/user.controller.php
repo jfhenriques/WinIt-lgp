@@ -9,15 +9,18 @@
 		 */
 		public function __configure()
 		{
-			$this->requireAuth(true);
 		}
 
 		
 		
-		public function show()
+		public function index()
 		{
-			$userId = 1; // cenas - pôr aqui a função que o joao ainda nao acabou
-			// devolve o id do user logado
+			
+			$this->requireAuth(true); // nao passa daqui se o user nao estiver logado
+			
+			$auth = Authenticator::getInstance(); // retorna o id do user logado
+			
+			$userId = $auth->getUserId(); 
 			
 			$user = User::findById($userId);
 			
@@ -25,14 +28,15 @@
 			
 				$name = $user->getnome();
 				$email = $user->getEmail();
-				$pass = $user->getPassword();
-				$cp4 = $user->getCp4();
-				$cp3 = $user->getCp3();
-				$porta_andar = $user->getPorta_andar();
-				$t_fb = $user->getToken_facebook();
-				$t_tw = $user->getToken_twitter();
+				$cp4 = $user->getCP4();
+				$cp3 = $user->getCP3();
+				$porta_andar = $user->getPortaAndar();
+				$t_fb = $user->getTokenFacebook();
+				$t_tw = $user->getTokenTwitter();
 				
-				$this->respond->renderJSON( array($name, $email, $pass, $cp4, $cp3, $porta_andar, $t_fb, $t_tw, $userId) );
+				$this->respond->renderJSON( array('name' => $name, 'email' => $email, 'cp4' => $cp4, 'cp3' => $cp3, 'door' => $porta_andar, 'token_fb' => $t_fb, 'token_tw' => $t_tw, 'uid' => $userId) );
+				
+				
 			}				
 		}
 	
