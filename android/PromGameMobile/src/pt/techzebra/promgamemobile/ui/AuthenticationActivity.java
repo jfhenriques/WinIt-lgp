@@ -72,6 +72,8 @@ public class AuthenticationActivity extends SherlockActivity {
             Intent intent = new Intent(this, DashboardActivity.class);
             startActivity(intent);
             finish();
+            
+            
         } else {
             
         }
