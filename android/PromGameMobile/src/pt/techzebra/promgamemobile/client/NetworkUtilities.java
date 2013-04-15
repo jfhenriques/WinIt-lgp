@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -15,6 +17,7 @@ import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -22,6 +25,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,7 +45,7 @@ import android.util.Log;
 public class NetworkUtilities {
     private static final String TAG = "NetworkUtilities";
 
-    public static final String PARAM_USERNAME = "username";
+    public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_BIRTHDAY = "birthday";
@@ -50,15 +54,18 @@ public class NetworkUtilities {
     public static final String PARAM_DOOR = "door";
     public static final String PARAM_FLOOR = "floor";
     public static final String PARAM_UPDATED = "timestamp";
+    public static final String PARAM_AUTH_TOKEN = "token";
     
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
+    public static final String HOST = "lgptlantic.fe.up.pt";
     // TODO: change to the correct URL
-    public static final String BASE_URL = "https://lgptlantic.fe.up.pt/api";
+    public static final String BASE_URL = "http://lgptlantic.fe.up.pt/api";
 
-    public static final String AUTH_URI = BASE_URL + "/session";
-    public static final String FETCH_USER_URI = BASE_URL + "/users";
-    public static final String NEW_USER_URI = FETCH_USER_URI + "/new";
+    public static final String AUTH_URI = BASE_URL + "/session.json";
+    public static final String FETCH_USER_URI = BASE_URL + "/user.json";
+    //TODO o de baixo nao serve para nada, em vez de se fazer get ao users, faz-se um post ao FETCH_USER_URI
+    public static final String NEW_USER_URI = FETCH_USER_URI + "/new.json";
 
     private static HttpClient http_client_;
 
@@ -86,7 +93,11 @@ public class NetworkUtilities {
         final Thread t = new Thread() {
             @Override
             public void run() {
-                runnable.run();
+            	try {
+            		runnable.run();
+            	} finally {
+            		
+            	}
             };
         };
         t.start();
@@ -111,9 +122,8 @@ public class NetworkUtilities {
     public static boolean authenticate(String username, String password,
             Handler handler, final Context context) throws JSONException {
         final HttpResponse http_response;
-
         final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(PARAM_USERNAME, username));
+        params.add(new BasicNameValuePair(PARAM_EMAIL, username));
         params.add(new BasicNameValuePair(PARAM_PASSWORD, password));
 
         HttpEntity entity = null;
@@ -136,14 +146,22 @@ public class NetworkUtilities {
                     
                 }
                 final String response = EntityUtils.toString(http_response.getEntity());
-                JSONObject auth_json = new JSONObject(response);
-                String auth_token = auth_json.getString("token");
-                SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
-                        Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
-                preferences_editor.putString(Constants.PREF_AUTH_TOKEN, auth_token);
-                preferences_editor.commit();
-                sendResultToAuthenticationActivity(true, handler, context);
-                return true;
+                JSONObject response_json = new JSONObject(response);
+                int response_s = response_json.getInt("s");
+                if (response_s != 0) {
+                	sendResultToAuthenticationActivity(false, handler, context);
+                	return false;
+                } else {
+                	JSONObject response_r = response_json.getJSONObject("r");
+                    SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
+                            Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
+                    preferences_editor.putString(Constants.PREF_AUTH_TOKEN, response_r.getString("token"));
+                    preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
+                    preferences_editor.commit();
+                    sendResultToAuthenticationActivity(true, handler, context);
+                    return true;
+                }
+                
             } else {
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
                     Log.v(TAG,
@@ -212,32 +230,19 @@ public class NetworkUtilities {
     public static User fetchUserInformation(String email, String auth_token,
             Date last_updated) throws ClientProtocolException, IOException,
             JSONException, AuthenticationException {
-        final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-        //params.add(new BasicNameValuePair(PARAM_USERNAME, email));
-        params.add(new BasicNameValuePair(PARAM_PASSWORD, auth_token));
-        if (last_updated != null) {
-            final SimpleDateFormat formatter = new SimpleDateFormat(
-                    "dd/MM/yyyy HH:mm");
-            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-            params.add(new BasicNameValuePair(PARAM_UPDATED, formatter
-                    .format(last_updated)));
-        }
-
-        Log.i(TAG, params.toString());
-
-        final HttpPost post = new HttpPost(FETCH_USER_URI + "?token=" + auth_token);
-        HttpEntity entity = new UrlEncodedFormEntity(params);
-        post.addHeader(entity.getContentType());
-        post.setEntity(entity);
+        
+        String URI = FETCH_USER_URI + "?token=" + auth_token;
+        final HttpGet get = new HttpGet(URI);
+        HttpHost host = new HttpHost(HOST);
         maybeCreateHttpClient();
-
-        final HttpResponse http_response = http_client_.execute(post);
-        final String response = EntityUtils.toString(http_response.getEntity());
-
+        final HttpResponse http_response = http_client_.execute(host, get);
+        final String response = EntityUtils.toString(http_response.getEntity());       
         User user = null;
 
         if (http_response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            user = User.valueOf(new JSONObject(response));
+        	JSONObject response_json = new JSONObject(response);
+        	JSONObject response_r = response_json.getJSONObject("r");
+        	user = new User(response_r.getInt("uid"), response_r.getString("name"), response_r.getString("email"), response_r.getString("level"), response_r.getString("points") );
         } else {
             if (http_response.getStatusLine().getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
                 Log.e(TAG,
@@ -258,7 +263,7 @@ public class NetworkUtilities {
         final HttpResponse resp;
 
         final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(PARAM_USERNAME, username));
+        params.add(new BasicNameValuePair(PARAM_EMAIL, username));
         params.add(new BasicNameValuePair(PARAM_NAME, name));
         params.add(new BasicNameValuePair(PARAM_PASSWORD, password));
         params.add(new BasicNameValuePair(PARAM_BIRTHDAY, birthday));
