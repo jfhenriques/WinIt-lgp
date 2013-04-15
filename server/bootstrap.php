@@ -18,6 +18,8 @@
 	include_once(ROOT .'/helpers/model.inc.php');
 	
 	include_once(ROOT .'/helpers/controller.inc.php');
+	
+	include_once(ROOT .'/helpers/authentication.inc.php');
 
 	$router = Router::getInstance();
 	$router->route();

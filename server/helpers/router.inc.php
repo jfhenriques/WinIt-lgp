@@ -3,6 +3,12 @@
 	DEFINE('ROUTES_FILE', ROOT . '/config/routes.conf.php' );
 	DEFINE('NOT_FOUND_PAGE', ROOT . '/public/404.html' );
 	
+	DEFINE('RESPOND_DISABLED',	0x0);
+	DEFINE('RESPOND_HTML',	0x1);
+	DEFINE('RESPOND_JSON',	0x2);
+	DEFINE('RESPOND_OTHER',	0x3);
+	
+	
 	class Router {
 	
 		const CACHE_ROUTE_KEY = '142124025.cahed_routes';
@@ -15,7 +21,8 @@
 		private $controller = null;
 		private $controllerAction = null;
 		private $controllerFound = false;
-		private $mc = null;
+		
+		private $responseType = RESPOND_DISABLED;
 	
 		private function __clone() { }
 		
@@ -84,6 +91,12 @@
 			}
 			
 			return false;
+		}
+		
+		
+		public function responseType()
+		{
+			return $this->responseType;
 		}
 		
 		public function foundController()
@@ -360,7 +373,22 @@
 					$formatExp = explode( '.', $val , 2 );
 					$val = $formatExp[0];
 					
-					$_REQUEST['z_format'] = ( count( $formatExp ) > 1 ) ? $formatExp[1] : "html" ;
+					$_REQUEST['z_format'] = strtolower( ( count( $formatExp ) > 1 ) ? $formatExp[1] : "html" ) ;
+					
+					switch( $_REQUEST['z_format'] )
+					{
+						case 'html':
+							$this->responseType = RESPOND_HTML;
+							break;
+							
+						case 'json':
+							$this->responseType = RESPOND_JSON;
+							break;
+							
+						default:
+							$this->responseType = RESPOND_OTHER;
+							break;
+					}
 				}
 				
 				$found = false;
@@ -411,13 +439,13 @@
 						
 						$this->controllerFound = true;
 						
-						
 					}
 				}
 			}
 			
 			if( $this->controllerFound )
 				$this->loadController( $this->controller, $this->controllerAction );
+				
 			else
 			{
 				header("HTTP/1.0 404 Not Found");

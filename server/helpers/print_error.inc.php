@@ -2,6 +2,8 @@
 
 	function dumpException($e)
 	{
+		ob_end_clean();
+		
 		header("HTTP/1.0 500 Internal Server Error", true, 500);
 		
 		$dev = defined('DEVELOPMENT_ENVIRONMENT') ? DEVELOPMENT_ENVIRONMENT : false;
@@ -9,7 +11,9 @@
 		$title = $dev ? $e->getMessage() : "Error found" ;
 		$msg = $dev ? (
 					"Exception: " . get_class($e) . "\n" .
-					"Error code: " . $e->getCode() .
+					"Error code: " . $e->getCode() . "\n" .
+					"File: " . $e->getFile() . "\n" .
+					"Line: " . $e->getLine() .
 					"\n\n===============[Trace]===============\n\n" .
 					$e->getTraceAsString() )
 					: "Please contact the system administrator" ;

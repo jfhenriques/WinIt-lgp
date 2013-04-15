@@ -4,7 +4,7 @@
 	 *	Error treatment
 	 **********************************************************************************/
 	 
-	error_reporting(E_ALL);
+	error_reporting( E_ALL | E_STRICT );
 	
 	date_default_timezone_set('Europe/Lisbon');
 	
@@ -18,16 +18,24 @@
 		error_log($exception);
 		dumpException( $exception );
 		
-		exit;
+		exit(1);
 	}
-	function my_exception_error_handler($errno, $errstr, $errfile, $errline )
-	{
-		throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
-	}
-	
 	set_exception_handler("my_exception_handler");
-	set_error_handler("my_exception_error_handler");
 	
+	set_error_handler(function($errno, $errstr, $errfile, $errline ) {
+		$exc = new ErrorException($errstr, $errno, 0, $errfile, $errline);
+		my_exception_handler( $exc );
+	});
+	
+	register_shutdown_function(function() {
+		$lErr = error_get_last();
+		
+		if ( !is_null( $lErr ) && ( $lErr['type'] & ( E_ERROR | E_USER_ERROR | E_PARSE ) ) !== 0 )
+		{
+			$exc = new ErrorException($lErr['message'], $lErr['type'], 0, $lErr['file'], $lErr['line']);
+			my_exception_handler( $exc );
+		}	
+	});
 	
 	ini_set('log_errors', 1);
 	ini_set('ignore_repeated_errors', 1);
@@ -102,6 +110,11 @@
 				
 			return static::$instance;
 		}
+
+		public static function buildVarName($var_suff, $var)
+		{
+			return COMMON_CACHE_VAR_PREFIX . ".${var_suff}.${var}";
+		}
 		
 		public function getMemcached()
 		{
@@ -117,6 +130,21 @@
 					
 				case COMMON_CACHE_MEMCACHED:
 					return $this->mc->get( $var ) ;
+					
+				default:
+					return false;
+			}
+		}
+		
+		public function delete($var)
+		{
+			switch( $this->TYPE )
+			{
+				case COMMON_CACHE_APC:
+					return apc_delete( $var );
+					
+				case COMMON_CACHE_MEMCACHED:
+					return $this->mc->delete( $var ) ;
 					
 				default:
 					return false;
@@ -243,7 +271,8 @@
 				else
 				{
 					include_once( $file );
-					$loaded = true;
+					
+					$loaded = class_exists( $name ) ;
 				}
 			}
 			

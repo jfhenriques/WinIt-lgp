@@ -17,6 +17,7 @@
 				$this->include_headers = $inc;
 		}
 		
+		
 		public function render( $view )
 		{
 			$router = Router::getInstance();
@@ -35,6 +36,25 @@
 			
 			if( $this->include_headers )
 				include_once( PAGE_FOOTER );
+		}
+		
+		public function renderJSON( $arr = null, $status = 0, $message = null )
+		{
+			$jsonEnc = null;
+			
+			$arrOut = array( 's' => $status,
+							 'm' => $message,
+							 'r' => $arr );
+			
+			if( ( $jsonEnc = @json_encode( $arrOut ) ) === false )
+				throw new Exception("Cannot encode array as json");
+			
+			else
+			{
+				header('Content-Type: application/json', true);
+				
+				echo $jsonEnc;
+			}
 		}
 	
 	

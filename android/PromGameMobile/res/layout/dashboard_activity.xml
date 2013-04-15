@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@color/blue" >
+        android:background="@color/blue"
+        android:onClick="handleRoomSelection" >
 
         <TextView
             android:id="@+id/single_player_text"
@@ -28,7 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@color/orange" >
+        android:background="@color/orange"
+        android:onClick="handleRoomSelection" >
 
         <TextView
             android:id="@+id/cooperative_text"
@@ -46,7 +48,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@color/red" >
+        android:background="@color/red"
+        android:onClick="handleRoomSelection" >
 
         <TextView
             android:id="@+id/competitive_text"
@@ -64,7 +67,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@color/green" >
+        android:background="@color/green"
+        android:onClick="handleRoomSelection" >
         
         <TextView
             android:id="@+id/trading_text"

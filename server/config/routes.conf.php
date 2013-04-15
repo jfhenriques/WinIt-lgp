@@ -24,11 +24,14 @@
 
 			'resources' => array(
 			
+				':session' => array( 'only' => array( 'create', 'destroy' ) ),
+				
 				':user' => array(
 					':tag' => null,
 					':promotion' => null,
 					':badge' => null,
 				), 
+				
 				// considerar o id do user que esta logado
 				':promotion' => array(
 					':tag' => null,
@@ -58,7 +61,7 @@
 		 *	Só funciona na raíz de todo o projecto, e não funciona para namespaces
 		 *****************************************************************************************/
 		
-		'root' => 'home',
+		//'root' => 'home',
 			
 		
 		
@@ -72,7 +75,10 @@
 		 
 		'matches' => array(
 		
-			array( 'match' => '/home', 'controller' => 'home', 'via' => 'get', 'action' => 'index' ),
+			//array( 'match' => '/home', 'controller' => 'home', 'via' => 'get', 'action' => 'index' ),
+			
+			array( 'match' => '/user/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
+			array( 'match' => '/user/promotions', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions' ),
 			
 		),
 	
