@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp" 
-    android:background="#7ebbdc">
+    android:background="@color/blue_delas">
 
     <LinearLayout
         android:id="@+id/LinearLayout1"
@@ -125,10 +125,12 @@
                     android:textSize="22sp" />
 
                 <View
+                    android:id="@+id/badges_view"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginRight="5dp"
                     android:background="@color/green" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -187,10 +189,12 @@
                     android:textSize="22sp" />
 
                 <View
+                    android:id="@+id/tags_view"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginRight="5dp"
                     android:background="@color/orange" />
+
             </LinearLayout>
 
             <LinearLayout
