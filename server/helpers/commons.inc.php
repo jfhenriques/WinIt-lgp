@@ -29,7 +29,7 @@
 	
 	register_shutdown_function(function() {
 		$lErr = error_get_last();
-
+		
 		if ( !is_null( $lErr ) && ( $lErr['type'] & ( E_ERROR | E_USER_ERROR | E_PARSE ) ) !== 0 )
 		{
 			$exc = new ErrorException($lErr['message'], $lErr['type'], 0, $lErr['file'], $lErr['line']);
@@ -109,6 +109,11 @@
 				static::$instance = new CommonCache();
 				
 			return static::$instance;
+		}
+
+		public static function buildVarName($var_suff, $var)
+		{
+			return COMMON_CACHE_VAR_PREFIX . ".${var_suff}.${var}";
 		}
 		
 		public function getMemcached()

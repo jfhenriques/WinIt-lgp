@@ -5,9 +5,6 @@
 	
 	
 	
-	DEFINE( 'TOKEN_ID_KEY', 'uid' );
-	DEFINE( 'TOKEN_VALIDITY_KEY', 'val' );
-	
 	class Authenticator {
 	
 		static private $instance = null;

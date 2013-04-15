@@ -7,8 +7,9 @@
 		/*
 		 * Ensure that the user is logged
 		 */
-		public function __configure() {
-			this->requireAuth(true);
+		public function __configure()
+		{
+			$this->requireAuth(true);
 		}
 		
 		public function show()
@@ -35,7 +36,7 @@
 	
 		public function create() {
 			
-			$_REQUEST();
+			//$_REQUEST();
 		}
 	}
 ?>
