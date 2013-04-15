@@ -1,6 +1,22 @@
 <?php
 
+
+	DEFINE( 'RESPOND_ERROR_PARAM'			, 0x10 );
+	DEFINE( 'RESPOND_ERROR_USER_NOT_FOUND'	, 0x11 );
+
+	DEFINE( 'RESPOND_ERROR_SESSION_NOT_FOUND'	, 0x20 );
+
+
+
 	class  UserController extends Controller {
+
+		private static $status = array(
+				RESPOND_ERROR_PARAM				=> 'Utilizador e/ou password não especificado',
+				RESPOND_ERROR_USER_NOT_FOUND	=> 'Utilizador e/ou password não encontrado',
+
+				RESPOND_ERROR_SESSION_NOT_FOUND	=> 'Sessão não encontrado',
+			);
+
 	
 		// $_REQUEST
 		
@@ -45,16 +61,19 @@
 			}				
 		}
 	
-		public function create() {
+		public function create()
+		{
 			
 			$nome = valid_request('name');
 			$email = valid_request('email');
 			$cp4 = valid_request('cp4');
 			$cp3 = valid_request('cp3');
 			$door = valid_request('door');
+			$password = valid_request('password');
+			
 			// $t_fb = valid_request('token_fb');
 			// $t_tw = valid_request('token_tw');
-			$password = valid_request('password');
+			
 			
 			if( is_null($nome)|| is_null($email) || is_null($cp4) || is_null($cp3) || is_null($door) || is_null($password)) {
 				$render_code = 1;
