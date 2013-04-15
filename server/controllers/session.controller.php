@@ -5,7 +5,7 @@
 
 		public function __configure()
 		{
-			$this->checkAuth();
+			//$this->checkAuth();
 		}
 		
 		

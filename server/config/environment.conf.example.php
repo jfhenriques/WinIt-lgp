@@ -1,69 +1,67 @@
 <?php
 
-	/*
-	 *	O URI onde se for encontrar o website.
-	 *	Se tiver na raiz do domínio deve ficar em branco
-	 */
-	DEFINE('INCLUSION_PATH_SIMPLE', '');
-	
-	
 	/* 
-	 *	Deve sempre ficar em 'false' quando lançado em produção
+	 *	Must always be set to false on prodution environment
 	 */
 	DEFINE('DEVELOPMENT_ENVIRONMENT', false);
 	
 	
 	/*
-	 *	Configurações do pdo para a base de dados
+	 *	PDO configuration
 	 */
-	DEFINE('PDO_DATABASE', 'mysql:host=localhost;dbname=;charset=UTF-8' );
-	DEFINE('PDO_USERNAME', '');
-	DEFINE('PDO_PASSWORD', '');
+	DEFINE('PDO_DATABASE', 'mysql:host=localhost;dbname=DB_NAME_HERE;charset=UTF-8' );
+	DEFINE('PDO_USERNAME', 'DB_USER');
+	DEFINE('PDO_PASSWORD', 'DB_PASS');
 	
 	
 	/*
-	 *	Configuração de qual tipo de cache a utilizar
-	 *	para guardar informação.
+	 *	Description of the types of cache available
 	 *
-	 *	!! Não alterar nem o snomes nem os valores directamente abaixo !!
+	 *	!! Do not edit this values !!
 	 */
-	DEFINE( 'COMMON_CACHE_DISABLED'	, 0 );	/* Não deve ser usado */
-	DEFINE( 'COMMON_CACHE_AUTO'		, 1 );	/* Escolha automática entre APC e Memcache(d) */
-	DEFINE( 'COMMON_CACHE_APC'		, 2 );	/* Força PHP APC */
-	DEFINE( 'COMMON_CACHE_MEMCACHED', 3 );	/* Força Memcache(d) */
+	DEFINE( 'COMMON_CACHE_DISABLED'	, 0 );	/* It should never be used */
+	DEFINE( 'COMMON_CACHE_AUTO'		, 1 );	/* Automatic choose between APC e Memcache(d) */
+	DEFINE( 'COMMON_CACHE_APC'		, 2 );	/* Force PHP APC */
+	DEFINE( 'COMMON_CACHE_MEMCACHED', 3 );	/* Force Memcache(d) */
 	
 	/*
-	 *	Tipo de cache a utilizar
+	 *	Which type of cache in use
 	 *
-	 *	Nunca usar COMMON_CACHE_DISABLED ou trará graves problemas de performance
-	 *	Quando escolhido COMMON_CACHE_AUTO, deve estar garantida a instalação de pelo menos o APC ou de Memcache(d).
-	 *	A ordem de verificação neste modo é de primeiro pelo memcache(d) e depois pelo APC
+	 *	Do not ever use COMMON_CACHE_DISABLED, some things may break,
+	 *	and there would be so much overhead in every call to the server
+	 *	that the performance would be really bad
 	 *
-	 *	NOTA: AINDA EXISTE UM BUG POR RESOLVER NO APC AO GUARDAR ARRAYS, NÃO USAR!
+	 *	COMMON_CACHE_AUTO will search first for memcache(d) and then for APC
+	 *
+	 *	NOTE: there is a bug in APC, please do not use!
 	 */
 	DEFINE( 'COMMON_CACHE_SET_MODE'	, COMMON_CACHE_MEMCACHED );
 	
 	
 	/*
-	 *	Configurações do servidor de memcache(d)
+	 *	Memcache(d) server configuration
 	 */
 	DEFINE( 'MEMCACHED_SERVER_ADDR'	,	'127.0.0.1' );
 	DEFINE( 'MEMCACHED_SERVER_PORT'	,	11211 );
 	
 	
 	/*
-	 *	Força o flush do memcache(d) ou do apc quando 'true'
+	 *	Forces flush of memcache(d) or APC. This is usefull for test purposes
 	 */
 	DEFINE( 'COMMON_CACHE_FORCE_FLUSH'	,	false );
+
+	
+	/*
+	 *	This variable could be used when is needed some prefix to distinguish
+	 *	memcached variable names from other common names
+	 */
 	 
 	DEFINE( 'COMMON_CACHE_VAR_PREFIX'	,	'cc_' );
-	 
-	 
-	 
-	 
+	
+	
 	/*
-	 * !! Não alterar nada daqui para nada !!
+	 *	Validity of tokens until they die
 	 */
-	DEFINE("INCLUSION_PATH", INCLUSION_PATH_SIMPLE . '/');
+	DEFINE( 'TOKEN_VALIDITY', (3600*24*7) );
 
 ?>
