@@ -72,14 +72,20 @@ public class AuthenticationActivity extends SherlockActivity {
             Intent intent = new Intent(this, DashboardActivity.class);
             startActivity(intent);
             finish();
+            
+            
         } else {
             
         }
     }
-
+    
+    
     public void handleSignUp(View view) {
         Log.i(TAG, "Initialize Sign Up");
         Toast.makeText(this, "Sign UP", Toast.LENGTH_SHORT).show();
+        /*
+        Intent intent = new Intent(this, RegisterActivity.this);
+        startActivity(intent);*/
     }
     
     public void handleForgotPassword(View view){
