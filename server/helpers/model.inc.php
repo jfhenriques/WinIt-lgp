@@ -13,9 +13,6 @@
 								PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 								PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 							) );
-			
-			/*$this->db->setAttribute(, );
-			$this->db->setAttribute();*/
 		}
 		
 		public static function getInstance()
@@ -33,7 +30,11 @@
 	}
 			
 	
-	class ActiveRecord {
+	abstract class ActiveRecord {
+
+
+		public abstract function save();
+
 	
 		protected static function cachedQuery($id, $prefix, $sql, $arrExec, $validationFunc = null)
 		{

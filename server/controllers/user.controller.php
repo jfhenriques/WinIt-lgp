@@ -11,10 +11,12 @@
 		{
 			$this->requireAuth(true);
 		}
+
+		
 		
 		public function show()
 		{
-			$userId = 1; // cenas - pôr aqui a função que o joao ainda nao acabou
+			$userId = 1; // cenas - pÃ´r aqui a funÃ§Ã£o que o joao ainda nao acabou
 			// devolve o id do user logado
 			
 			$user = User::findById($userId);
