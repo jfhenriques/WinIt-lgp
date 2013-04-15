@@ -15,6 +15,6 @@
 	if( MEASURE_TIME )
 	{
 		$end = 1000 * (microtime(true) - $st);	
-		print("<br>Time: $end ms\n");
+		print("\n\n<br>Time: $end ms\n");
 	}
 ?>

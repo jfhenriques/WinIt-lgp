@@ -2,7 +2,7 @@
 
 	DEFINE( 'AUTH_PREFIX', 'auth_' );
 	
-	DEFINE( 'TOKEN_VALIDITY', 0 );
+	
 	
 	
 	DEFINE( 'TOKEN_ID_KEY', 'uid' );
@@ -12,11 +12,8 @@
 	
 		static private $instance = null;
 		
-		private $token = null;
-		private $userId = null;
+		private $session = null;
 		
-		private function __clone() { }
-		private function __construct() { }
 		
 		public static function getInstance()
 		{
@@ -26,77 +23,34 @@
 			return static::$instance;
 		}
 		
-
-		public function evalLogin()
+		
+		private function __clone() { }
+		
+		private function __construct()
 		{
-			function checkValidity($val)
-			{
-				return ( TOKEN_VALIDITY == 0 || ( $val + TOKEN_VALIDITY ) <= time() ) ;
-			}
-		
-		
-			$_REQUEST['token'] = "12erwer23r23er3r2r23";
-			
 			if( isset( $_REQUEST['token'] ) && strlen( $_REQUEST['token'] ) > 0 )
-			{
-				$token = $_REQUEST['token'];
-				$token_key = AUTH_PREFIX . '.' . $token ;
-				$cc = CommonCache::getInstance();
-				
-				$aInfo = $cc->get( $token_key );
-				
-				if( $aInfo !== false && is_array( $aInfo )
-						&& isset( $aInfo[ TOKEN_ID_KEY ] ) )
-				{
-					if( TOKEN_VALIDITY == 0 ||
-							( isset( $aInfo[ TOKEN_VALIDITY_KEY ] ) && checkValidity( $aInfo[ TOKEN_VALIDITY_KEY ] ) ) )
-					{
-						$this->token = $token;
-						$this->userId = $aInfo[ TOKEN_ID_KEY ];
-						
-						return true;
-					}
-					else
-						$cc->delete( $token_key );
-				}
-				else
-				{
-					$sess = Session::getByToken( $token );
-					if( !is_null( $sess ) )
-					{
-						$arr = array( TOKEN_ID_KEY => $sess->getUserId(),
-									  TOKEN_VALIDITY_KEY => $sess->getValidity() );
-
-						$cc->set( $token_key, $arr ) ;
-						
-						if( checkValidity( $sess->getValidity() ) )
-						{
-							$this->token = $sess->getToken();
-							$this->userId = $sess->getUserId();
-							
-							return true;
-						}
-					}
-				}
-			}
-			
-			return false;
+				$this->session = Session::findById( $_REQUEST['token'] );
+		}
+		
+		public function getSession()
+		{
+			return $this->session;
 		}
 		
 		public function getToken()
 		{
-			if( is_null( $this->token ) )
-				return false;
+			if( !is_null( $this->session ) )
+				return $this->session->getToken();
 				
-			return $this->token;
+			return false;
 		}
 		
 		public function getUserId()
 		{
-			if( is_null( $this->userId ) )
-				return false;
+			if( !is_null( $this->session ) )
+				return $this->session->getUserId();
 				
-			return $this->userId;
+			return false;
 		}
 	
 	}
@@ -106,7 +60,7 @@
 		
 		$auth = Authenticator::getInstance();
 		
-		return $auth->evalLogin();
+		return !is_null( $auth->getSession() );
 	});
 
 

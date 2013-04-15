@@ -1,5 +1,15 @@
 <?php
 
+
+	function valid( $var, $arr )
+	{
+		return ( is_array( $arr ) && isset( $arr[ $var ] ) && strlen( $arr[ $var ] ) > 0 ) ? $arr[ $var ] : null ;
+	}
+	function valid_request( $var )
+	{
+		return valid( $var, $_REQUEST );
+	}
+
 	class Controller {
 	
 		public $respond = null;
@@ -19,13 +29,13 @@
 		
 		public function __configure() {}
 	
-		public function requireAuth( $value = true )
+		public function requireAuth()
 		{
-			$this->checkAuth( $value, true );
+			$this->checkAuth( true );
 		}
-		public function checkAuth( $value = true, $exit = false )
+		public function checkAuth( $exit = false )
 		{
-			if( $value && !is_null( Controller::$authFunction ) )
+			if( !is_null( Controller::$authFunction ) )
 			{
 				$func = &Controller::$authFunction;
 				

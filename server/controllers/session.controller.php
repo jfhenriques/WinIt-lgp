@@ -1,23 +1,39 @@
 <?php
 
-	class  SessionController extends Controller {
+	class SessionController extends Controller {
 	
 
 		public function __configure()
 		{
-			
+			$this->checkAuth();
 		}
 		
 		
-		public function index()
+		
+		public function create()
 		{
+			$render_code = 0;
+			$resp = array();
 			
-			$this->checkAuth();
+			if( $this->checkAuth() )
+				$render_code = 1;
+				
+			else
+			{
+				$mail = valid_request( 'email' );
+				$pass = valid_request( 'password' );
+
+				if( is_null( $mail ) || is_null( $pass ) )
+					$render_code = 2;
+				
+				else
+				{
+					
+
+				}
+			}
 			
-			$auth = Authenticator::getInstance();
-			echo "t: " . $auth->getToken();
-			
-			//$this->respond->renderJSON();
+			$this->respond->renderJSON( $resp, $render_code );
 		
 		}
 	

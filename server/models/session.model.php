@@ -1,6 +1,8 @@
 <?php
 	
-	class Session extends SQLModel {
+	
+	
+	class Session extends ActiveRecord {
 		
 		private $token = null;
 		private $userId = 0;
@@ -42,27 +44,26 @@
 		
 		
 		
-		public static function getByToken($token)
+		public static function findById($token)
 		{
-			if( !is_null($token) && strlen($token) > 0 )
+			$result = static::cachedQuery( $token,
+											self::TABLE_NAME,
+											'SELECT * FROM '. self::TABLE_NAME . ' WHERE token = ? LIMIT 1;',
+											array( $token ),
+											function($arr) {
+												return TOKEN_VALIDITY == 0 ||
+															( isset($arr['validity']) && ( $arr['validity'] + TOKEN_VALIDITY ) >= time() ) ;
+											});
+				
+			if( is_array( $result ) && count( $result ) > 0 )
 			{
-				$dbh = DbConn::getInstance()->getDB();
+				$sess = new Session();
 				
-				$sth = $dbh->prepare('SELECT * FROM ' . Session::TABLE_NAME . ' WHERE token = ? LIMIT 1;');
-				$sth->execute(array($token));
+				$sess->token = $result['token'];
+				$sess->userId = $result['uid'];
+				$sess->validity = $result['validity'];
 				
-				$result = $sth->fetch();
-				
-				if( $result !== false && count( $result ) > 0 )
-				{
-					
-					$sess = new Session();
-					$sess->token = $result['token'];
-					$sess->userId = $result['uid'];
-					$sess->validity = $result['validity'];
-					
-					return $sess;
-				}
+				return $sess;
 			}
 			
 			return null;

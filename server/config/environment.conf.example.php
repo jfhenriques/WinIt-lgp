@@ -56,6 +56,8 @@
 	 */
 	DEFINE( 'COMMON_CACHE_FORCE_FLUSH'	,	false );
 	 
+	DEFINE( 'COMMON_CACHE_VAR_PREFIX'	,	'cc_' );
+	 
 	 
 	 
 	 

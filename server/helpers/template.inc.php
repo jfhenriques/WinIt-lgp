@@ -38,16 +38,21 @@
 				include_once( PAGE_FOOTER );
 		}
 		
-		public function renderJSON( $arr )
+		public function renderJSON( $arr = null, $status = 0, $message = null )
 		{
 			$jsonEnc = null;
 			
-			if( is_null( $arr ) || !is_array( $arr ) || ($jsonEnc = @json_encode( $arr ) ) === false )
+			$arrOut = array( 's' => $status,
+							 'm' => $message,
+							 'r' => $arr );
+			
+			if( ( $jsonEnc = @json_encode( $arrOut ) ) === false )
 				throw new Exception("Cannot encode array as json");
 			
 			else
 			{
 				header('Content-Type: application/json', true);
+				
 				echo $jsonEnc;
 			}
 		}
