@@ -53,7 +53,7 @@
 	}
 	
 	
-	Controller::registerAutheFunction(function() {
+	Controller::registerAuthFunction(function() {
 		
 		$auth = Authenticator::getInstance();
 		

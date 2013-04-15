@@ -146,6 +146,15 @@
 			return null;
 		}
 
+		public static function findByEmail( $email )
+		{
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE email = ? LIMIT 1;',
+									  array( $email ) );
+
+							
+			return static::fillUser( $result );
+		}
+
 		public static function findById($id)
 		{
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE utilizadorid = ? LIMIT 1;',

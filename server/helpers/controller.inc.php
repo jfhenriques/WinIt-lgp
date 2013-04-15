@@ -1,40 +1,61 @@
 <?php
 
 
-	DEFINE('RESPOND_STATUS_OK'			, 0x0	);
+	DEFINE( 'R_STATUS_OK'				, 0x0	);
 
-	DEFINE('RESPOND_ERROR_UNDEFINED'	, 0x100	);
-	DEFINE('RESPOND_ERROR_SAVE_UNABLE'	, 0x101	);
+	DEFINE( 'R_GLOB_ERR_UNDEFINED'		, 0x100	);
+	DEFINE( 'R_GLOB_ERR_SAVE_UNABLE'	, 0x101	);
 
-	DEFINE('RESPOND_ERROR_MUST_AUTH'		, 0x200	);
-	DEFINE('RESPOND_ERROR_MUST_NOT_AUTH'	, 0x201	);
-
-
+	DEFINE( 'R_GLOB_ERR_MUST_AUTH'		, 0x150	);
+	DEFINE( 'R_GLOB_ERR_MUST_NOT_AUTH'	, 0x151	);
 
 
-	function valid( $var, $arr )
+
+
+	function valid( $var, $arr, $trim = true )
 	{
-		return ( is_array( $arr ) && isset( $arr[ $var ] ) && strlen( $arr[ $var ] ) > 0 ) ? $arr[ $var ] : null ;
+		if( is_array( $arr ) && isset( $arr[ $var ] ) && !is_null( $arr[ $var ] ) )
+		{
+			$val = null;
+
+			if( $trim )
+				$val = trim( $arr[ $var ] );
+			else
+				$val = &$arr[ $var ] ;
+
+			if( strlen( $val ) > 0 )
+				return $val;
+		}
+
+		return null;
 	}
-	function valid_request( $var )
+	function valid_request( $var, $trim = true )
 	{
-		return valid( $var, $_REQUEST );
+		return valid( $var, $_REQUEST, $trim );
 	}
+
+
 
 
 	function describeMessage( $code, $arr = array() )
 	{
-		$globStatusCode = array(
-								RESPOND_ERROR_UNDEFINED		=> 'Erro Indefinido',
-								RESPOND_ERROR_SAVE_UNABLE	=> 'Impossível Salvar',
 
-								RESPOND_ERROR_MUST_AUTH		=> 'Utilizador não autenticado',
-								RESPOND_ERROR_MUST_NOT_AUTH	=> 'Utilizador não pode estar autenticado',
-							);
+		$globStatusCode = array(
+							R_GLOB_ERR_UNDEFINED		=> 'Erro Indefinido',
+							R_GLOB_ERR_SAVE_UNABLE		=> 'Impossível Salvar',
+
+							R_GLOB_ERR_MUST_AUTH		=> 'Utilizador não autenticado',
+							R_GLOB_ERR_MUST_NOT_AUTH	=> 'Utilizador não pode estar autenticado',
+						);
+		
+		if( is_null( $code ) )
+			$code = R_GLOB_ERR_UNDEFINED ;
 
 		return isset( $globStatusCode[$code] ) ?
 							$globStatusCode[$code]
-							: ( ( is_array( $arr ) && isset( $arr[$code] ) ) ? $arr[$code] : null );
+							: ( ( is_array( $arr ) && isset( $arr[$code] ) ) ?
+										$arr[$code] :
+										null );
 	}
 
 
@@ -74,7 +95,7 @@
 					header('HTTP/1.0 403 Forbidden', true);
 
 				$retType = Router::getInstance()->responseType() ;
-				$renderCode = $auth ? RESPOND_ERROR_MUST_AUTH : RESPOND_ERROR_MUST_NOT_AUTH ;
+				$renderCode = $auth ? R_GLOB_ERR_MUST_AUTH : R_GLOB_ERR_MUST_NOT_AUTH ;
 
 				if( $retType === RESPOND_JSON )
 					$this->respond->renderJSON(null, $renderCode, describeMessage($renderCode));
@@ -108,7 +129,7 @@
 
 
 		
-		public static function registerAutheFunction( $func )
+		public static function registerAuthFunction( $func )
 		{
 			Controller::$authFunction = &$func;
 		}

@@ -1,20 +1,20 @@
 <?php
 
 
-	DEFINE( 'RESPOND_ERROR_PARAM'			, 0x10 );
-	DEFINE( 'RESPOND_ERROR_USER_NOT_FOUND'	, 0x11 );
+	DEFINE( 'R_SESS_ERR_PARAM'				, 0x10 );
+	DEFINE( 'R_SESS_ERR_USER_NOT_FOUND'		, 0x11 );
 
-	DEFINE( 'RESPOND_ERROR_SESSION_NOT_FOUND'	, 0x20 );
+	DEFINE( 'R_SESS_ERR_SESSION_NOT_FOUND'	, 0x20 );
 
 
 
 	class SessionController extends Controller {
 
 		private static $status = array(
-				RESPOND_ERROR_PARAM				=> 'Utilizador e/ou password não especificado',
-				RESPOND_ERROR_USER_NOT_FOUND	=> 'Utilizador e/ou password não encontrado',
+				R_SESS_ERR_PARAM				=> 'Utilizador e/ou password não especificado',
+				R_SESS_ERR_USER_NOT_FOUND		=> 'Utilizador e/ou password não encontrado',
 
-				RESPOND_ERROR_SESSION_NOT_FOUND	=> 'Sessão não encontrado',
+				R_SESS_ERR_SESSION_NOT_FOUND	=> 'Sessão não encontrado',
 			);
 
 	
@@ -30,21 +30,21 @@
 			$this->requireNoAuth();
 
 
-			$render_code = RESPOND_ERROR_UNDEFINED;
+			$render_code = null;
 			$resp = array();
 			
 			$mail = valid_request( 'email' );
 			$pass = valid_request( 'password' );
 
 			if( is_null( $mail ) || is_null( $pass ) )
-				$render_code = RESPOND_ERROR_PARAM;
+				$render_code = R_SESS_ERR_PARAM;
 			
 			else
 			{
 				$user = User::findByCredentials( $mail, $pass );
 
 				if( is_null( $user ) )
-					$render_code = RESPOND_ERROR_USER_NOT_FOUND;
+					$render_code = R_SESS_ERR_USER_NOT_FOUND;
 				
 				else
 				{
@@ -62,7 +62,7 @@
 						$validity = $sess->getValidity();
 						
 						$success = true;
-						$render_code = RESPOND_STATUS_OK;
+						$render_code = R_STATUS_OK;
 					}
 					else
 					{
@@ -74,7 +74,7 @@
 						$sess->setUserId( $userId );
 						$sess->setValidity( TOKEN_VALIDITY == 0 ? 0 : ( time() + TOKEN_VALIDITY ) );
 						
-						$render_code = ( $success = $sess->save() ) ? RESPOND_STATUS_OK : RESPOND_ERROR_SAVE_UNABLE ;
+						$render_code = ( $success = $sess->save() ) ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE ;
 					}
 					
 					if( $success )
@@ -92,19 +92,19 @@
 		{
 			$this->requireAuth();
 
-			$render_code = RESPOND_ERROR_UNDEFINED;
+			$render_code = null;
 			$resp = array();
 			
 			$token = valid_request( 'session' );
 			$sess = null;
 
 			if( is_null( $token ) || is_null( $sess = Session::findById( $token ) ) ) 
-				$render_code = RESPOND_ERROR_SESSION_NOT_FOUND;
+				$render_code = R_SESS_ERR_SESSION_NOT_FOUND;
 
 			else
 			{
 				$sess->setValidity(-1);
-				$render_code = ( $success = $sess->save() ) ? RESPOND_STATUS_OK : RESPOND_ERROR_SAVE_UNABLE ;
+				$render_code = ( $success = $sess->save() ) ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE ;
 			}
 			
 
