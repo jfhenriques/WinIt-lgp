@@ -13,6 +13,19 @@ public class User {
     private final String level_;
     private final String points_;
     
+    /*
+     * Temporary constructor, for testing purpose. While the message from the server still comes incomplete
+     */
+    public User(int uid, String name, String email, String level, String points){
+    	user_id_= uid;
+    	name_ = name;
+    	address_ = null;
+    	birthday_ = null;
+    	email_ = email;
+    	level_ = level;
+    	points_ = points;
+    }
+    
     public User(int user_id, String name, String address, String birthday,
             String email, String level, String points) {
         user_id_ = user_id;
