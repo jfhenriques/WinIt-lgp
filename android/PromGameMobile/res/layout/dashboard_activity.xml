@@ -2,83 +2,137 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1"
-    android:orientation="vertical" >
+    android:background="@color/light_gray"
+    android:orientation="vertical"
+    android:padding="@dimen/gap"
+    android:weightSum="1" >
 
     <LinearLayout
         android:id="@+id/single_player_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@color/blue"
+        android:background="@drawable/card_bg_play"
         android:onClick="handleRoomSelection" >
+
+        <ImageView
+            android:layout_width="@dimen/dashboard_icon_size"
+            android:layout_height="@dimen/dashboard_icon_size"
+            android:layout_gravity="center_vertical"
+            android:contentDescription=""
+            android:src="@drawable/ic_single_player"
+            android:layout_marginLeft="@dimen/dashboard_icon_margin" />
 
         <TextView
             android:id="@+id/single_player_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:gravity="right"
             android:text="@string/single_player"
+            android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white" />
-
+            android:textColor="@color/dark_gray"
+            android:layout_marginRight="@dimen/dashboard_label_margin" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
 
     <LinearLayout
         android:id="@+id/cooperative_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@color/orange"
+        android:background="@drawable/card_bg_play"
         android:onClick="handleRoomSelection" >
+
+        <ImageView
+            android:layout_width="@dimen/dashboard_icon_size"
+            android:layout_height="@dimen/dashboard_icon_size"
+            android:layout_gravity="center_vertical"
+            android:contentDescription=""
+            android:src="@drawable/ic_cooperative"
+            android:layout_marginLeft="@dimen/dashboard_icon_margin"  />
 
         <TextView
             android:id="@+id/cooperative_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:gravity="right"
             android:text="@string/cooperative"
-            android:textColor="@color/white"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
+            android:textAllCaps="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dark_gray"
+            android:layout_marginRight="@dimen/dashboard_label_margin" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
 
     <LinearLayout
         android:id="@+id/competitive_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@color/red"
+        android:background="@drawable/card_bg_play"
         android:onClick="handleRoomSelection" >
+
+        <ImageView
+            android:layout_width="@dimen/dashboard_icon_size"
+            android:layout_height="@dimen/dashboard_icon_size"
+            android:layout_gravity="center_vertical"
+            android:contentDescription=""
+            android:src="@drawable/ic_competitive"
+            android:layout_marginLeft="@dimen/dashboard_icon_margin"  />
 
         <TextView
             android:id="@+id/competitive_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:gravity="right"
             android:text="@string/competitive"
-            android:textColor="@color/white"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
+            android:textAllCaps="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dark_gray"
+            android:layout_marginRight="@dimen/dashboard_label_margin" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
 
     <LinearLayout
         android:id="@+id/trading_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@color/green"
+        android:background="@drawable/card_bg_play"
         android:onClick="handleRoomSelection" >
-        
+
+        <ImageView
+            android:layout_width="@dimen/dashboard_icon_size"
+            android:layout_height="@dimen/dashboard_icon_size"
+            android:layout_gravity="center_vertical"
+            android:contentDescription=""
+            android:src="@drawable/ic_trading"
+            android:layout_marginLeft="@dimen/dashboard_icon_margin"  />
+
         <TextView
             android:id="@+id/trading_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:gravity="right"
             android:text="@string/trading"
-            android:textColor="@color/white"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
+            android:textAllCaps="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dark_gray"
+            android:layout_marginRight="@dimen/dashboard_label_margin" />
     </LinearLayout>
 
 </LinearLayout>
