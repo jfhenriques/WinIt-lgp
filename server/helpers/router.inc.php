@@ -10,8 +10,6 @@
 	
 	
 	class Router {
-	
-		const CACHE_ROUTE_KEY = '142124025.cahed_routes';
 		
 		private static $instance = null;
 		
@@ -31,8 +29,9 @@
 			$this->url = ( isset( $_REQUEST['z_url' ] ) && strlen( $_REQUEST['z_url' ] ) > 0 ) ? $_REQUEST['z_url' ] : "" ;
 			
 			$cc = CommonCache::getInstance();
+			$cc_key = CommonCache::buildVarName('cached', 'routes');
 
-			$cache = $cc->get( self::CACHE_ROUTE_KEY );
+			$cache = $cc->get( $cc_key );
 			
 			$lastMod = @filemtime(ROUTES_FILE) ;
 			
@@ -45,7 +44,7 @@
 				
 				$this->buildRoutes( $GLOBALS['routes'] , $lastMod !== false ? $lastMod : 0 , $cache);
 
-				$cc->set( self::CACHE_ROUTE_KEY, $cache );
+				$cc->set( $cc_key, $cache );
 				
 				//var_dump( $cache );
 			}
@@ -104,14 +103,14 @@
 			return $this->controllerFound ;
 		}
 		
+
 		
 		/**
 		 *
 		 *	Build routes
 		 *
 		 */
-		
-		
+
 		private function buildRoutes($routes, $version, &$cached)
 		{
 			
@@ -217,6 +216,7 @@
 				}	
 			}
 			
+
 			
 			/***************************************************************************************************
 			 *	Processa recursivamente o namespace e os seus recursos

@@ -57,17 +57,13 @@ public class AuthenticationActivity extends SherlockActivity {
             Log.i(TAG, "Inicialize login with email: " + user_email_
                     + " password: " + user_password_);
             Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT).show();
-            //authentication_thread_ = NetworkUtilities.attemptAuth(user_email_, user_password_, handler, this);
-            onAuthenticationResult(true); // for debug purposes only!    
+            authentication_thread_ = NetworkUtilities.attemptAuth(user_email_, user_password_, handler, this);
+            //onAuthenticationResult(true); // for debug purposes only!    
         }   
     }
 
     public void onAuthenticationResult(boolean result) {
         if (result == true) {
-            SharedPreferences.Editor preferences_editor = getSharedPreferences(
-                    Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
-            preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
-            preferences_editor.commit();
 
             Intent intent = new Intent(this, DashboardActivity.class);
             startActivity(intent);
@@ -75,7 +71,8 @@ public class AuthenticationActivity extends SherlockActivity {
             
             
         } else {
-            
+        	Log.d(TAG, "error");
+            Toast.makeText(this, "FUCK YOU", Toast.LENGTH_SHORT).show();
         }
     }
     
