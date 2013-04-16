@@ -90,12 +90,14 @@
 			
 			$sth = null;
 			
-			if( is_null($this->utilizadorid) )
+			if( is_null($this->utilizadorid) ) {
+			
 				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME .
-										' VALUES(:nome, :email, :password, :cp4, :cp3, :porta_andar, :token_facebook, :token_twitter, NULL)');
-			else
-				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME .
-										' SET nome = :nome, email = :email, password = :password, cp4 = :cp4, cp3 =:cp3, porta_andar = :porta_andar, token_facebook = :token_facebook, token_twitter = :token_twitter, NULL)');
+										' VALUES(:nome, :email, :password, :cp4, :cp3, :porta_andar, :token_facebook, :token_twitter, NULL)');				
+			} else {
+				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET nome = :nome , email = :email, password = :password, cp4 = :cp4, cp3 = :cp3, porta_andar = :porta_andar, token_facebook = :token_facebook, token_twitter = :token_twitter WHERE utilizadorid = '.$this->utilizadorid);
+				
+			}
 			
 			$sth->bindParam(':nome', $this->nome, PDO::PARAM_STR);
 			$sth->bindParam(':email', $this->email, PDO::PARAM_STR);
@@ -104,7 +106,7 @@
 			$sth->bindParam(':cp3', $this->cp3, PDO::PARAM_INT);
 			$sth->bindParam(':porta_andar', $this->porta_andar, PDO::PARAM_STR);
 			$sth->bindParam(':token_facebook', $this->token_facebook, PDO::PARAM_STR);
-			$sth->bindParam(':token_twitter', $this->token_twitter, PDO::PARAM_STR);			
+			$sth->bindParam(':token_twitter', $this->token_twitter, PDO::PARAM_STR);
 			
 			$ret = $sth->execute();
 			
