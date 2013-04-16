@@ -4,7 +4,9 @@
     android:layout_height="match_parent"
     android:background="@color/light_gray"
     android:orientation="vertical"
-    android:padding="@dimen/gap"
+    android:paddingTop="@dimen/gap"
+    android:paddingLeft="@dimen/gap"
+    android:paddingRight="@dimen/gap"
     android:weightSum="1" >
 
     <LinearLayout
@@ -13,7 +15,8 @@
         android:layout_height="0dp"
         android:layout_weight="0.25"
         android:background="@drawable/card_bg_play"
-        android:onClick="handleRoomSelection" >
+        android:onClick="handleRoomSelection"
+        android:layout_marginBottom="@dimen/gap" >
 
         <ImageView
             android:layout_width="@dimen/dashboard_icon_size"
@@ -36,17 +39,14 @@
             android:layout_marginRight="@dimen/dashboard_label_margin" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
-
     <LinearLayout
         android:id="@+id/cooperative_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
         android:background="@drawable/card_bg_play"
-        android:onClick="handleRoomSelection" >
+        android:onClick="handleRoomSelection"
+        android:layout_marginBottom="@dimen/gap" >
 
         <ImageView
             android:layout_width="@dimen/dashboard_icon_size"
@@ -69,17 +69,14 @@
             android:layout_marginRight="@dimen/dashboard_label_margin" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
-
     <LinearLayout
         android:id="@+id/competitive_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
         android:background="@drawable/card_bg_play"
-        android:onClick="handleRoomSelection" >
+        android:onClick="handleRoomSelection"
+        android:layout_marginBottom="@dimen/gap" >
 
         <ImageView
             android:layout_width="@dimen/dashboard_icon_size"
@@ -102,17 +99,14 @@
             android:layout_marginRight="@dimen/dashboard_label_margin" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
-
     <LinearLayout
         android:id="@+id/trading_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
         android:background="@drawable/card_bg_play"
-        android:onClick="handleRoomSelection" >
+        android:onClick="handleRoomSelection"
+        android:layout_marginBottom="@dimen/gap" >
 
         <ImageView
             android:layout_width="@dimen/dashboard_icon_size"

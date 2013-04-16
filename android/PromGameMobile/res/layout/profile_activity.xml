@@ -21,13 +21,12 @@
 
             <ImageView
                 android:id="@+id/profile_image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:contentDescription="ProfileImage"
-                android:src="@drawable/abs__ab_bottom_solid_dark_holo"
-                android:layout_margin="10dp"
-                android:padding="5dp"
-                android:background="@color/white" />
+                android:src="@drawable/circular_photo"
+                android:layout_margin="6dp"
+                android:padding="5dp" />
 
 			<TextView
                 android:id="@+id/name_text"
@@ -40,7 +39,7 @@
             <View
                 android:id="@+id/separator"
                 android:layout_width="fill_parent"
-                android:layout_height="3dp"
+                android:layout_height="2dp"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/white" />
