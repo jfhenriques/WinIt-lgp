@@ -2,82 +2,96 @@
 	
 	class User extends ActiveRecord {
 
-		private $utilizadorid = null;
-		private $nome;
+		private $uid = null;
+		private $name;
 		private $email;
 		private $password;
-		private $cp4;
-		private $cp3;
-		private $porta_andar;
+		private $adid;
+		private $door;
 		private $token_facebook;
 		private $token_twitter;
 		
-		const TABLE_NAME = 'utilizador' ;
+
+		const TABLE_NAME = 'user' ;
 
 
-		public function __construct() {}
-		
+		//public function __construct() {}
 
 		
 		/* GET's and SET's*/
 
-		public function getUtilizadorId() {
-			return $this->utilizadorid;
+		public function getID()
+		{
+			return $this->uid;
 		}
 		
-		public function getnome() {
-			return $this->nome;
+
+		public function getName()
+		{
+			return $this->name;
 		}		
-		public function setnome($nome) {
-			$this->nome = $nome;
+		public function setName($name)
+		{
+			$this->name = $name;
 		}
 		
-		public function getEmail() {
+
+		public function getEmail()
+		{
 			return $this->email;
 		}
-		public function setEmail($email) {
+		public function setEmail($email)
+		{
 			$this->email = $email;
 		}
 		
-		public function getPassword() {
+
+		public function getPassword()
+		{
 			return $this->password;
 		}
-		public function setPassword($password) {
+		public function setPassword($password)
+		{
 			$this->password = $password;
 		}
 		
-		public function getCP4() {
-			return $this->cp4;
+
+		public function getADID()
+		{
+			return $this->adid;
 		}
-		public function setCP4($cp4) {
-			$this->cp4 = $cp4;
+		public function setADID($adid)
+		{
+			$this->adid = $adid;
 		}
+
 		
-		public function getCP3() {
-			return $this->cp3;
+		public function getDoor()
+		{
+			return $this->door;
 		}
-		public function setCP3($cp3) {
-			$this->cp3 = $cp3;
+		public function setDoor($door)
+		{
+			$this->door = $door;
 		}
+
 		
-		public function getPortaAndar() {
-			return $this->porta_andar;
-		}
-		public function setPortaAndar($porta_andar) {
-			$this->porta_andar = $porta_andar;
-		}
-		
-		public function getTokenFacebook() {
+		public function getTokenFacebook()
+		{
 			return $this->token_facebook;
 		}
-		public function setTokenFacebook($token_facebook) {
+		public function setTokenFacebook($token_facebook)
+		{
 			$this->token_facebook = $token_facebook;
 		}
 		
-		public function getTokenTwitter() {
+
+		public function getTokenTwitter()
+		{
 			return $this->token_twitter;
 		}
-		public function setTokenTwitter($token_twitter) {
+		public function setTokenTwitter($token_twitter)
+		{
 			$this->token_twitter = $token_twitter;
 		}
 
@@ -87,31 +101,32 @@
 		{
 
 			$dbh = DbConn::getInstance()->getDB();
-			
 			$sth = null;
 			
-			if( is_null($this->utilizadorid) ) {
-			
-				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME .
-										' VALUES(:nome, :email, :password, :cp4, :cp3, :porta_andar, :token_facebook, :token_twitter, NULL)');				
-			} else {
-				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET nome = :nome , email = :email, password = :password, cp4 = :cp4, cp3 = :cp3, porta_andar = :porta_andar, token_facebook = :token_facebook, token_twitter = :token_twitter WHERE utilizadorid = '.$this->utilizadorid);
+			if( is_null($this->uid) )
+				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, token_facebook, token_twitter) ' .
+										' VALUES(:name, :email, :password, :adid, :door, :token_facebook, :token_twitter)');
+			else
+			{
+				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,' .
+												' adid = :adid, door = :door, token_facebook = :token_facebook,' .
+												' token_twitter = :token_twitter WHERE uid = :uid ;' );
 				
+				$sth->bindParam(':uid', $this->uid, PDO::PARAM_INT);
 			}
-			
-			$sth->bindParam(':nome', $this->nome, PDO::PARAM_STR);
+
+			$sth->bindParam(':name', $this->name, PDO::PARAM_STR);
 			$sth->bindParam(':email', $this->email, PDO::PARAM_STR);
 			$sth->bindParam(':password', $this->password, PDO::PARAM_STR);
-			$sth->bindParam(':cp4', $this->cp4, PDO::PARAM_INT);
-			$sth->bindParam(':cp3', $this->cp3, PDO::PARAM_INT);
-			$sth->bindParam(':porta_andar', $this->porta_andar, PDO::PARAM_STR);
+			$sth->bindParam(':adid', $this->adid, PDO::PARAM_INT);
+			$sth->bindParam(':door', $this->door, PDO::PARAM_STR);
 			$sth->bindParam(':token_facebook', $this->token_facebook, PDO::PARAM_STR);
 			$sth->bindParam(':token_twitter', $this->token_twitter, PDO::PARAM_STR);
 			
 			$ret = $sth->execute();
 			
-			if( $ret && is_null($this->utilizadorid) )
-				$this->utilizadorid = $dbh->lastInsertId();
+			if( $ret && is_null($this->uid) )
+				$this->uid = $dbh->lastInsertId();
 
 			return $ret;
 		}
@@ -132,13 +147,12 @@
 			{
 				$user = new User();
 				
-				$user->utilizadorid = $arr['utilizadorid'];
-				$user->nome = $arr['nome'];
+				$user->uid = $arr['uid'];
+				$user->name = $arr['name'];
 				$user->email = $arr['email'];
 				$user->password = $arr['password'];
-				$user->cp4 = $arr['cp4'];
-				$user->cp3 = $arr['cp3'];
-				$user->porta_andar = $arr['porta_andar'];
+				$user->adid = $arr['adid'];
+				$user->door = $arr['door'];
 				$user->token_facebook = $arr['token_facebook'];
 				$user->token_twitter = $arr['token_twitter'];
 				
@@ -159,7 +173,7 @@
 
 		public static function findById($id)
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE utilizadorid = ? LIMIT 1;',
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
 									  array( $id ) );
 
 							
@@ -168,10 +182,7 @@
 
 		public static function findByCredentials($email, $pass)
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE email = ? LIMIT 1;',
-									  array( $email ) );
-
-			$user = static::fillUser( $result );
+			$user = static::findByEmail( $email );
 
 			if( !is_null( $user ) && !is_null( $user->password ) )
 			{

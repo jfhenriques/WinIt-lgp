@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 	/* 
 	 *	Must always be set to false on prodution environment
