@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_delas"
+    android:background="@color/light_gray"
     android:orientation="vertical"
     android:padding="10dp" >
 
@@ -18,7 +18,7 @@
         android:background="@color/white" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/question_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name" />
@@ -34,7 +34,7 @@
     </EditText>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/counter_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="E-mail" />
