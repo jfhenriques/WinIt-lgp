@@ -1,6 +1,8 @@
 <?php
 
 	DEFINE('ROUTES_FILE', ROOT . '/config/routes.conf.php' );
+	DEFINE('MULTIPART_PARSER_FILE', ROOT . '/helpers/multipart.parser.php' );
+
 	DEFINE('NOT_FOUND_PAGE', ROOT . '/public/404.html' );
 	
 	DEFINE('RESPOND_DISABLED',	0x0);
@@ -46,7 +48,7 @@
 
 				$cc->set( $cc_key, $cache );
 				
-				//var_dump( $cache );
+				// var_dump( $cache );
 			}
 
 			$this->cachedRoutes = $cache ;
@@ -433,6 +435,13 @@
 					$act = $lastValue[ $key ] ;
 					if( isset( $act['a'] ) && isset( $act['c'] ) )
 					{
+						if( $key === "#PUT" || $key === "#DELETE" )
+						{
+							require_once(MULTIPART_PARSER_FILE);
+
+							parse_raw_http_request();
+						}
+
 						$this->controller = $act['c'];
 						$this->controllerAction = $act['a'];
 						$this->method = $_SERVER['REQUEST_METHOD'];

@@ -3,16 +3,6 @@
 
 	$GLOBALS['routes'] = array(
 		
-		/*'resources' => array(
-				':notes' => array( 'only' => array( 'edit', 'index', 'show' ) ),
-				':user' => array(
-					':account' => array(
-						':bill' => array( 'only' => array( 'index' ) )
-					),
-					':bill' => null,
-				)
-		),*/
-		
 		
 		/*****************************************************************************************
 		 *	Namespace e resources
@@ -26,7 +16,7 @@
 			
 				':session' => array( 'only' => array( 'create', 'destroy' ) ),
 				
-				':user' => array(
+				':user' => array( 'only' => array( 'create', 'index' ),
 					':tag' => null,
 					':promotion' => null,
 					':badge' => null,
@@ -77,8 +67,11 @@
 		
 			//array( 'match' => '/home', 'controller' => 'home', 'via' => 'get', 'action' => 'index' ),
 			
-			array( 'match' => '/user/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
-			array( 'match' => '/user/promotions', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions' ),
+			array( 'match' => '/api/address', 'controller' => 'address', 'via' => 'post', 'action' => 'get_address' ),
+
+			array( 'match' => '/api/user/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
+			array( 'match' => '/api/user/promotions', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions' ),
+			array( 'match' => '/api/user', 'controller' => 'user', 'via' => 'put', 'action' => 'edit' ),
 			
 		),
 	

@@ -48,7 +48,7 @@
 				
 				else
 				{
-					$userId = $user->getUtilizadorId();
+					$userId = $user->getID();
 
 					$token		= null;
 					$success	= false;
@@ -90,7 +90,7 @@
 
 		public function destroy()
 		{
-			$this->requireAuth();
+			$this->checkAuth();
 
 			$render_code = null;
 			$resp = array();

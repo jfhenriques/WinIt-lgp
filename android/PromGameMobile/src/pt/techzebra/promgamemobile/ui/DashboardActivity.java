@@ -3,6 +3,7 @@ package pt.techzebra.promgamemobile.ui;
 import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.platform.LoadingUserInfo;
+import pt.techzebra.promgamemobile.games.quiz.QuizActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -79,7 +80,10 @@ public class DashboardActivity extends SherlockActivity {
         switch (view.getId()) {
         case R.id.single_player_layout:
             msg = "Single Player";
-            break;
+            Intent intent = new Intent(this, QuizActivity.class);
+            startActivity(intent);
+            return;
+            //break;
         case R.id.cooperative_layout:
             msg = "Cooperative";
             break;

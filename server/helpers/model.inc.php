@@ -13,6 +13,7 @@
 								PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 								PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 							) );
+			$this->db -> exec("SET NAMES utf8");
 		}
 		
 		public static function getInstance()
