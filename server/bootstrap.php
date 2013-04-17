@@ -3,7 +3,7 @@
 	session_start();
 	
 	// Faz todo o output ir para um buffer primeiro,
-	// sendo enviado tudo de uma vez só para o browser do utilizador apenas no final.
+	// sendo enviado tudo de uma vez sÃ³ para o browser do utilizador apenas no final.
 	ob_start();
 	
 	header('Content-type: text/html; charset=utf-8', true);
