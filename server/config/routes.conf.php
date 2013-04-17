@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 
 	$GLOBALS['routes'] = array(

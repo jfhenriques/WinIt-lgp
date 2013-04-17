@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 
 	DEFINE( 'R_SESS_ERR_USER_NOT_FOUND'	, 0x10 );

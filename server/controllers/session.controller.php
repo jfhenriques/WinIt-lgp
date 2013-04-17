@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 
 	DEFINE( 'R_SESS_ERR_PARAM'				, 0x10 );
