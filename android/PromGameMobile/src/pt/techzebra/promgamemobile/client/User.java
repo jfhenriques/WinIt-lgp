@@ -1,11 +1,18 @@
 package pt.techzebra.promgamemobile.client;
 
+import java.io.Serializable;
+
+import org.apache.http.entity.SerializableEntity;
 import org.json.JSONObject;
 
 import android.util.Log;
 
-public class User {
-    private final int user_id_;
+public class User implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final int user_id_;
     private final String name_;
     private final String address_;
     private final String birthday_;
