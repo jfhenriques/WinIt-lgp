@@ -67,7 +67,7 @@
 		
 			//array( 'match' => '/home', 'controller' => 'home', 'via' => 'get', 'action' => 'index' ),
 			
-			array( 'match' => '/api/address', 'controller' => 'address', 'via' => 'post', 'action' => 'get_address' ),
+			array( 'match' => '/api/address/:cp4/:cp3', 'controller' => 'address', 'via' => 'get', 'action' => 'list_cp' ),
 
 			array( 'match' => '/api/user/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
 			array( 'match' => '/api/user/promotions', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions' ),

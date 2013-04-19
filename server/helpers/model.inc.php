@@ -81,17 +81,23 @@
 		}
 		
 		
-		protected static function query( $sql, $execArr )
+		protected static function executeQuery( $sql, $execArr, &$stmt = null )
 		{
 			$dbh = DbConn::getInstance()->getDB();
 
-			$sth = $dbh->prepare($sql);
+			$stmt = $dbh->prepare($sql);
 			
-			if( $sth->execute($execArr) )
-				return $sth->fetch();
+			return $stmt->execute($execArr) ;
+		}
+		protected static function query( $sql, $execArr )
+		{
+			if( static::executeQuery( $sql, $execArr, $stmt ) !== false )
+				return $stmt->fetch();
 				
 			return false;
 		}
+
+
 
 	}
 
