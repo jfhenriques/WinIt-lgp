@@ -64,7 +64,7 @@ public class LoadingUserInfo extends AsyncTask<Void, Void, User> {
 		} else {
 			if(!Utilities.hasInternetConnection(mContext)){
 				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-				builder.setMessage("No Internet connections. Do you wish to open Settings?");
+				builder.setMessage("No Internet connection. Do you wish to open Settings?");
 				builder.setPositiveButton("Sure", new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
 			        	   mContext.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));

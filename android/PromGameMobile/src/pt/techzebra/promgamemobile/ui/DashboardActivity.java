@@ -58,7 +58,8 @@ public class DashboardActivity extends SherlockActivity {
         switch (item.getItemId()) {
             case R.id.menu_profile:
             	//TODO sempre que ele vai ao profile tenta ir sacar as cenas ao servidor. Talvez se existir um db local no android guardar esta informação. Neste momento só tá a aceder ao perfil se tiver internet activa
-                LoadingUserInfo lui = new LoadingUserInfo(this);
+                String auth = getSharedPreferences("auth_token", Context.MODE_PRIVATE).toString();
+            	LoadingUserInfo lui = new LoadingUserInfo(this);
                 lui.execute();
                 break;
             case R.id.menu_settings:

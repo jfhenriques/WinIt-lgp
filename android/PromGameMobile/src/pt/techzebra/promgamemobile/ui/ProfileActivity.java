@@ -7,6 +7,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.client.User;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +20,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,7 +37,7 @@ public class ProfileActivity extends SherlockActivity {
 	TextView email_text_;
 	TextView level_text_;
 	TextView points_text_;
-
+	
 	User user_ = null;
 	String auth_token;
 
@@ -110,8 +112,19 @@ public class ProfileActivity extends SherlockActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-
+	}
+	
+	public void handleProfileSelection(View view){
+		 switch (view.getId()) {
+		 case R.id.badges_view:
+			 Intent i = new Intent(this, BadgesActivity.class);
+			 startActivity(i);
+			 return;
+		 case R.id.tags_view:
+			 Intent in = new Intent(this, TagsActivity.class);
+			 startActivity(in);
+			 return;
+		 }
 	}
 }
 
