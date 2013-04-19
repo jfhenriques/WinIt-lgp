@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 import org.json.JSONObject;
 
-/**
- *	
- */
 
 public class Quiz {
 	private final int id_;

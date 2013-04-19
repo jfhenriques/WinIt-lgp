@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class MultipleChoiceAnswer extends Answer {
     private ArrayList<String> answers_;
     
-    public MultipleChoiceAnswer(int id, boolean correct) {
-        super(id, correct);
+    public MultipleChoiceAnswer(int id) {
+        super(id);
+        answers_ = new ArrayList<String>();
     }
 
     @Override
@@ -14,8 +15,10 @@ public class MultipleChoiceAnswer extends Answer {
         return answers_;
     }
 
-//    public void addAnswer(String answer) {
-//        
-//    }
+    public void addAnswer(String answer) {
+        if(!answers_.contains(answer)){
+            answers_.add(answer);
+        }
+    }
     
 }

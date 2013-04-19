@@ -117,12 +117,12 @@ public class ProfileActivity extends SherlockActivity {
 	public void handleProfileSelection(View view){
 		 switch (view.getId()) {
 		 case R.id.badges_view:
-			 Intent i = new Intent(this, BadgesActivity.class);
-			 startActivity(i);
+			 //Intent i = new Intent(this, BadgesActivity.class);
+			 //startActivity(i);
 			 return;
 		 case R.id.tags_view:
-			 Intent in = new Intent(this, TagsActivity.class);
-			 startActivity(in);
+			 //Intent in = new Intent(this, TagsActivity.class);
+			 //startActivity(in);
 			 return;
 		 }
 	}
