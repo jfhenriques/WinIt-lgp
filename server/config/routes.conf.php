@@ -23,23 +23,24 @@
 				), 
 				
 				// considerar o id do user que esta logado
-				':promotion' => array(
-					':tag' => null,
-					':game' => array(
-						':quizgame' => array(
-							':question' => null,
-							':answer' => null,
-						),
-						':proximtygame' => null,
-					),
+				':promotion' => array( 'only' => array( 'index', 'show' ),
+
+					':tag'  => array( 'only' => array( 'index', 'show' ) ),
+					// ':game' => array(
+					// 	':quizgame' => array(
+					// 		':question' => null,
+					// 		':answer' => null,
+					// 	),
+					// 	':proximtygame' => null,
+					// ),
 				),
 				
-				':tag' => null,
+				':tag' => array( 'only' => array( 'index', 'show' ) ),
 				
-				':trade' => array(
-					':promotion' => null,
-					':sugestion' => null,
-				),
+				// ':trade' => array(
+				// 	':promotion' => null,
+				// 	':sugestion' => null,
+				// ),
 				
 			),
 		),
@@ -66,12 +67,22 @@
 		'matches' => array(
 		
 			//array( 'match' => '/home', 'controller' => 'home', 'via' => 'get', 'action' => 'index' ),
-			
-			array( 'match' => '/api/address/:cp4/:cp3', 'controller' => 'address', 'via' => 'get', 'action' => 'list_cp' ),
 
-			array( 'match' => '/api/user/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
-			array( 'match' => '/api/user/promotions', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions' ),
-			array( 'match' => '/api/user', 'controller' => 'user', 'via' => 'put', 'action' => 'edit' ),
+			array( 'match' => '/api',
+				   'matches' => array(
+
+						array( 'match' => '/user', 'controller' => 'user', 'via' => 'put', 'action' => 'edit',
+							   'matches' => array(
+
+									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
+									array( 'match' => '/promotions', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions' ),
+
+								),
+						),
+
+						array( 'match' => '/address/:cp4/:cp3', 'controller' => 'address', 'via' => 'get', 'action' => 'list_cp' ),
+				   	),
+			),
 			
 		),
 	

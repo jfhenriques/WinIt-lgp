@@ -83,7 +83,7 @@
 			}
 		}
 		
-		private static function hasNext($i, $arr)
+		public static function hasNext($i, $arr)
 		{
 			for( ; $i < count( $arr ); $i++)
 			{
@@ -242,6 +242,46 @@
 					processResources( $arr['resources'], $output );
 					
 			}
+
+			function processMatches( $arr, &$output )
+			{
+				if( isset( $arr['matches'] ) && is_array( $arr['matches'] ) )
+				{
+					foreach( $arr['matches'] as $rule )
+					{
+						if( !is_array( $rule ) || !isset( $rule['match'] ) )
+							continue;
+
+						$controller = null;
+						
+						$i = 0;
+						$val = null;
+
+						$lastLevel = &$output;
+						
+						$exp = explode('/', $rule['match'] ) ;
+
+						while( ($next = Router::hasNext( $i, $exp ) ) !== false )
+						{
+							$i = 1 + $next;
+							$val = $exp[$next] ;
+
+							if( is_null( $controller ) )
+								$controller = $val;
+
+							Router::add_key_to_array( $val, $lastLevel );
+
+							if( Router::hasNext( $i, $exp ) === false )
+								processAtom( $rule, false, $controller, $val, $lastLevel );
+
+							$lastLevel = &$lastLevel[$val] ;
+						}
+
+						if( !is_null( $val ) )
+							processMatches( $rule, $lastLevel );
+					}
+				}
+			}
 			
 			
 			function recursiveArrayClean( &$arr )
@@ -283,50 +323,13 @@
 			$cached['version'] = $version;
 			$cached['root'] = ( isset($routes['root']) && is_string( $routes['root'] ) ) ? $routes['root'] : null;
 			
-			
-			processNamespace(  $routes, $cached['rules'] );
-			
-			
-			if( isset( $routes['matches'] ) && is_array( $routes['matches'] ) )
-			{
-				foreach( $routes['matches'] as $rule )
-				{
-					if( !is_array( $rule ) || !isset( $rule['match'] ) )
-						continue;
+			// Process Namespace / resources
+			processNamespace( $routes, $cached['rules'] );
 
-					$controller = null;
-					
-					$i = 0;
-					$val = null;
-					$next = 0;
-					
-					$exp = explode('/', $rule['match'] ) ;
-					
-					$lastLevel =& $cached['rules'] ;
+			// Process Matches
+			processMatches( $routes, $cached['rules'] );
 
-					while( ($next = static::hasNext( $i, $exp ) ) !== false )
-					{
-						$i = 1 + $next;
-						$val = $exp[$next] ;
-
-						if( is_null( $controller ) )
-							$controller = $val;
-						
-						static::add_key_to_array( $val, $lastLevel );
-						
-						if( static::hasNext( $i, $exp ) === false )
-						{
-							processAtom( $rule, false, $controller, $val, $lastLevel);
-							
-							break;
-						}
-						else
-							$lastLevel =& $lastLevel[$val];
-							
-					}
-				}
-			}
-			
+			// Clean possible empty array tails
 			recursiveArrayClean( $cached );
 			
 		}
