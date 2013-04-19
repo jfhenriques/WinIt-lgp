@@ -2,6 +2,8 @@ package pt.techzebra.promgamemobile.ui;
 
 import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.R;
+import pt.techzebra.promgamemobile.platform.LoadingUserInfo;
+import pt.techzebra.promgamemobile.games.quiz.QuizActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -55,8 +57,10 @@ public class DashboardActivity extends SherlockActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_profile:
-                Intent intent = new Intent(this, ProfileActivity.class);
-                startActivity(intent);
+            	//TODO sempre que ele vai ao profile tenta ir sacar as cenas ao servidor. Talvez se existir um db local no android guardar esta informação. Neste momento só tá a aceder ao perfil se tiver internet activa
+                String auth = getSharedPreferences("auth_token", Context.MODE_PRIVATE).toString();
+            	LoadingUserInfo lui = new LoadingUserInfo(this);
+                lui.execute();
                 break;
             case R.id.menu_settings:
                 Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
@@ -77,7 +81,10 @@ public class DashboardActivity extends SherlockActivity {
         switch (view.getId()) {
         case R.id.single_player_layout:
             msg = "Single Player";
-            break;
+            Intent intent = new Intent(this, QuizActivity.class);
+            startActivity(intent);
+            return;
+            //break;
         case R.id.cooperative_layout:
             msg = "Cooperative";
             break;

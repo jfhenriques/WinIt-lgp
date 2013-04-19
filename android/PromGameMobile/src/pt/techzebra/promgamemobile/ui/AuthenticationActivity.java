@@ -1,6 +1,7 @@
 package pt.techzebra.promgamemobile.ui;
 
 import pt.techzebra.promgamemobile.Constants;
+import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.client.NetworkUtilities;
 import android.accounts.Account;
@@ -46,6 +47,7 @@ public class AuthenticationActivity extends SherlockActivity {
         user_email_ = email_edit_.getText().toString();
         user_password_ = password_edit_.getText().toString();
 
+        /*
         // TODO: parse input and create new thread
         if (user_email_.equals("") || user_password_.equals("")) {
             // TODO message saying fields are empty
@@ -60,6 +62,12 @@ public class AuthenticationActivity extends SherlockActivity {
             authentication_thread_ = NetworkUtilities.attemptAuth(user_email_, user_password_, handler, this);
             //onAuthenticationResult(true); // for debug purposes only!    
         }   
+        */
+        SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
+                Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
+        preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
+        preferences_editor.commit();
+        onAuthenticationResult(true);
     }
 
     public void onAuthenticationResult(boolean result) {

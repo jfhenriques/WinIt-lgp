@@ -1,10 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
     android:padding="10dp" 
-    android:background="@color/blue_delas">
-    
+    android:background="@color/light_gray">
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="30dp" >
+
+        <ImageView
+            android:id="@+id/step1_image"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:contentDescription="Step1"
+            android:padding="5dp"
+            android:src="@drawable/abs__ab_bottom_solid_dark_holo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Birthday"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/birthday_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Address"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/address_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPostalAddress" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" 
+        android:layout_marginBottom="50dp" >
+
+        <Button
+            android:id="@+id/continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Sign up"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</RelativeLayout>
