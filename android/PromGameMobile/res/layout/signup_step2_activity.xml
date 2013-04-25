@@ -13,50 +13,55 @@
         android:orientation="vertical"
         android:layout_marginTop="30dp" >
 
-        <ImageView
-            android:id="@+id/step1_image"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginBottom="20dp"
+       <TextView
+            android:id="@+id/step2_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/white"
-            android:contentDescription="Step1"
-            android:padding="5dp"
-            android:src="@drawable/abs__ab_bottom_solid_dark_holo" />
+            android:layout_marginBottom="30dp"
+            android:text="Step 2"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textStyle="bold" 
+            android:textSize="26sp"/>
 
-        <TextView
+        <!--<TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Birthday"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold" />-->
 
         <EditText
             android:id="@+id/birthday_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="date" >
+            android:inputType="date"
+            android:hint="@string/birthday"
+            android:layout_marginBottom="@dimen/gap" >
 
             <requestFocus />
         </EditText>
 
-        <TextView
+        <!--<TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Address"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold" />-->
 
         <EditText
             android:id="@+id/address_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPostalAddress" />
+            android:inputType="textPostalAddress" 
+            android:hint="@string/address"
+            android:layout_marginBottom="@dimen/gap"/>
 
     </LinearLayout>
 
@@ -69,10 +74,10 @@
 
         <Button
             android:id="@+id/continue_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Sign up"
+            android:text="@string/sign_up"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textStyle="bold" />

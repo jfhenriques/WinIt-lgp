@@ -7,40 +7,41 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="30dp" >
 
-        <ImageView
-            android:id="@+id/step1_image"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+       <TextView
+            android:id="@+id/step1_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="20dp"
-            android:background="@color/white"
-            android:contentDescription="Step1"
-            android:padding="5dp"
-            android:src="@drawable/abs__ab_bottom_solid_dark_holo" />
-
-        <TextView
+            android:layout_marginBottom="30dp"
+            android:text="Step 1"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textStyle="bold" 
+            android:textSize="26sp"/>
+        
+         <!--  <TextView
             android:id="@+id/question_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textStyle="bold" />
-        
+            android:textStyle="bold" /> -->
 
-        
         <EditText
             android:id="@+id/name_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:hint="@string/name"
+            android:layout_marginBottom="@dimen/gap" />
 
-        <TextView
+        <!-- <TextView
             android:id="@+id/TextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,16 +49,18 @@
             android:text="E-mail"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold" /> -->
 
         <EditText
             android:id="@+id/email_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:hint="@string/email"
+            android:layout_marginBottom="@dimen/gap" />
 
-        <TextView
+        <!--  <TextView
             android:id="@+id/TextView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,14 +68,16 @@
             android:text="Password"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold" /> -->
 
         <EditText
             android:id="@+id/password_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPassword" />
+            android:inputType="textPassword" 
+            android:hint="@string/password"
+            android:layout_marginBottom="@dimen/gap" />
     </LinearLayout>
 
     <LinearLayout
@@ -84,10 +89,10 @@
 
         <Button
             android:id="@+id/continue_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Continue"
+            android:text="@string/next"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textStyle="bold" />
