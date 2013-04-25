@@ -194,6 +194,29 @@
 
 			return null;
 		}
+		
+		public function list_promotions_won() {
+		
+			$dbh = DbConn::getInstance()->getDB();
+			$sth = null;
+											
+			$sth = $dbh->prepare('SELECT pid, name, active, end_date FROM promotion, user WHERE user.uid = promotion.uid');
+			
+			$sth->bindParam(':uid', $this->uid, PDO::PARAM_INT);
+			$sth->bindParam(':pid', $this->pid, PDO::PARAM_INT);
+			$sth->bindParam(':name', $this->name, PDO::PARAM_STR);
+			$sth->bindParam(':active', $this->active, PDO::PARAM_STR);
+			$sth->bindParam(':end_date', $this->end_date, PDO::PARAM_STR);
+			
+			$ret = $sth->execute();
+			
+			if( $ret && is_null($this->uid) )
+				$this->uid = $dbh->lastInsertId();
+
+			return $ret;
+			
+		
+		}
 
 	}
 
