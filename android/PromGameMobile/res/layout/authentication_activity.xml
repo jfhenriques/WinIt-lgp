@@ -1,72 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="@color/blue"
+    android:gravity="center_horizontal"
+    android:padding="@dimen/gap" >
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/app_name" />
-
-    <Button
-        android:id="@+id/facebook_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/sign_in_with_facebook"
-        android:onClick="handleFacebookConnection"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/or" />
-
-    <EditText
-        android:id="@+id/email_edit"
+        android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ems="10"
-        android:inputType="textEmailAddress"
-        android:hint="@string/email" />
-
-    <EditText
-        android:id="@+id/password_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:inputType="textPassword"
-        android:hint="@string/password" />
-
-    <Button
-        android:id="@+id/log_in_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/log_in"
-        android:onClick="handleLogin" />
+        android:layout_above="@+id/form_view"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <LinearLayout
+        android:id="@+id/form_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" >
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/facebook_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/blue_button"
+            android:fontFamily="sans-serif"
+            android:onClick="handleFacebookConnection"
+            android:text="@string/sign_in_with_facebook"
+            android:textAllCaps="true"
+            android:textSize="@dimen/button_primary_text_size" />
 
         <Button
             android:id="@+id/sign_up_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_button"
+            android:fontFamily="sans-serif-light"
+            android:onClick="handleSignUp"
+            android:text="@string/sign_up"
+            android:textAllCaps="true"
+            android:textSize="@dimen/button_primary_text_size" />
+
+        <TextView
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sign_up"
-        	android:onClick="handleSignUp" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/gap"
+            android:layout_marginTop="@dimen/gap"
+            android:text="@string/or"
+            android:textColor="@color/white" />
+
+        <EditText
+            android:id="@+id/email_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" >
+        </EditText>
+
+        <EditText
+            android:id="@+id/password_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
+
+        <Button
+            android:id="@+id/log_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_button"
+            android:onClick="handleLogin"
+            android:text="@string/log_in"
+            android:textAllCaps="true"
+            android:textSize="@dimen/button_primary_text_size" />
 
         <Button
             android:id="@+id/forgot_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/highlight_overlay"
+            android:fontFamily="sans-serif-light"
+            android:onClick="handleForgotPassword"
             android:text="@string/forgot"
-        	android:onClick="handleForgotPassword" />
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

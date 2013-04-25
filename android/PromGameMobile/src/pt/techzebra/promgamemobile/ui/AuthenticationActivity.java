@@ -3,14 +3,14 @@ package pt.techzebra.promgamemobile.ui;
 import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
-import pt.techzebra.promgamemobile.client.NetworkUtilities;
-import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -38,12 +38,15 @@ public class AuthenticationActivity extends SherlockActivity {
         super.onCreate(saved_instance_state);
 
         setContentView(R.layout.authentication_activity);
+        
+        email_edit_ = (EditText) findViewById(R.id.email_edit);
+        password_edit_ = (EditText) findViewById(R.id.password_edit);
+        
+        password_edit_.setTypeface(Typeface.DEFAULT);
+        password_edit_.setTransformationMethod(new PasswordTransformationMethod());
     }
 
     public void handleLogin(View view) {
-        email_edit_ = (EditText) findViewById(R.id.email_edit);
-        password_edit_ = (EditText) findViewById(R.id.password_edit);
-
         user_email_ = email_edit_.getText().toString();
         user_password_ = password_edit_.getText().toString();
 
