@@ -28,6 +28,8 @@
             android:noHistory="true"
             android:excludeFromRecents="true" />
         
+        <activity android:name="pt.techzebra.promgamemobile.ui.RegistrationActivity" />
+        
         <activity android:name="pt.techzebra.promgamemobile.ui.ProfileActivity" />
         
         <activity android:name="pt.techzebra.promgamemobile.games.quiz.QuizActivity" />
