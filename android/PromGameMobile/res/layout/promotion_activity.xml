@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/light_gray" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="Promotion_image"
+        android:src="@drawable/abs__ab_bottom_solid_dark_holo" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/gap"
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam a lacus vel nisi dignissim lobortis. Nunc a magna vitae enim facilisis vestibulum quis condimentum tortor. Morbi non eros ante, sit amet tincidunt felis. Proin orci lectus, sollicitudin vitae fermentum in, faucibus fermentum massa. Proin at leo felis." />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="Slide to play"
+        android:background="@color/dark_green"
+        android:textColor="@color/white" />
+
+</LinearLayout>
