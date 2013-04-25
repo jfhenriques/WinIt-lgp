@@ -2,3 +2,4 @@ config/environment.conf.php
 public/.htaccess
 tmp
 tlantic_server.sublime-*
+public/p.php
