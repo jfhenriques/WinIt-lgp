@@ -13,50 +13,83 @@
         android:orientation="vertical"
         android:layout_marginTop="30dp" >
 
-        <ImageView
-            android:id="@+id/step1_image"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginBottom="20dp"
+       <TextView
+            android:id="@+id/step2_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/white"
-            android:contentDescription="Step1"
-            android:padding="5dp"
-            android:src="@drawable/abs__ab_bottom_solid_dark_holo" />
+            android:layout_marginBottom="30dp"
+            android:text="@string/step2"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textStyle="bold" 
+            android:textSize="26sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Birthday"
+            android:paddingLeft="@dimen/gap"
+            android:text="@string/birthday"
             android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textColor="@color/gray"
+            android:textStyle="bold"
+            android:textSize="16sp"  />
 
         <EditText
             android:id="@+id/birthday_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="date" >
-
-            <requestFocus />
-        </EditText>
+            android:inputType="date"
+            android:layout_marginBottom="@dimen/gap2" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Address"
+            android:paddingLeft="@dimen/gap"
+            android:text="@string/address"
             android:textAllCaps="true"
-            android:textColor="@color/white"
+            android:textColor="@color/gray"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/address_text"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPostalAddress" />
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/editText1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="4"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/editText2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="3"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/editText3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="4"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/editText4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="5"
+                android:inputType="text" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -65,14 +98,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical" 
-        android:layout_marginBottom="50dp" >
+        android:layout_marginBottom="@dimen/gap3" >
 
         <Button
             android:id="@+id/continue_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Sign up"
+            android:text="@string/sign_up"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textStyle="bold" />

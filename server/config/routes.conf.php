@@ -16,11 +16,7 @@
 			
 				':session' => array( 'only' => array( 'create', 'destroy' ) ),
 				
-				':user' => array( 'only' => array( 'create', 'index' ),
-					':tag' => null,
-					':promotion' => null,
-					':badge' => null,
-				), 
+				':user' => array( 'only' => array( 'create', 'index' ) ),
 				
 				// considerar o id do user que esta logado
 				':promotion' => array( 'only' => array( 'index', 'show' ),
@@ -36,6 +32,8 @@
 				),
 				
 				':tag' => array( 'only' => array( 'index', 'show' ) ),
+
+				':badge' => array( 'only' => array( 'index', 'show' ) ),
 				
 				// ':trade' => array(
 				// 	':promotion' => null,
@@ -75,7 +73,12 @@
 							   'matches' => array(
 
 									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
+									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'post', 'action' => 'assoc_tags' ),
+									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'delete', 'action' => 'remove_tags' ),
+
 									array( 'match' => '/promotions', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions' ),
+
+									array( 'match' => '/badges', 'controller' => 'user', 'via' => 'get', 'action' => 'list_badges' ),
 
 								),
 						),
