@@ -7,7 +7,7 @@
 
 		function getQID()
 		{
-			return $this->getData('qid');
+			return (int)$this->getData('qid');
 		}
 		function getQuestion()
 		{
@@ -27,7 +27,7 @@
 		}
 		function getPID()
 		{
-			return $this->getData('pid');
+			return (int)$this->getData('pid');
 		}
 
 

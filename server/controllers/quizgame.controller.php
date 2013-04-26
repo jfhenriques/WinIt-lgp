@@ -25,7 +25,6 @@
 		{
 
 			$pid = valid_request_var( 'promotion' );
-
 			
 			if( is_null( $pid ) )
 				$this->respond->setJSONCode( R_QUIZ_ERR_PARAM );
@@ -59,6 +58,20 @@
 
 
 			$this->respond->renderJSON( static::$status );
+		}
+
+
+
+		public function submit_answer()
+		{
+
+			$pid = valid_request_var( 'answers' );
+
+			var_dump($pid);
+			var_dump($_REQUEST);
+
+
+
 		}
 
 

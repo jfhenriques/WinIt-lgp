@@ -7,7 +7,7 @@
 
 		public function getPID()
 		{
-			return $this->getData('pid');
+			return (int)$this->getData('pid');
 		}
 		public function getName()
 		{

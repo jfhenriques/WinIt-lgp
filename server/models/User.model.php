@@ -7,7 +7,8 @@
 		private $email;
 		private $password;
 		private $adid;
-		private $door;
+		private $birth = 0;
+		private $address2;
 		private $token_facebook;
 		private $token_twitter;
 		
@@ -22,7 +23,7 @@
 
 		public function getID()
 		{
-			return $this->uid;
+			return (int)$this->uid;
 		}
 		
 
@@ -58,21 +59,21 @@
 
 		public function getADID()
 		{
-			return $this->adid;
+			return (int)$this->adid;
 		}
 		public function setADID($adid)
 		{
-			$this->adid = $adid;
+			$this->adid = (int)$adid;
 		}
 
 		
-		public function getDoor()
+		public function getAddress2()
 		{
-			return $this->door;
+			return $this->address2;
 		}
-		public function setDoor($door)
+		public function setAddress2($address2)
 		{
-			$this->door = $door;
+			$this->address2 = $address2;
 		}
 
 		
@@ -95,6 +96,16 @@
 			$this->token_twitter = $token_twitter;
 		}
 
+		public function getBirth()
+		{
+			return (int)$this->birth;
+		}
+		public function setBirth($birth)
+		{
+			$this->birth = (int)$birth;
+		}
+
+
 
 
 		public function save()
@@ -104,12 +115,12 @@
 			$sth = null;
 			
 			if( is_null($this->uid) )
-				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, token_facebook, token_twitter) ' .
-										' VALUES(:name, :email, :password, :adid, :door, :token_facebook, :token_twitter)');
+				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, token_facebook, token_twitter, birth) ' .
+										' VALUES(:name, :email, :password, :adid, :address2, :token_facebook, :token_twitter, :birth)');
 			else
 			{
 				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,' .
-												' adid = :adid, door = :door, token_facebook = :token_facebook,' .
+												' adid = :adid, door = :address2, birth = :birth, token_facebook = :token_facebook,' .
 												' token_twitter = :token_twitter WHERE uid = :uid ;' );
 				
 				$sth->bindParam(':uid', $this->uid, PDO::PARAM_INT);
@@ -119,9 +130,10 @@
 			$sth->bindParam(':email', $this->email, PDO::PARAM_STR);
 			$sth->bindParam(':password', $this->password, PDO::PARAM_STR);
 			$sth->bindParam(':adid', $this->adid, PDO::PARAM_INT);
-			$sth->bindParam(':door', $this->door, PDO::PARAM_STR);
+			$sth->bindParam(':address2', $this->address2, PDO::PARAM_STR);
 			$sth->bindParam(':token_facebook', $this->token_facebook, PDO::PARAM_STR);
 			$sth->bindParam(':token_twitter', $this->token_twitter, PDO::PARAM_STR);
+			$sth->bindParam(':birth', $this->birth, PDO::PARAM_INT);
 			
 			$ret = $sth->execute();
 			
@@ -152,9 +164,10 @@
 				$user->email = $arr['email'];
 				$user->password = $arr['password'];
 				$user->adid = $arr['adid'];
-				$user->door = $arr['door'];
+				$user->address2 = $arr['door'];
 				$user->token_facebook = $arr['token_facebook'];
 				$user->token_twitter = $arr['token_twitter'];
+				$user->birth = $arr['birth'];
 				
 				return $user;
 			}
