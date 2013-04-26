@@ -17,22 +17,6 @@
         android:textColor="@color/white"
         android:layout_marginBottom="@dimen/gap2" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enter your e-mail address below to have your password reset."
-        android:textSize="14sp" 
-        android:layout_marginBottom="@dimen/gap"/>
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You will receive an e-mail with instructions."
-        android:textSize="14sp"
-        android:layout_marginBottom="50dp" />
-
     <EditText
         android:id="@+id/editText1"
         android:layout_width="match_parent"
@@ -50,6 +34,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:background="@color/white"
-        android:text="@string/send" />
+        android:text="@string/reset" />
 
 </LinearLayout>
