@@ -3,6 +3,7 @@ package pt.techzebra.promgamemobile.ui;
 import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
+import pt.techzebra.promgamemobile.client.NetworkUtilities;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ public class AuthenticationActivity extends SherlockActivity {
     private EditText password_edit_;
 
     private final Handler handler = new Handler();
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle saved_instance_state) {
@@ -45,12 +47,33 @@ public class AuthenticationActivity extends SherlockActivity {
         password_edit_.setTypeface(Typeface.DEFAULT);
         password_edit_.setTransformationMethod(new PasswordTransformationMethod());
     }
+    @Override
+    public void onBackPressed(){
+    	 if (doubleBackToExitPressedOnce) {
+             super.onBackPressed();
+             Intent intent = new Intent(Intent.ACTION_MAIN);
+             intent.addCategory(Intent.CATEGORY_HOME);
+             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+             startActivity(intent);
+             return;
+         }
+         this.doubleBackToExitPressedOnce = true;
+         Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+         new Handler().postDelayed(new Runnable() {
+
+             @Override
+             public void run() {
+              doubleBackToExitPressedOnce=false;   
+              
+             }
+         }, 2000);
+    }
 
     public void handleLogin(View view) {
         user_email_ = email_edit_.getText().toString();
         user_password_ = password_edit_.getText().toString();
 
-        /*
+        
         // TODO: parse input and create new thread
         if (user_email_.equals("") || user_password_.equals("")) {
             // TODO message saying fields are empty
@@ -65,7 +88,7 @@ public class AuthenticationActivity extends SherlockActivity {
             authentication_thread_ = NetworkUtilities.attemptAuth(user_email_, user_password_, handler, this);
             //onAuthenticationResult(true); // for debug purposes only!    
         }   
-        */
+        
         SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
                 Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
         preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);

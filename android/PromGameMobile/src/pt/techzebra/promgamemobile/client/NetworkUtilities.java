@@ -48,10 +48,10 @@ public class NetworkUtilities {
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
     public static final String PARAM_NAME = "name";
-    public static final String PARAM_BIRTHDAY = "birthday";
+    public static final String PARAM_BIRTHDAY = "date";
     public static final String PARAM_CP4 = "cp4";
     public static final String PARAM_CP3 = "cp3";
-    public static final String PARAM_DOOR = "door";
+    public static final String PARAM_DOOR = "portaAndar";
     public static final String PARAM_FLOOR = "floor";
     public static final String PARAM_UPDATED = "timestamp";
     public static final String PARAM_AUTH_TOKEN = "token";
@@ -256,9 +256,10 @@ public class NetworkUtilities {
 
         return user;
     }
-
+    
+    //TODO falta adicionar o floor à BD
     private static boolean register(String name, String username, String password,
-            String birthday, String cp4, String cp3, String door, String floor, Handler handler,
+            String birthday, String cp4, String cp3, String door, Handler handler,
             final Context context) {
         final HttpResponse resp;
 
@@ -270,7 +271,6 @@ public class NetworkUtilities {
         params.add(new BasicNameValuePair(PARAM_CP4, cp4));
         params.add(new BasicNameValuePair(PARAM_CP3, cp3));
         params.add(new BasicNameValuePair(PARAM_DOOR, door));
-        params.add(new BasicNameValuePair(PARAM_FLOOR, floor));
         
         HttpEntity entity = null;
         
@@ -281,7 +281,7 @@ public class NetworkUtilities {
             e.printStackTrace();
         }
         
-        final HttpPost post = new HttpPost(NEW_USER_URI);
+        final HttpPost post = new HttpPost(FETCH_USER_URI);
         post.addHeader(entity.getContentType());
         post.setEntity(entity);
         maybeCreateHttpClient();
@@ -312,14 +312,15 @@ public class NetworkUtilities {
         
     }
 
+    //TODO falta o floor porque nao há campo na BD
     public static Thread attemptRegister(final String name, final String email,
             final String password, final String birthday, final String cp4,
-            final String cp3, final String door, final String floor, final Handler handler,
+            final String cp3, final String door, final Handler handler,
             final Context context) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                register(name, email, password, birthday, cp4, cp3, door, floor, handler,
+                register(name, email, password, birthday, cp4, cp3, door, handler,
                         context);
             }
         };

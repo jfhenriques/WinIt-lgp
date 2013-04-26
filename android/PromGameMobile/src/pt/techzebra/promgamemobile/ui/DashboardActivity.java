@@ -1,6 +1,7 @@
 package pt.techzebra.promgamemobile.ui;
 
 import pt.techzebra.promgamemobile.Constants;
+import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.platform.LoadingUserInfo;
 import pt.techzebra.promgamemobile.games.quiz.QuizActivity;
@@ -67,7 +68,14 @@ public class DashboardActivity extends SherlockActivity {
                 break;
             case R.id.menu_log_out:
                 // TODO: erase user local information
-                Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
+            	SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
+                        Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
+                preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, false);
+                preferences_editor.putString(Constants.PREF_AUTH_TOKEN, "");
+                preferences_editor.commit();
+                Intent i = new Intent(this, AuthenticationActivity.class);
+                Toast.makeText(this, "Logout successful!", Toast.LENGTH_SHORT).show();
+                startActivity(i);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
