@@ -46,9 +46,13 @@
 			
 			$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' VALUES(:tok, :uid, :val) ON DUPLICATE KEY UPDATE validity = :val ;');	
 			
-			$sth->bindParam(':tok', $this->getToken(), PDO::PARAM_STR);
-			$sth->bindParam(':uid', $this->getUserId(), PDO::PARAM_INT);
-			$sth->bindParam(':val', $this->getValidity(), PDO::PARAM_INT);
+			$tok = $this->getToken() ;
+			$uid = $this->getUserId() ;
+			$val = $this->getValidity() ;
+
+			$sth->bindParam(':tok', $tok, PDO::PARAM_STR);
+			$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
+			$sth->bindParam(':val', $val, PDO::PARAM_INT);
 
 			// If this instance was cached, force its deletetion, so the next query caches it back with the correct values
 			CommonCache::getInstance()->delete( CommonCache::buildVarName( self::TABLE_NAME, $this->getToken() ) );

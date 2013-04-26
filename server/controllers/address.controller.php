@@ -41,12 +41,14 @@
 				
 				else
 				{
+					$resp = array();
+
 					foreach( $streets as $str )
 					{
 						$resp[] = array(
 										'adid' => $str->getID(),
 
-										'street' => $str->getStreet(),
+										'address' => $str->getStreet(),
 
 										'locality' => $str->getLocality(),
 										'district' => $str->getDistrict(),

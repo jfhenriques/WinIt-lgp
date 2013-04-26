@@ -16,15 +16,16 @@
 	{
 		if( is_array( $arr ) && isset( $arr[ $var ] ) && !is_null( $arr[ $var ] ) )
 		{
-			$val = null;
+			
+			if( is_string( $arr[ $var ] ) )
+			{
+				$val = $trim ? trim( $arr[ $var ] ) : $arr[ $var ] ;
 
-			if( $trim )
-				$val = trim( $arr[ $var ] );
+				if( strlen( $val ) > 0 )
+					return $val;
+			}
 			else
-				$val = &$arr[ $var ] ;
-
-			if( strlen( $val ) > 0 )
-				return $val;
+				return $arr[ $var ];
 		}
 
 		return null;

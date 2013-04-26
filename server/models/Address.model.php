@@ -95,6 +95,21 @@
 			return $streets;
 		}
 
+		public static function findByADID($adid)
+		{
+
+			$result = static::query( 'SELECT a.adid AS adid, a.cp4 AS cp4, a.cp3 AS cp3, s.street AS street, ' .
+										' l.locality AS locality, d.district AS district ' .
+										' FROM '. self::TABLE_NAME_CP . ' AS a ' .
+										' INNER JOIN '. self::TABLE_NAME_LOC . ' AS l ON ( l.llll = a.llll ) ' .
+										' INNER JOIN '. self::TABLE_NAME_DIS . ' AS d ON ( d.dd = l.dd ) ' .
+										' INNER JOIN '. self::TABLE_NAME_STR . ' AS s ON ( s.stid = a.stid ) ' .
+										' WHERE a.adid = ? ;',
+									  array( $adid ) );
+
+			return static::fillModel( $result, new Address() );
+		}
+
 
 		public function save() {}
 

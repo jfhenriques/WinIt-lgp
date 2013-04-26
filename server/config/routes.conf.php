@@ -96,7 +96,8 @@
 							   		array( 'match' => '/quizgame', 'controller' => 'quizgame', 'via' => 'get', 'action' => 'show',
 							   			   'matches' => array(
 
-							   			   		array( 'match' => '/submit', 'controller' => 'user', 'via' => 'post', 'action' => 'submit_answer' ),
+												array( 'match' => '/submit', 'controller' => 'quizgame', 'via' => 'get', 'action' => 'get_submited_answer' ),
+							   			   		array( 'match' => '/submit', 'controller' => 'quizgame', 'via' => 'put', 'action' => 'submit_answer' ),
 
 							   			   	),
 
