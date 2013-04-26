@@ -20,21 +20,21 @@
 		
 		public function getUserId()
 		{
-			return $this->getData('uid');
+			return (int)$this->getData('uid');
 		}
 		public function setUserId($userId)
 		{
-			$this->data['uid'] = $userId;
+			$this->data['uid'] = (int)$userId;
 		}
 		
 
 		public function getValidity()
 		{
-			return $this->getData('validity');
+			return (int)$this->getData('validity');
 		}
 		public function setValidity($validity)
 		{
-			$this->data['validity'] = $validity;
+			$this->data['validity'] = (int)$validity;
 		}
 		
 		

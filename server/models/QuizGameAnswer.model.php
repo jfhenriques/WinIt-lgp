@@ -1,42 +1,40 @@
-<?php
+// <?php
 
-	class QuizGameAnswer extends ActiveRecord {
+// 	class QuizGameAnswer extends ActiveRecord {
 
-		const TABLE_NAME = "quizgame";
+// 		const TABLE_NAME = "quizgame";
 
 
 
-		function getPID()
-		{
-			return $this->getData('pid');
-			return @$this->data['pid'] ;
-		}
-		function getName()
-		{
-			return $this->getData('name');
-			return @$this->data['name'] ;
-		}
-		function isQuiz()
-		{
-			return $this->getData('is_quiz');
-		}
+// 		function getPID()
+// 		{
+// 			return $this->getData('pid');
+// 		}
+// 		function getName()
+// 		{
+// 			return $this->getData('name');
+// 		}
+// 		function isQuiz()
+// 		{
+// 			return $this->getData('is_quiz');
+// 		}
 
 
 
 
-		public static function findByPID($pid)
-		{
+// 		public static function findByPID($pid)
+// 		{
 
-			$result = static::executeQuery( 'SELECT * FROM ' . self::TABLE_NAME . ' WHERE pid = ? LIMIT 1;',
-									  		array( $pid ), $stmt );
+// 			$result = static::executeQuery( 'SELECT * FROM ' . self::TABLE_NAME . ' WHERE pid = ? LIMIT 1;',
+// 									  		array( $pid ), $stmt );
 
-			if( $resul)
-			return static::fillModel( $result, new Quizgame() );
-		}
+// 			if( $resul)
+// 			return static::fillModel( $result, new Quizgame() );
+// 		}
 
 
-		public function save() { }
+// 		public function save() { }
 
-	}
+// 	}
 
-?>
+// ?>

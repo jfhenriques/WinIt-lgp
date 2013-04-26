@@ -20,15 +20,15 @@
 
 		public function getID()
 		{
-			return $this->getData('adid');
+			return (int)$this->getData('adid');
 		}
 		public function getCP4()
 		{
-			return $this->getData('cp4');
+			return (int)$this->getData('cp4');
 		}
 		public function getCP3()
 		{
-			return $this->getData('cp3');
+			return (int)$this->getData('cp3');
 		}
 
 		public function getDistrict()

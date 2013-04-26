@@ -1,18 +1,23 @@
 <?php
 
 
-	DEFINE( 'R_SESS_ERR_USER_NOT_FOUND'	, 0x10 );
+	DEFINE( 'R_USER_ERR_USER_NOT_FOUND'	, 0x10 );
 
-	DEFINE( 'R_SESS_ERR_PARAMS'			, 0x20 );
-	DEFINE( 'R_SESS_ERR_EMAIL_EXISTS'	, 0x21 );
+	DEFINE( 'R_USER_ERR_PARAMS'			, 0x20 );
+	DEFINE( 'R_USER_ERR_EMAIL_EXISTS'	, 0x21 );
+	DEFINE( 'R_SESS_ERR_INV_ADID'		, 0x22 );
 
 
 
 	class  UserController extends Controller {
 
 		private static $status = array(
-				R_SESS_ERR_PARAMS		=> 'Parâmetros não definidos',
-				R_SESS_ERR_EMAIL_EXISTS	=> 'Email já existente',
+				R_USER_ERR_USER_NOT_FOUND => 'Utilizador não encontrado',
+
+				R_USER_ERR_PARAMS		=> 'Parâmetros não definidos',
+				R_USER_ERR_EMAIL_EXISTS	=> 'Email já existente',
+
+				R_SESS_ERR_INV_ADID		=> 'Código de Endereço inválido',
 			);
 
 	
@@ -38,7 +43,7 @@
 			$user = User::findById($userId);
 			
 			if( is_null( $user ) )
-				$this->respond->setJSONCode( R_SESS_ERR_USER_NOT_FOUND );
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
 			else
 			{
@@ -60,7 +65,7 @@
 														  'name' => $user->getName(),
 														  'email' => $user->getEmail(),
 														  'adid' => $user->getADID(),
-														  'birth' => 0,
+														  'birth' => $user->getBirth(),
 														  'cp4' => $cp4,
 														  'cp3' => $cp3,
 														  'locality' => $locality,
@@ -93,7 +98,7 @@
 			$user = User::findById($userId);
 			
 			if( is_null( $user ) )
-				$this->respond->setJSONCode( R_SESS_ERR_USER_NOT_FOUND );
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
 			else
 			{
@@ -108,7 +113,7 @@
 				$password = valid_request_var('password', false);
 				
 				if( !is_null($email) && !is_null( User::findByEmail( $email ) ) )
-					$this->respond->setJSONCode( R_SESS_ERR_EMAIL_EXISTS );
+					$this->respond->setJSONCode( R_USER_ERR_EMAIL_EXISTS );
 
 				else
 				{
@@ -126,31 +131,25 @@
 
 					if( !is_null($birth) )
 						$user->setBirth($birth);
-				
+
 					// if( !is_null($token_fb) )
 					// 	$user->setTokenFacebook($token_fb);
 				
 					// if( !is_null($token_tw))
 					// 	$user->setTokenTwitter($token_tw);
-				
-					if( !is_null($password) )
-						$user->setPassword( User::saltPass( $password ) );
-				
-					$this->respond->setJSONCode( $user->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
-				
-					// if( $success )
-					// {
-					// 	$resp = array( 'uid' => $userId,
-					// 	  'name' => $user->getnome(),
-					// 	  'email' => $user->getEmail(),
-					// 	  'cp4' => $user->getCP4(),
-					// 	  'cp3' => $user->getCP3(),
-					// 	  'door' => $user->getPortaAndar(),
-					// 	  'token_fb' => $user->getTokenFacebook(),
-					// 	  'token_tw' => $user->getTokenTwitter(),
-					// 	  'level' => 0,
-					// 	  'points' => 0 );
-					// }
+
+					if( !is_null( $user->getADID() ) && is_null( Address::findByADID($user->getADID()) ) )
+						$this->respond->setJSONCode( R_SESS_ERR_INV_ADID );
+
+					else
+					{
+					
+						if( !is_null($password) )
+							$user->setPassword( User::saltPass( $password ) );
+					
+						$this->respond->setJSONCode( $user->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+
+					}
 				}
 							
 			}
@@ -174,14 +173,16 @@
 			$birth = valid_request_var('birth');
 			$password = valid_request_var('password', false);
 
-			
 			if( is_null($name) || is_null($email) || is_null($password) || is_null($birth) )
-				$this->respond->setJSONCode( R_SESS_ERR_PARAMS );
+				$this->respond->setJSONCode( R_USER_ERR_PARAMS );
 
 			else
 			{
 				if( !is_null( User::findByEmail( $email ) ) )
-					$this->respond->setJSONCode( R_SESS_ERR_EMAIL_EXISTS );
+					$this->respond->setJSONCode( R_USER_ERR_EMAIL_EXISTS );
+
+				elseif( !is_null( $adid ) && is_null( Address::findByADID($adid) ) )
+					$this->respond->setJSONCode( R_SESS_ERR_INV_ADID );
 
 				else
 				{

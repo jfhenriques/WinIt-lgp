@@ -23,7 +23,7 @@
 
 		public function getID()
 		{
-			return $this->uid;
+			return (int)$this->uid;
 		}
 		
 
@@ -59,11 +59,11 @@
 
 		public function getADID()
 		{
-			return $this->adid;
+			return (int)$this->adid;
 		}
 		public function setADID($adid)
 		{
-			$this->adid = $adid;
+			$this->adid = (int)$adid;
 		}
 
 		
@@ -98,11 +98,11 @@
 
 		public function getBirth()
 		{
-			return $this->birth;
+			return (int)$this->birth;
 		}
 		public function setBirth($birth)
 		{
-			$this->birth = $birth;
+			$this->birth = (int)$birth;
 		}
 
 

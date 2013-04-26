@@ -9,7 +9,8 @@
 	date_default_timezone_set('Europe/Lisbon');
 	
 
-	ini_set('display_errors', DEVELOPMENT_ENVIRONMENT !== false);
+	//ini_set('display_errors', DEVELOPMENT_ENVIRONMENT !== false);
+	ini_set('display_errors', true);
 
 
 	function my_exception_handler($exception)
