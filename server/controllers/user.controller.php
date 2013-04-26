@@ -21,7 +21,7 @@
 		/*
 		 * Ensure that the user is logged
 		 */
-		public function __configure()
+		protected function __configure()
 		{
 		}
 

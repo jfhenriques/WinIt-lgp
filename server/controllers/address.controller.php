@@ -15,35 +15,34 @@
 
 	
 
-		public function __configure()
+		protected function __configure()
 		{
-			$this->requireAuth();
+			//$this->requireAuth();
 		}
 		
 		
 		public function list_cp()
 		{
-			$render_code = null;
-			$resp = array();
 			
-			$cp4 = valid_request( 'cp4' );
-			$cp3 = valid_request( 'cp3' );
+			$cp4 = valid_request_var( 'cp4' );
+			$cp3 = valid_request_var( 'cp3' );
 
-			$hint = valid_request( 'hint' );
+			$hint = valid_request_var( 'hint' );
 
 			if( is_null( $cp4 ) || is_null( $cp3 ) )
-				$render_code = R_ADDR_ERR_PARAM;
+				$this->respond->setJSONCode( R_ADDR_ERR_PARAM );
 			
 			else
 			{
 				$streets = Address::findByCP( $cp4, $cp3, $hint );
 
 				if( is_null( $streets ) || !is_array( $streets ) || count( $streets ) == 0 )
-					$render_code = R_ADDR_ERR_ADDR_NOT_FOUND;
+					$this->respond->setJSONCode( R_ADDR_ERR_ADDR_NOT_FOUND );
 				
 				else
 				{
 					foreach( $streets as $str )
+					{
 						$resp[] = array(
 										'adid' => $str->getID(),
 
@@ -52,12 +51,14 @@
 										'locality' => $str->getLocality(),
 										'district' => $str->getDistrict(),
 									);
+					}
 
-					$render_code = R_STATUS_OK;
+					$this->respond->setJSONResponse( $resp );
+					$this->respond->setJSONCode( R_STATUS_OK );
 				}
 			}
 			
-			$this->respond->renderJSON( $resp, $render_code, describeMessage( $render_code, static::$status ) );
+			$this->respond->renderJSON( static::$status );
 
 		}
 	

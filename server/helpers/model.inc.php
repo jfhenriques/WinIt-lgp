@@ -34,8 +34,32 @@
 	abstract class ActiveRecord {
 
 
+		protected $data = array();
+
+		
+
+
 		public abstract function save();
 
+
+		protected function getData($key, $default = null)
+		{
+			if( isset( $this->data[$key] ) )
+				return $this->data[$key];
+
+			$this->data[$key] = $default;
+
+			return $default;
+		}
+
+		protected static function fillModel($data, $model)
+		{
+			if( !is_array( $data ) || count( $data ) <= 0 )
+				return null;
+
+			$model->data = $data;				
+			return $model;
+		}
 	
 		protected static function cachedQuery($id, $prefix, $sql, $arrExec, $validationFunc = null)
 		{
