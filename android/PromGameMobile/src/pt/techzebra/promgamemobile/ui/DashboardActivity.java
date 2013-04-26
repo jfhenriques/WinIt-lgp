@@ -89,7 +89,7 @@ public class DashboardActivity extends SherlockActivity {
         switch (view.getId()) {
         case R.id.single_player_layout:
             msg = "Single Player";
-            Intent intent = new Intent(this, QuizActivity.class);
+            Intent intent = new Intent(this, PromotionsActivity.class);
             startActivity(intent);
             return;
             //break;

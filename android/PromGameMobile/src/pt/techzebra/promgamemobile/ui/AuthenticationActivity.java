@@ -11,10 +11,12 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -46,6 +48,9 @@ public class AuthenticationActivity extends SherlockActivity {
         
         password_edit_.setTypeface(Typeface.DEFAULT);
         password_edit_.setTransformationMethod(new PasswordTransformationMethod());
+        
+        TextView slogan = (TextView) findViewById(R.id.slogan);
+        slogan.setText(Html.fromHtml(getString(R.string.slogan)));
     }
     @Override
     public void onBackPressed(){

@@ -3,34 +3,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue"
-    android:gravity="center_horizontal"
-    android:padding="@dimen/gap" >
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/form_view"
-        android:layout_alignParentTop="true"
-        android:gravity="center"
-        android:text="@string/app_name"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+    android:gravity="center_horizontal" >
 
     <LinearLayout
-        android:id="@+id/form_view"
+        android:id="@+id/top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/sign_up_layout"
+        android:layout_alignParentTop="true"
         android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gap2"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/slogan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/gap"
+            android:text="@string/slogan"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sign_up_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/sign_in_layout"
+        android:orientation="vertical"
+        android:padding="@dimen/gap" >
 
         <Button
             android:id="@+id/facebook_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/blue_button"
             android:fontFamily="sans-serif"
             android:onClick="handleFacebookConnection"
             android:text="@string/sign_in_with_facebook"
@@ -41,7 +59,6 @@
             android:id="@+id/sign_up_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/blue_button"
             android:fontFamily="sans-serif-light"
             android:onClick="handleSignUp"
             android:text="@string/sign_up"
@@ -55,8 +72,20 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/gap"
             android:layout_marginTop="@dimen/gap"
+            android:fontFamily="sans-serif-light"
             android:text="@string/or"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sign_in_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/dark_blue"
+        android:orientation="vertical"
+        android:padding="@dimen/gap" >
 
         <EditText
             android:id="@+id/email_edit"
@@ -83,7 +112,6 @@
             android:id="@+id/log_in_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/blue_button"
             android:onClick="handleLogin"
             android:text="@string/log_in"
             android:textAllCaps="true"
@@ -100,7 +128,6 @@
             android:text="@string/forgot"
             android:textColor="@color/white"
             android:textSize="12sp" />
-
     </LinearLayout>
 
 </RelativeLayout>
