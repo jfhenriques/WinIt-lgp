@@ -12,7 +12,7 @@
 
 
 
-	function valid( $var, $arr, $trim = true )
+	function valid_var( $var, $arr, $trim = true )
 	{
 		if( is_array( $arr ) && isset( $arr[ $var ] ) && !is_null( $arr[ $var ] ) )
 		{
@@ -29,9 +29,9 @@
 
 		return null;
 	}
-	function valid_request( $var, $trim = true )
+	function valid_request_var( $var, $trim = true )
 	{
-		return valid( $var, $_REQUEST, $trim );
+		return valid_var( $var, $_REQUEST, $trim );
 	}
 
 
@@ -78,7 +78,7 @@
 			$this->__configure();
 		}
 		
-		public function __configure() {}
+		protected function __configure() {}
 	
 
 		public function __checkAuth( $auth = true, $exit = false )
@@ -86,7 +86,7 @@
 			if( is_null( Controller::$authFunction ) )
 				return false;
 
-			$func = &Controller::$authFunction;
+			$func = Controller::$authFunction;
 			$ret_val = $func();
 
 			if( $exit && $ret_val !== $auth )
@@ -98,7 +98,10 @@
 				$renderCode = $auth ? R_GLOB_ERR_MUST_AUTH : R_GLOB_ERR_MUST_NOT_AUTH ;
 
 				if( $retType === RESPOND_JSON )
-					$this->respond->renderJSON(null, $renderCode, describeMessage($renderCode));
+				{
+					$this->respond->setJSONCode( $renderCode );
+					$this->respond->renderJSON();
+				}
 
 				else
 					echo $auth ? "403 Forbidden" : describeMessage($renderCode) ;

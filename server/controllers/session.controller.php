@@ -19,7 +19,7 @@
 
 	
 
-		public function __configure()
+		protected function __configure()
 		{
 			//$this->checkAuth();
 		}
@@ -28,23 +28,19 @@
 		public function create()
 		{
 			$this->requireNoAuth();
-
-
-			$render_code = null;
-			$resp = array();
 			
-			$mail = valid_request( 'email' );
-			$pass = valid_request( 'password' );
+			$mail = valid_request_var( 'email' );
+			$pass = valid_request_var( 'password' );
 
 			if( is_null( $mail ) || is_null( $pass ) )
-				$render_code = R_SESS_ERR_PARAM;
+				$this->respond->setJSONCode( R_SESS_ERR_PARAM );
 			
 			else
 			{
 				$user = User::findByCredentials( $mail, $pass );
 
 				if( is_null( $user ) )
-					$render_code = R_SESS_ERR_USER_NOT_FOUND;
+					$this->respond->setJSONCode( R_SESS_ERR_USER_NOT_FOUND );
 				
 				else
 				{
@@ -62,7 +58,7 @@
 						$validity = $sess->getValidity();
 						
 						$success = true;
-						$render_code = R_STATUS_OK;
+						$this->respond->setJSONCode( R_STATUS_OK );
 					}
 					else
 					{
@@ -74,15 +70,15 @@
 						$sess->setUserId( $userId );
 						$sess->setValidity( TOKEN_VALIDITY == 0 ? 0 : ( time() + TOKEN_VALIDITY ) );
 						
-						$render_code = ( $success = $sess->save() ) ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE ;
+						$this->respond->setJSONCode( ( $success = $sess->save() ) ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 					}
 					
 					if( $success )
-						$resp = array('token' => $token, 'uid' => $userId, 'validity' => $validity );
+						$this->respond->setJSONResponse( array('token' => $token, 'uid' => $userId, 'validity' => $validity ) );
 				}
 			}
 			
-			$this->respond->renderJSON( $resp, $render_code, describeMessage( $render_code, static::$status ) );
+			$this->respond->renderJSON( static::$status );
 		}
 
 
@@ -92,23 +88,22 @@
 		{
 			$this->checkAuth();
 
-			$render_code = null;
 			$resp = array();
 			
-			$token = valid_request( 'session' );
+			$token = valid_request_var( 'session' );
 			$sess = null;
 
 			if( is_null( $token ) || is_null( $sess = Session::findById( $token ) ) ) 
-				$render_code = R_SESS_ERR_SESSION_NOT_FOUND;
+				$this->respond->setJSONCode( R_SESS_ERR_SESSION_NOT_FOUND );
 
 			else
 			{
 				$sess->setValidity(-1);
-				$render_code = ( $success = $sess->save() ) ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE ;
+				$this->respond->setJSONCode( $sess->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 			}
 			
 
-			$this->respond->renderJSON( $resp, $render_code, describeMessage( $render_code, static::$status ) );
+			$this->respond->renderJSON( static::$status );
 		}
 	
 	

@@ -8,7 +8,9 @@
 	
 	date_default_timezone_set('Europe/Lisbon');
 	
-	ini_set('display_errors', DEVELOPMENT_ENVIRONMENT !== false);
+
+	ini_set('display_errors', false);
+	//ini_set('display_errors', DEVELOPMENT_ENVIRONMENT !== false);
 
 
 	function my_exception_handler($exception)
@@ -23,8 +25,11 @@
 	set_exception_handler("my_exception_handler");
 	
 	set_error_handler(function($errno, $errstr, $errfile, $errline ) {
-		$exc = new ErrorException($errstr, $errno, 0, $errfile, $errline);
-		my_exception_handler( $exc );
+		if ( (ini_get('error_reporting') & $errno) !== 0 )
+		{
+			$exc = new ErrorException($errstr, $errno, 0, $errfile, $errline);
+			my_exception_handler( $exc );
+		}
 	});
 	
 	register_shutdown_function(function() {
@@ -231,7 +236,7 @@
 				
 				$k = strtolower( $k );
 				$name = strtolower( $v['name'] );
-				$name_f = ucfirst( $name );
+				$classType = ucfirst( $name );
 				
 				if( $handle = @opendir( $dir ) )
 				{
@@ -239,11 +244,11 @@
 					{
 						if ( $entry[0] != '.' )
 						{
-							$exp = explode('.', strtolower($entry), 3);
+							$exp = explode('.', $entry, 3);
 							
-							if( count( $exp ) == 3 && $exp[1] == $name )
+							if( count( $exp ) == 3 && strtolower($exp[1]) == $name )
 							{
-								$key = ucfirst( $exp[0] ) . ( $v['incName'] ? $name_f : '' ) ;
+								$key = ucfirst( $exp[0] ) . ( $v['incName'] ? $classType : '' ) ;
 								$file = $dir . $entry ;
 								
 								$output[$key] = $file;
