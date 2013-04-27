@@ -1,3 +1,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <style name="SignupStep">
+        <item name="android:width">110dp</item>
+        <item name="android:height">110dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/step_circle</item>
+    </style>
 </resources>

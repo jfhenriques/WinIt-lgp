@@ -103,7 +103,7 @@ public class AuthenticationActivity extends SherlockActivity {
     public void handleSignUp(View view) {
         Log.i(TAG, "Initialize Sign Up");
         
-        Intent intent = new Intent(this, RegistrationActivity.class);
+        Intent intent = new Intent(this, SignupActivity.class);
         startActivity(intent);
     }
     
