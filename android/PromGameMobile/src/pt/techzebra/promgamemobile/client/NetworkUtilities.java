@@ -162,7 +162,7 @@ public class NetworkUtilities {
     
     public static boolean validResponse(JSONObject response) {
         try {
-            return response.getString("s") == "0";
+            return response.getString("s").equals("0");
         } catch (JSONException e) {
             e.printStackTrace();
         }
