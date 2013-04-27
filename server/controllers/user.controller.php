@@ -206,6 +206,34 @@
 			
 			$this->respond->renderJSON( static::$status );
 		}
+		
+		public function list_promotions_won() {
+		
+			$this->requireAuth();
+			
+			$auth = Authenticator::getInstance(); // retorna o id do user logado
+			$userId = $auth->getUserId();
+			
+			$user = User::findById($userId);
+			
+			if( is_null( $user ) ) {
+			
+				$this->respond->setJSONCode ( R_USER_ERR_USER_NOT_FOUND );
+				
+			} else {
+			
+				$resp = $user->list_promotions_won();				
+				$response = array();
+				
+				foreach ( $resp as $linha ) {
+					array_push($response, $linha);
+				}
+				
+				$this->respond->setJSONResponse( $response );
+				$this->respond->setJSONCode( R_STATUS_OK );
+			}
+			$this->respond->renderJSON( static::$status );
+		}
 	}
 	
 	
