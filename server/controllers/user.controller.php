@@ -15,7 +15,7 @@
 	DEFINE( 'MAIL_SUBJECT'     , 'Tlantic PromGame Mobile - Password Reset' );
 
 	DEFINE( 'MAIL_HEADERS'     , "From: %s\r\nTo: %s\r\nReply-To: %s\r\nMIME-Version: 1.0\r\n".
-							     "Content-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit" );
+							     "Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit" );
 
 	DEFINE( 'MAIL_SIGNATURE'   , "Atenciosamente,\nA Equipa Tlantic PromGame Mobile" );
 
@@ -255,7 +255,7 @@
 		{
 			$headers = sprintf(MAIL_HEADERS, MAIL_FROM_ADDRESS, $from, $from);
 
-			return mail($from, MAIL_SUBJECT, $texto . "\r\n" . MAIL_SIGNATURE, $headers);
+			return mail($from, MAIL_SUBJECT, "{$texto}\r\n\r\n" . MAIL_SIGNATURE, $headers);
 		}
 
 		public function reset_password()
@@ -282,8 +282,8 @@
 				else
 				{
 					$ret = self::send_custom_message($user->getEmail(),
-							"Foi pedido que fosse feito reset da password da sua conta na aplicação Tlantic PromGame Mobile.\n\n".
-							"Por favor siga o link: https://lgptlantic.fe.up.pt/reset_password/${token} \n\n".
+							"Foi pedido que fosse feito reset da password da sua conta na aplicação Tlantic PromGame Mobile.\r\n".
+							"Por favor siga o link: https://lgptlantic.fe.up.pt/reset_password/${token}\r\n".
 							"Se o pedido não efectuado por si, por favor ignore este e-mail" );
 
 					$this->respond->setJSONCode( $ret ? R_STATUS_OK : R_USER_SENDMAIL_ERROR );
@@ -328,14 +328,14 @@
 					else
 					{
 						$ret = self::send_custom_message($user->getEmail(),
-								"No seguimento do pedido de reset da password de acesso à sua conta,\n" .
-								"enviamos-lhe uma password temporária, que deverá ser alterada de imediato, após o login.\n".
+								"No seguimento do pedido de reset da password de acesso à sua conta,\r\n" .
+								"enviamos-lhe uma password temporária, que deverá ser alterada de imediato, após o login.\r\n".
 								"E-mail: {$user->getEmail()}\r\nPassword: + {$pass}" );
 
 						if( !$ret )
 							$renderText = static::$status[R_USER_SENDMAIL_ERROR];
 						else
-							$renderText = "Nova password de acesso temporária enviada para o seu e-mail.\n<br>".
+							$renderText = "Nova password de acesso temporária enviada para o seu e-mail.\r\n<br>".
 										  "Atenção: Deve mudá-la a sua password de imediato.";
 							
 					}
