@@ -8,11 +8,16 @@
 	DEFINE( 'R_USER_ERR_INV_ADID'		, 0x22 );
 
 	DEFINE( 'R_USER_EMAIL_MISSING'		, 0x30 );
+	DEFINE( 'R_USER_SENDMAIL_ERROR'		, 0x31 );
 
-	DEFINE( 'MAIL_FROM_ADDRESS', 'noreply@lptlantic.fe.up.pt');
-	DEFINE( 'MAIL_HEADERS', "From: " . MAIL_FROM_ADDRESS . "\r\nMIME-Version: 1.0\r\n".
-							"Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit" );
-	DEFINE( 'MAIL_SIGNATURE', "Atenciosamente,\nTlantic PromGame Mobile");
+
+	DEFINE( 'MAIL_FROM_ADDRESS', 'noreply@lptlantic.fe.up.pt' );
+	DEFINE( 'MAIL_SUBJECT'     , 'Tlantic PromGame Mobile - Password Reset' );
+
+	DEFINE( 'MAIL_HEADERS'     , "From: %s\r\nTo: %s\r\nReply-To: %s\r\nMIME-Version: 1.0\r\n".
+							     "Content-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit" );
+
+	DEFINE( 'MAIL_SIGNATURE'   , "Atenciosamente,\nA Equipa Tlantic PromGame Mobile" );
 
 
 
@@ -26,7 +31,8 @@
 
 				R_USER_ERR_INV_ADID		=> 'Código de Endereço inválido',
 
-				R_USER_EMAIL_MISSING		=> 'Deve fornecer o e-mail para fazer reset à password',
+				R_USER_EMAIL_MISSING	=> 'Deve fornecer o e-mail para fazer reset à password',
+				R_USER_SENDMAIL_ERROR	=> 'Não foi possível enviar o e-mail para o endereço de destino',
 			);
 
 	
@@ -245,6 +251,12 @@
 		}
 
 
+		public static function send_custom_message($from, $texto)
+		{
+			$headers = sprintf(MAIL_HEADERS, MAIL_FROM_ADDRESS, $from, $from);
+
+			return mail($from, MAIL_SUBJECT, $texto . "\r\n" . MAIL_SIGNATURE, $headers);
+		}
 
 		public function reset_password()
 		{
@@ -264,20 +276,18 @@
 				$user->setResetToken($token);
 				$user->setResetTokenValidity(time()+600); // 10 minutos para fazer reset
 
-				$success = $user->save();
+				if( !$user->save() )
+					$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
 
-				if( $success )
+				else
 				{
-					$texto = "Foi pedido que fosse feito reset da password da sua conta na aplicação Tlantic PromGame Mobile.\n\n".
-							 "Por favor siga o link: https://lgptlantic.fe.up.pt/reset_password/${token} \n\n".
-							 "Se o pedido não efectuado por si, por favor ignore este e-mail\n\n". MAIL_SIGNATURE;
+					$ret = self::send_custom_message($user->getEmail(),
+							"Foi pedido que fosse feito reset da password da sua conta na aplicação Tlantic PromGame Mobile.\n\n".
+							"Por favor siga o link: https://lgptlantic.fe.up.pt/reset_password/${token} \n\n".
+							"Se o pedido não efectuado por si, por favor ignore este e-mail" );
 
-					$headers = "To: {$user->getEmail()}\r\n" . MAIL_HEADERS;
-
-					mail($user->getEmail(), "Tlantic PromGame Mobile - Reset da Password", $texto, $headers);
+					$this->respond->setJSONCode( $ret ? R_STATUS_OK : R_USER_SENDMAIL_ERROR );
 				}
-
-				$this->respond->setJSONCode( $success ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 			}
 
 			$this->respond->renderJSON( static::$status );
@@ -317,19 +327,18 @@
 
 					else
 					{
-						$renderText = "Nova password de acesso temporária enviada para o seu e-mail.\n<br>".
-									  "Atenção: Deve mudá-la a sua password de imediato.";
-						
-						$texto = "No seguimento do pedido de reset da password de acesso à sua conta,\n" .
-								 "enviamos-lhe a sua nova password temporária.\n".
-								 "Atenção: deve alterar esta password de imediato.\n\n".
-								 "Password: + $pass \n\n". MAIL_SIGNATURE;
+						$ret = self::send_custom_message($user->getEmail(),
+								"No seguimento do pedido de reset da password de acesso à sua conta,\n" .
+								"enviamos-lhe uma password temporária, que deverá ser alterada de imediato, após o login.\n".
+								"E-mail: {$user->getEmail()}\r\nPassword: + {$pass}" );
 
-						$headers = "To: {$user->getEmail()}\r\n" . MAIL_HEADERS;
-
-						mail($user->getEmail(), "Tlantic PromGame Mobile - Reset da Password", $texto, $headers);
+						if( !$ret )
+							$renderText = static::$status[R_USER_SENDMAIL_ERROR];
+						else
+							$renderText = "Nova password de acesso temporária enviada para o seu e-mail.\n<br>".
+										  "Atenção: Deve mudá-la a sua password de imediato.";
+							
 					}
-
 				
 					
 				}
