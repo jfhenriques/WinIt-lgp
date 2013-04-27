@@ -9,6 +9,11 @@
 
 	DEFINE( 'R_USER_EMAIL_MISSING'		, 0x30 );
 
+	DEFINE( 'MAIL_FROM_ADDRESS', 'noreply@lptlantic.fe.up.pt');
+	DEFINE( 'MAIL_HEADERS', "From: " . MAIL_FROM_ADDRESS . "\r\nMIME-Version: 1.0\r\n".
+							"Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit" );
+	DEFINE( 'MAIL_SIGNATURE', "Atenciosamente,\nTlantic PromGame Mobile");
+
 
 
 	class  UserController extends Controller {
@@ -265,10 +270,11 @@
 				{
 					$texto = "Foi pedido que fosse feito reset da password da sua conta na aplicação Tlantic PromGame Mobile.\n\n".
 							 "Por favor siga o link: https://lgptlantic.fe.up.pt/reset_password/${token} \n\n".
-							 "Se o pedido não efectuado por si, por favor ignore este e-mail\n\n".
-							 "Atenciosamente,\nTlantic PromGame Mobile";
+							 "Se o pedido não efectuado por si, por favor ignore este e-mail\n\n". MAIL_SIGNATURE;
 
-					@mail($user->getEmail(), "Tlantic PromGame Mobile - Reset da Password", $texto);
+					$headers = "To: {$user->getEmail()}\r\n" . MAIL_HEADERS;
+
+					mail($user->getEmail(), "Tlantic PromGame Mobile - Reset da Password", $texto, $headers);
 				}
 
 				$this->respond->setJSONCode( $success ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
@@ -317,10 +323,11 @@
 						$texto = "No seguimento do pedido de reset da password de acesso à sua conta,\n" .
 								 "enviamos-lhe a sua nova password temporária.\n".
 								 "Atenção: deve alterar esta password de imediato.\n\n".
-								 "Password: + $pass \n\n".
-								 "Atenciosamente,\nTlantic PromGame Mobile";
+								 "Password: + $pass \n\n". MAIL_SIGNATURE;
 
-						@mail($user->getEmail(), "Tlantic PromGame Mobile - Reset da Password", $texto);
+						$headers = "To: {$user->getEmail()}\r\n" . MAIL_HEADERS;
+
+						mail($user->getEmail(), "Tlantic PromGame Mobile - Reset da Password", $texto, $headers);
 					}
 
 				
