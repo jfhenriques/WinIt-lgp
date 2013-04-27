@@ -1,47 +1,53 @@
 package pt.techzebra.promgamemobile.client;
 
+import java.util.ArrayList;
+import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+
+import android.util.Log;
 
 public abstract class Answer {
-	private final int id_;
-	
-	
-	public Answer(int id) {
-		id_ = id;
-	}
-	
-	public int getId() {
-		return id_;
-	}
+    private int id_ = 0;
 
-	public abstract Object getContent();
+    public Answer() {
+        id_++;
+    }
 
-	
-	public boolean equals(Answer answer) {
-		return (id_ == answer.id_);
-	}
+    public int getId() {
+        return id_;
+    }
 
-	public static Answer valueOf(JSONObject answer){
-	   
+    public abstract Object getContent();
+
+    public boolean equals(Answer answer) {
+        return (id_ == answer.id_);
+    }
+
+    public static Answer valueOf(int type, JSONArray answers_choices) {
         try {
-            final int answer_id = answer.getInt("id");
-           
-    	    final String answer_type;
-    	    if(!(answer_type = answer.getString("multi")).equals(null)){
-    	        MultipleChoiceAnswer multiple_answer = new MultipleChoiceAnswer(answer_id);
-    	        int size_array = answer.getInt("adsa");
-    	        for(int i = 0; i<size_array; i++){
-    	            
-    	        }
-    	        return new MultipleChoiceAnswer(answer_id);
-    	    }else{
-    	        return new TextAnswer(answer_id);
-    	    }
-	    
+            if (type == 1) {
+                // string
+                return new TextAnswer();
+            } else if (type == 2) {
+                // radio
+                ArrayList<String> ans = new ArrayList<String>();
+                for (int i = 0; i < answers_choices.length(); i++) {
+                    ans.add(answers_choices.getString(i));
+                }
+                return new RadioChoiceAnswer(ans);
+            } else if (type == 3) {
+                // multi
+                ArrayList<String> ans = new ArrayList<String>();
+                for (int i = 0; i < answers_choices.length(); i++) {
+                    ans.add(answers_choices.getString(i));
+                }
+                return new MultipleChoiceAnswer(ans);
+            } else {
+                Log.i("Answer", "Error parsing JSON");
+            }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.i("Answer", "Error parsing JSON");
         }
         return null;
-	}
+    }
 }
