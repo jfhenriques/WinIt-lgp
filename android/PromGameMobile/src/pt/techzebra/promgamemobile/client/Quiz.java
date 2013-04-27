@@ -2,28 +2,25 @@ package pt.techzebra.promgamemobile.client;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.util.Log;
 
 
 public class Quiz {
-	private final int id_;
 	private final String name_;
 	private final ArrayList<Question> questions_;
 
-	public Quiz(int id, String name, ArrayList<Question> questions) {
-		id_ = id;
+	public Quiz(String name, ArrayList<Question> questions) {
 		name_ = name;
 		questions_ = questions;
 	}
 
-	public Quiz(int id, String name) {
-		id_ = id;
+	public Quiz(String name) {
 		name_ = name;
 		questions_ = new ArrayList<Question>();
-	}
-
-	public int getId() {
-		return id_;
 	}
 
 	public String getName() {
@@ -87,7 +84,26 @@ public class Quiz {
 	
 	
 	public static Quiz valueOf(JSONObject quiz) {
-	    // TODO: parse json
+	    try {
+            if(quiz.getInt("s") == 0){
+                JSONObject value_quiz = quiz.getJSONObject("r");
+                final String name = value_quiz.getString("name");
+                Log.i("quiz", name);
+                Quiz new_quiz = new Quiz(name);
+                final JSONArray question_array = value_quiz.getJSONArray("questions");
+                for(int i = 0; i < question_array.length() ; i++){
+                    Question question = Question.valueOf(question_array.getJSONObject(i));
+                    new_quiz.addQuestion(question);
+                }
+                
+                return new_quiz;
+            }else{
+                Log.i("User", "Error parsing JSON user object");
+            }
+        } catch (JSONException e) {
+            Log.i("User", "Error parsing JSON user object" + e.toString());
+        }
+
 		return null;
 	}
 	

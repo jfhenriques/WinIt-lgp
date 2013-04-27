@@ -1,5 +1,6 @@
 package pt.techzebra.promgamemobile.client;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Question {
@@ -49,6 +50,18 @@ public class Question {
 	}
 
 	public static Question valueOf(JSONObject question) {
+	    try {
+            final int question_id = question.getInt("qid");
+            final String title = question.getString("question");
+            final int type = question.getInt("type");
+            //final int choices = question.getString("answer_choices");
+            //Answer answer = Answer.valueOf(question);
+            
+            return new Question(question_id, title);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+	    
 		return null;
 	}
 }
