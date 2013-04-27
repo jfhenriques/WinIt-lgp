@@ -44,7 +44,7 @@
 		{
 			$dbh = DbConn::getInstance()->getDB();
 			
-			$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' VALUES(:tok, :uid, :val) ON DUPLICATE KEY UPDATE validity = :val ;');	
+			$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (token, uid, validity) VALUES(:tok, :uid, :val) ON DUPLICATE KEY UPDATE validity = :val ;');	
 			
 			$tok = $this->getToken() ;
 			$uid = $this->getUserId() ;

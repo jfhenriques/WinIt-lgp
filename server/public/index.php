@@ -1,7 +1,7 @@
 <?php
 
 	
-	DEFINE('MEASURE_TIME', false);
+	DEFINE('MEASURE_TIME', true);
 	$st = 0;
 	
 	if( MEASURE_TIME ) $st = microtime(true);
