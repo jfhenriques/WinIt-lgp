@@ -29,9 +29,7 @@
             android:layout_height="wrap_content"
             android:text="@string/name"
             android:textAllCaps="true"
-            android:textColor="@color/dark_gray"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            style="@style/BlueSectionHeader" />
 
         <EditText
             android:id="@+id/name_edit"
@@ -46,9 +44,7 @@
             android:layout_height="wrap_content"
             android:text="@string/email"
             android:textAllCaps="true"
-            android:textColor="@color/dark_gray"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            style="@style/BlueSectionHeader" />
 
         <EditText
             android:id="@+id/email_edit"
@@ -63,9 +59,7 @@
             android:layout_height="wrap_content"
             android:text="@string/password"
             android:textAllCaps="true"
-            android:textColor="@color/dark_gray"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            style="@style/BlueSectionHeader" />
 
         <EditText
             android:id="@+id/password_edit"

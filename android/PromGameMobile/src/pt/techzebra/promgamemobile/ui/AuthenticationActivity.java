@@ -23,7 +23,7 @@ public class AuthenticationActivity extends SherlockActivity {
     private EditText email_edit_;
     private EditText password_edit_;
 
-    private final Handler handler_ = new Handler();
+    private Handler handler_;
     private boolean doubleBackToExitPressedOnce = false;
 
     @Override
@@ -43,6 +43,8 @@ public class AuthenticationActivity extends SherlockActivity {
         
         TextView slogan = (TextView) findViewById(R.id.slogan);
         slogan.setText(Html.fromHtml(getString(R.string.slogan)));
+        
+        handler_ = new Handler();
     }
     @Override
     public void onBackPressed(){
@@ -107,12 +109,12 @@ public class AuthenticationActivity extends SherlockActivity {
         startActivity(intent);
     }
     
-    public void handleForgotPassword(View view){
+    public void handleForgotPassword(View view) {
         Log.i(TAG, "Initialize Forgot Password");
         Utilities.showToast(this, "Coming soon");
     }
     
-    public void handleFacebookConnection(View view){
+    public void handleFacebookConnection(View view) {
         Log.i(TAG, "Initialize Facebook Connection");
         Utilities.showToast(this, "Coming soon");
     }

@@ -80,16 +80,13 @@ public class User implements Serializable{
      */
     public static User valueOf(JSONObject user) {
         try {
-            // TODO: Adapt the code in accordance with API
-            final int user_id = user.getInt("id");
+            final int user_id = user.getInt("uid");
             final String name = user.getString("name");
-            final String address = user.getString("address");
-            final String birthday = user.getString("birthday");
             final String email = user.getString("email");
             final String level = user.getString("level");
             final String points = user.getString("points");
             
-            return new User(user_id, name, address, birthday, email, level, points);
+            return new User(user_id, name, email, level, points);
         } catch (final Exception e) {
             Log.i("User", "Error parsing JSON user object" + e.toString());
         }
