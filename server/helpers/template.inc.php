@@ -41,13 +41,19 @@
 		}
 
 
+		public function renderHTML( $html )
+		{
+			echo $html;
+		}
+
+
 		public function setJSONCode($code)
 		{
 			$this->jsonCode = is_int( $code ) ? $code : R_GLOB_ERR_UNDEFINED ;
 		}
 		public function setJSONResponse($arr)
 		{
-			if( is_array( $arr ) )
+			if( !is_null($arr) && is_array( $arr ) )
 				$this->jsonArray = $arr;
 		}
 		

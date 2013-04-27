@@ -72,6 +72,8 @@
 						array( 'match' => '/user', 'controller' => 'user', 'via' => 'put', 'action' => 'edit',
 							   'matches' => array(
 
+							   		array( 'match' => '/reset_password', 'controller' => 'user', 'via' => 'post', 'action' => 'reset_password' ),
+
 									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
 									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'post', 'action' => 'assoc_tags' ),
 									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'delete', 'action' => 'remove_tags' ),
@@ -108,6 +110,8 @@
 						array( 'match' => '/address/:cp4/:cp3', 'controller' => 'address', 'via' => 'get', 'action' => 'list_cp' ),
 				   	),
 			),
+			
+			array( 'match' => '/reset_password/:reset_token', 'controller' => 'user', 'via' => 'get', 'action' => 'reset_password_confirmation' ),
 			
 		),
 	
