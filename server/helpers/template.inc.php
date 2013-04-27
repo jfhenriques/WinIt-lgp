@@ -47,7 +47,7 @@
 		}
 		public function setJSONResponse($arr)
 		{
-			if( is_array( $arr ) )
+			if( !is_null($arr) && is_array( $arr ) )
 				$this->jsonArray = $arr;
 		}
 		
