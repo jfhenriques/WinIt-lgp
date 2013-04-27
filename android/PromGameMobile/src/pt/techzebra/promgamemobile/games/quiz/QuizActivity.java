@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.client.Answer;
 import pt.techzebra.promgamemobile.client.MultipleChoiceAnswer;
+import pt.techzebra.promgamemobile.client.NetworkUtilities;
 import pt.techzebra.promgamemobile.client.Question;
 import pt.techzebra.promgamemobile.client.Quiz;
 import android.os.Bundle;
@@ -14,12 +15,15 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnTouchListener;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -38,7 +42,8 @@ public class QuizActivity extends SherlockFragmentActivity {
     
     QuizCollectionPagerAdapter quiz_collection_adapter_;
     ViewPager view_pager_;
-    static Quiz quiz_ = new Quiz(1, "cena");
+    //TODO: Apenas para teste, é necessário ir buscar informação ao servidor
+    static Quiz quiz_;
     
     @Override
     protected void onCreate(Bundle saved_instance_state) {
@@ -53,6 +58,8 @@ public class QuizActivity extends SherlockFragmentActivity {
         view_pager_ = (ViewPager) findViewById(R.id.pager);
         view_pager_.setAdapter(quiz_collection_adapter_);
         
+        //quiz_ = NetworkUtilities.getQuizGame();
+       /* 
         Question p1 = new Question(1, 
                 "Que nome se dá a alguém que nega a existência de Deus?");
         MultipleChoiceAnswer p1r1 = new MultipleChoiceAnswer(1);
@@ -68,7 +75,7 @@ public class QuizActivity extends SherlockFragmentActivity {
         p1r2.addAnswer("Edge of Glory");
         p1r2.addAnswer("Thriller");
         p1r2.addAnswer("Waka Waka");
-        p1r2.addAnswer("Parazzi");
+        p1r2.addAnswer("Paparazzi");
         p2.setAnswer(p1r2);
         quiz_.addQuestion(p2);
 
@@ -90,8 +97,8 @@ public class QuizActivity extends SherlockFragmentActivity {
         p1r4.addAnswer("Naty Botero");
         p4.setAnswer(p1r4);
         quiz_.addQuestion(p4);
- 
-        
+ */
+      
         /*
         gesture_detector_ = new GestureDetector(this, new QuizGestureDetector());
         gesture_listener_ = new OnTouchListener() {
@@ -116,7 +123,14 @@ public class QuizActivity extends SherlockFragmentActivity {
         public Fragment getItem(int i) {
             Fragment fragment = new QuestionObjectFragment();
             Bundle args = new Bundle();
-            args.putString("title", quiz_.getQuestions().get(i).getTitle());
+            args.putString("question", quiz_.getQuestions().get(i).getTitle());
+
+            @SuppressWarnings("unchecked")
+            ArrayList<String> answerslist = ((ArrayList<String>) quiz_.getQuestions().get(i).getAnswer().getContent());
+            args.putInt("num_answers", answerslist.size());
+            for (int j = 0; j < answerslist.size(); j++) {
+                args.putString("answer"+j, answerslist.get(j));
+            }
             fragment.setArguments(args);
             
             return fragment;
@@ -135,20 +149,31 @@ public class QuizActivity extends SherlockFragmentActivity {
     }
     
     public static class QuestionObjectFragment extends Fragment {
-        public static final String ARG_OBJECT =  "object";
-        
+        public static final String ARG_OBJECT =  "question";
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle saved_instance_state) {
             View root_view = inflater.inflate(R.layout.question_fragment, container, false);
             Bundle args = getArguments();
-            ((TextView) root_view.findViewById(R.id.question_text)).setText(args.getString("title"));
-
+            ((TextView) root_view.findViewById(R.id.question_text)).setText(args.getString("question"));
             
+             
+            //TODO: mudar para vários tipos de resposta
+            RadioGroup radio = (RadioGroup) root_view.findViewById(R.id.answers_group);
+            int size_answers = args.getInt("num_answers");
+            for(int j = 0; j < size_answers; j++){
+                RadioButton r = new RadioButton(getActivity());
+                String str = args.getString(("answer"+j));
+                r.setText(str);
+                r.setId(j);
+                r.setGravity(Gravity.CENTER_VERTICAL);
+                radio.addView(r);
+            }
             return root_view;
         }
     }
-       
+    /*   
     private static class QuizGestureDetector extends SimpleOnGestureListener {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocity_x,
@@ -174,5 +199,5 @@ public class QuizActivity extends SherlockFragmentActivity {
         public boolean onDown(MotionEvent e) {
             return true;
         }
-    }
+    }*/
 }
