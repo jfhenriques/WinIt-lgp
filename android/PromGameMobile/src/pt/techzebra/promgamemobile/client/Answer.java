@@ -7,20 +7,21 @@ import org.json.JSONException;
 import android.util.Log;
 
 public abstract class Answer {
-    private int id_ = 0;
-
+    private static int id_ = 0;
+    private static int id_ans_;
     public Answer() {
+        id_ans_ = id_;
         id_++;
     }
 
     public int getId() {
-        return id_;
+        return id_ans_;
     }
 
     public abstract Object getContent();
 
     public boolean equals(Answer answer) {
-        return (id_ == answer.id_);
+        return (id_ans_ == answer.id_ans_);
     }
 
     public static Answer valueOf(int type, JSONArray answers_choices) {
