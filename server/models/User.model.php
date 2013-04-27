@@ -2,15 +2,15 @@
 	
 	class User extends ActiveRecord {
 
-		private $uid = null;
-		private $name;
-		private $email;
-		private $password;
-		private $adid;
-		private $birth = 0;
-		private $address2;
-		private $token_facebook;
-		private $token_twitter;
+		// private $uid = null;
+		// private $name;
+		// private $email;
+		// private $password;
+		// private $adid;
+		// private $birth = 0;
+		// private $address2;
+		// private $token_facebook;
+		// private $token_twitter;
 		
 
 		const TABLE_NAME = 'user' ;
@@ -21,89 +21,108 @@
 		
 		/* GET's and SET's*/
 
-		public function getID()
+		public function getUID()
 		{
-			return (int)$this->uid;
+			return (int)$this->getData('uid');
 		}
 		
 
 		public function getName()
 		{
-			return $this->name;
+			return $this->getData('name');
 		}		
 		public function setName($name)
 		{
-			$this->name = $name;
+			$this->data['name'] = $name;
 		}
 		
 
 		public function getEmail()
 		{
-			return $this->email;
+			return $this->getData('email');
 		}
 		public function setEmail($email)
 		{
-			$this->email = $email;
+			$this->data['email'] = $email;
 		}
 		
 
 		public function getPassword()
 		{
-			return $this->password;
+			return $this->getData('password');
 		}
 		public function setPassword($password)
 		{
-			$this->password = $password;
+			$this->data['password'] = $password;
 		}
 		
 
 		public function getADID()
 		{
-			return (int)$this->adid;
+			return (int)$this->getData('adid');
 		}
 		public function setADID($adid)
 		{
-			$this->adid = (int)$adid;
+			$this->data['adid'] = $adid;
 		}
 
 		
 		public function getAddress2()
 		{
-			return $this->address2;
+			return $this->getData('address2');
 		}
 		public function setAddress2($address2)
 		{
-			$this->address2 = $address2;
+			$this->data['address2'] = $address2;
 		}
 
 		
 		public function getTokenFacebook()
 		{
-			return $this->token_facebook;
+			return $this->getData('token_facebook');
 		}
 		public function setTokenFacebook($token_facebook)
 		{
-			$this->token_facebook = $token_facebook;
+			$this->data['token_facebook'] = $token_facebook;
 		}
 		
 
 		public function getTokenTwitter()
 		{
-			return $this->token_twitter;
+			return $this->getData('token_twitter');
 		}
 		public function setTokenTwitter($token_twitter)
 		{
-			$this->token_twitter = $token_twitter;
+			$this->data['token_twitter'] = $token_twitter;
 		}
 
 		public function getBirth()
 		{
-			return (int)$this->birth;
+			return (int)$this->getData('birth');
 		}
 		public function setBirth($birth)
 		{
-			$this->birth = (int)$birth;
+			$this->data['birth'] = $birth;
 		}
+
+		public function getResetToken()
+		{
+			return $this->getData('reset_token');
+		}
+		public function setResetToken($token)
+		{
+			$this->data['reset_token'] = $token;
+		}
+
+		public function getResetTokenValidity()
+		{
+			return (int)$this->getData('reset_token_validity');
+		}
+		public function setResetTokenValidity($validity)
+		{
+			$this->data['reset_token_validity'] = $validity;
+		}
+
 
 
 
@@ -114,30 +133,47 @@
 			$dbh = DbConn::getInstance()->getDB();
 			$sth = null;
 			
-			if( is_null($this->uid) )
+			$uid = $this->getUID();
+			$isInsert = $uid <= 0 ;
+
+			if( $isInsert )
 				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, token_facebook, token_twitter, birth) ' .
 										' VALUES(:name, :email, :password, :adid, :address2, :token_facebook, :token_twitter, :birth)');
 			else
 			{
 				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,' .
 												' adid = :adid, door = :address2, birth = :birth, token_facebook = :token_facebook,' .
-												' token_twitter = :token_twitter WHERE uid = :uid ;' );
+												' token_twitter = :token_twitter , reset_token = :res_token , reset_token_validity = :res_token_val WHERE uid = :uid ;' );
 				
-				$sth->bindParam(':uid', $this->uid, PDO::PARAM_INT);
+				$res_token = $this->getResetToken();
+				$res_token_val = $this->getResetTokenValidity();
+
+				$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
+				$sth->bindParam(':res_token', $res_token, PDO::PARAM_STR);
+				$sth->bindParam(':res_token_val', $res_token_val, PDO::PARAM_INT);
 			}
 
-			$sth->bindParam(':name', $this->name, PDO::PARAM_STR);
-			$sth->bindParam(':email', $this->email, PDO::PARAM_STR);
-			$sth->bindParam(':password', $this->password, PDO::PARAM_STR);
-			$sth->bindParam(':adid', $this->adid, PDO::PARAM_INT);
-			$sth->bindParam(':address2', $this->address2, PDO::PARAM_STR);
-			$sth->bindParam(':token_facebook', $this->token_facebook, PDO::PARAM_STR);
-			$sth->bindParam(':token_twitter', $this->token_twitter, PDO::PARAM_STR);
-			$sth->bindParam(':birth', $this->birth, PDO::PARAM_INT);
+			$name = $this->getName();
+			$email = $this->getEmail();
+			$password = $this->getPassword();
+			$adid = $this->getADID();
+			$address2 = $this->getAddress2();
+			$token_facebook = $this->getTokenFacebook();
+			$token_twitter = $this->getTokenTwitter();
+			$birth = $this->getBirth();
+
+			$sth->bindParam(':name', $name, PDO::PARAM_STR);
+			$sth->bindParam(':email', $email, PDO::PARAM_STR);
+			$sth->bindParam(':password', $password, PDO::PARAM_STR);
+			$sth->bindParam(':adid', $adid, PDO::PARAM_INT);
+			$sth->bindParam(':address2', $address2, PDO::PARAM_STR);
+			$sth->bindParam(':token_facebook', $token_facebook, PDO::PARAM_STR);
+			$sth->bindParam(':token_twitter', $token_twitter, PDO::PARAM_STR);
+			$sth->bindParam(':birth', $birth, PDO::PARAM_INT);
 			
 			$ret = $sth->execute();
 			
-			if( $ret && is_null($this->uid) )
+			if( $ret && $isInsert )
 				$this->uid = $dbh->lastInsertId();
 
 			return $ret;
@@ -153,26 +189,35 @@
 			return ":${salt}:" . hash( 'sha256', $salt.$pass ) . ':';
 		}
 
-		private static function fillUser($arr)
-		{
-			if( is_array( $arr ) && count( $arr ) > 0 )
-			{
-				$user = new User();
+		// private static function fillUser($arr)
+		// {
+		// 	if( is_array( $arr ) && count( $arr ) > 0 )
+		// 	{
+		// 		$user = new User();
 				
-				$user->uid = $arr['uid'];
-				$user->name = $arr['name'];
-				$user->email = $arr['email'];
-				$user->password = $arr['password'];
-				$user->adid = $arr['adid'];
-				$user->address2 = $arr['door'];
-				$user->token_facebook = $arr['token_facebook'];
-				$user->token_twitter = $arr['token_twitter'];
-				$user->birth = $arr['birth'];
+		// 		$user->uid = $arr['uid'];
+		// 		$user->name = $arr['name'];
+		// 		$user->email = $arr['email'];
+		// 		$user->password = $arr['password'];
+		// 		$user->adid = $arr['adid'];
+		// 		$user->address2 = $arr['door'];
+		// 		$user->token_facebook = $arr['token_facebook'];
+		// 		$user->token_twitter = $arr['token_twitter'];
+		// 		$user->birth = $arr['birth'];
 				
-				return $user;
-			}
+		// 		return $user;
+		// 	}
 			
-			return null;
+		// 	return null;
+		// }
+
+		public static function findByResetToken( $token )
+		{
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE reset_token = ? LIMIT 1;',
+									  array( $token ) );
+
+							
+			return static::fillModel( $result, new User() );
 		}
 
 		public static function findByEmail( $email )
@@ -181,7 +226,7 @@
 									  array( $email ) );
 
 							
-			return static::fillUser( $result );
+			return static::fillModel( $result, new User() );
 		}
 
 		public static function findById($id)
@@ -190,18 +235,19 @@
 									  array( $id ) );
 
 							
-			return static::fillUser( $result );
+			return static::fillModel( $result, new User() );
 		}
 
 		public static function findByCredentials($email, $pass)
 		{
 			$user = static::findByEmail( $email );
 
-			if( !is_null( $user ) && !is_null( $user->password ) )
+			if( !is_null( $user ) && !is_null( $user->getPassword() ) )
 			{
-				$exp = explode(':', $user->password, 3);
+				$uPass = $user->getPassword();
+				$exp = explode(':', $uPass, 3);
 				if( count( $exp ) === 3 &&
-						static::saltPass( $pass , $exp[1] ) === $user->password )
+						static::saltPass( $pass , $exp[1] ) === $uPass )
 					return $user;
 			}
 
@@ -213,7 +259,7 @@
 			$dbh = DbConn::getInstance()->getDB();
 			$sth = null;
 			
-			$userID = $this->getID();
+			$userID = $this->getUID();
 		
 			$sth = $dbh->prepare('SELECT promotion.pid, promotion.name, promotion.active, promotion.end_date '.
 									'FROM promotion, user, userpromotion '.

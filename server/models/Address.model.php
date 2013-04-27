@@ -18,7 +18,7 @@
 		const TABLE_NAME_STR = "addrstreet";
 
 
-		public function getID()
+		public function getADID()
 		{
 			return (int)$this->getData('adid');
 		}

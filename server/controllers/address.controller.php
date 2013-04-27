@@ -46,7 +46,7 @@
 					foreach( $streets as $str )
 					{
 						$resp[] = array(
-										'adid' => $str->getID(),
+										'adid' => $str->getADID(),
 
 										'address' => $str->getStreet(),
 

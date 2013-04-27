@@ -5,7 +5,9 @@
 
 	DEFINE( 'R_USER_ERR_PARAMS'			, 0x20 );
 	DEFINE( 'R_USER_ERR_EMAIL_EXISTS'	, 0x21 );
-	DEFINE( 'R_SESS_ERR_INV_ADID'		, 0x22 );
+	DEFINE( 'R_USER_ERR_INV_ADID'		, 0x22 );
+
+	DEFINE( 'R_USER_EMAIL_MISSING'		, 0x30 );
 
 
 
@@ -17,7 +19,9 @@
 				R_USER_ERR_PARAMS		=> 'Parâmetros não definidos',
 				R_USER_ERR_EMAIL_EXISTS	=> 'Email já existente',
 
-				R_SESS_ERR_INV_ADID		=> 'Código de Endereço inválido',
+				R_USER_ERR_INV_ADID		=> 'Código de Endereço inválido',
+
+				R_USER_EMAIL_MISSING		=> 'Deve fornecer o e-mail para fazer reset à password',
 			);
 
 	
@@ -139,7 +143,7 @@
 					// 	$user->setTokenTwitter($token_tw);
 
 					if( !is_null( $user->getADID() ) && is_null( Address::findByADID($user->getADID()) ) )
-						$this->respond->setJSONCode( R_SESS_ERR_INV_ADID );
+						$this->respond->setJSONCode( R_USER_ERR_INV_ADID );
 
 					else
 					{
@@ -182,14 +186,14 @@
 					$this->respond->setJSONCode( R_USER_ERR_EMAIL_EXISTS );
 
 				elseif( !is_null( $adid ) && is_null( Address::findByADID($adid) ) )
-					$this->respond->setJSONCode( R_SESS_ERR_INV_ADID );
+					$this->respond->setJSONCode( R_USER_ERR_INV_ADID );
 
 				else
 				{
 					$user = new User();
 					
 					$user->setName($name);
-					$user->setEmail($email);
+					$user->setEmail(strtolower($email));
 					$user->setADID($adid);
 					$user->setAddress2($address2);
 					$user->setBirth($birth);
@@ -198,7 +202,7 @@
 					$success = $user->save();
 
 					if( $success )
-						$this->respond->setJSONResponse( array( 'uid' => $user->getID() ) );
+						$this->respond->setJSONResponse( array( 'uid' => $user->getUID() ) );
 
 					$this->respond->setJSONCode( $success ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 				}
@@ -233,6 +237,99 @@
 				$this->respond->setJSONCode( R_STATUS_OK );
 			}
 			$this->respond->renderJSON( static::$status );
+		}
+
+
+
+		public function reset_password()
+		{
+			$email = valid_request_var('email');
+			$user = null;
+
+			if( is_null( $email ) )
+				$this->respond->setJSONCode( R_USER_EMAIL_MISSING );
+			
+			elseif( is_null( $user = User::findByEmail( $email ) ) )
+					$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
+			else
+			{
+				$token = hash('sha512', uniqid(rand(), true)) ;
+
+				$user->setResetToken($token);
+				$user->setResetTokenValidity(time()+600); // 10 minutos para fazer reset
+
+				$success = $user->save();
+
+				if( $success )
+				{
+					$texto = "Foi pedido que fosse feito reset da password da sua conta na aplicação Tlantic PromGame Mobile.\n\n".
+							 "Por favor siga o link: https://lgptlantic.fe.up.pt/reset_password/${token} \n\n".
+							 "Se o pedido não efectuado por si, por favor ignore este e-mail\n\n".
+							 "Atenciosamente,\nTlantic PromGame Mobile";
+
+					@mail($user->getEmail(), "Tlantic PromGame Mobile - Reset da Password", $texto);
+				}
+
+				$this->respond->setJSONCode( $success ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+			}
+
+			$this->respond->renderJSON( static::$status );
+		}
+
+
+
+		public function reset_password_confirmation()
+		{
+			$reset_token = valid_request_var('reset_token');
+			$renderText = "Erro desconhecido";
+
+			if( is_null( $reset_token ) )
+				$renderText = "Token não definido";
+			
+			else
+			{
+				$user = User::findByResetToken( $reset_token );
+
+				if( is_null( $user ) )
+					$renderText = "Token de reset inválido";
+
+				else
+				if( $user->getResetTokenValidity() < time() )
+					$renderText = "Excedeu o tempo para fazer reset à password";
+
+				else
+				{
+
+ 					$pass = substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ#()+", 3)), 10, 8);
+
+
+ 					$user->setPassword( User::saltPass($pass) );
+
+					if( !$user->save() )
+						$renderText = "Erro: Impossível salvar";
+
+					else
+					{
+						$renderText = "Nova password de acesso temporária enviada para o seu e-mail.\n<br>".
+									  "Atenção: Deve mudá-la a sua password de imediato.";
+						
+						$texto = "No seguimento do pedido de reset da password de acesso à sua conta,\n" .
+								 "enviamos-lhe a sua nova password temporária.\n".
+								 "Atenção: deve alterar esta password de imediato.\n\n".
+								 "Password: + $pass \n\n".
+								 "Atenciosamente,\nTlantic PromGame Mobile";
+
+						@mail($user->getEmail(), "Tlantic PromGame Mobile - Reset da Password", $texto);
+					}
+
+				
+					
+				}
+			
+			}
+
+			$this->respond->renderHTML( $renderText );
 		}
 	}
 	
