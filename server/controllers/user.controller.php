@@ -314,7 +314,7 @@
 
  					$user->setPassword( User::saltPass($pass) );
  					$user->setResetToken(null);
- 					$user->setResetTokenValidity(null);
+ 					$user->setResetTokenValidity(0);
 
 					if( !$user->save() )
 						$renderText = "Erro: Impossível salvar";
@@ -323,14 +323,14 @@
 					{
 						$ret = Controller::sendCustomMail($user->getEmail(), MAIL_SUBJECT_RESET_PASS, "text/plain",
 								"No seguimento do pedido de reset da password de acesso à sua conta,\r\n" .
-								"enviamos-lhe uma password temporária, que deverá ser alterada de imediato, logo após ao login.\r\n\r\n".
+								"enviamos-lhe uma password temporária, que deverá ser alterada de imediato, logo após o login.\r\n\r\n".
 								"E-mail: {$user->getEmail()}\r\nPassword: {$pass}" . MAIL_SIGNATURE, true );
 
 						if( !$ret )
 							$renderText = static::$status[R_USER_SENDMAIL_ERROR];
 						else
 							$renderText = "Nova password de acesso temporária enviada para o seu e-mail.\r\n<br>".
-										  "Atenção: Deve alterá-la de imediato, após ao login.";
+										  "Atenção: Deve alterá-la de imediato, logo após o login.";
 							
 					}
 				
