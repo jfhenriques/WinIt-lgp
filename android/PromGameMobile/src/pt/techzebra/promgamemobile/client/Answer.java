@@ -8,7 +8,8 @@ import android.util.Log;
 
 public abstract class Answer {
     private static int id_ = 0;
-    private static int id_ans_;
+    private int id_ans_;
+
     public Answer() {
         id_ans_ = id_;
         id_++;

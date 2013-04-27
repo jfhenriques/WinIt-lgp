@@ -2,7 +2,6 @@ package pt.techzebra.promgamemobile.client;
 
 import java.io.Serializable;
 
-import org.apache.http.entity.SerializableEntity;
 import org.json.JSONObject;
 
 import android.util.Log;

@@ -53,7 +53,7 @@ public class NetworkUtilities {
     public static final String PARAM_HOUSE_NUMBER = "portaAndar";
     public static final String PARAM_UPDATED = "timestamp";
     public static final String PARAM_AUTH_TOKEN = "token";
-    
+
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
     public static final String HOST = "lgptlantic.fe.up.pt";
@@ -61,6 +61,9 @@ public class NetworkUtilities {
 
     public static final String AUTH_URI = BASE_URL + "/session.json";
     public static final String USER_URI = BASE_URL + "/user.json";
+    public static final String PROMOTION_URI = BASE_URL + "/promotion";
+
+    public static final String QUIZ_URI = "/quizgame.json";
 
     private static HttpClient http_client_;
 
@@ -88,32 +91,33 @@ public class NetworkUtilities {
         final Thread t = new Thread() {
             @Override
             public void run() {
-            	try {
-            		runnable.run();
-            	} finally {
-            		
-            	}
+                try {
+                    runnable.run();
+                } finally {
+
+                }
             };
         };
         t.start();
         return t;
     }
 
-    private static JSONObject executeRequest(HttpRequest request) {        
+    private static JSONObject executeRequest(HttpRequest request) {
         maybeCreateHttpClient();
         HttpHost host = new HttpHost(HOST);
-        
+
         HttpResponse response;
         try {
             response = http_client_.execute(host, request);
             int status_code = response.getStatusLine().getStatusCode();
-            
+
             if (status_code == HttpStatus.SC_OK) {
-                JSONObject json_response = new JSONObject(EntityUtils.toString(response.getEntity()));
-                
+                JSONObject json_response = new JSONObject(
+                        EntityUtils.toString(response.getEntity()));
+
                 return json_response;
             } else {
-                
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -122,54 +126,57 @@ public class NetworkUtilities {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        
+
         return null;
     }
-    
+
     private static JSONObject simpleRequest(HttpRequestBase request) {
         return executeRequest(request);
     }
-    
-    private static JSONObject enclosingRequest(HttpEntityEnclosingRequestBase request, ArrayList<NameValuePair> parameters) {
+
+    private static JSONObject enclosingRequest(
+            HttpEntityEnclosingRequestBase request,
+            ArrayList<NameValuePair> parameters) {
         HttpEntity entity = null;
         try {
             entity = new UrlEncodedFormEntity(parameters);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        
+
         request.addHeader(entity.getContentType());
         request.setEntity(entity);
-        
+
         return executeRequest(request);
     }
-    
+
     private static JSONObject get(String uri) {
         return simpleRequest(new HttpGet(uri));
     }
-    
+
     private static JSONObject delete(String uri) {
         return simpleRequest(new HttpDelete(uri));
     }
-    
-    private static JSONObject post(String uri, ArrayList<NameValuePair> parameters) {
+
+    private static JSONObject post(String uri,
+            ArrayList<NameValuePair> parameters) {
         return enclosingRequest(new HttpPost(uri), parameters);
     }
-    
-    private static JSONObject put(String uri, ArrayList<NameValuePair> parameters) {
+
+    private static JSONObject put(String uri,
+            ArrayList<NameValuePair> parameters) {
         return enclosingRequest(new HttpPut(uri), parameters);
     }
-    
+
     public static boolean validResponse(JSONObject response) {
         try {
-            return response.getString("s") == "0";
+            return response.getString("s").equals("0");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        
         return false;
     }
-    
+
     public static String getResponseMessage(JSONObject response) {
         String message = null;
         try {
@@ -180,10 +187,10 @@ public class NetworkUtilities {
 
         return message;
     }
-    
+
     public static JSONObject getResponseContent(JSONObject response) {
         JSONObject content = null;
-        
+
         if (validResponse(response)) {
             try {
                 content = response.getJSONObject("r");
@@ -191,10 +198,10 @@ public class NetworkUtilities {
                 e.printStackTrace();
             }
         }
-        
+
         return content;
     }
-    
+
     /**
      * Connects to the server, authenticates the provided username and password.
      * 
@@ -208,7 +215,7 @@ public class NetworkUtilities {
      *            The context of the calling Activity.
      * @return boolean The boolean result indicating whether the user was
      *         successfully authenticated.
-     * @throws JSONException 
+     * @throws JSONException
      */
     public static boolean authenticate(String username, String password,
             Handler handler, final Context context) {
@@ -217,25 +224,28 @@ public class NetworkUtilities {
         params.add(new BasicNameValuePair(PARAM_PASSWORD, password));
 
         JSONObject json_response = post(AUTH_URI, params);
-        
+
         JSONObject r = getResponseContent(json_response);
         if (r == null) {
             sendResultToAuthenticationActivity(false, handler, context);
         } else {
-            SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
-                    Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
+            SharedPreferences.Editor preferences_editor = PromGame
+                    .getAppContext()
+                    .getSharedPreferences(Constants.USER_PREFERENCES,
+                            Context.MODE_PRIVATE).edit();
             try {
-                preferences_editor.putString(Constants.PREF_AUTH_TOKEN, r.getString("token"));
+                preferences_editor.putString(Constants.PREF_AUTH_TOKEN,
+                        r.getString("token"));
                 preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
                 preferences_editor.commit();
                 sendResultToAuthenticationActivity(true, handler, context);
-                
+
                 return true;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        
+
         return false;
     }
 
@@ -278,20 +288,30 @@ public class NetworkUtilities {
     }
 
     public static User fetchUserInformation(String auth_token, Date last_updated) {
-        String uri = USER_URI + "?token=" + auth_token;      
+        String uri = USER_URI + "?token=" + auth_token;
         JSONObject json_response = get(uri);
-        
+
         User user = null;
 
-    	JSONObject r = getResponseContent(json_response);
+        JSONObject r = getResponseContent(json_response);
         user = User.valueOf(r);
 
         return user;
     }
     
-    private static boolean register(String name, String username, String password,
-            String birthday, String pc4, String pc3, String house_number, Handler handler,
-            final Context context) {
+    public static Quiz fetchQuizGame(final String promotionid, String auth_token) {
+        String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "/?token=" + auth_token;
+
+        Log.i(TAG, uri);
+        JSONObject response = get(uri);
+        Log.i(TAG, response.toString());
+        Quiz new_quiz = Quiz.valueOf(response);
+        return new_quiz;
+    }
+
+    private static boolean register(String name, String username,
+            String password, String birthday, String pc4, String pc3,
+            String house_number, Handler handler, final Context context) {
         final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair(PARAM_EMAIL, username));
         params.add(new BasicNameValuePair(PARAM_NAME, name));
@@ -300,15 +320,15 @@ public class NetworkUtilities {
         params.add(new BasicNameValuePair(PARAM_PC4, pc4));
         params.add(new BasicNameValuePair(PARAM_PC3, pc3));
         params.add(new BasicNameValuePair(PARAM_HOUSE_NUMBER, house_number));
-        
+
         JSONObject json_response = post(USER_URI, params);
         if (validResponse(json_response)) {
             attemptAuth(username, password, handler, context);
             Log.v(TAG, "Successful register");
-            
+
             return true;
         } else {
-            
+
             return false;
         }
     }
@@ -320,11 +340,11 @@ public class NetworkUtilities {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                register(name, email, password, birthday, pc4, pc3, house_number, handler,
-                        context);
+                register(name, email, password, birthday, pc4, pc3,
+                        house_number, handler, context);
             }
         };
-        
+
         return NetworkUtilities.performOnBackgroundThread(runnable);
     }
 }

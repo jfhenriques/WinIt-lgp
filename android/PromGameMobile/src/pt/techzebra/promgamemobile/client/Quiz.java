@@ -67,9 +67,11 @@ public class Quiz {
     }
 
     public static Quiz valueOf(JSONObject quiz) {
+
         try {
-            if (quiz.getInt("s") == 0) {
-                JSONObject value_quiz = quiz.getJSONObject("r");
+            if (NetworkUtilities.validResponse(quiz)) {
+                JSONObject value_quiz = NetworkUtilities
+                        .getResponseContent(quiz);
                 final String name = value_quiz.getString("name");
                 final boolean is_quiz = value_quiz.getBoolean("is_quiz");
                 if (is_quiz) {
@@ -84,11 +86,11 @@ public class Quiz {
 
                     return new_quiz;
                 } else {
-                    return null;
+                    Log.i("Quiz", "This is not a quiz");
                 }
             } else {
-                Log.i("Quiz",
-                        "Error parsing JSON: message: " + quiz.getString("m"));
+                Log.i("Quiz", "Error parsing JSON: message: "
+                        + NetworkUtilities.getResponseMessage(quiz));
             }
         } catch (JSONException e) {
             Log.i("Quiz", "Error parsing JSON user object" + e.toString());
