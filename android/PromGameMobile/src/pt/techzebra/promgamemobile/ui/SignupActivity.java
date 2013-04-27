@@ -1,13 +1,10 @@
 package pt.techzebra.promgamemobile.ui;
 
-import java.util.ArrayList;
 
-import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.Utilities;
 import pt.techzebra.promgamemobile.client.NetworkUtilities;
 import pt.techzebra.promgamemobile.platform.SignupViewPager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,7 +12,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,7 +32,7 @@ public class SignupActivity extends SherlockFragmentActivity {
 	private static final int NUM_STEPS_ = 2;
 
 	private Thread registration_thread_;
-	private final Handler handler = new Handler();
+	private final Handler handler_ = new Handler();
 
 	private SignupPagerAdapter signup_pager_adapter_;
 	private SignupViewPager signup_view_pager_;
@@ -158,8 +154,7 @@ public class SignupActivity extends SherlockFragmentActivity {
 	        if (step == 0) {
 	            signup_view_pager_.setCurrentItem(1, true);
 	        } else {
-	            // TODO: call API
-	            Utilities.showToast(this, "Success");
+	            handleSubmit();
 	        }
 	    } else {
 	        Log.i(TAG, "Empty fields");
@@ -194,24 +189,15 @@ public class SignupActivity extends SherlockFragmentActivity {
 	}
 	
 
-	public void handleSubmit(View view){
-//		new_user_cp4_ = cp4_edit_.getText().toString();
-//		new_user_cp3_ = cp3_edit_.getText().toString();
-//		new_user_floor_ = floor_edit_.getText().toString();
-//		new_user_door_ = door_edit_.getText().toString();
-//		new_user_birthday_ = birthday_edit_.getText().toString();
-//
-//		if (new_user_cp4_.equals("") || new_user_cp3_.equals("") || new_user_floor_.equals("") || new_user_door_.equals("") || new_user_birthday_.equals("")) {
-//			// TODO message saying fields are empty
-//			Log.i(TAG, "Empty fields");
-//
-//			Toast.makeText(this, "Os campos encontram-se vazios",
-//					Toast.LENGTH_SHORT).show();
-//		} else {
-//			Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
-//			//TODO fica a faltar mandar o registo com o andar - floor
-//			//registration_thread_ = NetworkUtilities.attemptRegister(new_user_name_, new_user_email_, new_user_password_, new_user_birthday_, new_user_cp4_, new_user_cp3_, new_user_door_, handler, this);
-//		}   
-
+	private void handleSubmit() {
+	    String name = name_edit_.getText().toString();
+        String email = email_edit_.getText().toString();
+        String password = password_edit_.getText().toString();
+        String birthday = birthday_edit_.getText().toString();
+        String pc4 = pc4_edit_.getText().toString();
+        String pc3 = pc3_edit_.getText().toString();
+        String house_number = house_number_edit_.getText().toString();
+        
+        NetworkUtilities.attemptRegister(name, email, password, birthday, pc4, pc3, house_number, handler_, this);
 	}
 }
