@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:padding="10dp" 
+    android:padding="@dimen/gap" 
     android:background="@color/light_gray">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="30dp" >
+        android:layout_marginTop="10dp" >
 
        <TextView
-            android:id="@+id/step2_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="30dp"
-            android:text="@string/step2"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textStyle="bold" 
-            android:textSize="26sp"/>
+           android:id="@+id/step2_text"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_gravity="center"
+           android:layout_marginBottom="10dp"
+           android:text="@string/step2"
+           android:textAllCaps="true"
+           android:textColor="@color/white"
+           android:textSize="26sp"
+           android:textStyle="bold"
+           style="@style/SignupStep" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/gap"
             android:text="@string/birthday"
             android:textAllCaps="true"
-            android:textColor="@color/gray"
-            android:textStyle="bold"
-            android:textSize="16sp"  />
+            style="@style/BlueSectionHeader" />
 
         <EditText
-            android:id="@+id/birthday_text"
+            android:id="@+id/birthday_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -46,19 +43,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/gap"
             android:text="@string/address"
             android:textAllCaps="true"
-            android:textColor="@color/gray"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            style="@style/BlueSectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
             <EditText
-                android:id="@+id/editText1"
+                android:id="@+id/pc4_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -66,7 +60,7 @@
                 android:inputType="number" />
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/pc3_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -74,20 +68,12 @@
                 android:inputType="number" />
 
             <EditText
-                android:id="@+id/editText3"
+                android:id="@+id/house_number_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="4"
                 android:inputType="number" />
-
-            <EditText
-                android:id="@+id/editText4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="5"
-                android:inputType="text" />
 
         </LinearLayout>
 
@@ -97,18 +83,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical" 
-        android:layout_marginBottom="@dimen/gap3" >
+        android:orientation="vertical"  >
 
         <Button
-            android:id="@+id/continue_button"
+            android:id="@+id/signup_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:text="@string/sign_up"
             android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:onClick="handleSignupNavigation"
+            style="@style/WhiteButtonAppTheme" />
 
     </LinearLayout>
 

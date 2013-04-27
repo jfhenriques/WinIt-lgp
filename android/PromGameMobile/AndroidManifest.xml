@@ -28,7 +28,7 @@
             android:name="pt.techzebra.promgamemobile.ui.AuthenticationActivity"
             android:excludeFromRecents="true"
             android:noHistory="true" />
-        <activity android:name="pt.techzebra.promgamemobile.ui.RegistrationActivity" />
+        <activity android:name="pt.techzebra.promgamemobile.ui.SignupActivity" />
         
         <activity android:name="pt.techzebra.promgamemobile.ui.PromotionsActivity" />
         

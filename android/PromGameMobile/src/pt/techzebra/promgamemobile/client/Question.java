@@ -1,6 +1,10 @@
 package pt.techzebra.promgamemobile.client;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.util.Log;
 
 public class Question {
 	private final int id_;
@@ -49,6 +53,17 @@ public class Question {
 	}
 
 	public static Question valueOf(JSONObject question) {
+	    try {
+            final int question_id = question.getInt("qid");
+            final String title = question.getString("question");
+            final int type = question.getInt("type");
+            JSONArray answers_choices = question.getJSONArray("answer_choices");
+            Answer answer = Answer.valueOf(type, answers_choices);
+            return new Question(question_id, title, answer);
+        } catch (JSONException e) {
+            Log.i("Question", "Error parsing JSON");
+        }
+	    
 		return null;
 	}
 }

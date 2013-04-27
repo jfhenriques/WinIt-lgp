@@ -31,7 +31,7 @@ public class LoadingUserInfo extends AsyncTask<Void, Void, User> {
 		try {
 			SharedPreferences preferences_ = PromGame.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
 			auth_token = preferences_.getString(Constants.PREF_AUTH_TOKEN, "");
-			user_ = NetworkUtilities.fetchUserInformation("", auth_token, null);
+			user_ = NetworkUtilities.fetchUserInformation(auth_token, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		

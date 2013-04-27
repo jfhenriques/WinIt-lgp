@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="ButtonAppTheme" parent="android:Widget.Holo.Light.Button">
         <item name="android:background">@drawable/btn_default_holo_light</item>
     </style>
@@ -7,4 +7,21 @@
     <style name="ImageButtonAppTheme" parent="android:Widget.Holo.Light.ImageButton">
         <item name="android:background">@drawable/btn_default_holo_light</item>
     </style>
+    
+    <style name="WhiteButtonAppTheme" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/btn_white_holo_light</item>
+        <item name="android:textSize">@dimen/button_primary_text_size</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="FacebookButtonAppTheme" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/btn_facebook_holo_light</item>
+        <item name="android:textSize">@dimen/button_primary_text_size</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    
+    <style name="WhiteImageButtonAppTheme" parent="android:Widget.Holo.Light.ImageButton">
+        <item name="android:background">@drawable/btn_white_holo_light</item>
+    </style>
+
 </resources>

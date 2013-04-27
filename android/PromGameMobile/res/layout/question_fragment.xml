@@ -18,7 +18,7 @@
             android:id="@+id/question_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            android:textIsSelectable="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
     </LinearLayout>
@@ -28,33 +28,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/question_layout" >
-
+        
         <RadioGroup
-            android:id="@+id/radioGroup1"
+            android:id="@+id/answers_group"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lorem ipsum dolor" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fusce eget sapien" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Aliquam non dui" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mauris ut quam vitae" />
+       		android:layout_height="wrap_content">
+           
         </RadioGroup>
-
+                
     </ScrollView>
 
 </RelativeLayout>

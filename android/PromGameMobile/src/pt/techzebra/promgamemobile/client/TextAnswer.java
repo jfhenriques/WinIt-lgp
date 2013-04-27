@@ -3,8 +3,8 @@ package pt.techzebra.promgamemobile.client;
 public class TextAnswer extends Answer {
     private String answer_;
     
-    public TextAnswer(int id) {
-        super(id);
+    public TextAnswer() {
+        super();
     }
 
     @Override

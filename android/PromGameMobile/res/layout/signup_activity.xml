@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pt.techzebra.promgamemobile.platform.SignupViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray" >
+    
+
+</pt.techzebra.promgamemobile.platform.SignupViewPager>

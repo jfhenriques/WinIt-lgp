@@ -1,13 +1,9 @@
 package pt.techzebra.promgamemobile.ui;
 
-import pt.techzebra.promgamemobile.Constants;
-import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
+import pt.techzebra.promgamemobile.Utilities;
 import pt.techzebra.promgamemobile.client.NetworkUtilities;
-import android.accounts.AccountManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,16 +20,10 @@ import com.actionbarsherlock.app.SherlockActivity;
 public class AuthenticationActivity extends SherlockActivity {
     private static final String TAG = "AuthenticationActivity";
 
-    private AccountManager account_manager_;
-    private Thread authentication_thread_;
-
-    private String user_email_;
-    private String user_password_;
-
     private EditText email_edit_;
     private EditText password_edit_;
 
-    private final Handler handler = new Handler();
+    private Handler handler_;
     private boolean doubleBackToExitPressedOnce = false;
 
     @Override
@@ -43,6 +33,8 @@ public class AuthenticationActivity extends SherlockActivity {
 
         setContentView(R.layout.authentication_activity);
         
+        getSupportActionBar().hide();
+        
         email_edit_ = (EditText) findViewById(R.id.email_edit);
         password_edit_ = (EditText) findViewById(R.id.password_edit);
         
@@ -51,6 +43,8 @@ public class AuthenticationActivity extends SherlockActivity {
         
         TextView slogan = (TextView) findViewById(R.id.slogan);
         slogan.setText(Html.fromHtml(getString(R.string.slogan)));
+        
+        handler_ = new Handler();
     }
     @Override
     public void onBackPressed(){
@@ -75,62 +69,53 @@ public class AuthenticationActivity extends SherlockActivity {
     }
 
     public void handleLogin(View view) {
-        user_email_ = email_edit_.getText().toString();
-        user_password_ = password_edit_.getText().toString();
+        String email = email_edit_.getText().toString();
+        String password = password_edit_.getText().toString();
 
-        
-        // TODO: parse input and create new thread
-        if (user_email_.equals("") || user_password_.equals("")) {
-            // TODO message saying fields are empty
+        if (email.equals("") || password.equals("")) {
             Log.i(TAG, "Empty fields");
-
-            Toast.makeText(this, "Os campos encontram-se vazios",
-                    Toast.LENGTH_SHORT).show();
+            Utilities.showToast(this, R.string.empty_fields);
         } else {
-            Log.i(TAG, "Inicialize login with email: " + user_email_
-                    + " password: " + user_password_);
-            Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT).show();
-            authentication_thread_ = NetworkUtilities.attemptAuth(user_email_, user_password_, handler, this);
-            //onAuthenticationResult(true); // for debug purposes only!    
+            Log.i(TAG, "Inicialize login with email: " + email
+                    + " password: " + password);
+            Utilities.showToast(this, "Loading...");
+            NetworkUtilities.attemptAuth(email, password, handler_, this);
         }   
-        
+        /*
         SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
                 Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
         preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
         preferences_editor.commit();
         onAuthenticationResult(true);
+        */
     }
 
     public void onAuthenticationResult(boolean result) {
         if (result == true) {
-
             Intent intent = new Intent(this, DashboardActivity.class);
             startActivity(intent);
-            finish();
-            
-            
+            finish(); 
         } else {
-        	Log.d(TAG, "error");
-            Toast.makeText(this, "FUCK YOU", Toast.LENGTH_SHORT).show();
+        	Log.d(TAG, "Error");
+            Utilities.showToast(this, "Please check your email and password and try again.");
         }
     }
     
     
     public void handleSignUp(View view) {
         Log.i(TAG, "Initialize Sign Up");
-        Toast.makeText(this, "Sign UP", Toast.LENGTH_SHORT).show();
         
-        Intent intent = new Intent(this, RegistrationActivity.class);
+        Intent intent = new Intent(this, SignupActivity.class);
         startActivity(intent);
     }
     
-    public void handleForgotPassword(View view){
+    public void handleForgotPassword(View view) {
         Log.i(TAG, "Initialize Forgot Password");
-        Toast.makeText(this, "Forgot Password", Toast.LENGTH_SHORT).show();
+        Utilities.showToast(this, "Coming soon");
     }
     
-    public void handleFacebookConnection(View view){
+    public void handleFacebookConnection(View view) {
         Log.i(TAG, "Initialize Facebook Connection");
-        Toast.makeText(this, "Facebook connection - Coming Soon", Toast.LENGTH_SHORT).show();
+        Utilities.showToast(this, "Coming soon");
     }
 }
