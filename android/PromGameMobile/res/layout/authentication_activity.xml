@@ -53,7 +53,8 @@
             android:onClick="handleFacebookConnection"
             android:text="@string/sign_in_with_facebook"
             android:textAllCaps="true"
-            android:textSize="@dimen/button_primary_text_size" />
+            android:textSize="@dimen/button_primary_text_size"
+            style="@style/FacebookButtonAppTheme" />
 
         <Button
             android:id="@+id/sign_up_button"
@@ -63,7 +64,8 @@
             android:onClick="handleSignUp"
             android:text="@string/sign_up"
             android:textAllCaps="true"
-            android:textSize="@dimen/button_primary_text_size" />
+            android:textSize="@dimen/button_primary_text_size"
+            style="@style/WhiteButtonAppTheme" />
 
         <TextView
             android:id="@+id/textView1"
@@ -95,8 +97,8 @@
             android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:textColor="@color/white"
-            android:textColorHint="@color/white" >
-        </EditText>
+            android:textColorHint="@color/white"
+            style="@style/WhiteEditTextAppTheme" />
 
         <EditText
             android:id="@+id/password_edit"
@@ -106,7 +108,8 @@
             android:hint="@string/password"
             android:inputType="textPassword"
             android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            android:textColorHint="@color/white"
+            style="@style/WhiteEditTextAppTheme" />
 
         <Button
             android:id="@+id/log_in_button"
@@ -115,7 +118,8 @@
             android:onClick="handleLogin"
             android:text="@string/log_in"
             android:textAllCaps="true"
-            android:textSize="@dimen/button_primary_text_size" />
+            android:textSize="@dimen/button_primary_text_size"
+            style="@style/WhiteButtonAppTheme" />
 
         <Button
             android:id="@+id/forgot_button"
