@@ -219,7 +219,7 @@
 									'FROM promotion, user, userpromotion '.
 									'WHERE user.uid = userpromotion.uid '.
 									'AND promotion.pid = userpromotion.pid'.
-									'AND user.uid = '. $userId .' ;' );
+									'AND user.uid = '. $userID .' ;' );
 			
 			$ret = $sth->execute();
 			
