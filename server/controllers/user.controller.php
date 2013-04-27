@@ -12,12 +12,12 @@
 
 
 	DEFINE( 'MAIL_FROM_ADDRESS', 'noreply@lptlantic.fe.up.pt' );
-	DEFINE( 'MAIL_SUBJECT'     , 'Tlantic PromGame Mobile - Password Reset' );
+	DEFINE( 'MAIL_SUBJECT_RESET_PASS' , 'Tlantic PromGame Mobile - Password Reset' );
 
 	DEFINE( 'MAIL_HEADERS'     , "From: %s\r\nTo: %s\r\nReply-To: %s\r\nMIME-Version: 1.0\r\n".
-							     "Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit" );
+							     "Content-Type: %s; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit" );
 
-	DEFINE( 'MAIL_SIGNATURE'   , "Atenciosamente,\nA Equipa Tlantic PromGame Mobile" );
+	DEFINE( 'MAIL_SIGNATURE'   , "\r\n\r\n\r\nAtenciosamente,\nA Equipa Tlantic PromGame Mobile" );
 
 
 
@@ -251,11 +251,11 @@
 		}
 
 
-		public static function send_custom_message($from, $texto)
+		public function send_custom_message($subject, $contentType, $texto)
 		{
-			$headers = sprintf(MAIL_HEADERS, MAIL_FROM_ADDRESS, $from, $from);
+			$headers = sprintf(MAIL_HEADERS, MAIL_FROM_ADDRESS, $this-getEmail(), $this-getEmail(), $contentType);
 
-			return mail($from, MAIL_SUBJECT, "{$texto}\r\n\r\n" . MAIL_SIGNATURE, $headers);
+			return mail($this-getEmail(), $subject, "{$texto}\r\n\r\n\r\n" . MAIL_SIGNATURE, $headers);
 		}
 
 		public function reset_password()
@@ -281,10 +281,10 @@
 
 				else
 				{
-					$ret = self::send_custom_message($user->getEmail(),
-							"Foi pedido que fosse feito reset da password da sua conta na aplicação Tlantic PromGame Mobile.\r\n".
-							"Por favor siga o link: https://lgptlantic.fe.up.pt/reset_password/${token}\r\n".
-							"Se o pedido não efectuado por si, por favor ignore este e-mail" );
+					$ret = $this->send_custom_message(MAIL_SUBJECT_RESET_PASS, "text/plain",
+							"Foi pedido que fosse feito reset da password da sua conta na aplicação Tlantic PromGame Mobile.\r\n\r\n".
+							"Por favor siga o link: https://lgptlantic.fe.up.pt/reset_password/${token}\r\n\r\n".
+							"Se o pedido não efectuado por si, por favor ignore este e-mail" . MAIL_SIGNATURE );
 
 					$this->respond->setJSONCode( $ret ? R_STATUS_OK : R_USER_SENDMAIL_ERROR );
 				}
@@ -327,10 +327,10 @@
 
 					else
 					{
-						$ret = self::send_custom_message($user->getEmail(),
+						$ret = $this->send_custom_message(MAIL_SUBJECT_RESET_PASS, "text/plain",
 								"No seguimento do pedido de reset da password de acesso à sua conta,\r\n" .
-								"enviamos-lhe uma password temporária, que deverá ser alterada de imediato, após o login.\r\n".
-								"E-mail: {$user->getEmail()}\r\nPassword: + {$pass}" );
+								"enviamos-lhe uma password temporária, que deverá ser alterada de imediato após o login.\r\n\r\n".
+								"E-mail: {$user->getEmail()}\r\nPassword: + {$pass}" . MAIL_SIGNATURE );
 
 						if( !$ret )
 							$renderText = static::$status[R_USER_SENDMAIL_ERROR];
