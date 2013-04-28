@@ -298,13 +298,13 @@ public class NetworkUtilities {
 
         return user;
     }
-    
+
     public static Quiz fetchQuizGame(final String promotionid, String auth_token) {
-        String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "/?token=" + auth_token;
-        
-        
+        String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "/?token="
+                + auth_token;
+
         JSONObject response = get(uri);
-             
+
         Quiz new_quiz = Quiz.valueOf(response);
         return new_quiz;
     }
@@ -346,5 +346,34 @@ public class NetworkUtilities {
         };
 
         return NetworkUtilities.performOnBackgroundThread(runnable);
+    }
+
+    public static void submitAnswersQuizGame(String promotion_id,
+            String auth_token, ArrayList<Question> arrayList) {
+
+        // TODO: change
+        String uri = BASE_URL + PROMOTION_URI + "/" + promotion_id + QUIZ_URI + "/" + ":userpromotionid.json";
+
+        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("token", auth_token));
+        for (Question e : arrayList) {
+            params.add(new BasicNameValuePair("" + e.getId(), ""
+                    + e.getAnswered()));
+        }
+        // TODO: change
+        JSONObject json_response = post(uri, params);
+        if (validResponse(json_response)) {
+            try {
+                String won = getResponseContent(json_response).getString("won");
+                String correct = getResponseContent(json_response).getString(
+                        "correct");
+            } catch (JSONException e) {
+                Log.i(TAG, "Error to get response: "
+                        + getResponseContent(json_response));
+            }
+        } else {
+            Log.i(TAG, "Error to get response: "
+                    + getResponseContent(json_response));
+        }
     }
 }

@@ -14,13 +14,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
@@ -28,8 +28,10 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 public class QuizActivity extends SherlockFragmentActivity {
+    @SuppressWarnings("unused")
     private static final String TAG = "QuizActivity";
     private ActionBar action_bar_;
     /*
@@ -43,61 +45,33 @@ public class QuizActivity extends SherlockFragmentActivity {
     QuizCollectionPagerAdapter quiz_collection_adapter_;
     ViewPager view_pager_;
     static Quiz quiz_;
+    String authen_token;
+    String promotion_id;
 
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
 
+        setContentView(R.layout.quiz_pager);
+
         action_bar_ = getSupportActionBar();
         action_bar_.setTitle("Quiz Game");
-    
+
         quiz_collection_adapter_ = new QuizCollectionPagerAdapter(
                 getSupportFragmentManager());
 
         view_pager_ = (ViewPager) findViewById(R.id.pager);
         view_pager_.setAdapter(quiz_collection_adapter_);
-        
 
-              
         SharedPreferences preferences_editor = PromGame.getAppContext()
                 .getSharedPreferences(Constants.USER_PREFERENCES,
                         Context.MODE_PRIVATE);
 
-        String authen_token = preferences_editor.getString(
-                Constants.PREF_AUTH_TOKEN, null);
+        authen_token = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
+                null);
+        promotion_id = "1";
 
-        quiz_ = NetworkUtilities.fetchQuizGame("1", authen_token);
-
-        setContentView(R.layout.quiz_pager);
-        /*
-         * Question p1 = new Question(1,
-         * "Que nome se dá a alguém que nega a existência de Deus?");
-         * MultipleChoiceAnswer p1r1 = new MultipleChoiceAnswer(1);
-         * p1r1.addAnswer("Judeu"); p1r1.addAnswer("Ateu");
-         * p1r1.addAnswer("Cristão"); p1r1.addAnswer("Pagão");
-         * p1.setAnswer(p1r1); quiz_.addQuestion(p1);
-         * 
-         * Question p2 = new Question(2,
-         * "Qual das seguintes musicas pertence a Michael Jackson?");
-         * MultipleChoiceAnswer p1r2 = new MultipleChoiceAnswer(2);
-         * p1r2.addAnswer("Edge of Glory"); p1r2.addAnswer("Thriller");
-         * p1r2.addAnswer("Waka Waka"); p1r2.addAnswer("Paparazzi");
-         * p2.setAnswer(p1r2); quiz_.addQuestion(p2);
-         * 
-         * Question p3 = new Question(3,
-         * "Que ator foi personagem principal no filme \'O Exterminador\'?");
-         * MultipleChoiceAnswer p1r3 = new MultipleChoiceAnswer(3);
-         * p1r3.addAnswer("Arnold Schwarzenegger");
-         * p1r3.addAnswer("Sylvestre Stallone"); p1r3.addAnswer("Vin Diesel");
-         * p1r3.addAnswer("Van Damme"); p3.setAnswer(p1r3);
-         * quiz_.addQuestion(p3);
-         * 
-         * Question p4 = new Question(4, "De quem é a musica \'Loca\'?");
-         * MultipleChoiceAnswer p1r4 = new MultipleChoiceAnswer(3);
-         * p1r4.addAnswer("Shakira"); p1r4.addAnswer("Carolina Herrera");
-         * p1r4.addAnswer("Kat DeLuna"); p1r4.addAnswer("Naty Botero");
-         * p4.setAnswer(p1r4); quiz_.addQuestion(p4);
-         */
+        quiz_ = NetworkUtilities.fetchQuizGame(promotion_id, authen_token);
 
         /*
          * gesture_detector_ = new GestureDetector(this, new
@@ -112,7 +86,43 @@ public class QuizActivity extends SherlockFragmentActivity {
          * question_layout_wrapper.setOnTouchListener(gesture_listener_);
          */
     }
-    
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getSupportMenuInflater();
+        inflater.inflate(R.menu.menu_quiz, menu);
+        return true;
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.menu_submit:
+            submitAnswers();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void submitAnswers() {
+
+        for (int i = 0; i < quiz_.getQuestions().size(); i++) {
+            if (quiz_.getQuestions().get(i).getAnswered() == -1) {
+                Toast.makeText(this, "Responda a todas as questões",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+//TODO: falta update a isto
+        /*NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token,
+                quiz_.getQuestions());*/
+
+        Toast.makeText(this, "Submetido", Toast.LENGTH_SHORT).show();
+
+    }
+
     private static class QuizCollectionPagerAdapter extends
             FragmentStatePagerAdapter {
         public QuizCollectionPagerAdapter(FragmentManager fm) {
@@ -125,14 +135,14 @@ public class QuizActivity extends SherlockFragmentActivity {
             Bundle args = new Bundle();
             args.putString("question", quiz_.getQuestions().get(i).getTitle());
             args.putInt("num_question", i);
+
             @SuppressWarnings("unchecked")
             ArrayList<String> answerslist = ((ArrayList<String>) quiz_
                     .getQuestions().get(i).getAnswer().getContent());
             args.putInt("num_answers", answerslist.size());
-            int j = 0;
-            for (String e : answerslist) {
-                args.putString("answer" + j, e);
-                j++;
+
+            for (int j = 0; j < answerslist.size(); j++) {
+                args.putString("answer" + j, answerslist.get(j));
             }
             fragment.setArguments(args);
 
@@ -182,15 +192,13 @@ public class QuizActivity extends SherlockFragmentActivity {
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
                     quiz_.getQuestions().get(args.getInt("num_question"))
                             .setAnswered(checkedId);
-
-                    Log.i(TAG, "question: " + args.getInt("num_question")
-                            + " & answer: " + checkedId);
                 }
             });
 
             return root_view;
         }
     }
+
     /*
      * private static class QuizGestureDetector extends SimpleOnGestureListener
      * {
