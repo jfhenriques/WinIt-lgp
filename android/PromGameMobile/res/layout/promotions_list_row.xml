@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+
+    <RelativeLayout
+        android:id="@+id/leftSide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="handlePromSelected"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/promo_image1"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:layout_margin="6dp"
+            android:contentDescription="PromotionImage"
+            android:padding="5dp"
+             />
+
+        <TextView
+            android:id="@+id/description1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/promo_image1"
+            android:layout_alignLeft="@+id/promo_image1"
+            android:layout_alignRight="@+id/promo_image1"
+            android:layout_alignTop="@+id/promo_image1"
+            android:layout_margin="1dp"
+            android:gravity="bottom|right"
+            android:text="Promotion X"
+            android:textColor="@color/black"
+            android:textSize="20sp" >
+        </TextView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rightSide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="handlePromSelected"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/promo_image2"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:layout_margin="6dp"
+            android:contentDescription="PromotionImage"
+            android:padding="5dp" />
+
+        <TextView
+            android:id="@+id/description2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/promo_image2"
+            android:layout_alignLeft="@+id/promo_image2"
+            android:layout_alignRight="@+id/promo_image2"
+            android:layout_alignTop="@+id/promo_image2"
+            android:layout_margin="1dp"
+            android:gravity="right|bottom"
+            android:text="Promotion X"
+            android:textColor="@color/black"
+            android:textSize="20sp" >
+        </TextView>
+    </RelativeLayout>
+
+</LinearLayout>
