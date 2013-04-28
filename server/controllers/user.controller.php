@@ -9,6 +9,8 @@
 
 	DEFINE( 'R_USER_EMAIL_MISSING'		, 0x30 );
 	DEFINE( 'R_USER_SENDMAIL_ERROR'		, 0x31 );
+	DEFINE( 'R_USER_MUST_SEND_OLD_P'	, 0x32 );
+	DEFINE( 'R_USER_BAD_OLD_PASS'		, 0x33 );
 
 
 	DEFINE( 'MAIL_SUBJECT_RESET_PASS' , 'Tlantic PromGame Mobile - Password Reset' );
@@ -28,6 +30,9 @@
 
 				R_USER_EMAIL_MISSING	=> 'Deve fornecer o e-mail para fazer reset à password',
 				R_USER_SENDMAIL_ERROR	=> 'Não foi possível enviar o e-mail para o endereço de destino',
+
+				R_USER_MUST_SEND_OLD_P	=> 'É necessário enviar a password antiga para alterar a password',
+				R_USER_BAD_OLD_PASS		=> 'A password antiga está errada',
 			);
 
 		
@@ -118,9 +123,24 @@
 				//$token_fb = valid_request_var('token_fabebook');
 				//$token_tw = valid_request_var('token_twitter');
 				$password = valid_request_var('password', false);
+				$password_old = valid_request_var('password_old', false);
 				
-				if( !is_null($email) && !is_null( User::findByEmail( $email ) ) )
+
+				// Must verifiy if mail is not taken
+				if( !is_null($email) && $email !== $user->getEmail() && !is_null( User::findByEmail( $email ) ) )
 					$this->respond->setJSONCode( R_USER_ERR_EMAIL_EXISTS );
+
+				// If changing password, must provide old password
+				elseif( !is_null($password) && is_null( $password_old ) )
+					$this->respond->setJSONCode( R_USER_MUST_SEND_OLD_P );
+
+				// Old password must be correct
+				elseif( !is_null($password) && User::compareWithHashedPass($password_old, $user->getPassword()) === false )
+					$this->respond->setJSONCode( R_USER_BAD_OLD_PASS );
+
+				// if changic address, must check if adid exists
+				elseif( !is_null( $adid ) && is_null( Address::findByADID( $adid ) ) )
+					$this->respond->setJSONCode( R_USER_ERR_INV_ADID );
 
 				else
 				{
@@ -139,24 +159,10 @@
 					if( !is_null($birth) )
 						$user->setBirth($birth);
 
-					// if( !is_null($token_fb) )
-					// 	$user->setTokenFacebook($token_fb);
+					if( !is_null($password) )
+						$user->setPassword( User::saltPass( $password ) );
 				
-					// if( !is_null($token_tw))
-					// 	$user->setTokenTwitter($token_tw);
-
-					if( !is_null( $user->getADID() ) && is_null( Address::findByADID($user->getADID()) ) )
-						$this->respond->setJSONCode( R_USER_ERR_INV_ADID );
-
-					else
-					{
-					
-						if( !is_null($password) )
-							$user->setPassword( User::saltPass( $password ) );
-					
-						$this->respond->setJSONCode( $user->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
-
-					}
+					$this->respond->setJSONCode( $user->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 				}
 							
 			}
@@ -306,7 +312,7 @@
 
 				else
 				if( $user->getResetTokenValidity() < time() )
-					$renderText = "Excedeu o tempo para fazer reset à password";
+					$renderText = "Excedeu o tempo permitido para fazer reset à password";
 
 				else
 				{

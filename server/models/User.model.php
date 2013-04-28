@@ -238,18 +238,23 @@
 			return static::fillModel( $result, new User() );
 		}
 
+		public static function compareWithHashedPass($newPass, $oldHashedPass)
+		{
+			if( is_null( $newPass ) || is_null( $oldHashedPass ) )
+				return false;
+
+			$exp = explode(':', $oldHashedPass, 3);
+
+			return ( count( $exp ) === 3 &&
+						static::saltPass( $newPass , $exp[1] ) === $oldHashedPass ) ;
+		}
+
 		public static function findByCredentials($email, $pass)
 		{
 			$user = static::findByEmail( $email );
 
-			if( !is_null( $user ) && !is_null( $user->getPassword() ) )
-			{
-				$uPass = $user->getPassword();
-				$exp = explode(':', $uPass, 3);
-				if( count( $exp ) === 3 &&
-						static::saltPass( $pass , $exp[1] ) === $uPass )
-					return $user;
-			}
+			if( !is_null( $user ) && self::compareWithHashedPass( $pass, $user->getPassword() ) !== false )
+				return $user;
 
 			return null;
 		}
