@@ -21,10 +21,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 
 public class QuizActivity extends SherlockFragmentActivity {
     private static final String TAG = "QuizActivity";
@@ -44,17 +47,18 @@ public class QuizActivity extends SherlockFragmentActivity {
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
-        setContentView(R.layout.quiz_pager);
 
         action_bar_ = getSupportActionBar();
         action_bar_.setTitle("Quiz Game");
-
+    
         quiz_collection_adapter_ = new QuizCollectionPagerAdapter(
                 getSupportFragmentManager());
 
         view_pager_ = (ViewPager) findViewById(R.id.pager);
         view_pager_.setAdapter(quiz_collection_adapter_);
+        
 
+              
         SharedPreferences preferences_editor = PromGame.getAppContext()
                 .getSharedPreferences(Constants.USER_PREFERENCES,
                         Context.MODE_PRIVATE);
@@ -62,10 +66,9 @@ public class QuizActivity extends SherlockFragmentActivity {
         String authen_token = preferences_editor.getString(
                 Constants.PREF_AUTH_TOKEN, null);
 
-        Log.i(TAG, "new quiz");
-
         quiz_ = NetworkUtilities.fetchQuizGame("1", authen_token);
 
+        setContentView(R.layout.quiz_pager);
         /*
          * Question p1 = new Question(1,
          * "Que nome se dá a alguém que nega a existência de Deus?");
@@ -109,7 +112,7 @@ public class QuizActivity extends SherlockFragmentActivity {
          * question_layout_wrapper.setOnTouchListener(gesture_listener_);
          */
     }
-
+    
     private static class QuizCollectionPagerAdapter extends
             FragmentStatePagerAdapter {
         public QuizCollectionPagerAdapter(FragmentManager fm) {
@@ -121,13 +124,15 @@ public class QuizActivity extends SherlockFragmentActivity {
             Fragment fragment = new QuestionObjectFragment();
             Bundle args = new Bundle();
             args.putString("question", quiz_.getQuestions().get(i).getTitle());
-
+            args.putInt("num_question", i);
             @SuppressWarnings("unchecked")
             ArrayList<String> answerslist = ((ArrayList<String>) quiz_
                     .getQuestions().get(i).getAnswer().getContent());
             args.putInt("num_answers", answerslist.size());
-            for (int j = 0; j < answerslist.size(); j++) {
-                args.putString("answer" + j, answerslist.get(j));
+            int j = 0;
+            for (String e : answerslist) {
+                args.putString("answer" + j, e);
+                j++;
             }
             fragment.setArguments(args);
 
@@ -154,7 +159,7 @@ public class QuizActivity extends SherlockFragmentActivity {
                 Bundle saved_instance_state) {
             View root_view = inflater.inflate(R.layout.question_fragment,
                     container, false);
-            Bundle args = getArguments();
+            final Bundle args = getArguments();
             ((TextView) root_view.findViewById(R.id.question_text))
                     .setText(args.getString("question"));
 
@@ -170,6 +175,19 @@ public class QuizActivity extends SherlockFragmentActivity {
                 r.setGravity(Gravity.CENTER_VERTICAL);
                 radio.addView(r);
             }
+
+            radio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    quiz_.getQuestions().get(args.getInt("num_question"))
+                            .setAnswered(checkedId);
+
+                    Log.i(TAG, "question: " + args.getInt("num_question")
+                            + " & answer: " + checkedId);
+                }
+            });
+
             return root_view;
         }
     }

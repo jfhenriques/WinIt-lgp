@@ -301,10 +301,10 @@ public class NetworkUtilities {
     
     public static Quiz fetchQuizGame(final String promotionid, String auth_token) {
         String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "/?token=" + auth_token;
-
-        Log.i(TAG, uri);
+        
+        
         JSONObject response = get(uri);
-        Log.i(TAG, response.toString());
+             
         Quiz new_quiz = Quiz.valueOf(response);
         return new_quiz;
     }
