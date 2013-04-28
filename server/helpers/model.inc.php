@@ -36,8 +36,6 @@
 
 		protected $data = array();
 
-	
-
 		public abstract function save();
 
 

@@ -131,7 +131,14 @@
 		}
 
 
+		public function sendCustomMail($to, $subject, $contentType, $text, $replySameTo = false)
+		{
+			$headers = sprintf("From: %s\r\nReply-To: %s\r\nMIME-Version: 1.0\r\n".
+							   "Content-Type: %s; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit",
+							   MAIL_FROM_ADDRESS, $replySameTo ? $to : MAIL_FROM_ADDRESS , $contentType);
 
+			return mail($to, $subject, $text, $headers);
+		}
 		
 		public static function registerAuthFunction( $func )
 		{
