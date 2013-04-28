@@ -21,6 +21,7 @@
 	class  UserController extends Controller {
 
 		private static $status = array(
+			
 				R_USER_ERR_USER_NOT_FOUND => 'Utilizador não encontrado',
 
 				R_USER_ERR_PARAMS		=> 'Parâmetros não definidos',

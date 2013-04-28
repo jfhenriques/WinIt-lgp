@@ -119,7 +119,7 @@
 
 		public static function buildVarName($var_pref, $var)
 		{
-			return ".${var_pref}.${var}";
+			return "${var_pref}.${var}";
 		}
 		
 		public function getMemcached()
@@ -129,7 +129,7 @@
 		
 		public function get($var)
 		{
-			$var0 = COMMON_CACHE_VAR_PREFIX . "$var" ;
+			$var0 = COMMON_CACHE_VAR_PREFIX . ".{$var}" ;
 
 			switch( $this->TYPE )
 			{
@@ -146,7 +146,7 @@
 		
 		public function delete($var)
 		{
-			$var0 = COMMON_CACHE_VAR_PREFIX . "$var" ;
+			$var0 = COMMON_CACHE_VAR_PREFIX . ".{$var}" ;
 
 			switch( $this->TYPE )
 			{
@@ -170,7 +170,7 @@
 		}*/
 		public function set($var, $val)
 		{
-			$var0 = COMMON_CACHE_VAR_PREFIX . "$var" ;
+			$var0 = COMMON_CACHE_VAR_PREFIX . ".{$var}" ;
 			
 			switch( $this->TYPE )
 			{
