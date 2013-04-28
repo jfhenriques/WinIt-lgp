@@ -1,5 +1,7 @@
 <?php
 
+	DEFINE('ITEM_RET_SRC_DIR', 'img/04e36748dd36c92422c3a300db9897ceb4c4cd48/');
+
 	class Promotion extends ActiveRecord {
 	
 		// private $pid = null;
@@ -18,158 +20,204 @@
 		// private $grand_limit;
 		
 		const TABLE_NAME = 'promotion' ;
+		const TABLE_NAME_RET = 'retailer' ;
+		const TABLE_NAME_TYPE = 'promotiontype' ;
+
+
+
+		const TYPE_QUIZ_GAME = 1;
+		const TYPE_PROXIMITY_ALERT = 2;
+
+
+		private function __construct() { }
+
 		
 		/* GET's and SET's*/
 
-		public function getID()
+		public function getPID()
 		{
 			return (int)$this->getData('pid');
 		}
+		public function getRID()
+		{
+			return (int)$this->getData('rid');
+		}
+
+
 	
 		public function getName()
 		{
 			return $this->getData('name');
 		}
-		public function setName($name)
-		{
-			$this->data['name'] = $name;
-		}
+		// public function setName($name)
+		// {
+		// 	$this->data['name'] = $name;
+		// }
+
 		
-		public function getInit_date()
+		public function getInitDate()
 		{
-			return $this->getData('init_date');
+			return (int)$this->getData('init_date');
 		}
-		public function setInit_date($init_date)
-		{
-			$this->data['init_date'] = $init_date;
-		}
+		// public function setInitDate($init_date)
+		// {
+		// 	$this->data['init_date'] = $init_date;
+		// }
 		
-		public function getEnd_date()
+		public function getEndDate()
 		{
-			return $this->getData('end_date');
+			return (int)$this->getData('end_date');
 		}
-		public function setEnd_date($end_date)
-		{
-			$this->data['end_date'] = $end_date;
-		}
+		// public function setEndDate($end_date)
+		// {
+		// 	$this->data['end_date'] = $end_date;
+		// }
 		
-		public function getUser_limit()
+		public function getGrandLimit()
 		{
-			return $this->getData('user_limit');
+			return (int)$this->getData('grand_limit');
 		}
-		public function setUser_limit($user_limit)
+		// public function setGrandLimit($grand_limit)
+		// {
+		// 	$this->data['grand_limit'] = $grand_limit;
+		// }
+
+		public function getUserLimit()
 		{
-			$this->data['user_limit'] = $user_limit;
+			return (int)$this->getData('user_limit');
 		}
+		// public function setUserLimit($user_limit)
+		// {
+		// 	$this->data['user_limit'] = $user_limit;
+		// }
 		
-		public function getValid_coord()
+		public function getValidCoord()
 		{
 			return $this->getData('valid_coord');
 		}
-		public function setValid_coord($valid_coord)
-		{
-			$this->data['valid_coord'] = $valid_coord;
-		}
+		// public function setValidCoord($valid_coord)
+		// {
+		// 	$this->data['valid_coord'] = $valid_coord;
+		// }
 		
-		public function getValid_coord_radius()
+		public function getValidCoordRadius()
 		{
 			return $this->getData('valid_coord_radius');
 		}
-		public function setValid_coord_radius($valid_coord_radius)
-		{
-			$this->data['valid_coord_radius'] = $valid_coord_radius;
-		}
+		// public function setValidCoordRadius($valid_coord_radius)
+		// {
+		// 	$this->data['valid_coord_radius'] = $valid_coord_radius;
+		// }
 		
-		public function getTransferable()
+		public function isTransferable()
 		{
-			return $this->getData('transferable');
+			return (boolean)$this->getData('transferable');
 		}
-		public function setTransferable($transferable)
-		{
-			$this->data['transferable'] = $transferable;
-		}
+		// public function setTransferable($transferable)
+		// {
+		// 	$this->data['transferable'] = $transferable;
+		// }
 		
-		public function getActive()
+
+		public function isActive()
 		{
-			return $this->getData('active');
+			return (boolean)$this->getData('active');
 		}
-		public function setActive($active)
-		{
-			$this->data['active'] = $active;
-		}
+		// public function setActive($active)
+		// {
+		// 	$this->data['active'] = $active;
+		// }
 		
-		public function getWin_points()
+		public function getWinPoints()
 		{
-			return $this->getData('win_points');
+			return (int)$this->getData('win_points');
 		}
-		public function setWin_points($win_points)
-		{
-			$this->data['win_points'] = $win_points;
-		}
+		// public function setWinPoints($win_points)
+		// {
+		// 	$this->data['win_points'] = $win_points;
+		// }
 		
-		public function getRid()
-		{
-			return $this->getData('rid');
-		}
-		public function setRid($rid)
-		{
-			$this->data['rid'] = $rid;
-		}
-		
-		public function getPtid()
+		public function getPTID()
 		{
 			return $this->getData('ptid');
 		}
-		public function setPtid($ptid)
-		{
-			$this->data['ptid'] = $ptid;
-		}
+		// public function setPtid($ptid)
+		// {
+		// 	$this->data['ptid'] = $ptid;
+		// }
 		
 		
-		public function getFunc_type()
+		public function getFuncType()
 		{
-			return $this->getData('func_type');
+			return (int)$this->getData('func_type');
 		}
-		public function setFunc_type($func_type)
+		// public function setFuncType($func_type)
+		// {
+		// 	$this->data['func_type'] = $func_type;
+		// }
+
+		public function getRetailerName()
 		{
-			$this->data['func_type'] = $func_type;
+			return $this->getData('ret_name');
+		}
+
+		public function geRetailerImage()
+		{
+			return $this->getData('ret_image');
+		}
+
+		public function getRetailerImageSRC()
+		{
+			$img = $this->getData('ret_image');
+			return is_null( $img ) ? null : ( ITEM_RET_SRC_DIR . $img );
+		}
+
+		public function getPromotionType()
+		{
+			return $this->getData('prom_type');
 		}
 		
-		public function getGrand_limit()
+
+		public function getItems()
 		{
-			return $this->getData('grand_limit');
+			$pid = $this->getPid();
+
+			return $pid > 0 ? ItemPromotion::findByPID( $pid ) : array() ;
 		}
-		public function setGrand_limit($grand_limit)
-		{
-			$this->data['grand_limit'] = $grand_limit;
-		}	
+
 		
-	
-		public function save()
+		public static function findByPID($pid)
 		{
-		}
-		
-		public static function findById($pid)
-		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE pid = ? LIMIT 1;',
+			$result = static::query( 'SELECT p.pid AS pid, p.active AS active, p.name AS name, p.init_date AS init_date, ' .
+									  ' p.end_date AS end_date, p.grand_limit AS grand_limit, p.user_limit AS user_limit, ' .
+									  ' p.valid_coord AS valid_coord, p.valid_coord_radius AS valid_coord_radius, ' .
+									  ' p.transferable AS transferable, p.win_points AS win_points, p.func_type AS func_type ,' .
+									  ' p.rid AS rid, p.ptid AS ptid, r.name AS ret_name, t.name AS prom_type, r.image AS ret_image  ' .
+									  ' FROM ' . self::TABLE_NAME . ' AS p ' .
+									  'INNER JOIN ' . self::TABLE_NAME_RET . ' AS r ON(r.rid = p.rid) ' .
+									  'INNER JOIN ' . self::TABLE_NAME_TYPE . ' AS t ON(t.ptid = p.ptid) ' .
+									  'WHERE p.pid = ? AND p.active = 1 LIMIT 1;',
 									  array( $pid ) );
 
 			return static::fillModel( $result, new Promotion() );
 		}
-		
-		public static function getPromotion($id) {
-		
-			$dbh = DbConn::getInstance()->getDB();
-			$sth = null;
-			
-			$sth = $dbh->prepare('SELECT * FROM promotion WHERE promotion.pid = '. $id .';');
-			
-			$sth->execute();
-			
-			$ret = $sth->fetchAll();
-			
-			var_dump($ret);
-			return $ret;	
+
+		public static function findValidPromotions($uid)
+		{
+			$promos = array();
+			$return = static::executeQuery( 'SELECT * FROM ' . self::TABLE_NAME . ' WHERE pid = ? ORDER BY qid ASC;',
+									  			array( $pid ), $stmt );
+
+			if( $stmt !== null && $return !== false )
+			{
+				while( $row = $stmt->fetch() )
+				{
+					if( !is_null( $res = static::fillModel( $row, new QuizGameQuestion() ) ) )
+						$promos[] = $res ;
+				}
+			}
+
+			return $promos;
 		}
 	}
 

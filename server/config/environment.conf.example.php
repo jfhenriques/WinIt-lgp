@@ -10,8 +10,8 @@
 	 *	PDO configuration
 	 */
 	DEFINE('PDO_DATABASE', 'mysql:host=localhost;dbname=DB_NAME_HERE;charset=UTF-8' );
-	DEFINE('PDO_USERNAME', 'DB_USER');
-	DEFINE('PDO_PASSWORD', 'DB_PASS');
+	DEFINE('PDO_USERNAME', 'DB_USER_HERE');
+	DEFINE('PDO_PASSWORD', 'DB_PASS_HERE');
 	
 	
 	/*
@@ -62,18 +62,30 @@
 	/*
 	 *	Validity of tokens until they die
 	 */
-	DEFINE( 'TOKEN_VALIDITY', (3600*24*7) );
+	DEFINE( 'TOKEN_VALIDITY', 604800 ); // 3600*24*7
 
 
 	/*
 	 *	E-mail from address, used by Controller::sendCustomMail(...)
 	 */
-	DEFINE( 'MAIL_FROM_ADDRESS', 'noreply@lptlantic.fe.up.pt' );
+	DEFINE( 'MAIL_FROM_ADDRESS', 'noreply@localhost' );
 
 
 	/*
 	 *	Leave empy if the website is in the root (namespaces don't count)
 	 */
-	DEFINE( 'BASE_URI', 'tlantic/' );
+	DEFINE( 'BASE_URI', '' );
+
+
+	/*
+	 *	If there is an alternative path to access static content, se this to true
+	 */
+	DEFINE( 'USE_STATIC_URI', false );
+
+
+	/*
+	 *	The base uri or schema+host+uri to access the static content
+	 */
+	DEFINE( 'BASE_STATIC_URI', '' );
 
 ?>

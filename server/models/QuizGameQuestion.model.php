@@ -11,6 +11,10 @@
 		const TYPE_MULTI  = 3;
 
 
+
+		private function __construct() { }
+
+
 		function getQID()
 		{
 			return (int)$this->getData('qid');
@@ -21,7 +25,7 @@
 		}
 		function getQuestionType()
 		{
-			return (int)$this->getData('answer_type', self::TYPE_UNKNOWN); // needs to be changed in the database to question_type
+			return (int)$this->getData('question_type', self::TYPE_UNKNOWN);
 		}
 		function getAnswerChoices()
 		{
@@ -98,16 +102,13 @@
 			{
 				while( $row = $stmt->fetch() )
 				{
-					if( ( $res = static::fillModel( $row, new QuizGameQuestion() ) ) !== null )
+					if( !is_null( $res = static::fillModel( $row, new QuizGameQuestion() ) ) )
 						$questions[] = $res ;
 				}
 			}
 
 			return $questions;
 		}
-
-
-		public function save() { }
 
 	}
 

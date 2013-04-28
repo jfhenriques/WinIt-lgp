@@ -139,6 +139,15 @@
 
 			return mail($to, $subject, $text, $headers);
 		}
+
+		public function formatURL($src)
+		{
+			if( is_null( $src ) )
+				return null;
+			
+			return ( USE_STATIC_URI ? BASE_STATIC_URI : ( '/' . BASE_URI ) ) . $src ;
+		}
+
 		
 		public static function registerAuthFunction( $func )
 		{

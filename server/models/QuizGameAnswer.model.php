@@ -1,6 +1,8 @@
 <?php
 
-	class QuizGameAnswer extends ActiveRecord {
+	class QuizGameAnswer
+		extends ActiveRecord
+		implements SavableActiveRecord {
 
 		const TABLE_NAME = "qganswer";
 
