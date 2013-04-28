@@ -117,9 +117,9 @@
 			return static::$instance;
 		}
 
-		public static function buildVarName($var_suff, $var)
+		public static function buildVarName($var_pref, $var)
 		{
-			return COMMON_CACHE_VAR_PREFIX . ".${var_suff}.${var}";
+			return ".${var_pref}.${var}";
 		}
 		
 		public function getMemcached()
@@ -129,13 +129,15 @@
 		
 		public function get($var)
 		{
+			$var0 = COMMON_CACHE_VAR_PREFIX . "$var" ;
+
 			switch( $this->TYPE )
 			{
 				case COMMON_CACHE_APC:
-					return unserialize( apc_fetch( $var ) );
+					return unserialize( apc_fetch( $var0 ) );
 					
 				case COMMON_CACHE_MEMCACHED:
-					return $this->mc->get( $var ) ;
+					return $this->mc->get( $var0 ) ;
 					
 				default:
 					return false;
@@ -144,13 +146,15 @@
 		
 		public function delete($var)
 		{
+			$var0 = COMMON_CACHE_VAR_PREFIX . "$var" ;
+
 			switch( $this->TYPE )
 			{
 				case COMMON_CACHE_APC:
-					return apc_delete( $var );
+					return apc_delete( $var0 );
 					
 				case COMMON_CACHE_MEMCACHED:
-					return $this->mc->delete( $var ) ;
+					return $this->mc->delete( $var0 ) ;
 					
 				default:
 					return false;
@@ -166,13 +170,15 @@
 		}*/
 		public function set($var, $val)
 		{
+			$var0 = COMMON_CACHE_VAR_PREFIX . "$var" ;
+			
 			switch( $this->TYPE )
 			{
 				case COMMON_CACHE_APC:
-					return apc_store( $var, serialize( $val ) );
+					return apc_store( $var0, serialize( $val ) );
 					
 				case COMMON_CACHE_MEMCACHED:
-					return $this->mc->set($var, $val) ;
+					return $this->mc->set($var0, $val) ;
 					
 				default:
 					return false;
