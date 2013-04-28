@@ -149,19 +149,27 @@
 		{
 		}
 		
-		public function getPromotion() {
+		public static function findById($pid)
+		{
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE pid = ? LIMIT 1;',
+									  array( $pid ) );
+
+			return static::fillModel( $result, new Promotion() );
+		}
+		
+		public static function getPromotion($id) {
 		
 			$dbh = DbConn::getInstance()->getDB();
 			$sth = null;
 			
-			$sth = $dbh->prepare('SELECT * FROM promotion WHERE promotion.pid = '. $this->getID() .';');
+			$sth = $dbh->prepare('SELECT * FROM promotion WHERE promotion.pid = '. $id .';');
 			
 			$sth->execute();
 			
 			$ret = $sth->fetchAll();
 			
 			var_dump($ret);
-			return ret;	
+			return $ret;	
 		}
 	}
 
