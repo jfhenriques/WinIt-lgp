@@ -1,6 +1,8 @@
 <?php
 
-	class QuizGameAnswer extends ActiveRecord {
+	class QuizGameAnswer
+		extends ActiveRecord
+		implements SavableActiveRecord {
 
 		const TABLE_NAME = "qganswer";
 
@@ -59,7 +61,7 @@
 			$upid = $this->getUPID() ;
 			$answer = $this->getAnswer() ;
 
-			if( is_null( $qid ) || is_null( $upid ) )
+			if( $qid <= 0 || $upid <= 0 )
 				throw new Exception("QID e/ou UPID têm de estar definidos");
 			
 			$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (qid,upid,answer) VALUES(:qid, :upid, :answer) ON DUPLICATE KEY UPDATE answer = :answer ;');	

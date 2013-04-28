@@ -1,12 +1,22 @@
 <?php
 
-	class UserPromotion extends ActiveRecord {
+	class UserPromotion
+		extends ActiveRecord
+		implements SavableActiveRecord {
 
 
 		const TABLE_NAME = "userpromotion";
 
 		const STATE_UNKNOWN		  = 0;
 		const STATE_WON			  = 1;
+
+
+
+
+		public function __construct(User $user, Promotion $promotion)
+		{
+
+		}
 
 		public function getUPID()
 		{

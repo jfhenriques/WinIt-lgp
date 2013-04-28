@@ -44,7 +44,7 @@
 				
 				else
 				{
-					$userId = $user->getID();
+					$userId = $user->getUID();
 
 					$token		= null;
 					$success	= false;

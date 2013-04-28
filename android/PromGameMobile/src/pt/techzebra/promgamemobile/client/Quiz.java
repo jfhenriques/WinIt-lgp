@@ -39,37 +39,12 @@ public class Quiz {
         }
     }
 
-    public void play() {
-        /*
-         * System.out.println("Bem-vindo"); int numPer = 0; int pontos = 0;
-         * while (numPer < questions_.size()) { Question p =
-         * questions_.get(numPer); System.out.println(numPer + ":" +
-         * (p.getQuestionId()+1)); System.out.println();
-         * 
-         * Scanner s = new Scanner(System.in); Scanner s1 = new
-         * Scanner(System.in);
-         * 
-         * String opt = "n"; int per = Integer.MAX_VALUE; while
-         * (opt.equals("n")) { for (int i = 0; i < p.getAnswers().size(); i++) {
-         * Answer r = p.getAnswers().get(i); System.out.println(i + ":" +
-         * r.getText()); } System.out.println("Opt:"); per = s.nextInt();
-         * 
-         * System.out.println("Tem a certeza?(s/n)"); opt = s1.nextLine(); }
-         * 
-         * if (p.getAnswers().get(per).isCorrect()) { pontos++;
-         * System.out.println("Está correta"); } else {
-         * System.out.println("Está incorreta"); } numPer++;
-         * System.out.println(); } System.out.println("Pontos: " + pontos); if
-         * (pontos == questions_.size())
-         * System.out.println("Ganhaste a promoção");
-         * System.out.println("GoodBye");
-         */
-    }
-
     public static Quiz valueOf(JSONObject quiz) {
+
         try {
-            if (quiz.getInt("s") == 0) {
-                JSONObject value_quiz = quiz.getJSONObject("r");
+            if (NetworkUtilities.validResponse(quiz)) {
+                JSONObject value_quiz = NetworkUtilities
+                        .getResponseContent(quiz);
                 final String name = value_quiz.getString("name");
                 final boolean is_quiz = value_quiz.getBoolean("is_quiz");
                 if (is_quiz) {
@@ -84,11 +59,11 @@ public class Quiz {
 
                     return new_quiz;
                 } else {
-                    return null;
+                    Log.i("Quiz", "This is not a quiz");
                 }
             } else {
-                Log.i("Quiz",
-                        "Error parsing JSON: message: " + quiz.getString("m"));
+                Log.i("Quiz", "Error parsing JSON: message: "
+                        + NetworkUtilities.getResponseMessage(quiz));
             }
         } catch (JSONException e) {
             Log.i("Quiz", "Error parsing JSON user object" + e.toString());

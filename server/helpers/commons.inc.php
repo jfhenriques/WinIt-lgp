@@ -25,11 +25,12 @@
 	set_exception_handler("my_exception_handler");
 	
 	set_error_handler(function($errno, $errstr, $errfile, $errline ) {
+		$exc = new ErrorException($errstr, $errno, 0, $errfile, $errline);
+
 		if ( (ini_get('error_reporting') & $errno) !== 0 )
-		{
-			$exc = new ErrorException($errstr, $errno, 0, $errfile, $errline);
 			my_exception_handler( $exc );
-		}
+		else
+			error_log($exc);
 	});
 	
 	register_shutdown_function(function() {
@@ -116,9 +117,9 @@
 			return static::$instance;
 		}
 
-		public static function buildVarName($var_suff, $var)
+		public static function buildVarName($var_pref, $var)
 		{
-			return COMMON_CACHE_VAR_PREFIX . ".${var_suff}.${var}";
+			return "${var_pref}.${var}";
 		}
 		
 		public function getMemcached()
@@ -128,13 +129,15 @@
 		
 		public function get($var)
 		{
+			$var0 = COMMON_CACHE_VAR_PREFIX . ".{$var}" ;
+
 			switch( $this->TYPE )
 			{
 				case COMMON_CACHE_APC:
-					return unserialize( apc_fetch( $var ) );
+					return unserialize( apc_fetch( $var0 ) );
 					
 				case COMMON_CACHE_MEMCACHED:
-					return $this->mc->get( $var ) ;
+					return $this->mc->get( $var0 ) ;
 					
 				default:
 					return false;
@@ -143,13 +146,15 @@
 		
 		public function delete($var)
 		{
+			$var0 = COMMON_CACHE_VAR_PREFIX . ".{$var}" ;
+
 			switch( $this->TYPE )
 			{
 				case COMMON_CACHE_APC:
-					return apc_delete( $var );
+					return apc_delete( $var0 );
 					
 				case COMMON_CACHE_MEMCACHED:
-					return $this->mc->delete( $var ) ;
+					return $this->mc->delete( $var0 ) ;
 					
 				default:
 					return false;
@@ -165,13 +170,15 @@
 		}*/
 		public function set($var, $val)
 		{
+			$var0 = COMMON_CACHE_VAR_PREFIX . ".{$var}" ;
+			
 			switch( $this->TYPE )
 			{
 				case COMMON_CACHE_APC:
-					return apc_store( $var, serialize( $val ) );
+					return apc_store( $var0, serialize( $val ) );
 					
 				case COMMON_CACHE_MEMCACHED:
-					return $this->mc->set($var, $val) ;
+					return $this->mc->set($var0, $val) ;
 					
 				default:
 					return false;
@@ -187,7 +194,7 @@
 	class AutoLoader {
 		
 		static private $instance = null;
-		const NAMES_KEY = "500593615.names";
+		const NAMES_KEY = "names";
 		
 		private $cachedNames = array();
 		private $cc = null;

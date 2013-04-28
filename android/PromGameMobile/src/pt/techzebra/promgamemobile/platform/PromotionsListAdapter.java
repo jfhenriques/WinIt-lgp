@@ -60,8 +60,6 @@ public class PromotionsListAdapter extends BaseAdapter{
 		Promotion tmp1, tmp2;
 		tmp1 = list.get(arg0).first;
 		tmp2 = list.get(arg0).second;
-		Pair<Integer, Integer> ids = new Pair<Integer, Integer>(tmp1.getId_(), tmp2.getId_());
-		arg1.setTag(ids);
 		promo_image1_.setImageBitmap(tmp1.get_image_bitmap());
 		promo_name1_.setText(tmp1.getName_());
 		

@@ -2,7 +2,9 @@
 	
 	
 	
-	class Session extends ActiveRecord {
+	class Session
+		extends ActiveRecord
+		implements SavableActiveRecord {
 		
 		const TABLE_NAME = 'session' ;
 		
@@ -54,7 +56,7 @@
 			$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
 			$sth->bindParam(':val', $val, PDO::PARAM_INT);
 
-			// If this instance was cached, force its deletetion, so the next query caches it back with the correct values
+			// If this instance was cached, force its deletetion, so the next cache miss forces it to reload
 			CommonCache::getInstance()->delete( CommonCache::buildVarName( self::TABLE_NAME, $this->getToken() ) );
 
 			return $sth->execute();

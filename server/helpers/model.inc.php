@@ -36,10 +36,6 @@
 
 		protected $data = array();
 
-	
-
-		public abstract function save();
-
 
 		protected function getData($key, $default = null)
 		{
@@ -122,6 +118,10 @@
 
 
 
+	}
+
+	interface SavableActiveRecord {
+		public function save();
 	}
 
 ?>

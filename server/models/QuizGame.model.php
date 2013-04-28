@@ -5,6 +5,9 @@
 		const TABLE_NAME = "quizgame";
 
 
+		private function __construct() { }
+
+
 		public function getPID()
 		{
 			return (int)$this->getData('pid');
@@ -19,11 +22,11 @@
 		}
 
 
-		public function findQuestions()
+		public function getQuestions()
 		{
 			$pid = $this->getPID();
 
-			return ( is_numeric( $pid ) && $pid > 0 ) ? QuizGameQuestion::findByPID( $pid ) : array() ;
+			return $pid > 0 ? QuizGameQuestion::findByPID( $pid ) : array() ;
 		}
 
 
@@ -36,9 +39,6 @@
 
 			return static::fillModel( $result, new QuizGame() );
 		}
-
-
-		public function save() { }
 
 	}
 

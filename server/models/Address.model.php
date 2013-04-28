@@ -18,7 +18,10 @@
 		const TABLE_NAME_STR = "addrstreet";
 
 
-		public function getID()
+		private function __construct() { }
+
+
+		public function getADID()
 		{
 			return (int)$this->getData('adid');
 		}
@@ -87,7 +90,7 @@
 				{
 					// if( ( $res = static::fillAddress( $row ) ) !== null )
 					// 	$streets[] = $res ;
-					if( ( $res = static::fillModel( $row, new Address() ) ) !== null )
+					if( !is_null( $res = static::fillModel( $row, new Address() ) ) )
 						$streets[] = $res ;
 				}
 			}
@@ -109,9 +112,6 @@
 
 			return static::fillModel( $result, new Address() );
 		}
-
-
-		public function save() {}
 
 	}
 

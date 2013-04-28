@@ -23,6 +23,8 @@
 		private $controllerFound = false;
 		
 		private $responseType = RESPOND_DISABLED;
+
+		const ROUTES_KEY = 'routes';
 	
 		private function __clone() { }
 		
@@ -31,9 +33,9 @@
 			$this->url = ( isset( $_REQUEST['z_url' ] ) && strlen( $_REQUEST['z_url' ] ) > 0 ) ? $_REQUEST['z_url' ] : "" ;
 			
 			$cc = CommonCache::getInstance();
-			$cc_key = CommonCache::buildVarName('cached', 'routes');
+			//$cc_key = //CommonCache::buildVarName('cached', 'routes');
 
-			$cache = $cc->get( $cc_key );
+			$cache = $cc->get( self::ROUTES_KEY );
 			
 			$lastMod = @filemtime(ROUTES_FILE) ;
 			
@@ -46,7 +48,7 @@
 				
 				$this->buildRoutes( $GLOBALS['routes'] , $lastMod !== false ? $lastMod : 0 , $cache);
 
-				$cc->set( $cc_key, $cache );
+				$cc->set( self::ROUTES_KEY, $cache );
 				
 				//var_dump( $cache );
 			}
