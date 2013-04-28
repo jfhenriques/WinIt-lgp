@@ -194,7 +194,7 @@
 	class AutoLoader {
 		
 		static private $instance = null;
-		const NAMES_KEY = "500593615.names";
+		const NAMES_KEY = "names";
 		
 		private $cachedNames = array();
 		private $cc = null;
