@@ -64,4 +64,16 @@
 	 */
 	DEFINE( 'TOKEN_VALIDITY', (3600*24*7) );
 
+
+	/*
+	 *	E-mail from address, used by Controller::sendCustomMail(...)
+	 */
+	DEFINE( 'MAIL_FROM_ADDRESS', 'noreply@lptlantic.fe.up.pt' );
+
+
+	/*
+	 *	Leave empy if the website is in the root (namespaces don't count)
+	 */
+	DEFINE( 'BASE_URI', 'tlantic/' );
+
 ?>

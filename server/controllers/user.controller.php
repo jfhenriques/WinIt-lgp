@@ -8,6 +8,11 @@
 	DEFINE( 'R_USER_ERR_INV_ADID'		, 0x22 );
 
 	DEFINE( 'R_USER_EMAIL_MISSING'		, 0x30 );
+	DEFINE( 'R_USER_SENDMAIL_ERROR'		, 0x31 );
+
+
+	DEFINE( 'MAIL_SUBJECT_RESET_PASS' , 'Tlantic PromGame Mobile - Password Reset' );
+	DEFINE( 'MAIL_SIGNATURE'   , "\r\n\r\n\r\nAtenciosamente,\nA Equipa Tlantic PromGame Mobile" );
 
 
 
@@ -21,11 +26,10 @@
 
 				R_USER_ERR_INV_ADID		=> 'Código de Endereço inválido',
 
-				R_USER_EMAIL_MISSING		=> 'Deve fornecer o e-mail para fazer reset à password',
+				R_USER_EMAIL_MISSING	=> 'Deve fornecer o e-mail para fazer reset à password',
+				R_USER_SENDMAIL_ERROR	=> 'Não foi possível enviar o e-mail para o endereço de destino',
 			);
 
-	
-		// $_REQUEST
 		
 		/*
 		 * Ensure that the user is logged
@@ -90,7 +94,6 @@
 		
 		public function edit()
 		{
-		
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
 
@@ -167,6 +170,7 @@
 		{
 			$this->requireNoAuth();
 
+
 			$render_code = null;
 			$resp = array();
 			
@@ -241,8 +245,12 @@
 
 
 
+
 		public function reset_password()
 		{
+			$this->requireNoAuth();
+
+
 			$email = valid_request_var('email');
 			$user = null;
 
@@ -259,19 +267,18 @@
 				$user->setResetToken($token);
 				$user->setResetTokenValidity(time()+600); // 10 minutos para fazer reset
 
-				$success = $user->save();
+				if( !$user->save() )
+					$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
 
-				if( $success )
+				else
 				{
-					$texto = "Foi pedido que fosse feito reset da password da sua conta na aplicação Tlantic PromGame Mobile.\n\n".
-							 "Por favor siga o link: https://lgptlantic.fe.up.pt/reset_password/${token} \n\n".
-							 "Se o pedido não efectuado por si, por favor ignore este e-mail\n\n".
-							 "Atenciosamente,\nTlantic PromGame Mobile";
+					$ret = Controller::sendCustomMail($user->getEmail(), MAIL_SUBJECT_RESET_PASS, "text/plain",
+							"Foi pedido que fosse feito reset da password de acesso da sua conta na aplicação Tlantic PromGame Mobile.\r\n\r\n".
+							"Por favor siga o link: https://" . $_SERVER['SERVER_NAME'] . "/" . BASE_URI ."reset_password/${token}\r\n\r\n".
+							"Se este pedido não foi efectuado por si, por favor ignore este e-mail" . MAIL_SIGNATURE, true );
 
-					@mail($user->getEmail(), "Tlantic PromGame Mobile - Reset da Password", $texto);
+					$this->respond->setJSONCode( $ret ? R_STATUS_OK : R_USER_SENDMAIL_ERROR );
 				}
-
-				$this->respond->setJSONCode( $success ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 			}
 
 			$this->respond->renderJSON( static::$status );
@@ -281,6 +288,9 @@
 
 		public function reset_password_confirmation()
 		{
+			$this->requireNoAuth();
+
+
 			$reset_token = valid_request_var('reset_token');
 			$renderText = "Erro desconhecido";
 
@@ -300,29 +310,29 @@
 
 				else
 				{
-
  					$pass = substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ#()+", 3)), 10, 8);
 
-
  					$user->setPassword( User::saltPass($pass) );
+ 					$user->setResetToken(null);
+ 					$user->setResetTokenValidity(0);
 
 					if( !$user->save() )
 						$renderText = "Erro: Impossível salvar";
 
 					else
 					{
-						$renderText = "Nova password de acesso temporária enviada para o seu e-mail.\n<br>".
-									  "Atenção: Deve mudá-la a sua password de imediato.";
-						
-						$texto = "No seguimento do pedido de reset da password de acesso à sua conta,\n" .
-								 "enviamos-lhe a sua nova password temporária.\n".
-								 "Atenção: deve alterar esta password de imediato.\n\n".
-								 "Password: + $pass \n\n".
-								 "Atenciosamente,\nTlantic PromGame Mobile";
+						$ret = Controller::sendCustomMail($user->getEmail(), MAIL_SUBJECT_RESET_PASS, "text/plain",
+								"No seguimento do pedido de reset da password de acesso à sua conta,\r\n" .
+								"enviamos-lhe uma password temporária, que deverá ser alterada de imediato, logo após o login.\r\n\r\n".
+								"E-mail: {$user->getEmail()}\r\nPassword: {$pass}" . MAIL_SIGNATURE, true );
 
-						@mail($user->getEmail(), "Tlantic PromGame Mobile - Reset da Password", $texto);
+						if( !$ret )
+							$renderText = static::$status[R_USER_SENDMAIL_ERROR];
+						else
+							$renderText = "Nova password de acesso temporária enviada para o seu e-mail.\r\n<br>".
+										  "Atenção: Deve alterá-la de imediato, logo após o login.";
+							
 					}
-
 				
 					
 				}

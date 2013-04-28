@@ -12,7 +12,6 @@
 			R_SESS_ERR_EMAIL_EXISTS	=> 'Email já existente',
 		);
 	
-	
 		/*
 		 * Ensure that the user is logged
 		 */
@@ -20,38 +19,46 @@
 		{
 		}
 		
-		public function index() {
+		/*public function index() {
 		
-			/*
+			*//*
 			 * Certeficar-se que alguém está logado
-			 */
-			// this->requireAuth();		
+			 *//*
+			this->requireAuth();
 		
-			$render_code = null ;
-			
-			$resp = array();
+			$render_code = null;
 			
 			$resp = array(
-				'promocaoid' => getID(),
-				'nome' => getNome(),
-				'data_inicio' => getData_inicio(),
-				'data_fim' => getData_fim(),
-				'max_utilizacoes' => getMax_utilizacoes(),
-				'coord_validas' => getCoord_validas(),
-				'coord_raio' => getCoord_raio(),
-				'transmissivel' => getTransmissivel(),
-				'activa' => getActiva(),
-				'pontos_ao_ganhar' => getPontos_ao_ganhar(),
-				'retalhistaid' => getRetalhistaid(),
-				'tipopromocaoid' => getTipopromocaoid(),
+				'pid' => $this->getID(),
+				'name' => $this->getName(),
+				'init_date' => $this->getInit_date(),
+				'end_date' => $this->getEnd_date(),
+				'user_limit' => $this->getUser_limit(),
+				'valid_coord' => $this->getValid_coord(),
+				'valid_coord_radius' => $this->getValid_coord_radius(),
+				'transferable' => $this->getTransferable(),
+				'active' => $this->getActive(),
+				'win_points' => $this->getWin_points(),
+				'rid' => $this->getRid(),
+				'ptid' => $this->getPtid(),
+				'func_type' => $this->getFunc_type(),
+				'grand_limit' => $this->getGrand_limit(),
 			);
+		
+			$render_code = R_STATUS_OK ;	
+
+			$this->respond->renderJSON( $resposta, $render_code, describeMessage( $render_code, static::$status ) );			
+		}*/
+		
+		public function show() {
+			$render_code = null;
+			
+			$resp = Promotion::getPromotion();
+		
 			$render_code = R_STATUS_OK ;	
 
 			$this->respond->renderJSON( $resp, $render_code, describeMessage( $render_code, static::$status ) );			
 		}
-		
-		/*public function show() {
-		}*/
 	
 	}
 
