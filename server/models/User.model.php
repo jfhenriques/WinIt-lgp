@@ -270,7 +270,7 @@
 			$sth = $dbh->prepare('SELECT promotion.pid, promotion.name, promotion.active, promotion.end_date '.
 									'FROM promotion, user, userpromotion '.
 									'WHERE user.uid = userpromotion.uid '.
-									'AND promotion.pid = userpromotion.pid'.
+									'AND promotion.pid = userpromotion.pid '.
 									'AND user.uid = '. $userID .' ;' );
 			
 			$ret = $sth->execute();
@@ -278,9 +278,6 @@
 			$result = $sth->fetchAll();
 			
 			// var_dump($result);
-			
-			if( $ret && is_null($this->uid) )
-				$this->uid = $dbh->lastInsertId();
 
 			return $result;
 			
