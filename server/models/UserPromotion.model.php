@@ -71,6 +71,15 @@
 			return $pid > 0 ? Promotion::findByPID( $pid ) : null ;
 		}
 
+		public function participate($pid, $uid)
+		{
+			if( !is_null( $pid ) && !is_null($uid) && $this->getUPID() == 0 )
+			{
+				$this->data['pid'] = $pid;
+				$this->data['uid'] = $uid;
+			}
+		}
+
 
 		
 
@@ -90,22 +99,22 @@
 			$sth = null;
 
 			$upid = $this->getUPID();
-			$isInsert = is_null( $upid );
+			$isInsert = $upid == 0;
 			
 			$init_date = $this->getInitDate();
 			$end_date = $this->getEndDate();
 			$state = $this->getState();
-			
+
 			if( $isInsert )
 			{
 				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (uid,pid,init_date,end_date,state) ' .
-												' VALUES(:uid,:pid,:init_date,:end_date,:state); ');
+												' VALUES(:uid,:pid,:init,:end,:state); ');
 
 				$pid = $this->getPID();
 				$uid = $this->getUID();
 
-				$sth->bindParam(':pid', $pid, PDO::PARAM_INT);
 				$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
+				$sth->bindParam(':pid', $pid, PDO::PARAM_INT);
 			}
 			else
 			{
@@ -117,7 +126,7 @@
 			$sth->bindParam(':init', $init_date, PDO::PARAM_INT);
 			$sth->bindParam(':end', $end_date, PDO::PARAM_INT);
 			$sth->bindParam(':state', $state, PDO::PARAM_INT);
-			
+
 			$ret = $sth->execute();
 			
 			if( $ret && $isInsert )
