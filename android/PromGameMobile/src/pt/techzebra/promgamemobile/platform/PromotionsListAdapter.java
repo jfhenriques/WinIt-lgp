@@ -60,11 +60,11 @@ public class PromotionsListAdapter extends BaseAdapter{
 		Promotion tmp1, tmp2;
 		tmp1 = list.get(arg0).first;
 		tmp2 = list.get(arg0).second;
-		promo_image1_.setImageBitmap(tmp1.get_image_bitmap());
+		/*promo_image1_.setImageBitmap(tmp1.get_image_bitmap());
 		promo_name1_.setText(tmp1.getName_());
 		
 		promo_image2_.setImageBitmap(tmp2.get_image_bitmap());
-		promo_name2_.setText(tmp2.getName_());
+		promo_name2_.setText(tmp2.getName_());*/
 		
 		return arg1;
 	}

@@ -309,6 +309,7 @@ public class NetworkUtilities {
     }
 
     public static Quiz fetchQuizGame(final String promotionid, String auth_token) {
+        
         String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "/?token="
                 + auth_token;
 
@@ -400,5 +401,10 @@ public class NetworkUtilities {
             Log.i(TAG, "Error to get response: "
                     + getResponseContent(json_response));
         }
+    }
+
+    public static Promotion fetchPromotionInformation(String promotionid) {
+        // TODO: fetchPromotion to view Promotion information 
+        return null;
     }
 }

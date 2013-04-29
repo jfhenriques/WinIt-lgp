@@ -45,7 +45,7 @@ public class DownloadImageTask extends AsyncTask<Pair<String, String>, Void, Arr
 			return null;
 		}
 		     
-		for(int i=0; i< urls.length; i++){
+		/*for(int i=0; i< urls.length; i++){
 			Promotion tmp = new Promotion("", "");
 			Pair<String, String> promo_display = urls[i];
 			Bitmap mIcon11 = null;
@@ -63,7 +63,7 @@ public class DownloadImageTask extends AsyncTask<Pair<String, String>, Void, Arr
 				Log.e("Error", e.getMessage());
 				e.printStackTrace();
 			}
-		}
+		}*/
 
 		return promos;
 	}

@@ -66,7 +66,7 @@ public class PromotionsActivity extends SherlockActivity {
 		dit.cancel(true);
 	}
 	public void handlePromSelected(View view){
-		//Bundle b = new Bundle();
+		/*//Bundle b = new Bundle();
 		//Pair<Integer, Integer> pids = (Pair<Integer, Integer>) view.getTag();
 		//int pid;
 		Intent i;
@@ -78,10 +78,10 @@ public class PromotionsActivity extends SherlockActivity {
 		}
 		i = new Intent(this, ShowPromotionActivity.class);
 		b.putInt("id", pid); //Your id
-		i.putExtras(b); //Put your id to your next Intent*/
+		i.putExtras(b); //Put your id to your next Intent
 		i = new Intent(this, ShowPromotionActivity.class);
 		startActivity(i);
-		finish();
+		finish();*/
 
 	}
 }
