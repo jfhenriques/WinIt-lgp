@@ -136,7 +136,8 @@ public class NetworkUtilities {
 
                 return json_response;
             } else {
-
+                Log.i(TAG, "Request Error");
+                return null;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -189,7 +190,11 @@ public class NetworkUtilities {
 
     public static boolean validResponse(JSONObject response) {
         try {
-            return response.getString("s").equals("0");
+            if (response == null) {
+                return false;
+            } else {
+                return response.getString("s").equals("0");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -199,7 +204,9 @@ public class NetworkUtilities {
     public static String getResponseMessage(JSONObject response) {
         String message = null;
         try {
-            message = response.getString("m");
+            if (response != null) {
+                message = response.getString("m");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -319,12 +326,14 @@ public class NetworkUtilities {
     }
 
     public static Quiz fetchQuizGame(final String promotionid, String auth_token) {
+        
         String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "/?token="
                 + auth_token;
 
         JSONObject response = get(uri);
 
         Quiz new_quiz = Quiz.valueOf(response);
+
         return new_quiz;
     }
     
@@ -402,7 +411,7 @@ public class NetworkUtilities {
                         "Ganhaste: " + won + " com: " + correct
                                 + " respostas correctas!", Toast.LENGTH_SHORT)
                         .show();
-                
+
             } catch (JSONException e) {
                 Log.i(TAG, "Error to get response: "
                         + getResponseContent(json_response));
@@ -412,6 +421,15 @@ public class NetworkUtilities {
                     + getResponseContent(json_response));
         }
     }
-    
-   
+
+
+    public static Promotion fetchPromotionInformation(String promotionid) {
+    	String uri = PROMOTION_URI + "/" + promotionid + ".json";
+        JSONObject response = get(uri);
+      
+        Promotion promo = Promotion.valueOf(response);
+
+        return promo;
+    }
+
 }
