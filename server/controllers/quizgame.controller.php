@@ -9,6 +9,8 @@
 	DEFINE( 'R_QUIZ_ERR_ANSWERS_MISSING'	, 0x22 );
 	DEFINE( 'R_QUIZ_ERR_USERPROM_PARTIC'	, 0x23 );
 
+	DEFINE( 'R_QUIZ_ERR_PROM_AUTOFVALID'	, 0x30 );
+
 	// DEFINE( 'R_QUIZ_ERR_SESSION_NOT_FOUND'	, 0x20 );
 
 
@@ -24,6 +26,8 @@
 				R_QUIZ_ERR_ANSWERS_MISSING		=> 'Nem todas as perguntas foram respondidas',
 				R_QUIZ_ERR_USERPROM_PARTIC		=> 'O questionário não pode ser respondido',
 
+				R_QUIZ_ERR_PROM_AUTOFVALID		=> 'A promoção não é válida, ou expirou',
+
 				// R_SESS_ERR_SESSION_NOT_FOUND	=> 'Sessão não encontrado',
 			);
 
@@ -37,50 +41,45 @@
 		{
 
 			$pid = valid_request_var( 'promotion' );
-			
+			$quiz = null;
+
 			if( is_null( $pid ) )
 				$this->respond->setJSONCode( R_QUIZ_ERR_PARAM );
 
+			elseif( is_null( $quiz = QuizGame::findByPID( $pid ) ) )
+				$this->respond->setJSONCode( R_QUIZ_ERR_QUIZ_NOT_FOUND );
+
 			else
 			{
-				$quiz = QuizGame::findByPID( $pid );
+				$questionsResult = $quiz->getQuestions();
+				$quests = array();
 
-				if( is_null( $quiz ) )
-					$this->respond->setJSONCode( R_QUIZ_ERR_QUIZ_NOT_FOUND );
-
-				else
+				foreach($questionsResult as $q)
 				{
-					$questionsResult = $quiz->getQuestions();
-					$quests = array();
+					$type = $q->getQuestionType() ;
+					$choices = $q->getAnswerChoices();
 
-					foreach($questionsResult as $q)
+					switch( $type )
 					{
-						$type = $q->getQuestionType() ;
-						$choices = $q->getAnswerChoices();
+						case QuizGameQuestion::TYPE_RADIO:
+						case QuizGameQuestion::TYPE_MULTI:
 
-						switch( $type )
-						{
-							case QuizGameQuestion::TYPE_RADIO:
-							case QuizGameQuestion::TYPE_MULTI:
+							$choices = explode(';', $choices);
 
-								$choices = explode(';', $choices);
-
-								break;
-						}
-						
-						$quests[] = array( 'qid' => $q->getQID(),
-										   'question' => $q->getQuestion(),
-										   'type' => $type,
-										   'answer_choices' => $choices );
+							break;
 					}
-
-					$this->respond->setJSONResponse( array( 'name' => $quiz->getName(),
-															'is_quiz' => $quiz->isQuiz(),
-															'questions' => $quests ) );
-					$this->respond->setJSONCode( R_STATUS_OK );
+					
+					$quests[] = array( 'qid' => $q->getQID(),
+									   'question' => $q->getQuestion(),
+									   'type' => $type,
+									   'answer_choices' => $choices );
 				}
-			}
 
+				$this->respond->setJSONResponse( array( 'name' => $quiz->getName(),
+														'is_quiz' => $quiz->isQuiz(),
+														'questions' => $quests ) );
+				$this->respond->setJSONCode( R_STATUS_OK );
+			}
 
 			$this->respond->renderJSON( static::$status );
 		}
@@ -102,114 +101,115 @@
 			{
 				$authUID = (int)Authenticator::getInstance()->getUserId();
 				$userProm = UserPromotion::findByUPID( $upid ) ;
+				$promo = null;
+				$time = time();
+				$quiz = $questions = null;
 
-
-				// TODO: check promotion exepiration date, utilizations, etc
 
 				// UserPromotion participation not found
 				if( is_null( $authUID ) || is_null( $userProm )
-						|| $authUID <= 0 || $userProm->getUID() !== $authUID )
-					$this->respond->setJSONCode( R_QUIZ_ERR_USERPROM_NOT_FOUND );
+					|| $authUID <= 0 || $userProm->getUID() !== $authUID )
+						$this->respond->setJSONCode( R_QUIZ_ERR_USERPROM_NOT_FOUND );
 
-				// QuizGame not available to be answered
+				// Check promotion exepiration date
+				elseif( is_null( $promo = $userProm->getPromotion() )
+						|| !$promo->isActive() || $pid !== $promo->getPID()
+						|| $promo->getEndDate() > 0 && $promo->getEndDate() < $time )
+							$this->respond->setJSONCode( R_QUIZ_ERR_PROM_AUTOFVALID );
+
+				// UserPromotion not available to be answered
 				elseif( !$userProm->inMotion() )
 					$this->respond->setJSONCode( R_QUIZ_ERR_USERPROM_PARTIC );
 
+				// QuizGame or quizgame questions not found
+				elseif( is_null( $quiz = QuizGame::findByPID( $pid ) )
+						|| is_null( $questions = $quiz->getQuestions() )
+						|| !is_array( $questions ) || count( $questions ) == 0
+						|| $userProm->getPID() !== $pid )
+							$this->respond->setJSONCode( R_QUIZ_ERR_QUEST_NOT_FOUND );
+
 				else
 				{
-					$quiz = $questions = null;
-					$userProm->setEndDate(time());
+					$dbh = DbConn::getInstance()->getDB();
+					$hasError = false;
+					$rightAnswers = 0;
+					$totalQuestions = count( $questions ) ;
+					$isQuiz = $quiz->isQuiz() ;
 
-					if( !is_null( $quiz = QuizGame::findByPID( $pid ) ) )
-						$questions = QuizGameQuestion::findByPID( $pid );
-					
-					// QuizGame question's not found
-					if( is_null( $questions ) || !is_array( $questions )
-							|| count( $questions ) == 0 || $userProm->getPID() !== $pid )
-						$this->respond->setJSONCode( R_QUIZ_ERR_QUEST_NOT_FOUND );
+					try {
 
-					else
-					{
-						$dbh = DbConn::getInstance()->getDB();
-						$hasError = false;
-						$rightAnswers = 0;
-						$totalQuestions = count( $questions ) ;
-						$isQuiz = $quiz->isQuiz() ;
+						// Start transaction
+						$dbh->beginTransaction();
 
-						try {
+						foreach($questions as $q)
+						{
+							$qid = $q->getQID() ;
+							$ans = null;
 
-							// Start transaction
-							$dbh->beginTransaction();
-
-							foreach($questions as $q)
+							if( !isset($answers[$qid]) || strlen( $ans = $answers[$qid] ) <= 0 )
 							{
-								$qid = $q->getQID() ;
-								$ans = null;
+								$hasError = true;
+								$this->respond->setJSONCode( R_QUIZ_ERR_ANSWERS_MISSING );
 
-								if( !isset($answers[$qid]) || strlen( $ans = $answers[$qid] ) <= 0 )
-								{
-									$hasError = true;
-									$this->respond->setJSONCode( R_QUIZ_ERR_ANSWERS_MISSING );
-
-									break;
-								}
-								elseif( $quiz->isQuiz() )
-								{
-									if( $q->validateAnswer( $ans ) )
-										$rightAnswers++;
-								}
-
-								$qga = new QuizGameAnswer( $q, $userProm );
-								$qga->setAnswer( $answers[$qid] );
-
-								if( !$qga->save() )
-								{
-									$hasError = true;
-									$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
-									
-									break;
-								}
+								break;
+							}
+							elseif( $quiz->isQuiz() )
+							{
+								if( $q->validateAnswer( $ans ) )
+									$rightAnswers++;
 							}
 
-							$resp = null;
+							$qga = new QuizGameAnswer( $q, $userProm );
+							$qga->setAnswer( $answers[$qid] );
 
-							if( !$hasError )
+							if( !$qga->save() )
 							{
-								$won = ( !$isQuiz || $rightAnswers === $totalQuestions ) ;
-								$resp = array('won' => $won, 'correct' => $rightAnswers );
-
-								if( $won )
-									$userProm->setState( UserPromotion::STATE_WON );
-
-								if( !$userProm->save() )
-								{
-									$hasError = true ;
-									$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
-								}
-							}
+								$hasError = true;
+								$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
 								
-							if( $hasError )
-								$dbh->rollBack();
-
-							else
-							{
-								$this->respond->setJSONResponse( $resp );
-								$this->respond->setJSONCode( R_STATUS_OK );
-								
-								// Commit
-								$dbh->commit();
+								break;
 							}
+						}
+
+						$resp = null;
+
+						if( !$hasError )
+						{
+							$won = ( !$isQuiz || $rightAnswers === $totalQuestions ) ;
+							$resp = array('won' => $won, 'correct' => $rightAnswers );
+
+							$userProm->setEndDate( $time );
+
+							if( $won )	
+								$userProm->setState( UserPromotion::STATE_WON );
+
+							if( !$userProm->save() )
+							{
+								$hasError = true ;
+								$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
+							}
+						}
 							
+						if( $hasError )
+							$dbh->rollBack();
 
-						} catch (Exception $e) {
-							// Failed, so lets rollback
-	  						$dbh->rollBack();
+						else
+						{
+							$this->respond->setJSONResponse( $resp );
+							$this->respond->setJSONCode( R_STATUS_OK );
+							
+							// Commit
+							$dbh->commit();
+						}
+						
 
-	  						throw $e;
-	  					}
-	  				}
+					} catch (Exception $e) {
+						// Failed, so lets rollback
+  						$dbh->rollBack();
 
-				}
+  						throw $e;
+  					}
+  				}
 
 			}
 

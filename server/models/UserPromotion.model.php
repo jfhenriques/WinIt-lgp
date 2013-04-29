@@ -13,10 +13,10 @@
 
 
 
-		public function __construct(User $user, Promotion $promotion)
-		{
+		// public function __construct(User $user, Promotion $promotion)
+		// {
 
-		}
+		// }
 
 		public function getUPID()
 		{
@@ -59,11 +59,20 @@
 		}
 
 
-
 		public function inMotion()
 		{
 			return ( $this->getInitDate() > 0 && $this->getEndDate() === 0 ) ;
 		}
+
+		public function getPromotion()
+		{
+			$pid = $this->getPid();
+
+			return $pid > 0 ? Promotion::findByPID( $pid ) : null ;
+		}
+
+
+		
 
 
 		public static function findByUPID($upid)

@@ -21,7 +21,8 @@
 			//$this->requireAuth();
 		}
 		
-		public function index() {
+		public function index()
+		{
 		
 			// /*
 			//  * Certeficar-se que alguém está logado
@@ -46,7 +47,22 @@
 			// 	'grand_limit' => $this->getGrandLimit(),
 			// );
 		
-			// $render_code = R_STATUS_OK ;	
+			// $render_code = R_STATUS_OK ;
+
+			$pid = (int)valid_request_var('promotion');
+			$promo = null;
+
+			if( $pid <= 0 )
+				$this->respond->setJSONCode( R_PROM_ERR_PARAMS );
+
+			elseif( is_null( $promo = Promotion::findByPID($pid) ) )
+				$this->respond->setJSONCode( R_PROM_ERR_USER_NOT_FOUND );
+
+			else
+			{
+				
+
+			}
 
 			// $this->respond->renderJSON( $resposta, $render_code, describeMessage( $render_code, static::$status ) );			
 		}
