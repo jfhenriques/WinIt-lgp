@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -37,6 +38,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Provides utility methods for communicating with the server.
@@ -349,24 +351,39 @@ public class NetworkUtilities {
     }
 
     public static void submitAnswersQuizGame(String promotion_id,
-            String auth_token, ArrayList<Question> arrayList) {
+            String auth_token, ArrayList<Question> arrayList,
+            final Context context) {
 
+        String userpromotionid = "1";
         // TODO: change
-        String uri = BASE_URL + PROMOTION_URI + "/" + promotion_id + QUIZ_URI + "/" + ":userpromotionid.json";
+        String uri = PROMOTION_URI + "/" + promotion_id + "/quizgame/"
+                + userpromotionid + ".json";
 
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("token", auth_token));
-        for (Question e : arrayList) {
-            params.add(new BasicNameValuePair("" + e.getId(), ""
-                    + e.getAnswered()));
+
+        for (int j = 0; j < arrayList.size(); j++) {
+            params.add(new BasicNameValuePair(String.format("answer[%d]",
+                    arrayList.get(j).getId()), String.format("%d", arrayList
+                    .get(j).getAnswered())));
         }
-        // TODO: change
+
         JSONObject json_response = post(uri, params);
+
+        Log.i(TAG, json_response.toString());
         if (validResponse(json_response)) {
             try {
                 String won = getResponseContent(json_response).getString("won");
                 String correct = getResponseContent(json_response).getString(
                         "correct");
+
+                // TODO: change
+                Toast.makeText(
+                        context,
+                        "Ganhaste: " + won + " com: " + correct
+                                + " respostas correctas!", Toast.LENGTH_SHORT)
+                        .show();
+                
             } catch (JSONException e) {
                 Log.i(TAG, "Error to get response: "
                         + getResponseContent(json_response));
