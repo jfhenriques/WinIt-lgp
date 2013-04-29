@@ -5,86 +5,110 @@
     android:background="@color/light_gray"
     android:padding="@dimen/gap" >
 
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/signup_step_1_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical" >
+        android:layout_marginTop="10dp" >
 
-        <TextView
-            android:id="@+id/step1_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:text="@string/step1"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            style="@style/SignupStep" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/name"
-            android:textAllCaps="true"
-            style="@style/BlueSectionHeader" />
-
-        <EditText
-            android:id="@+id/name_edit"
+        <LinearLayout
+            android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gap2"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            android:orientation="vertical" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/email"
-            android:textAllCaps="true"
-            style="@style/BlueSectionHeader" />
+            <TextView
+                android:id="@+id/step1_text"
+                style="@style/SignupStep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/step1"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="26sp"
+                android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/email_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gap2"
-            android:ems="10"
-            android:inputType="textEmailAddress" />
+            <TextView
+                style="@style/BlueSectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"
+                android:textAllCaps="true" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/password"
-            android:textAllCaps="true"
-            style="@style/BlueSectionHeader" />
+            <EditText
+                android:id="@+id/name_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/gap"
+                android:ems="10"
+                android:inputType="textPersonName" />
 
-        <EditText
-            android:id="@+id/password_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gap2"
-            android:ems="10"
-            android:inputType="textPassword" />
-    </LinearLayout>
+            <TextView
+                style="@style/BlueSectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/email"
+                android:textAllCaps="true" />
+
+            <EditText
+                android:id="@+id/email_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/gap"
+                android:ems="10"
+                android:inputType="textEmailAddress" />
+
+            <TextView
+                style="@style/BlueSectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/password"
+                android:textAllCaps="true" />
+
+            <EditText
+                android:id="@+id/password_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/gap"
+                android:ems="10"
+                android:inputType="textPassword" />
+
+            <TextView
+                style="@style/BlueSectionHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/birthday"
+                android:textAllCaps="true" />
+
+            <EditText
+                android:id="@+id/birthday_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="date" />
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical" >
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/continue_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="handleSignupNavigation"
-            android:text="@string/next"
-            android:textAllCaps="true"
-            style="@style/WhiteButtonAppTheme" />
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/active_fragment_dot" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/inactive_fragment_dot" />
     </LinearLayout>
 
 </RelativeLayout>

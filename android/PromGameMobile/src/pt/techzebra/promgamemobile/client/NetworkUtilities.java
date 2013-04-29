@@ -3,6 +3,7 @@ package pt.techzebra.promgamemobile.client;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -27,12 +28,14 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.ui.AuthenticationActivity;
+import pt.techzebra.promgamemobile.ui.SignupActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -50,12 +53,13 @@ public class NetworkUtilities {
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
     public static final String PARAM_NAME = "name";
-    public static final String PARAM_BIRTHDAY = "date";
+    public static final String PARAM_BIRTHDAY = "birth";
     public static final String PARAM_PC4 = "cp4";
     public static final String PARAM_PC3 = "cp3";
     public static final String PARAM_HOUSE_NUMBER = "portaAndar";
     public static final String PARAM_UPDATED = "timestamp";
     public static final String PARAM_AUTH_TOKEN = "token";
+    
     
     //Promotion
     public static final String PARAM_PROMO_ID = "pid";
@@ -81,8 +85,13 @@ public class NetworkUtilities {
     public static final String AUTH_URI = BASE_URL + "/session.json";
     public static final String USER_URI = BASE_URL + "/user.json";
     public static final String PROMOTION_URI = BASE_URL + "/promotion";
+    public static final String ADDRESSES_URI = BASE_URL + "/address";
 
     public static final String QUIZ_URI = "/quizgame.json";
+
+    private static final String PARAM_ADDRESS_ID = "adid";
+
+    private static final String PARAM_ADDRESS_2 = "address2";
 
     private static HttpClient http_client_;
 
@@ -227,6 +236,20 @@ public class NetworkUtilities {
 
         return content;
     }
+    
+    public static JSONArray getResponseContentArray(JSONObject response) {
+        JSONArray content = null;
+        
+        if (validResponse(response)) {
+            try {
+                content = response.getJSONArray("r");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return content;
+    }
 
     /**
      * Connects to the server, authenticates the provided username and password.
@@ -300,6 +323,19 @@ public class NetworkUtilities {
             }
         });
     }
+    
+    private static void sendAddressesToSignupActivity(final String[] addresses, final ArrayList<Integer> addresses_ids, final Handler handler, final Context context) {
+        if (handler == null || context == null) {
+            return;
+        }
+        
+        handler.post(new Runnable() { 
+            @Override
+            public void run() {
+                ((SignupActivity) context).onGetAddressesResult(addresses, addresses_ids);
+            }
+        });
+    }
 
     public static Thread attemptAuth(final String username,
             final String password, final Handler handler, final Context context) {
@@ -339,23 +375,23 @@ public class NetworkUtilities {
     
    
 
-    private static boolean register(String name, String username,
-            String password, String birthday, String pc4, String pc3,
-            String house_number, Handler handler, final Context context) {
+    private static boolean register(String name, String email,
+            String password, String birthday, String address_id,
+            String address_2, Handler handler, final Context context) {
         final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(PARAM_EMAIL, username));
         params.add(new BasicNameValuePair(PARAM_NAME, name));
+        params.add(new BasicNameValuePair(PARAM_EMAIL, email));
         params.add(new BasicNameValuePair(PARAM_PASSWORD, password));
         params.add(new BasicNameValuePair(PARAM_BIRTHDAY, birthday));
-        params.add(new BasicNameValuePair(PARAM_PC4, pc4));
-        params.add(new BasicNameValuePair(PARAM_PC3, pc3));
-        params.add(new BasicNameValuePair(PARAM_HOUSE_NUMBER, house_number));
+        params.add(new BasicNameValuePair(PARAM_ADDRESS_ID, address_id));
+        params.add(new BasicNameValuePair(PARAM_ADDRESS_2, address_2));
 
         JSONObject json_response = post(USER_URI, params);
+        
+        Log.d("RESPOSTA", getResponseMessage(json_response));
         if (validResponse(json_response)) {
-            attemptAuth(username, password, handler, context);
+            //attemptAuth(email, password, handler, context);
             Log.v(TAG, "Successful register");
-
             return true;
         } else {
 
@@ -363,15 +399,57 @@ public class NetworkUtilities {
         }
     }
 
+    public static void sendSignupResultToSignupActivity(final boolean result,
+            final Handler handler, final Context context) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                ((SignupActivity) context)
+                        .onSignupResult(result);
+            }
+        });
+    }
+    
     public static Thread attemptRegister(final String name, final String email,
-            final String password, final String birthday, final String pc4,
-            final String pc3, final String house_number, final Handler handler,
+            final String password, final String birthday, final String address_id,
+            final String address_2, final Handler handler,
             final Context context) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                register(name, email, password, birthday, pc4, pc3,
-                        house_number, handler, context);
+                boolean success = register(name, email, password, birthday, address_id,
+                        address_2, handler, context);
+                Log.d("AQUI", "FODA-SE");
+                if (success) {
+                    Log.d("AQUI", "FODA-SE!!!");
+                    final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+                    params.add(new BasicNameValuePair(PARAM_EMAIL, email));
+                    params.add(new BasicNameValuePair(PARAM_PASSWORD, password));
+    
+                    JSONObject json_response = post(AUTH_URI, params);
+    
+                    JSONObject r = getResponseContent(json_response);
+                    if (r == null) {
+                        sendSignupResultToSignupActivity(false, handler, context);
+                    } else {
+                        SharedPreferences.Editor preferences_editor = PromGame
+                                .getAppContext()
+                                .getSharedPreferences(Constants.USER_PREFERENCES,
+                                        Context.MODE_PRIVATE).edit();
+                        try {
+                            preferences_editor.putString(Constants.PREF_AUTH_TOKEN,
+                                    r.getString("token"));
+                            preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
+                            preferences_editor.commit();
+                            sendSignupResultToSignupActivity(true, handler, context);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    sendSignupResultToSignupActivity(false, handler, context);
+                }
+                
             }
         };
 
@@ -430,6 +508,55 @@ public class NetworkUtilities {
         Promotion promo = Promotion.valueOf(response);
 
         return promo;
+    }
+    
+    public static void getAddresses(String pc4, String pc3, Handler handler, final Context context) {
+        String uri = ADDRESSES_URI + "/" + pc4 + "/" + pc3 + ".json";
+        JSONObject response = get(uri);
+        
+        // 5000 402
+       
+        JSONArray r = getResponseContentArray(response);
+        if (r == null) {
+            sendAddressesToSignupActivity(null, null, handler, context);
+            return;
+        }
+        
+        JSONObject address;
+        String address_temp;
+        ArrayList<String> addresses = new ArrayList<String>();
+        ArrayList<Integer> addresses_ids = new ArrayList<Integer>();
+        for (int i = 0, size = r.length(); i < size; ++i) {
+            try {
+                address = r.getJSONObject(i);
+                address_temp = address.getString("address") + ", " + address.getString("locality") + ", " + address.getString("district");
+                addresses.add(address_temp);
+                addresses_ids.add(address.getInt("adid"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        try {
+            Log.d("TAG", r.toString(2));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        
+        String[] addresses_array = Arrays.copyOf(addresses.toArray(), addresses.size(), String[].class);
+        sendAddressesToSignupActivity(addresses_array, addresses_ids, handler, context);
+    }
+    
+    public static Thread attemptGetAddresses(final String pc4, final String pc3, final Handler handler,
+            final Context context) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                getAddresses(pc4, pc3, handler, context);
+            }
+        };
+
+        return NetworkUtilities.performOnBackgroundThread(runnable);
     }
 
 }
