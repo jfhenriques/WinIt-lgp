@@ -18,7 +18,7 @@
 		 */
 		public function __configure()
 		{
-			//$this->requireAuth();
+			$this->requireAuth();
 		}
 		
 		public function index()
@@ -111,6 +111,8 @@
 				$this->respond->setJSONResponse( 
 							array(  'pid' => $promo->getPID(),
 									'name' => $promo->getName(),
+									'desc' => $promo->getDescription(),
+									'image' => Controller::formatURL( $promo->getImageSRC() ),
 									//'active' => $promo->isActive(),
 									'init_date' => $promo->getInitDate(),
 									'end_date' => $promo->getEndDate(),
