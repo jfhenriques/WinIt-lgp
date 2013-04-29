@@ -77,7 +77,8 @@ public class ScaleImageView extends ImageView {
 	public void setImageChangeListener(ImageChangeListener imageChangeListener) {
 		this.imageChangeListener = imageChangeListener;
 	}
-
+	
+	
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 

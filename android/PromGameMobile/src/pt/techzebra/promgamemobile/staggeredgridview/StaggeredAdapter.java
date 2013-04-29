@@ -54,8 +54,8 @@ public class StaggeredAdapter extends ArrayAdapter<Promotion> {
 		holder = (ViewHolder) convertView.getTag();
 
 		mLoader.DisplayImage(objects.get(position).getImageUrl(), holder.imageView);
-		holder.imageDescription.setText(objects.get(position).getName_());
-		holder.promotion_id = objects.get(position).getPromotion_id_();
+		holder.imageDescription.setText(objects.get(position).getName());
+		holder.promotion_id = objects.get(position).getPromotionID();
 		
 		
 		return convertView;
