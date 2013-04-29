@@ -1,6 +1,7 @@
 <?php
 
-	DEFINE('ITEM_RET_SRC_DIR', 'img/04e36748dd36c92422c3a300db9897ceb4c4cd48/');
+	DEFINE('RET_IMG_SRC_DIR', 'img/eef8ac0ae5c57b53321cc1b14e34bc7b7494c649/');
+	DEFINE('PROM_IMG_SRC_DIR', 'img/0bb53157538fde36def76790f3d674969cba5218/');
 
 	class Promotion extends ActiveRecord {
 	
@@ -156,6 +157,24 @@
 		// 	$this->data['func_type'] = $func_type;
 		// }
 
+
+		public function getDescription()
+		{
+			return $this->getData('description');
+		}
+
+		public function getImage()
+		{
+			return $this->getData('image');
+		}
+
+		public function getImageSRC()
+		{
+			$img = $this->getData('image');
+			return is_null( $img ) ? null : ( PROM_IMG_SRC_DIR . $img );
+		}
+
+
 		public function getRetailerName()
 		{
 			return $this->getData('ret_name');
@@ -169,7 +188,7 @@
 		public function getRetailerImageSRC()
 		{
 			$img = $this->getData('ret_image');
-			return is_null( $img ) ? null : ( ITEM_RET_SRC_DIR . $img );
+			return is_null( $img ) ? null : ( RET_IMG_SRC_DIR . $img );
 		}
 
 		public function getPromotionType()
@@ -192,7 +211,8 @@
 									  ' p.end_date AS end_date, p.grand_limit AS grand_limit, p.user_limit AS user_limit, ' .
 									  ' p.valid_coord AS valid_coord, p.valid_coord_radius AS valid_coord_radius, ' .
 									  ' p.transferable AS transferable, p.win_points AS win_points, p.func_type AS func_type ,' .
-									  ' p.rid AS rid, p.ptid AS ptid, r.name AS ret_name, t.name AS prom_type, r.image AS ret_image  ' .
+									  ' p.rid AS rid, p.ptid AS ptid, r.name AS ret_name, t.name AS prom_type, r.image AS ret_image, ' .
+									  ' p.desc AS description, p.image AS image ' .
 									  ' FROM ' . self::TABLE_NAME . ' AS p ' .
 									  'INNER JOIN ' . self::TABLE_NAME_RET . ' AS r ON(r.rid = p.rid) ' .
 									  'INNER JOIN ' . self::TABLE_NAME_TYPE . ' AS t ON(t.ptid = p.ptid) ' .
