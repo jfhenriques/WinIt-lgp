@@ -1,6 +1,8 @@
 <?php
 	
-	class User extends ActiveRecord {
+	class User
+		extends ActiveRecord
+		implements SavableActiveRecord {
 
 		// private $uid = null;
 		// private $name;
@@ -234,7 +236,6 @@
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
 									  array( $id ) );
 
-							
 			return static::fillModel( $result, new User() );
 		}
 

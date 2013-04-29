@@ -50,7 +50,7 @@
 
 				else
 				{
-					$questionsResult = $quiz->findQuestions();
+					$questionsResult = $quiz->getQuestions();
 					$quests = array();
 
 					foreach($questionsResult as $q)
