@@ -113,7 +113,7 @@
 									'name' => $promo->getName(),
 									'desc' => $promo->getDescription(),
 									'image' => Controller::formatURL( $promo->getImageSRC() ),
-									//'active' => $promo->isActive(),
+									'active' => $promo->isActive(),
 									'init_date' => $promo->getInitDate(),
 									'end_date' => $promo->getEndDate(),
 									'user_limit' => $promo->getUserLimit(),
