@@ -225,14 +225,13 @@
 		public static function findValidPromotions($uid)
 		{
 			$promos = array();
-			$return = static::executeQuery( 'SELECT * FROM ' . self::TABLE_NAME . ' WHERE pid = ? ORDER BY qid ASC;',
-									  			array( $pid ), $stmt );
+			$return = static::executeQuery( 'CALL proc_avail_prom(?);', array( $uid ), $stmt );
 
 			if( $stmt !== null && $return !== false )
 			{
 				while( $row = $stmt->fetch() )
 				{
-					if( !is_null( $res = static::fillModel( $row, new QuizGameQuestion() ) ) )
+					if( !is_null( $res = static::fillModel( $row, new Promotion() ) ) )
 						$promos[] = $res ;
 				}
 			}

@@ -49,21 +49,28 @@
 		
 			// $render_code = R_STATUS_OK ;
 
-			$pid = (int)valid_request_var('promotion');
-			$promo = null;
+			$authUID = (int)Authenticator::getInstance()->getUserId();
+			//$userProm = UserPromotion::findByUPID( $upid ) ;
+			$promos = null;
 
-			if( $pid <= 0 )
-				$this->respond->setJSONCode( R_PROM_ERR_PARAMS );
-
-			elseif( is_null( $promo = Promotion::findByPID($pid) ) )
+			if( $authUID <= 0 || is_null( $promos = Promotion::findValidPromotions( $authUID ) ) || !is_array( $promos ) )
 				$this->respond->setJSONCode( R_PROM_ERR_USER_NOT_FOUND );
 
 			else
 			{
-				
+				$resp = array();
 
+				foreach( $promos as $p )
+				{
+					$resp[] = array( 'pid' => $p->getPID(),
+									 'name' => $p->getName(),
+									 'image' => Controller::formatURL( $p->getImageSRC() ) );
+				}
+				$this->respond->setJSONResponse( $resp );
+				$this->respond->setJSONCode( R_STATUS_OK );
 			}
-
+			
+			$this->respond->renderJSON( static::$status );
 			// $this->respond->renderJSON( $resposta, $render_code, describeMessage( $render_code, static::$status ) );			
 		}
 		
@@ -113,7 +120,7 @@
 									'name' => $promo->getName(),
 									'desc' => $promo->getDescription(),
 									'image' => Controller::formatURL( $promo->getImageSRC() ),
-									//'active' => $promo->isActive(),
+									'active' => $promo->isActive(),
 									'init_date' => $promo->getInitDate(),
 									'end_date' => $promo->getEndDate(),
 									'user_limit' => $promo->getUserLimit(),
