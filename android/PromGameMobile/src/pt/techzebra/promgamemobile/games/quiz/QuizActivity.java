@@ -115,12 +115,9 @@ public class QuizActivity extends SherlockFragmentActivity {
                 return;
             }
         }
-//TODO: falta update a isto
-        /*NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token,
-                quiz_.getQuestions());*/
-
-        Toast.makeText(this, "Submetido", Toast.LENGTH_SHORT).show();
-
+        // TODO: falta update a isto
+        NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token,
+                quiz_.getQuestions(), getApplicationContext());
     }
 
     private static class QuizCollectionPagerAdapter extends
