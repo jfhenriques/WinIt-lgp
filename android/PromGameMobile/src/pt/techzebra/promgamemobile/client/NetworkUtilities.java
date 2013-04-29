@@ -46,6 +46,7 @@ import android.widget.Toast;
 public class NetworkUtilities {
     private static final String TAG = "NetworkUtilities";
 
+    //User
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
     public static final String PARAM_NAME = "name";
@@ -55,6 +56,22 @@ public class NetworkUtilities {
     public static final String PARAM_HOUSE_NUMBER = "portaAndar";
     public static final String PARAM_UPDATED = "timestamp";
     public static final String PARAM_AUTH_TOKEN = "token";
+    
+    //Promotion
+    public static final String PARAM_PROMO_ID = "pid";
+    public static final String PARAM_PROMO_ACTIVE = "active";
+    public static final String PARAM_PROMO_NAME = "name";
+    public static final String PARAM_PROMO_INIT_DATE = "init_date";
+    public static final String PARAM_PROMO_END_DATE = "end_date";
+    public static final String PARAM_PROMO_GRAND_LIMIT = "grand_limit";
+    public static final String PARAM_PROMO_USER_LIMIT = "user_limit";
+    public static final String PARAM_PROMO_VALID_COORD = "valid_coord";
+    public static final String PARAM_PROMO_VALID_COORD_RADIUS = "valid_coord_radius";
+    public static final String PARAM_PROMO_TRANSFERABLE = "transferable";
+    public static final String PARAM_PROMO_WIN_POINTS = "win_points";
+    public static final String PARAM_PROMO_FUNC_TYPE = "func_type";
+    public static final String PARAM_PROMO_RETAILER_ID = "rid";
+    public static final String PARAM_PROMO_TYPE_ID = "ptid";
 
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
@@ -119,7 +136,8 @@ public class NetworkUtilities {
 
                 return json_response;
             } else {
-
+                Log.i(TAG, "Request Error");
+                return null;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -172,7 +190,11 @@ public class NetworkUtilities {
 
     public static boolean validResponse(JSONObject response) {
         try {
-            return response.getString("s").equals("0");
+            if (response == null) {
+                return false;
+            } else {
+                return response.getString("s").equals("0");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -182,7 +204,9 @@ public class NetworkUtilities {
     public static String getResponseMessage(JSONObject response) {
         String message = null;
         try {
-            message = response.getString("m");
+            if (response != null) {
+                message = response.getString("m");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -302,14 +326,18 @@ public class NetworkUtilities {
     }
 
     public static Quiz fetchQuizGame(final String promotionid, String auth_token) {
+        
         String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "/?token="
                 + auth_token;
 
         JSONObject response = get(uri);
 
         Quiz new_quiz = Quiz.valueOf(response);
+
         return new_quiz;
     }
+    
+   
 
     private static boolean register(String name, String username,
             String password, String birthday, String pc4, String pc3,
@@ -383,7 +411,7 @@ public class NetworkUtilities {
                         "Ganhaste: " + won + " com: " + correct
                                 + " respostas correctas!", Toast.LENGTH_SHORT)
                         .show();
-                
+
             } catch (JSONException e) {
                 Log.i(TAG, "Error to get response: "
                         + getResponseContent(json_response));
@@ -393,4 +421,15 @@ public class NetworkUtilities {
                     + getResponseContent(json_response));
         }
     }
+
+
+    public static Promotion fetchPromotionInformation(String promotionid) {
+    	String uri = PROMOTION_URI + "/" + promotionid + ".json";
+        JSONObject response = get(uri);
+      
+        Promotion promo = Promotion.valueOf(response);
+
+        return promo;
+    }
+
 }

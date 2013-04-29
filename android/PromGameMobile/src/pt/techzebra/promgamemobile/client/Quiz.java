@@ -60,15 +60,16 @@ public class Quiz {
                     return new_quiz;
                 } else {
                     Log.i("Quiz", "This is not a quiz");
+                    return null;
                 }
             } else {
                 Log.i("Quiz", "Error parsing JSON: message: "
                         + NetworkUtilities.getResponseMessage(quiz));
+                return null;
             }
         } catch (JSONException e) {
             Log.i("Quiz", "Error parsing JSON user object" + e.toString());
+            return null;
         }
-
-        return null;
     }
 }

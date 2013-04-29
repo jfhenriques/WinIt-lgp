@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
 
     <application
         android:name="pt.techzebra.promgamemobile.PromGame"
@@ -32,7 +33,7 @@
         <activity android:name="pt.techzebra.promgamemobile.ui.SignupActivity" />
         
         <activity android:name="pt.techzebra.promgamemobile.ui.PromotionsActivity" />
-        <activity android:name="pt.techzebra.promgamemobile.ui.ShowPromotionActivity" />
+        <activity android:name="pt.techzebra.promgamemobile.ui.PromotionActivity" />
         <activity android:name="pt.techzebra.promgamemobile.ui.BadgesActivity" />
         <activity android:name="pt.techzebra.promgamemobile.ui.ProfileActivity" />
         <activity android:name="pt.techzebra.promgamemobile.ui.TagsActivity" />
