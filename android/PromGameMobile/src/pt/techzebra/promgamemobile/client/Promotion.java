@@ -6,59 +6,45 @@ import android.util.Log;
 
 public class Promotion {
 	
-	private final int promotion_id_;
+	private int promotion_id_;
+	private int active_; //0 - not active | 1 - active
     private String name_;
-    private final String description_;
+    //TODO check date types
+    private int init_date_;
+    private int end_date_;
+    private int grand_limit_;
+    private int user_limit_;
+   // private String valid_coord_;
+    //private int valid_coord_radius_;
+    private int win_points_;
+    private int func_type_;
+    private int retailer_id_;
+    private int promotion_type_id_;
+    private int transferable_;
+    private String description_;
 	private String image_url_;
     
-	private Bitmap image_bitmap_;
-	
-	public Bitmap get_image_bitmap() {
-		return image_bitmap_;
-	}
-
-	public void set_image_bitmap(Bitmap promo_image) {
-		this.image_bitmap_ = promo_image;
+	public Promotion(){
+		
 	}
 	
-	public Promotion(int pid, String name, String description){
+	public Promotion(int pid, String name, String description, int active, int init_date, int end_date, int grand_limit, int user_limit, int transferable, int win_points, int func_type, int retailer_id, int promotion_type_id){
 		promotion_id_= pid;
     	name_ = name;
     	description_ = description;
+    	active_ = active;
+    	init_date_ = init_date;
+    	end_date_ = end_date;
+    	grand_limit_ = grand_limit;
+    	user_limit_ = user_limit;
+    	win_points_ = win_points;
+    	func_type_ = func_type;
+    	retailer_id_ = retailer_id;
+    	promotion_type_id_ = promotion_type_id;
+    	transferable_ = transferable;
+    	
 	}
 	
-	public Promotion(String name, String image_url){
-		//TODO change ID!!!
-		promotion_id_ = 1;
-		name_ = name;
-		image_url_ = image_url;
-		description_ = "";
-	}
-
-	public int getPromotion_id_() {
-		return promotion_id_;
-	}
-
-	public String getName_() {
-		return name_;
-	}
-
-	public void setName_(String name_) {
-		this.name_ = name_;
-	}
-
-	public String getImage_url_() {
-		return image_url_;
-	}
-
-	public void setImage_url_(String image_url_) {
-		this.image_url_ = image_url_;
-	}
-
-
-	public String getDescription_() {
-		return description_;
-	}
 	
     /**
      * Creates and returns an instance of the promotion from the provided JSON data.
@@ -72,7 +58,7 @@ public class Promotion {
             final String name = promotion.getString("name");
             final String description = promotion.getString("description");
            
-            return new Promotion(promotion_id, name, description);
+            return new Promotion();
         } catch (final Exception e) {
             Log.i("Promotion", "Error parsing JSON user object" + e.toString());
         }
