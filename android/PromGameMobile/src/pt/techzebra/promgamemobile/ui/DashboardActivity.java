@@ -3,6 +3,7 @@ package pt.techzebra.promgamemobile.ui;
 import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
+import pt.techzebra.promgamemobile.platform.LoadingAvailablePromotionsList;
 import pt.techzebra.promgamemobile.platform.LoadingUserInfo;
 import pt.techzebra.promgamemobile.games.quiz.QuizActivity;
 import android.content.Context;
@@ -89,8 +90,10 @@ public class DashboardActivity extends SherlockActivity {
         switch (view.getId()) {
         case R.id.single_player_layout:
             msg = "Single Player";
-            Intent intent = new Intent(this, PromotionsActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(this, PromotionsActivity.class);
+//            startActivity(intent);
+            LoadingAvailablePromotionsList apl = new LoadingAvailablePromotionsList(this);
+            apl.execute();
             return;
             //break;
         case R.id.cooperative_layout:

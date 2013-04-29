@@ -27,6 +27,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -131,8 +132,7 @@ public class NetworkUtilities {
             int status_code = response.getStatusLine().getStatusCode();
 
             if (status_code == HttpStatus.SC_OK) {
-                JSONObject json_response = new JSONObject(
-                        EntityUtils.toString(response.getEntity()));
+                JSONObject json_response = new JSONObject(EntityUtils.toString(response.getEntity()));
 
                 return json_response;
             } else {
@@ -220,6 +220,20 @@ public class NetworkUtilities {
         if (validResponse(response)) {
             try {
                 content = response.getJSONObject("r");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return content;
+    }
+    
+    public static JSONArray getResponseArray(JSONObject response) {
+        JSONArray content = null;
+
+        if (validResponse(response)) {
+            try {
+                content = response.getJSONArray("r");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -423,13 +437,31 @@ public class NetworkUtilities {
     }
 
 
-    public static Promotion fetchPromotionInformation(String promotionid) {
-    	String uri = PROMOTION_URI + "/" + promotionid + ".json";
+    public static Promotion fetchPromotionInformation(String promotionid, String auth_token) {
+    	
+    	String uri = PROMOTION_URI + "/" + promotionid + ".json?token=" + auth_token;
         JSONObject response = get(uri);
-      
-        Promotion promo = Promotion.valueOf(response);
+        JSONObject r = getResponseContent(response);
+        Promotion promo = Promotion.valueOf(r);
 
         return promo;
+    }
+    
+    public static ArrayList<Promotion> fetchAvailablePromotions(String token){
+    	ArrayList<Promotion> promos = new ArrayList<Promotion>();
+    	String uri = PROMOTION_URI + ".json?token=" + token;
+    	JSONObject response = get(uri);
+        JSONArray r = getResponseArray(response);
+        for(int i=0; i<r.length(); i++){
+        	try {
+				promos.add(Promotion.valueOf(r.getJSONObject(i)));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        
+        return promos;
     }
 
 }
