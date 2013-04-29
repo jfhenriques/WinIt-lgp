@@ -72,7 +72,11 @@ public class QuizActivity extends SherlockFragmentActivity {
         promotion_id = "1";
 
         quiz_ = NetworkUtilities.fetchQuizGame(promotion_id, authen_token);
-
+        
+        if(quiz_ == null){
+            Toast.makeText(this, "Pedimos desculpa, o erro será corrigido em breve!", Toast.LENGTH_SHORT).show();
+            finish();
+        }
         /*
          * gesture_detector_ = new GestureDetector(this, new
          * QuizGestureDetector()); gesture_listener_ = new OnTouchListener() {
@@ -115,9 +119,12 @@ public class QuizActivity extends SherlockFragmentActivity {
                 return;
             }
         }
+        
+        Toast.makeText(this, "sub",
+                Toast.LENGTH_SHORT).show();
         // TODO: falta update a isto
-        NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token,
-                quiz_.getQuestions(), getApplicationContext());
+        /*NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token,
+                quiz_.getQuestions(), getApplicationContext());*/
     }
 
     private static class QuizCollectionPagerAdapter extends
