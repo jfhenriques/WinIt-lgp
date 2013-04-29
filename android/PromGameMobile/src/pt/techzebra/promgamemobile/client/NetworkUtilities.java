@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -140,8 +139,7 @@ public class NetworkUtilities {
             int status_code = response.getStatusLine().getStatusCode();
 
             if (status_code == HttpStatus.SC_OK) {
-                JSONObject json_response = new JSONObject(
-                        EntityUtils.toString(response.getEntity()));
+                JSONObject json_response = new JSONObject(EntityUtils.toString(response.getEntity()));
 
                 return json_response;
             } else {
@@ -247,7 +245,7 @@ public class NetworkUtilities {
                 e.printStackTrace();
             }
         }
-        
+
         return content;
     }
 
@@ -501,15 +499,17 @@ public class NetworkUtilities {
     }
 
 
-    public static Promotion fetchPromotionInformation(String promotionid) {
-    	String uri = PROMOTION_URI + "/" + promotionid + ".json";
+    public static Promotion fetchPromotionInformation(String promotionid, String auth_token) {
+    	
+    	String uri = PROMOTION_URI + "/" + promotionid + ".json?token=" + auth_token;
         JSONObject response = get(uri);
-      
-        Promotion promo = Promotion.valueOf(response);
+        JSONObject r = getResponseContent(response);
+        Promotion promo = Promotion.valueOf(r);
 
         return promo;
     }
     
+
     public static void getAddresses(String pc4, String pc3, Handler handler, final Context context) {
         String uri = ADDRESSES_URI + "/" + pc4 + "/" + pc3 + ".json";
         JSONObject response = get(uri);
@@ -557,6 +557,22 @@ public class NetworkUtilities {
         };
 
         return NetworkUtilities.performOnBackgroundThread(runnable);
+    }
+    
+    public static ArrayList<Promotion> fetchAvailablePromotions(String token){
+    	ArrayList<Promotion> promos = new ArrayList<Promotion>();
+    	String uri = PROMOTION_URI + ".json?token=" + token;
+    	JSONObject response = get(uri);
+        JSONArray r = getResponseContentArray(response);
+        for(int i=0; i<r.length(); i++){
+        	try {
+				promos.add(Promotion.valueOf(r.getJSONObject(i)));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        }
+        
+        return promos;
     }
 
 }

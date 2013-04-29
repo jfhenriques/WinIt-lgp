@@ -12,6 +12,11 @@
 	DEFINE( 'R_USER_MUST_SEND_OLD_P'	, 0x32 );
 	DEFINE( 'R_USER_BAD_OLD_PASS'		, 0x33 );
 
+	DEFINE( 'R_USER_BAD_PROMO'			, 0x40 );
+	DEFINE( 'R_USER_PROMO_EXPIRED'		, 0x41 );
+
+	
+
 
 	DEFINE( 'MAIL_SUBJECT_RESET_PASS' , 'Tlantic PromGame Mobile - Password Reset' );
 	DEFINE( 'MAIL_SIGNATURE'   , "\r\n\r\n\r\nAtenciosamente,\nA Equipa Tlantic PromGame Mobile" );
@@ -34,6 +39,9 @@
 
 				R_USER_MUST_SEND_OLD_P	=> 'É necessário enviar a password antiga para alterar a password',
 				R_USER_BAD_OLD_PASS		=> 'A password antiga está errada',
+
+				R_USER_BAD_PROMO		=> 'Promoção não encontrada',
+				R_USER_PROMO_EXPIRED	=> 'A promoção expirou ou excedeu o limite de utilizações possíveis',
 			);
 
 		
@@ -231,11 +239,10 @@
 			
 			$user = User::findById($userId);
 			
-			if( is_null( $user ) ) {
-			
+			if( is_null( $user ) )
 				$this->respond->setJSONCode ( R_USER_ERR_USER_NOT_FOUND );
 				
-			} else {
+			else {
 			
 				$resp = $user->list_promotions_won();				
 				$response = array();
@@ -247,6 +254,44 @@
 				$this->respond->setJSONResponse( $response );
 				$this->respond->setJSONCode( R_STATUS_OK );
 			}
+			$this->respond->renderJSON( static::$status );
+		}
+
+
+
+		public function promotion_enroll()
+		{
+			$this->requireAuth();
+			
+			$auth = Authenticator::getInstance(); // retorna o id do user logado
+			$userId = $auth->getUserId();
+			$pid	= (int)valid_request_var('promotion');
+			$promo = null;
+			$user = User::findById($userId);
+			
+			if( is_null( $userId ) || is_null( $pid ) )
+				$this->respond->setJSONCode ( R_USER_ERR_PARAMS );
+
+			elseif( is_null( $promo = Promotion::findByPID($pid) ) )
+				$this->respond->setJSONCode ( R_USER_BAD_PROMO );
+			
+			else
+			{
+				$userProm = new UserPromotion();
+
+				$userProm->participate($pid, $userId);
+				$userProm->setInitDate(time());
+
+				try {
+					$success = $userProm->save();
+
+					$this->respond->setJSONCode( $success ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+				} catch(PDOException $e) {
+					$this->respond->setJSONCode( R_USER_PROMO_EXPIRED );
+				}
+				
+			}
+
 			$this->respond->renderJSON( static::$status );
 		}
 

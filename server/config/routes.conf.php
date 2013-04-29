@@ -95,6 +95,8 @@
 						array( 'match' => '/promotion/:promotion',
 							   'matches' => array(
 
+							   		array( 'match' => '/enroll', 'controller' => 'user', 'via' => 'post', 'action' => 'promotion_enroll' ),
+
 							   		array( 'match' => '/quizgame', 'controller' => 'quizgame', 'via' => 'get', 'action' => 'show',
 							   			   'matches' => array(
 
