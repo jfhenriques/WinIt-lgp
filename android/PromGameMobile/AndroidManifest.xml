@@ -32,6 +32,7 @@
         <activity android:name="pt.techzebra.promgamemobile.ui.SignupActivity" />
         
         <activity android:name="pt.techzebra.promgamemobile.ui.PromotionsActivity" />
+        <activity android:name="pt.techzebra.promgamemobile.ui.PromotionActivity" />
         <activity android:name="pt.techzebra.promgamemobile.ui.ShowPromotionActivity" />
         <activity android:name="pt.techzebra.promgamemobile.ui.BadgesActivity" />
         <activity android:name="pt.techzebra.promgamemobile.ui.ProfileActivity" />
