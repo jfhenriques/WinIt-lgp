@@ -38,5 +38,6 @@
     <string name="step1">Step 1</string>
     <string name="step2">Step 2</string>
     
+    <string name="prom_sample">Promotion X</string>
     <string name="test">test</string>
 </resources>

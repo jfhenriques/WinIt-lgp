@@ -6,6 +6,7 @@ import android.util.Log;
 
 public class Promotion {
 	
+
 	private int promotion_id_;
 	private int active_; //0 - not active | 1 - active
     private String name_;
@@ -24,8 +25,10 @@ public class Promotion {
     private String description_;
 	private String image_url_;
     
-	public Promotion(){
-		
+	public Promotion(int pid, String name, String image_url){
+		promotion_id_ = pid;
+		name_ = name;
+		image_url_ = image_url;
 	}
 	
 	public Promotion(int pid, String name, String description, int active, int init_date, int end_date, int grand_limit, int user_limit, int transferable, int win_points, int func_type, int retailer_id, int promotion_type_id){
@@ -45,8 +48,19 @@ public class Promotion {
     	
 	}
 	
+	public int getPromotion_id_() {
+		return promotion_id_;
+	}
+
+	public String getName_() {
+		return name_;
+	}
 	
-    /**
+	public String getImage_url_() {
+		return image_url_;
+	}
+
+	/**
      * Creates and returns an instance of the promotion from the provided JSON data.
      * 
      * @param promotion The JSONObject containing promotion data
@@ -58,7 +72,7 @@ public class Promotion {
             final String name = promotion.getString("name");
             final String description = promotion.getString("description");
            
-            return new Promotion();
+            //return new Promotion();
         } catch (final Exception e) {
             Log.i("Promotion", "Error parsing JSON user object" + e.toString());
         }

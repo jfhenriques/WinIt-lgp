@@ -46,6 +46,7 @@ import android.widget.Toast;
 public class NetworkUtilities {
     private static final String TAG = "NetworkUtilities";
 
+    //User
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
     public static final String PARAM_NAME = "name";
@@ -55,6 +56,22 @@ public class NetworkUtilities {
     public static final String PARAM_HOUSE_NUMBER = "portaAndar";
     public static final String PARAM_UPDATED = "timestamp";
     public static final String PARAM_AUTH_TOKEN = "token";
+    
+    //Promotion
+    public static final String PARAM_PROMO_ID = "pid";
+    public static final String PARAM_PROMO_ACTIVE = "active";
+    public static final String PARAM_PROMO_NAME = "name";
+    public static final String PARAM_PROMO_INIT_DATE = "init_date";
+    public static final String PARAM_PROMO_END_DATE = "end_date";
+    public static final String PARAM_PROMO_GRAND_LIMIT = "grand_limit";
+    public static final String PARAM_PROMO_USER_LIMIT = "user_limit";
+    public static final String PARAM_PROMO_VALID_COORD = "valid_coord";
+    public static final String PARAM_PROMO_VALID_COORD_RADIUS = "valid_coord_radius";
+    public static final String PARAM_PROMO_TRANSFERABLE = "transferable";
+    public static final String PARAM_PROMO_WIN_POINTS = "win_points";
+    public static final String PARAM_PROMO_FUNC_TYPE = "func_type";
+    public static final String PARAM_PROMO_RETAILER_ID = "rid";
+    public static final String PARAM_PROMO_TYPE_ID = "ptid";
 
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
@@ -310,6 +327,8 @@ public class NetworkUtilities {
         Quiz new_quiz = Quiz.valueOf(response);
         return new_quiz;
     }
+    
+   
 
     private static boolean register(String name, String username,
             String password, String birthday, String pc4, String pc3,
@@ -393,4 +412,6 @@ public class NetworkUtilities {
                     + getResponseContent(json_response));
         }
     }
+    
+   
 }
