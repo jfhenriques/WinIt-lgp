@@ -8,14 +8,17 @@ import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.client.NetworkUtilities;
 import pt.techzebra.promgamemobile.client.Promotion;
+import pt.techzebra.promgamemobile.games.quiz.QuizActivity;
 import pt.techzebra.promgamemobile.platform.DownloadImageTask;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,7 +45,7 @@ public class PromotionActivity extends SherlockActivity {
 		setContentView(R.layout.promotion_activity);
 		
 		p = (Promotion) getIntent().getSerializableExtra("Promotion");
-		if(p.getImageUrl() == null){
+		if (p.getImageUrl() == null){
 			p.setImageUrl("http://www.clker.com/cliparts/b/7/7/c/12247843801937558056schoolfreeware_Cancel.svg.med.png");
 		}
 		
@@ -53,8 +56,6 @@ public class PromotionActivity extends SherlockActivity {
 		auth_token = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
 				null);
 		
-		
-
 		name_text_ = (TextView) findViewById(R.id.name_text);
 		description_text_ = (TextView) findViewById(R.id.description_text);
 		end_date_text_ = (TextView) findViewById(R.id.end_date_text);
@@ -70,5 +71,10 @@ public class PromotionActivity extends SherlockActivity {
 		win_points_text_.setText(Integer.toString(p.getWinPoints()));
 
 
+	}
+	
+	public void play(View view) {
+	    Intent intent = new Intent(this, QuizActivity.class);
+	    startActivity(intent);
 	}
 }

@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scroll_view1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/light_gray" >
 
     <LinearLayout
         android:id="@+id/LinearLayout1"
@@ -96,10 +97,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:background="@color/dark_green"
-            android:text="Slide to play"
-            android:textColor="@color/white" 
-            />
+            android:text="Play"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            style="@style/WhiteButtonAppTheme"
+            android:onClick="play" />
     </LinearLayout>
 
 </ScrollView>

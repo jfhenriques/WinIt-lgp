@@ -10,10 +10,12 @@ import pt.techzebra.promgamemobile.client.Quiz;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +33,6 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 public class QuizActivity extends SherlockFragmentActivity {
-    @SuppressWarnings("unused")
     private static final String TAG = "QuizActivity";
     private ActionBar action_bar_;
     /*
@@ -47,7 +48,10 @@ public class QuizActivity extends SherlockFragmentActivity {
     static Quiz quiz_;
     String authen_token;
     String promotion_id;
+    
+    Handler handler_ = new Handler();
 
+    
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
@@ -59,24 +63,23 @@ public class QuizActivity extends SherlockFragmentActivity {
 
         quiz_collection_adapter_ = new QuizCollectionPagerAdapter(
                 getSupportFragmentManager());
-
         view_pager_ = (ViewPager) findViewById(R.id.pager);
         view_pager_.setAdapter(quiz_collection_adapter_);
-
         SharedPreferences preferences_editor = PromGame.getAppContext()
                 .getSharedPreferences(Constants.USER_PREFERENCES,
                         Context.MODE_PRIVATE);
-
         authen_token = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
                 null);
         promotion_id = "1";
-
-        quiz_ = NetworkUtilities.fetchQuizGame(promotion_id, authen_token);
+        Log.d(TAG, "here");
+        quiz_ = new Quiz("");
+        NetworkUtilities.attemptFetchQuizGame(promotion_id, authen_token, handler_, this);
         
-        if(quiz_ == null){
-            Toast.makeText(this, "Pedimos desculpa, o erro será corrigido em breve!", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+        Log.d(TAG, "2");
+//        if(quiz_ == null){
+//            Toast.makeText(this, "Pedimos desculpa, o erro será corrigido em breve!", Toast.LENGTH_SHORT).show();
+//            finish();
+//        }
         /*
          * gesture_detector_ = new GestureDetector(this, new
          * QuizGestureDetector()); gesture_listener_ = new OnTouchListener() {
@@ -110,6 +113,13 @@ public class QuizActivity extends SherlockFragmentActivity {
         }
     }
 
+    public void load(Quiz quiz) {
+        Log.d(TAG, "loading");
+        quiz_ = quiz;
+        ViewGroup vg = (ViewGroup) findViewById(R.id.pager);
+        vg.invalidate();
+    }
+    
     private void submitAnswers() {
 
         for (int i = 0; i < quiz_.getQuestions().size(); i++) {
@@ -120,7 +130,7 @@ public class QuizActivity extends SherlockFragmentActivity {
             }
         }
         
-        Toast.makeText(this, "sub",
+        Toast.makeText(this, "To do",
                 Toast.LENGTH_SHORT).show();
         // TODO: falta update a isto
         /*NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token,

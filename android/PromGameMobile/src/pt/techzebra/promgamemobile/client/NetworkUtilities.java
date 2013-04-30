@@ -33,6 +33,7 @@ import org.json.JSONObject;
 
 import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.PromGame;
+import pt.techzebra.promgamemobile.games.quiz.QuizActivity;
 import pt.techzebra.promgamemobile.ui.AuthenticationActivity;
 import pt.techzebra.promgamemobile.ui.SignupActivity;
 
@@ -79,7 +80,7 @@ public class NetworkUtilities {
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
     public static final String HOST = "lgptlantic.fe.up.pt";
-    public static final String BASE_URL = "http://lgptlantic.fe.up.pt/api";
+    public static final String BASE_URL = "http://lgptlantic.fe.up.pt/r1/api";
 
     public static final String AUTH_URI = BASE_URL + "/session.json";
     public static final String USER_URI = BASE_URL + "/user.json";
@@ -137,7 +138,6 @@ public class NetworkUtilities {
         try {
             response = http_client_.execute(host, request);
             int status_code = response.getStatusLine().getStatusCode();
-
             if (status_code == HttpStatus.SC_OK) {
                 JSONObject json_response = new JSONObject(EntityUtils.toString(response.getEntity()));
 
@@ -359,16 +359,48 @@ public class NetworkUtilities {
         return user;
     }
 
-    public static Quiz fetchQuizGame(final String promotionid, String auth_token) {
+    public static Thread attemptFetchQuizGame(final String promotionid,
+            final String auth_token, final Handler handler, final Context context) {
         
-        String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "/?token="
-                + auth_token;
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                fetchQuizGame(promotionid, auth_token, handler, context);
+            }
+        };
 
+        return NetworkUtilities.performOnBackgroundThread(runnable);
+        
+    }
+    
+    public static void sendQuizGameResultToActivity(final Quiz quiz,
+            final Handler handler, final Context context) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                ((QuizActivity) context)
+                        .load(quiz);
+            }
+        });
+    }
+    
+    public static Quiz fetchQuizGame(final String promotionid, String auth_token, Handler handler, final Context context) {
+        String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "?token="
+                + auth_token;
+        
         JSONObject response = get(uri);
 
-        Quiz new_quiz = Quiz.valueOf(response);
-
-        return new_quiz;
+        try {
+            Log.d("DERP", response.toString(2));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        
+        Quiz quiz = Quiz.valueOf(response);
+        
+        sendQuizGameResultToActivity(quiz, handler, context);
+        
+        return quiz;
     }
     
    
@@ -417,9 +449,7 @@ public class NetworkUtilities {
             public void run() {
                 boolean success = register(name, email, password, birthday, address_id,
                         address_2, handler, context);
-                Log.d("AQUI", "FODA-SE");
                 if (success) {
-                    Log.d("AQUI", "FODA-SE!!!");
                     final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
                     params.add(new BasicNameValuePair(PARAM_EMAIL, email));
                     params.add(new BasicNameValuePair(PARAM_PASSWORD, password));
@@ -564,7 +594,7 @@ public class NetworkUtilities {
     	String uri = PROMOTION_URI + ".json?token=" + token;
     	JSONObject response = get(uri);
         JSONArray r = getResponseContentArray(response);
-        for(int i=0; i<r.length(); i++){
+        for(int i = 0; i < r.length(); i++) {
         	try {
 				promos.add(Promotion.valueOf(r.getJSONObject(i)));
 			} catch (JSONException e) {
