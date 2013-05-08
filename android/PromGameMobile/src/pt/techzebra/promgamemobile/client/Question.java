@@ -57,6 +57,7 @@ public class Question {
             final int question_id = question.getInt("qid");
             final String title = question.getString("question");
             final int type = question.getInt("type");
+            
             Answer answer = null;
             if (type != 1) {
                 JSONArray answers_choices = question

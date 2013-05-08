@@ -23,5 +23,10 @@
     <style name="WhiteImageButtonAppTheme" parent="android:Widget.Holo.Light.ImageButton">
         <item name="android:background">@drawable/btn_white_holo_light</item>
     </style>
+    
+    <style name="ProgressBarAppTheme" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/progress_indeterminate_horizontal_holo_light</item>
+    </style>
 
 </resources>

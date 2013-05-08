@@ -79,8 +79,8 @@ public class NetworkUtilities {
 
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
-    public static final String HOST = "lgptlantic.fe.up.pt";
-    public static final String BASE_URL = "http://lgptlantic.fe.up.pt/r1/api";
+    public static final String HOST = "tlantic.techzebra.pt";
+    public static final String BASE_URL = "http://tlantic.techzebra.pt/api";
 
     public static final String AUTH_URI = BASE_URL + "/session.json";
     public static final String USER_URI = BASE_URL + "/user.json";
@@ -350,7 +350,12 @@ public class NetworkUtilities {
     public static User fetchUserInformation(String auth_token, Date last_updated) {
         String uri = USER_URI + "?token=" + auth_token;
         JSONObject json_response = get(uri);
-
+        try {
+            Log.d(TAG, json_response.toString(2));
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         User user = null;
 
         JSONObject r = getResponseContent(json_response);

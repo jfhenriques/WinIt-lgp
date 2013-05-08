@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,11 +72,10 @@ public class QuizActivity extends SherlockFragmentActivity {
         authen_token = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
                 null);
         promotion_id = "1";
-        Log.d(TAG, "here");
+        
         quiz_ = new Quiz("");
         NetworkUtilities.attemptFetchQuizGame(promotion_id, authen_token, handler_, this);
         
-        Log.d(TAG, "2");
 //        if(quiz_ == null){
 //            Toast.makeText(this, "Pedimos desculpa, o erro será corrigido em breve!", Toast.LENGTH_SHORT).show();
 //            finish();
@@ -114,7 +114,6 @@ public class QuizActivity extends SherlockFragmentActivity {
     }
 
     public void load(Quiz quiz) {
-        Log.d(TAG, "loading");
         quiz_ = quiz;
         ViewGroup vg = (ViewGroup) findViewById(R.id.pager);
         vg.invalidate();
@@ -145,16 +144,16 @@ public class QuizActivity extends SherlockFragmentActivity {
 
         @Override
         public Fragment getItem(int i) {
+            Log.d(TAG, "" + i);
             Fragment fragment = new QuestionObjectFragment();
             Bundle args = new Bundle();
             args.putString("question", quiz_.getQuestions().get(i).getTitle());
             args.putInt("num_question", i);
-
-            @SuppressWarnings("unchecked")
+            Log.d(TAG, "bundle");
             ArrayList<String> answerslist = ((ArrayList<String>) quiz_
                     .getQuestions().get(i).getAnswer().getContent());
             args.putInt("num_answers", answerslist.size());
-
+            Log.d(TAG, "num answers: " + answerslist.size());
             for (int j = 0; j < answerslist.size(); j++) {
                 args.putString("answer" + j, answerslist.get(j));
             }
