@@ -101,13 +101,14 @@
 			{
 				$authUID = (int)Authenticator::getInstance()->getUserId();
 				$userProm = UserPromotion::findByUPID( $upid ) ;
+				$user = null;
 				$promo = null;
 				$time = time();
 				$quiz = $questions = null;
 
 
 				// UserPromotion participation not found
-				if( is_null( $authUID ) || is_null( $userProm )
+				if( is_null( $authUID ) || is_null( $userProm ) || is_null( $user = User::findByUID( $authUID ) )
 					|| $authUID <= 0 || $userProm->getUID() !== $authUID )
 						$this->respond->setJSONCode( R_QUIZ_ERR_USERPROM_NOT_FOUND );
 
@@ -176,18 +177,35 @@
 						if( !$hasError )
 						{
 							$won = ( !$isQuiz || $rightAnswers === $totalQuestions ) ;
-							$resp = array('won' => $won, 'correct' => $rightAnswers );
-
+							$prizecode = null;
 							$userProm->setEndDate( $time );
 
-							if( $won )	
+							if( $won )
 								$userProm->setState( UserPromotion::STATE_WON );
 
-							if( !$userProm->save() )
+							if( $userProm->save() ) // need to save now and get the auto-increment ID
 							{
-								$hasError = true ;
-								$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
+								if( $won )
+								{
+									$pc = new PrizeCode();
+									$pc->setEmissionDate($time);
+									$pc->setUPID($userProm->getUPID());
+									$pc->setOwnerUID($authUID);
+
+									$pc->genValidCode($user->getSeed());
+									$prizecode = $pc->getCode();
+
+									if( !$pc->save() )
+										$hasError = true;
+								}
 							}
+							else
+								$hasError = true;
+
+							if( !$hasError )
+								$resp = array('won' => $won, 'correct' => $rightAnswers, 'prizecode' => $prizecode);
+							else
+								$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
 						}
 							
 						if( $hasError )

@@ -110,6 +110,30 @@
 						),
 
 						array( 'match' => '/address/:cp4/:cp3', 'controller' => 'address', 'via' => 'get', 'action' => 'list_cp' ),
+
+						array( 'match' => '/trading', 'controller' => 'trading', 'via' => 'get', 'action' => 'index',
+/*							   'matches' => array(
+
+							   		array( 'match' => '/reset_password', 'controller' => 'user', 'via' => 'post', 'action' => 'reset_password' ),
+
+									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
+									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'post', 'action' => 'assoc_tags' ),
+									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'delete', 'action' => 'remove_tags' ),
+
+									array( 'match' => '/promotions',
+										   'matches' => array(
+
+												array( 'match' => '/won', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions_won' ),
+												array( 'match' => '/active', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions_active' ),
+
+											),
+									),
+
+									array( 'match' => '/badges', 'controller' => 'user', 'via' => 'get', 'action' => 'list_badges' ),
+
+								),*/
+						),
+
 				   	),
 			),
 			

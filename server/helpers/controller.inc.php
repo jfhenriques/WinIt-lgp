@@ -148,6 +148,20 @@
 			return ( USE_STATIC_URI ? BASE_STATIC_URI : ( '/' . BASE_URI ) ) . $src ;
 		}
 
+
+		public static function genRand64($raw = false)
+		{
+			return self::genRand('sha256', $raw);
+		}
+		public static function genRand128($raw = false)
+		{
+			return self::genRand('sha512', $raw);
+		}
+		public static function genRand($algo, $raw = false)
+		{
+			return hash( $algo, uniqid(rand(), true), $raw );
+		}
+
 		
 		public static function registerAuthFunction( $func )
 		{

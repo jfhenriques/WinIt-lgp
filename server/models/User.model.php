@@ -125,6 +125,15 @@
 			$this->data['reset_token_validity'] = $validity;
 		}
 
+		public function getSeed()
+		{
+			return $this->getData('ui_seed');
+		}
+		public function setSeed($seed)
+		{
+			$this->data['ui_seed'] = $seed;
+		}
+
 
 
 
@@ -136,11 +145,16 @@
 			$sth = null;
 			
 			$uid = $this->getUID();
-			$isInsert = $uid <= 0 ;
+			$isInsert = ( $uid <= 0 ) ;
 
 			if( $isInsert )
-				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, token_facebook, token_twitter, birth) ' .
-										' VALUES(:name, :email, :password, :adid, :address2, :token_facebook, :token_twitter, :birth)');
+			{
+				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, token_facebook, token_twitter, birth, ui_seed) ' .
+										' VALUES(:name, :email, :password, :adid, :address2, :token_facebook, :token_twitter, :birth, :seed)');
+				
+				$seed = $this->getSeed();
+				$sth->bindParam(':seed', $seed, PDO::PARAM_LOB );
+			}
 			else
 			{
 				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,' .
@@ -176,7 +190,7 @@
 			$ret = $sth->execute();
 			
 			if( $ret && $isInsert )
-				$this->uid = $dbh->lastInsertId();
+				$this->data['uid'] = $dbh->lastInsertId();
 
 			return $ret;
 		}
@@ -231,7 +245,7 @@
 			return static::fillModel( $result, new User() );
 		}
 
-		public static function findById($id)
+		public static function findByUID($id)
 		{
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
 									  array( $id ) );

@@ -62,7 +62,7 @@
 					}
 					else
 					{
-						$token = hash('sha256', uniqid(rand(), true)) ;
+						$token = Controller::genRand64() ;
 					
 						$sess = new Session();
 						

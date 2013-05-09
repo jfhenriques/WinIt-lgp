@@ -62,7 +62,7 @@
 			$auth = Authenticator::getInstance(); // retorna uma class com o id do user logado
 			$userId = $auth->getUserId();
 
-			$user = User::findById($userId);
+			$user = User::findByUID($userId);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -116,7 +116,7 @@
 
 			$resp = array();
 			
-			$user = User::findById($userId);
+			$user = User::findByUID($userId);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -217,6 +217,7 @@
 					$user->setAddress2($address2);
 					$user->setBirth($birth);
 					$user->setPassword( User::saltPass($password) );
+					$user->setSeed( Controller::genRand('sha256', true) );
 
 					$success = $user->save();
 
@@ -237,7 +238,7 @@
 			$auth = Authenticator::getInstance(); // retorna o id do user logado
 			$userId = $auth->getUserId();
 			
-			$user = User::findById($userId);
+			$user = User::findByUID($userId);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode ( R_USER_ERR_USER_NOT_FOUND );
@@ -267,7 +268,7 @@
 			$userId = $auth->getUserId();
 			$pid	= (int)valid_request_var('promotion');
 			$promo = null;
-			$user = User::findById($userId);
+			$user = User::findByUID($userId);
 			
 			if( is_null( $userId ) || is_null( $pid ) )
 				$this->respond->setJSONCode ( R_USER_ERR_PARAMS );
@@ -283,7 +284,8 @@
 				$userProm->setInitDate(time());
 
 				try {
-					$success = $userProm->save();
+					if( $success = $userProm->save() )
+						$this->respond->setJSONResponse( array('upid' => $userProm->getUPID()) );
 
 					$this->respond->setJSONCode( $success ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 				} catch(PDOException $e) {
@@ -314,7 +316,7 @@
 
 			else
 			{
-				$token = hash('sha512', uniqid(rand(), true)) ;
+				$token = Controller::genRand64() ;
 
 				$user->setResetToken($token);
 				$user->setResetTokenValidity(time()+600); // 10 minutos para fazer reset
