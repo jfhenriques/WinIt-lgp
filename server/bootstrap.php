@@ -1,6 +1,8 @@
 <?php
 
-	session_start();
+	//session_start();
+
+	$init_time = microtime(true);
 	
 	// Força o output a ser redirecionado para o buffer,
 	// e sendo enviado para o browser do utulizador apenas no final.
