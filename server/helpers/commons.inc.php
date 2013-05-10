@@ -17,7 +17,7 @@
 	{
 		require_once( ROOT .'/helpers/print_error.inc.php' );
 		
-		error_log($exception);
+		error_log( $exception );
 		dumpException( $exception );
 		
 		exit(1);
@@ -40,7 +40,8 @@
 		{
 			$exc = new ErrorException($lErr['message'], $lErr['type'], 0, $lErr['file'], $lErr['line']);
 			my_exception_handler( $exc );
-		}	
+		}
+		//echo "a";
 	});
 	
 	ini_set('log_errors', 1);

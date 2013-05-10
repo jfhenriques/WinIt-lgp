@@ -2,8 +2,8 @@
 
 	session_start();
 	
-	// Faz todo o output ir para um buffer primeiro,
-	// sendo enviado tudo de uma vez só para o browser do utilizador apenas no final.
+	// Força o output a ser redirecionado para o buffer,
+	// e sendo enviado para o browser do utulizador apenas no final.
 	ob_start();
 	
 	header('Content-type: text/html; charset=utf-8', true);
