@@ -34,7 +34,7 @@ public class ProfileActivity extends SherlockActivity {
     User user_ = null;
     String auth_token;
 
-    /*
+    /**
      * Set up user data that is displayed on this activity
      */
     public void setUserData(User u) throws Exception {
@@ -103,6 +103,8 @@ public class ProfileActivity extends SherlockActivity {
             myb.putString("email", user_.getEmail());
             myb.putString("birthday", user_.getBirthday());
             myb.putString("address", user_.getAddress());
+            myb.putInt("cp4", user_.getCp4());
+            myb.putInt("cp3", user_.getCp3());
             myb.putInt("id", user_.getUserId());
             myb.putString("token", auth_token);
             in.putExtras(myb);
