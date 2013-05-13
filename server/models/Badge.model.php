@@ -6,6 +6,8 @@
 		
 
 		const TABLE_NAME = 'badges' ;
+		const TABLE_NAME_USER = 'user' ;
+		const TABLE_NAME_USERBADGES = 'userbadges' ;
 
 
 		//public function __construct() {}
@@ -57,7 +59,7 @@
 		{
 		}
 		
-		public static function findById($id)
+		public static function findByBID($id)
 		{
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE bid = ? LIMIT 1;',
 									  array( $id ) );
@@ -65,30 +67,16 @@
 			return static::fillModel( $result, new Badge() );
 		}
 
-		/*public function list_promotions_won() {
-		
-			$dbh = DbConn::getInstance()->getDB();
-			$sth = null;
-			
-			$userID = $this->getUID();
-		
-			$sth = $dbh->prepare('SELECT promotion.pid, promotion.name, promotion.active, promotion.end_date '.
-									'FROM promotion, user, userpromotion '.
-									'WHERE user.uid = userpromotion.uid '.
-									'AND promotion.pid = userpromotion.pid '.
-									'AND user.uid = '. $userID .' ;' );
-			
-			$ret = $sth->execute();
-			
-			$result = $sth->fetchAll();
-			
-			// var_dump($result);
+		public static function findByUIS($uid) {
 
-			return $result;
-			
-		
-		}*/
-
+			$result = static::query( 'SELECT b.bid AS bid, b.name AS bname, b.image AS bimage, ub.aquis_date AS bdata '.
+										'FROM self::TABLE_NAME AS b '.
+										'INNER JOIN self::TABLE_NAME_USERBADGES AS ub ON (ub.bid = b.bid) '.
+										'INNER JOIN self::TABLE_NAME_USER AS u ON (u.uid = ub.uid);'.
+										'WHERE u.uid = ? LIMIT 1;',
+										array( $uid ));
+			return static::fillModel( $result, new Badge() );			
+		}
 	}
 
 ?>

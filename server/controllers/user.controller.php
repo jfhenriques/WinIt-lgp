@@ -267,6 +267,30 @@
 			$this->respond->renderJSON( static::$status );
 		}
 
+		public function list_badges_won() {
+			$this->requireAuth();
+
+			$auth = Authenticator::getInstance();
+			$userId = $auth->getUserId();
+
+			$user = User::findByUID($userId);
+
+			if( is_null( $user ) ) {
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+			} else {
+				$resp = $user->list_badges_won();
+				$response = array();
+
+				foreach ( $resp as $linha) {
+					array_push($response, $linha);
+				}
+
+				$this->respond->setJSONResponse( $response );
+				$this->respond->setJSONCode( R_STATUS_OK );
+			}
+			$this->respond->renderJSON( static::$status);
+		}
+
 
 
 		public function promotion_enroll()
