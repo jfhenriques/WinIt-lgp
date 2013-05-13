@@ -3,12 +3,8 @@ package pt.techzebra.promgamemobile.ui;
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.Utilities;
 import pt.techzebra.promgamemobile.client.NetworkUtilities;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.location.Address;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -58,6 +54,8 @@ public class EditProfileActivity extends SherlockActivity {
         name_edit_text_.setText(bun.getString("name"));
         email_edit_text_.setText(bun.getString("email"));
         birth_edit_text_.setText(bun.getString("birthday"));
+        cp4_edit_text_.setText(String.valueOf(bun.getInt("cp4")));
+        cp3_edit_text_.setText(String.valueOf(bun.getInt("cp3")));
         address_ = bun.getString("address");
         auth_token_ = bun.getString("token");
     }
@@ -76,6 +74,8 @@ public class EditProfileActivity extends SherlockActivity {
             Toast.makeText(this, "Deve preencher o campo Password", Toast.LENGTH_SHORT).show();
             return;
         }
+        
+        //TODO: address change
         
         NetworkUtilities.attemptEditProfile(auth_token_, name, email, new_password,
                 old_password, birthday, String.valueOf(address_id), address_2, handler_, this);
