@@ -112,10 +112,10 @@
 					|| $authUID <= 0 || $userProm->getUID() !== $authUID )
 						$this->respond->setJSONCode( R_QUIZ_ERR_USERPROM_NOT_FOUND );
 
-				// Check promotion exepiration date
+				// Check promotion expiration date
 				elseif( is_null( $promo = $userProm->getPromotion() )
 						|| !$promo->isActive() || $pid !== $promo->getPID()
-						|| $promo->getEndDate() > 0 && $promo->getEndDate() < $time )
+						|| ( $promo->getEndDate() > 0 && $promo->getEndDate() < $time ) )
 							$this->respond->setJSONCode( R_QUIZ_ERR_PROM_AUTOFVALID );
 
 				// UserPromotion not available to be answered
@@ -137,10 +137,10 @@
 					$totalQuestions = count( $questions ) ;
 					$isQuiz = $quiz->isQuiz() ;
 
-					try {
+					// Start transaction
+					$dbh->beginTransaction();
 
-						// Start transaction
-						$dbh->beginTransaction();
+					try {
 
 						foreach($questions as $q)
 						{

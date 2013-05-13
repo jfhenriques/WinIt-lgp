@@ -170,8 +170,17 @@
 
 					if( !is_null($password) )
 						$user->setPassword( User::saltPass( $password ) );
-				
-					$this->respond->setJSONCode( $user->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+
+					if( !$user->save() )
+						$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
+
+					else
+					{
+						if( !is_null($password) )
+							Session::resetUserTokens( $user->getUID() );
+						
+						$this->respond->setJSONCode( R_STATUS_OK );
+					}
 				}
 							
 			}
@@ -298,8 +307,6 @@
 		}
 
 
-
-
 		public function reset_password()
 		{
 			$this->requireNoAuth();
@@ -342,6 +349,29 @@
 
 		public function reset_password_confirmation()
 		{
+			// function dump()
+			// {
+			//     $memcache = new Memcache();
+			//     $memcache->connect('127.0.0.1', 11211) or die ("Could not connect to memcache server");
+
+			//     $list = array();
+			//     $allSlabs = $memcache->getExtendedStats('slabs');
+			//     $items = $memcache->getExtendedStats('items');
+			//     foreach($allSlabs as $server => $slabs) {
+			//         foreach($slabs AS $slabId => $slabMeta) {
+			//            $cdump = $memcache->getExtendedStats('cachedump',(int)$slabId);
+			//             foreach($cdump AS $keys => $arrVal) {
+			//                 if (!is_array($arrVal)) continue;
+			//                 foreach($arrVal AS $k => $v) {                   
+			//                     $list[] = $k;
+			//                 }
+			//            }
+			//         }
+			//     }
+
+			//     var_dump($list);
+			// }
+
 			$this->requireNoAuth();
 
 
@@ -364,6 +394,8 @@
 
 				else
 				{
+					Session::resetUserTokens( $user->getUID() );
+
  					$pass = substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ#()+", 3)), 10, 8);
 
  					$user->setPassword( User::saltPass($pass) );

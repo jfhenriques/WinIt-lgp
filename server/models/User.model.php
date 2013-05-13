@@ -205,28 +205,6 @@
 			return ":${salt}:" . hash( 'sha256', $salt.$pass ) . ':';
 		}
 
-		// private static function fillUser($arr)
-		// {
-		// 	if( is_array( $arr ) && count( $arr ) > 0 )
-		// 	{
-		// 		$user = new User();
-				
-		// 		$user->uid = $arr['uid'];
-		// 		$user->name = $arr['name'];
-		// 		$user->email = $arr['email'];
-		// 		$user->password = $arr['password'];
-		// 		$user->adid = $arr['adid'];
-		// 		$user->address2 = $arr['door'];
-		// 		$user->token_facebook = $arr['token_facebook'];
-		// 		$user->token_twitter = $arr['token_twitter'];
-		// 		$user->birth = $arr['birth'];
-				
-		// 		return $user;
-		// 	}
-			
-		// 	return null;
-		// }
-
 		public static function findByResetToken( $token )
 		{
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE reset_token = ? LIMIT 1;',
@@ -276,7 +254,7 @@
 		
 		public function list_promotions_won() {
 		
-			$dbh = DbConn::getInstance()->getDB();
+/*			$dbh = DbConn::getInstance()->getDB();
 			$sth = null;
 			
 			$userID = $this->getUID();
@@ -285,15 +263,15 @@
 									'FROM promotion, user, userpromotion '.
 									'WHERE user.uid = userpromotion.uid '.
 									'AND promotion.pid = userpromotion.pid '.
-									'AND user.uid = '. $userID .' ;' );
+									'AND user.uid = ? ;' );
 			
-			$ret = $sth->execute();
+			$ret = $sth->execute(array());
 			
 			$result = $sth->fetchAll();
 			
 			// var_dump($result);
 
-			return $result;
+			return $result;*/
 			
 		
 		}

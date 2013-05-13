@@ -40,7 +40,10 @@
 		}
 		
 		
-		
+		public function deleteCache()
+		{
+			CommonCache::getInstance()->delete( CommonCache::buildVarName( self::TABLE_NAME, $this->getToken() ) );
+		}
 		
 		public function save()
 		{
@@ -57,13 +60,32 @@
 			$sth->bindParam(':val', $val, PDO::PARAM_INT);
 
 			// If this instance was cached, force its deletetion, so the next cache miss forces it to reload
-			CommonCache::getInstance()->delete( CommonCache::buildVarName( self::TABLE_NAME, $this->getToken() ) );
+			$this->deleteCache();
 
 			return $sth->execute();
 		}
 
 
-		
+		public static function resetUserTokens($uid)
+		{
+			$return = static::executeQuery( 'SELECT * FROM '. self::TABLE_NAME .
+											' WHERE uid = ? AND validity >= 0;',
+									  			array( $uid ), $stmt );
+
+			if( $stmt !== null && $return !== false )
+			{
+				while( $row = $stmt->fetch() )
+				{
+					if( !is_null( $sess = static::fillModel( $row, new Session() ) ) )
+					{
+						$sess->setValidity(-1);
+						$sess->save();
+					}
+				}
+
+			}
+		}
+
 		public static function findById($token)
 		{
 			$result = static::cachedQuery( $token,
