@@ -60,22 +60,38 @@
 
 		public function getUPID()
 		{
-			return $this->getData('upid');
+			return (int)$this->getData('upid');
 		}
 		public function setUPID($upid)
 		{
 			$this->data['upid'] = $upid;
 		}
 
-		public function getOriginalUID()
-		{
-			$this->getData('o_uid');
-		}
-		public function getPID()
-		{
-			$this->getData('pid');
-		}
+		/* START: Only available on tradable finds, for performance boost */
 
+			public function getOriginalUID()
+			{
+				return (int)$this->getData('o_uid');
+			}
+			public function getPID()
+			{
+				return (int)$this->getData('pid');
+			}
+			public function getMaxUtilizationDate()
+			{
+				return (int)$this->getData('p_util_date');
+			}
+			public function getPromotionName()
+			{
+				return $this->getData('p_name');
+			}
+			public function getPromotionImageSRC()
+			{
+				$img = $this->getData('p_image');
+				return is_null( $img ) ? null : ( PROM_IMG_SRC_DIR . $img );
+			}
+
+		/* END */
 
 
 		public function genValidCode($binaryPass)
@@ -140,32 +156,59 @@
 		}
 
 
-		public static function findOwnTrading($uid)
+		public static function _fillTradablePrizes($prizArr)
 		{
-			return self::_findTradable($uid, true, 1);
-		}
-		public static function findOwnTradable($uid)
-		{
-			return self::_findTradable($uid, true, 0);
-		}
-		public static function findOthersTradable($uid)
-		{
-			return self::_findTradable($uid, false, 1);
+			$ret = array();
+
+			if( !is_null( $prizArr ) && is_array( $prizArr ) )
+			{
+				foreach($prizArr as $p)
+				{
+					$ret[] = array('pcid' => $p->getPCID(),
+								   'pid' => $p->getPID(),
+								   'max_util_date' => $p->getMaxUtilizationDate(),
+								   'name' => $p->getPromotionName(),
+								   'image' => Controller::formatURL( $p->getPromotionImageSRC() ),
+						);
+
+				}
+
+			}
+
+			return $ret;
 		}
 
 
-		private static function _findTradable($uid, $owned, $inTrading)
+		public static function findOwnTrading($uid, $time = null)
+		{
+			return self::_findTradable($uid, true, 1, $time);
+		}
+		public static function findOwnTradable($uid, $time = null)
+		{
+			return self::_findTradable($uid, true, 0, $time);
+		}
+		public static function findOthersTradable($uid, $time = null)
+		{
+			return self::_findTradable($uid, false, 1, $time);
+		}
+
+
+		private static function _findTradable($uid, $owned, $inTrading, $time)
 		{
 			$prizes = array();
+			$time = is_null( $time ) ? time() : $time ;
+
 			$return = static::executeQuery( 'SELECT pc.pcid AS pcid, pc.emiss_date AS emiss_date, pc.util_date AS util_date, ' .
 											' pc.cur_uid AS cuir_uid, pc.valid_code AS valid_code, pc.in_trading AS in_trading, ' .
-											' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid ' .
+											' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid, p.util_date AS p_util_date, ' .
+											' p.name AS p_name, p.image AS p_image ' .
 											' FROM ' . self::TABLE_NAME .' AS pc ' .
 											' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid)' .
 											' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid)' .
-											' WHERE p.transferable = 1 AND up.end_date > 0 AND up.state = 1 ' .
+											' WHERE p.transferable = 1 AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
+											' AND up.end_date > 0 AND up.state = 1 AND pc.util_date = 0 ' .
 											' AND pc.in_trading = ? AND up.uid ' . ( $owned ? '=' : '<>' ) . ' ? ;',
-									  			array( $inTrading, $uid ), $stmt );
+									  			array(  $time, $inTrading, $uid ), $stmt );
 
 			if( $stmt !== null && $return !== false )
 			{
@@ -177,6 +220,16 @@
 			}
 
 			return $prizes;
+		}
+
+
+		public static function findByPCID($pcid)
+		{
+			$result = static::query( 'SELECT pcid, emiss_date, util_date, cur_uid, valid_code, in_trading, upid' .
+											' FROM ' . self::TABLE_NAME . ' WHERE pcid = ? ;',
+									  			array(  $pcid ) );
+
+			return static::fillModel( $result, new Promotion() );
 		}
 
 

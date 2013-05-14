@@ -20,37 +20,13 @@
 		{
 			$this->requireAuth();
 		}
+
+		
 		
 		public function index()
 		{
-		
-			// /*
-			//  * Certeficar-se que alguém está logado
-			//  */
-			// // 		
-			// $render_code = null;
-			
-			// $resp = array(
-			// 	'pid' => $this->getPID(),
-			// 	'name' => $this->getName(),
-			// 	'init_date' => $this->getInitDate(),
-			// 	'end_date' => $this->getEndDate(),
-			// 	'user_limit' => $this->getUserLimit(),
-			// 	'valid_coord' => $this->getValidCoord(),
-			// 	'valid_coord_radius' => $this->getValidCoordRadius(),
-			// 	'transferable' => $this->getTransferable(),
-			// 	'active' => $this->getActive(),
-			// 	'win_points' => $this->getWinPoints(),
-			// 	'rid' => $this->getRid(),
-			// 	'ptid' => $this->getPtid(),
-			// 	'func_type' => $this->getFuncType(),
-			// 	'grand_limit' => $this->getGrandLimit(),
-			// );
-		
-			// $render_code = R_STATUS_OK ;
 
 			$authUID = (int)Authenticator::getInstance()->getUserId();
-			//$userProm = UserPromotion::findByUPID( $upid ) ;
 			$promos = null;
 
 			if( $authUID <= 0 || is_null( $promos = Promotion::findValidPromotions( $authUID ) ) || !is_array( $promos ) )
@@ -71,29 +47,11 @@
 			}
 			
 			$this->respond->renderJSON( static::$status );
-			// $this->respond->renderJSON( $resposta, $render_code, describeMessage( $render_code, static::$status ) );			
+
 		}
 		
 		public function show()
 		{
-						
-			// $resp = Promotion::findByPId($pid);
-			
-			// $promotionId = ;
-			// $name = ;
-			// $init_date = $resp->getInitDate();
-			// $end_date = $resp->getEndDate();
-			// $user_limit = $resp->getUserLimit();
-			// $valid_coord = $resp->getValidCoord();
-			// $valid_coord_radius = $resp->getValidCoordRadius();
-			// $transferable = $resp->isTransferable();
-			// $active = $resp->isActive();
-			// $win_points = $resp->getWinPoints();
-			// $rid = $resp->getRid();
-			// $ptid = $resp->getPtid();
-			// $func_type = $resp->getFuncType();
-			// $grand_limit = $resp->getGrandLimit();
-
 			
 			$pid = (int)valid_request_var('promotion');
 			$promo = null;

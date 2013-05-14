@@ -81,6 +81,9 @@
 									array( 'match' => '/promotions',
 										   'matches' => array(
 
+											   	array( 'match' => '/trading', 'controller' => 'user', 'via' => 'get', 'action' => 'list_prizes_trading' ),
+										   		array( 'match' => '/tradable', 'controller' => 'user', 'via' => 'get', 'action' => 'list_prizes_tradable' ),
+
 												array( 'match' => '/won', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions_won' ),
 												array( 'match' => '/active', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions_active' ),
 
@@ -110,6 +113,7 @@
 						),
 
 						array( 'match' => '/address/:cp4/:cp3', 'controller' => 'address', 'via' => 'get', 'action' => 'list_cp' ),
+
 
 						array( 'match' => '/trading', 'controller' => 'trading', 'via' => 'get', 'action' => 'index',
 /*							   'matches' => array(

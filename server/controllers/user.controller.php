@@ -338,6 +338,49 @@
 		}
 
 
+
+
+		public function list_prizes_trading()
+		{
+			$this->requireAuth();
+
+			$user = Authenticator::getInstance()->getUser();
+
+			if( is_null( $user ) )
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
+			else
+			{
+				$prizes = PrizeCode::findOwnTrading( $user->getUID() );
+
+				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
+				$this->respond->setJSONCode( R_STATUS_OK );
+			}
+
+			$this->respond->renderJSON( static::$status );
+		}
+		public function list_prizes_tradable()
+		{
+			$this->requireAuth();
+
+			$user = Authenticator::getInstance()->getUser();
+
+			if( is_null( $user ) )
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
+			else
+			{
+				$prizes = PrizeCode::findOwnTradable( $user->getUID() );
+
+				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
+				$this->respond->setJSONCode( R_STATUS_OK );
+			}
+
+			$this->respond->renderJSON( static::$status );
+		}
+
+
+
 		public function reset_password()
 		{
 			$this->requireNoAuth();

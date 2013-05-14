@@ -20,24 +20,22 @@
 		}
 
 
-
 		public function index()
 		{
-			//$uid = (int)valid_request_var('pid');
 			$user = Authenticator::getInstance()->getUser();
 
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
+
 			else
 			{
-				//$prizes = PrizeCode::findOthersTradable( $user->getUID() );
-				$prizes = PrizeCode::findOwnTrading( $user->getUID() );
-				//$prizes = PrizeCode::findOwnTradable( $user->getUID() );
+				$prizes = PrizeCode::findOthersTradable( $user->getUID() );
 
-				var_dump( $prizes );
-
+				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
+				$this->respond->setJSONCode( R_STATUS_OK );
 			}
 
+			$this->respond->renderJSON( static::$status );
 		}
 
 		public function _index()

@@ -140,7 +140,7 @@
 			return mail($to, $subject, $text, $headers);
 		}
 
-		public function formatURL($src)
+		public static function formatURL($src)
 		{
 			if( is_null( $src ) )
 				return null;

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 14, 2013 at 03:06 PM
+-- Generation Time: May 14, 2013 at 04:55 PM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -130,14 +130,6 @@ CREATE TABLE IF NOT EXISTS `itempromotion` (
   KEY `i_itempromotion_pid` (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- RELATIONS FOR TABLE `itempromotion`:
---   `iid`
---       `item` -> `iid`
---   `pid`
---       `promotion` -> `pid`
---
-
 -- --------------------------------------------------------
 
 --
@@ -148,24 +140,16 @@ DROP TABLE IF EXISTS `prizecode`;
 CREATE TABLE IF NOT EXISTS `prizecode` (
   `pcid` int(11) NOT NULL AUTO_INCREMENT,
   `emiss_date` int(11) NOT NULL,
-  `util_date` int(11) DEFAULT NULL,
+  `util_date` int(11) NOT NULL DEFAULT '0',
   `cur_uid` int(11) NOT NULL,
   `valid_code` varchar(100) NOT NULL,
   `in_trading` smallint(1) NOT NULL DEFAULT '0',
   `upid` int(11) NOT NULL,
   PRIMARY KEY (`pcid`),
-  UNIQUE KEY `valid_code` (`valid_code`),
-  UNIQUE KEY `i_prizecode_upid` (`upid`),
+  UNIQUE KEY `uq_prizecode_valid_code` (`valid_code`),
+  UNIQUE KEY `uq_prizecode_upid` (`upid`),
   KEY `i_prizecode_cur_uid` (`cur_uid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
---
--- RELATIONS FOR TABLE `prizecode`:
---   `cur_uid`
---       `user` -> `uid`
---   `upid`
---       `userpromotion` -> `upid`
---
 
 -- --------------------------------------------------------
 
@@ -180,8 +164,9 @@ CREATE TABLE IF NOT EXISTS `promotion` (
   `name` varchar(200) NOT NULL,
   `desc` text,
   `image` varchar(200) DEFAULT NULL,
-  `init_date` int(11) NOT NULL,
-  `end_date` int(11) NOT NULL,
+  `init_date` int(11) NOT NULL DEFAULT '0',
+  `end_date` int(11) NOT NULL DEFAULT '0',
+  `util_date` int(11) NOT NULL DEFAULT '0',
   `grand_limit` int(11) NOT NULL DEFAULT '0',
   `user_limit` int(11) NOT NULL DEFAULT '1',
   `valid_coord` varchar(200) DEFAULT NULL,
@@ -195,14 +180,6 @@ CREATE TABLE IF NOT EXISTS `promotion` (
   KEY `i_promotion_rid` (`rid`),
   KEY `i_promotion_ptid` (`ptid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
---
--- RELATIONS FOR TABLE `promotion`:
---   `rid`
---       `retailer` -> `rid`
---   `ptid`
---       `promotiontype` -> `ptid`
---
 
 -- --------------------------------------------------------
 
@@ -232,14 +209,6 @@ CREATE TABLE IF NOT EXISTS `promotiontags` (
   KEY `i_promotiontags_tid` (`tid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- RELATIONS FOR TABLE `promotiontags`:
---   `pid`
---       `promotion` -> `pid`
---   `tid`
---       `tag` -> `tid`
---
-
 -- --------------------------------------------------------
 
 --
@@ -266,12 +235,6 @@ CREATE TABLE IF NOT EXISTS `proximityalert` (
   PRIMARY KEY (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- RELATIONS FOR TABLE `proximityalert`:
---   `pid`
---       `promotion` -> `pid`
---
-
 -- --------------------------------------------------------
 
 --
@@ -287,14 +250,6 @@ CREATE TABLE IF NOT EXISTS `qganswer` (
   KEY `i_qganswer_qid` (`qid`),
   KEY `i_qganswer_upid` (`upid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- RELATIONS FOR TABLE `qganswer`:
---   `qid`
---       `qgquestion` -> `qid`
---   `upid`
---       `userpromotion` -> `upid`
---
 
 -- --------------------------------------------------------
 
@@ -314,12 +269,6 @@ CREATE TABLE IF NOT EXISTS `qgquestion` (
   KEY `i_qgquestion_pid` (`pid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
---
--- RELATIONS FOR TABLE `qgquestion`:
---   `pid`
---       `quizgame` -> `pid`
---
-
 -- --------------------------------------------------------
 
 --
@@ -334,12 +283,6 @@ CREATE TABLE IF NOT EXISTS `quizgame` (
   PRIMARY KEY (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- RELATIONS FOR TABLE `quizgame`:
---   `pid`
---       `promotion` -> `pid`
---
-
 -- --------------------------------------------------------
 
 --
@@ -352,12 +295,6 @@ CREATE TABLE IF NOT EXISTS `raffle` (
   `xp_cost` int(11) DEFAULT NULL,
   PRIMARY KEY (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- RELATIONS FOR TABLE `raffle`:
---   `pid`
---       `promotion` -> `pid`
---
 
 -- --------------------------------------------------------
 
@@ -375,14 +312,6 @@ CREATE TABLE IF NOT EXISTS `rafflebuyin` (
   KEY `i_sortbuyin_pid` (`pid`),
   KEY `i_sortbuyin_upid` (`upid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- RELATIONS FOR TABLE `rafflebuyin`:
---   `pid`
---       `raffle` -> `pid`
---   `upid`
---       `userpromotion` -> `upid`
---
 
 -- --------------------------------------------------------
 
@@ -404,12 +333,6 @@ CREATE TABLE IF NOT EXISTS `retailer` (
   KEY `i_retailer_adid` (`adid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
---
--- RELATIONS FOR TABLE `retailer`:
---   `adid`
---       `address` -> `adid`
---
-
 -- --------------------------------------------------------
 
 --
@@ -422,14 +345,8 @@ CREATE TABLE IF NOT EXISTS `session` (
   `uid` int(11) NOT NULL,
   `validity` int(11) NOT NULL,
   PRIMARY KEY (`token`),
-  KEY `uid` (`uid`)
+  KEY `i_session_uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- RELATIONS FOR TABLE `session`:
---   `uid`
---       `user` -> `uid`
---
 
 -- --------------------------------------------------------
 
@@ -462,14 +379,6 @@ CREATE TABLE IF NOT EXISTS `tradingsuggestion` (
   KEY `i_tradingsuggestion_pcid_dest` (`pcid_dest`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- RELATIONS FOR TABLE `tradingsuggestion`:
---   `pcid_orig`
---       `prizecode` -> `pcid`
---   `pcid_dest`
---       `prizecode` -> `pcid`
---
-
 -- --------------------------------------------------------
 
 --
@@ -492,15 +401,9 @@ CREATE TABLE IF NOT EXISTS `user` (
   `ui_seed` binary(32) NOT NULL,
   PRIMARY KEY (`uid`),
   UNIQUE KEY `uq_user_email` (`email`),
-  UNIQUE KEY `reset_token` (`reset_token`),
+  UNIQUE KEY `uq_user_reset_token` (`reset_token`),
   KEY `i_user_adid` (`adid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
---
--- RELATIONS FOR TABLE `user`:
---   `adid`
---       `address` -> `adid`
---
 
 -- --------------------------------------------------------
 
@@ -517,14 +420,6 @@ CREATE TABLE IF NOT EXISTS `userbadges` (
   KEY `i_userbadges_uid` (`uid`),
   KEY `i_userbadges_bid` (`bid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- RELATIONS FOR TABLE `userbadges`:
---   `uid`
---       `user` -> `uid`
---   `bid`
---       `badges` -> `bid`
---
 
 -- --------------------------------------------------------
 
@@ -544,14 +439,6 @@ CREATE TABLE IF NOT EXISTS `userpromotion` (
   KEY `i_userpromotion_uid` (`uid`),
   KEY `i_userpromotion_pid` (`pid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
---
--- RELATIONS FOR TABLE `userpromotion`:
---   `uid`
---       `user` -> `uid`
---   `pid`
---       `promotion` -> `pid`
---
 
 --
 -- Triggers `userpromotion`
@@ -638,14 +525,6 @@ CREATE TABLE IF NOT EXISTS `usertags` (
   KEY `i_usertags_tid` (`tid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- RELATIONS FOR TABLE `usertags`:
---   `uid`
---       `user` -> `uid`
---   `tid`
---       `tag` -> `tid`
---
-
 -- --------------------------------------------------------
 
 --
@@ -662,14 +541,6 @@ CREATE TABLE IF NOT EXISTS `xppoints` (
   KEY `i_xppoints_uid` (`uid`),
   KEY `i_xppoints_pid` (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- RELATIONS FOR TABLE `xppoints`:
---   `uid`
---       `user` -> `uid`
---   `pid`
---       `promotion` -> `pid`
---
 
 --
 -- Constraints for dumped tables
