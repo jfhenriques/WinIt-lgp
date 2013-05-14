@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Máquina: localhost
--- Data de Criação: 09-Maio-2013 às 04:27
+-- Data de Criação: 14-Maio-2013 às 16:14
 -- Versão do servidor: 5.5.31
--- versão do PHP: 5.5.0beta4
+-- versão do PHP: 5.5.0RC1
 
 SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
@@ -97,8 +97,6 @@ INSERT INTO `user` (`uid`, `name`, `email`, `password`, `birth`, `adid`, `door`,
 --
 
 INSERT INTO `userpromotion` (`upid`, `uid`, `pid`, `init_date`, `end_date`, `state`) VALUES
-(2, 1, 1, 1, 1367262244, 1),
-(15, 1, 1, 1367275294, 0, 0),
-(16, 1, 1, 1367279631, 0, 0);
+(2, 1, 1, 1, 1367262244, 1);
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
