@@ -20,11 +20,11 @@
 		}
 		
 		
-		public function getUserId()
+		public function getUID()
 		{
 			return (int)$this->getData('uid');
 		}
-		public function setUserId($userId)
+		public function setUID($userId)
 		{
 			$this->data['uid'] = (int)$userId;
 		}
@@ -52,7 +52,7 @@
 			$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (token, uid, validity) VALUES(:tok, :uid, :val) ON DUPLICATE KEY UPDATE validity = :val ;');	
 			
 			$tok = $this->getToken() ;
-			$uid = $this->getUserId() ;
+			$uid = $this->getUID() ;
 			$val = $this->getValidity() ;
 
 			$sth->bindParam(':tok', $tok, PDO::PARAM_STR);
@@ -86,7 +86,7 @@
 			}
 		}
 
-		public static function findById($token)
+		public static function findByToken($token)
 		{
 			$result = static::cachedQuery( $token,
 											self::TABLE_NAME,
@@ -101,7 +101,7 @@
 		}
 		
 
-		public static function findByUserId($id)
+		public static function findByUID($id)
 		{
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME .
 											' WHERE uid = ? AND validity >= 0 AND ( ? = \'0\' OR validity >= ? ) ORDER BY validity DESC LIMIT 1;',

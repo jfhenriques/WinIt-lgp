@@ -68,20 +68,37 @@
 
 				case QuizGameQuestion::TYPE_MULTI:
 
-					$givenArr = explode(';', $expected );
-					$expArr = explode(';', $answer );
-					$totalMultis = count($expArr) ;
+					$expectedArr = explode(';', $expected );
+					$totalExpected = count($expectedArr) ;
+
+					$answerArr = explode(';', $answer );
+					
 					$multis = 0;
 
-					if( $totalMultis > 0 && count($givenArr) === $totalMultis )
+					if( $totalExpected > 0 && count($answerArr) === $totalExpected )
 					{
-						foreach( $givenArr as $g )
+						for($i = 0; $i < $totalExpected; $i++)
+							$answerArr[$i] = trim( $answerArr[$i] );
+
+						foreach( $expectedArr as $g )
 						{
-							if( in_array( $g, $expArr ) )
-								$multis++;
+							$g = trim( $g );
+
+							if( strlen($g) <= 0 )
+								continue;
+
+							for($i = 0; $i < $totalExpected; $i++)
+							{
+								if( !is_null($answerArr[$i]) && $g === $answerArr[$i] )
+								{
+									$answerArr[$i] = null;
+
+									$multis++;
+								}
+							}
 						}
 
-						if( $multis === $totalMultis )
+						if( $multis === $totalExpected )
 							return true;
 					}
 

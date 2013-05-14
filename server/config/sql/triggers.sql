@@ -107,6 +107,7 @@ FOR EACH ROW BEGIN
 	DECLARE u_lim INT DEFAULT 0;
 	DECLARE g_lim INT DEFAULT 0;
 	DECLARE tmp INT DEFAULT 0;
+	DECLARE tmp2 INT DEFAULT NULL;
 	DECLARE act SMALLINT(1) DEFAULT 0;
 	DECLARE t_end INT DEFAULT 0;
 	DECLARE t_init INT DEFAULT 0;
@@ -120,6 +121,7 @@ FOR EACH ROW BEGIN
 	IF ( act <> 1 OR t_init > @now OR ( t_end > 0 AND t_end < @now ) ) THEN
 		signal sqlstate '45000' set message_text = "Promotion inactive, or out of valid timeframe";
 	END IF;
+
 	
 	IF g_lim > 0 THEN
 
@@ -136,13 +138,24 @@ FOR EACH ROW BEGIN
 		
 	END IF;
 
+
+	SELECT count(*) INTO tmp2
+	FROM userpromotion
+	WHERE pid = NEW.pid AND uid = NEW.uid AND (end_date = NULL OR end_date = 0)
+	GROUP BY pid;
+
+	IF tmp2 IS NOT NULL AND tmp2 > 0 THEN
+		signal sqlstate '45000' set message_text = "You can only have one active participation at one time";
+	END IF;
+
+
 	IF u_lim > 0 THEN
 
 		SELECT count(*) INTO tmp
 		FROM userpromotion
 		WHERE pid = NEW.pid AND uid = NEW.uid
 		GROUP BY pid;
-		
+
 		IF tmp >= u_lim THEN
 			signal sqlstate '45000' set message_text = "User limit reached";
 		END IF;

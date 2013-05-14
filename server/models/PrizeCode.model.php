@@ -67,6 +67,17 @@
 			$this->data['upid'] = $upid;
 		}
 
+		public function getOriginalUID()
+		{
+			$this->getData('o_uid');
+		}
+		public function getPID()
+		{
+			$this->getData('pid');
+		}
+
+
+
 		public function genValidCode($binaryPass)
 		{
 			if( strlen($binaryPass) !== 32 )
@@ -75,7 +86,7 @@
 			$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
 			$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 
-			$bytes = "yeah";
+			$bytes = "yay, a code!!4567890123456789012";
 
 			$ciphertext = rtrim(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $binaryPass, $bytes, MCRYPT_MODE_CBC, $iv), "\0");
 			
@@ -126,6 +137,46 @@
 				$this->data['pcid'] = $dbh->lastInsertId();
 
 			return $ret;
+		}
+
+
+		public static function findOwnTrading($uid)
+		{
+			return self::_findTradable($uid, true, 1);
+		}
+		public static function findOwnTradable($uid)
+		{
+			return self::_findTradable($uid, true, 0);
+		}
+		public static function findOthersTradable($uid)
+		{
+			return self::_findTradable($uid, false, 1);
+		}
+
+
+		private static function _findTradable($uid, $owned, $inTrading)
+		{
+			$prizes = array();
+			$return = static::executeQuery( 'SELECT pc.pcid AS pcid, pc.emiss_date AS emiss_date, pc.util_date AS util_date, ' .
+											' pc.cur_uid AS cuir_uid, pc.valid_code AS valid_code, pc.in_trading AS in_trading, ' .
+											' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid ' .
+											' FROM ' . self::TABLE_NAME .' AS pc ' .
+											' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid)' .
+											' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid)' .
+											' WHERE p.transferable = 1 AND up.end_date > 0 AND up.state = 1 ' .
+											' AND pc.in_trading = ? AND up.uid ' . ( $owned ? '=' : '<>' ) . ' ? ;',
+									  			array( $inTrading, $uid ), $stmt );
+
+			if( $stmt !== null && $return !== false )
+			{
+				while( $row = $stmt->fetch() )
+				{
+					if( !is_null( $res = static::fillModel( $row, new PrizeCode() ) ) )
+						$prizes[] = $res ;
+				}
+			}
+
+			return $prizes;
 		}
 
 

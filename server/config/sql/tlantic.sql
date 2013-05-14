@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 09, 2013 at 05:18 AM
+-- Generation Time: May 14, 2013 at 03:06 PM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -25,46 +25,46 @@ DROP PROCEDURE IF EXISTS `proc_avail_prom`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `proc_avail_prom`( uid_in INT )
 BEGIN
 
-	SET @now = UNIX_TIMESTAMP(NOW());
-	
-	SELECT
-		p.pid AS pid,
-		p.name AS name,
-		p.image AS image,
-		p.active AS active,
-		p.user_limit AS user_limit,
-		p.grand_limit AS grand_limit,
-		IFNULL(gt.g_tot, 0) AS g_tot,
-		IFNULL(up.times, 0) AS u_tot
-	FROM promotion AS p
-	LEFT JOIN (
-		SELECT
-			p.pid AS pid,
-			up.uid AS uid,
-			count(*) AS times
-		FROM promotion AS p
-		INNER JOIN userpromotion AS up
-		ON (up.pid = p.pid)
-		WHERE up.uid = uid_in AND
-			p.active = 1 AND
-			( p.init_date = 0 OR p.init_date < @now ) AND
-			( p.end_date = 0 OR p.end_date >= @now )
-		GROUP BY p.pid
-	) AS up ON (up.pid = p.pid)
-	LEFT JOIN (
-		SELECT
-			pid,
-			count(*) AS g_tot
-		FROM userpromotion
-		GROUP BY pid
-	) AS gt ON (gt.pid = p.pid)
-	WHERE p.active = 1 AND
-		( p.init_date = 0 OR p.init_date < @now ) AND
-		( p.end_date = 0 OR p.end_date >= @now )
-	HAVING ( grand_limit = 0 OR g_tot < grand_limit ) AND
-		   ( user_limit = 0 OR u_tot < user_limit );
+  SET @now = UNIX_TIMESTAMP(NOW());
+  
+  SELECT
+    p.pid AS pid,
+    p.name AS name,
+    p.image AS image,
+    p.active AS active,
+    p.user_limit AS user_limit,
+    p.grand_limit AS grand_limit,
+    IFNULL(gt.g_tot, 0) AS g_tot,
+    IFNULL(up.times, 0) AS u_tot
+  FROM promotion AS p
+  LEFT JOIN (
+    SELECT
+      p.pid AS pid,
+      up.uid AS uid,
+      count(*) AS times
+    FROM promotion AS p
+    INNER JOIN userpromotion AS up
+    ON (up.pid = p.pid)
+    WHERE up.uid = uid_in AND
+      p.active = 1 AND
+      ( p.init_date = 0 OR p.init_date < @now ) AND
+      ( p.end_date = 0 OR p.end_date >= @now )
+    GROUP BY p.pid
+  ) AS up ON (up.pid = p.pid)
+  LEFT JOIN (
+    SELECT
+      pid,
+      count(*) AS g_tot
+    FROM userpromotion
+    GROUP BY pid
+  ) AS gt ON (gt.pid = p.pid)
+  WHERE p.active = 1 AND
+    ( p.init_date = 0 OR p.init_date < @now ) AND
+    ( p.end_date = 0 OR p.end_date >= @now )
+  HAVING ( grand_limit = 0 OR g_tot < grand_limit ) AND
+       ( user_limit = 0 OR u_tot < user_limit );
 
-	
+  
 END$$
 
 DELIMITER ;
@@ -130,6 +130,14 @@ CREATE TABLE IF NOT EXISTS `itempromotion` (
   KEY `i_itempromotion_pid` (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONS FOR TABLE `itempromotion`:
+--   `iid`
+--       `item` -> `iid`
+--   `pid`
+--       `promotion` -> `pid`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -150,6 +158,14 @@ CREATE TABLE IF NOT EXISTS `prizecode` (
   UNIQUE KEY `i_prizecode_upid` (`upid`),
   KEY `i_prizecode_cur_uid` (`cur_uid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+
+--
+-- RELATIONS FOR TABLE `prizecode`:
+--   `cur_uid`
+--       `user` -> `uid`
+--   `upid`
+--       `userpromotion` -> `upid`
+--
 
 -- --------------------------------------------------------
 
@@ -180,6 +196,14 @@ CREATE TABLE IF NOT EXISTS `promotion` (
   KEY `i_promotion_ptid` (`ptid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONS FOR TABLE `promotion`:
+--   `rid`
+--       `retailer` -> `rid`
+--   `ptid`
+--       `promotiontype` -> `ptid`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -208,6 +232,14 @@ CREATE TABLE IF NOT EXISTS `promotiontags` (
   KEY `i_promotiontags_tid` (`tid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONS FOR TABLE `promotiontags`:
+--   `pid`
+--       `promotion` -> `pid`
+--   `tid`
+--       `tag` -> `tid`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -234,6 +266,12 @@ CREATE TABLE IF NOT EXISTS `proximityalert` (
   PRIMARY KEY (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONS FOR TABLE `proximityalert`:
+--   `pid`
+--       `promotion` -> `pid`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -249,6 +287,14 @@ CREATE TABLE IF NOT EXISTS `qganswer` (
   KEY `i_qganswer_qid` (`qid`),
   KEY `i_qganswer_upid` (`upid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- RELATIONS FOR TABLE `qganswer`:
+--   `qid`
+--       `qgquestion` -> `qid`
+--   `upid`
+--       `userpromotion` -> `upid`
+--
 
 -- --------------------------------------------------------
 
@@ -268,6 +314,12 @@ CREATE TABLE IF NOT EXISTS `qgquestion` (
   KEY `i_qgquestion_pid` (`pid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONS FOR TABLE `qgquestion`:
+--   `pid`
+--       `quizgame` -> `pid`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -282,6 +334,12 @@ CREATE TABLE IF NOT EXISTS `quizgame` (
   PRIMARY KEY (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONS FOR TABLE `quizgame`:
+--   `pid`
+--       `promotion` -> `pid`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -294,6 +352,12 @@ CREATE TABLE IF NOT EXISTS `raffle` (
   `xp_cost` int(11) DEFAULT NULL,
   PRIMARY KEY (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- RELATIONS FOR TABLE `raffle`:
+--   `pid`
+--       `promotion` -> `pid`
+--
 
 -- --------------------------------------------------------
 
@@ -311,6 +375,14 @@ CREATE TABLE IF NOT EXISTS `rafflebuyin` (
   KEY `i_sortbuyin_pid` (`pid`),
   KEY `i_sortbuyin_upid` (`upid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- RELATIONS FOR TABLE `rafflebuyin`:
+--   `pid`
+--       `raffle` -> `pid`
+--   `upid`
+--       `userpromotion` -> `upid`
+--
 
 -- --------------------------------------------------------
 
@@ -332,6 +404,12 @@ CREATE TABLE IF NOT EXISTS `retailer` (
   KEY `i_retailer_adid` (`adid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONS FOR TABLE `retailer`:
+--   `adid`
+--       `address` -> `adid`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -346,6 +424,12 @@ CREATE TABLE IF NOT EXISTS `session` (
   PRIMARY KEY (`token`),
   KEY `uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- RELATIONS FOR TABLE `session`:
+--   `uid`
+--       `user` -> `uid`
+--
 
 -- --------------------------------------------------------
 
@@ -378,6 +462,14 @@ CREATE TABLE IF NOT EXISTS `tradingsuggestion` (
   KEY `i_tradingsuggestion_pcid_dest` (`pcid_dest`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONS FOR TABLE `tradingsuggestion`:
+--   `pcid_orig`
+--       `prizecode` -> `pcid`
+--   `pcid_dest`
+--       `prizecode` -> `pcid`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -404,6 +496,12 @@ CREATE TABLE IF NOT EXISTS `user` (
   KEY `i_user_adid` (`adid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONS FOR TABLE `user`:
+--   `adid`
+--       `address` -> `adid`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -419,6 +517,14 @@ CREATE TABLE IF NOT EXISTS `userbadges` (
   KEY `i_userbadges_uid` (`uid`),
   KEY `i_userbadges_bid` (`bid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- RELATIONS FOR TABLE `userbadges`:
+--   `uid`
+--       `user` -> `uid`
+--   `bid`
+--       `badges` -> `bid`
+--
 
 -- --------------------------------------------------------
 
@@ -440,6 +546,14 @@ CREATE TABLE IF NOT EXISTS `userpromotion` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 --
+-- RELATIONS FOR TABLE `userpromotion`:
+--   `uid`
+--       `user` -> `uid`
+--   `pid`
+--       `promotion` -> `pid`
+--
+
+--
 -- Triggers `userpromotion`
 --
 DROP TRIGGER IF EXISTS `tg_userpromotion_limit`;
@@ -447,51 +561,64 @@ DELIMITER //
 CREATE TRIGGER `tg_userpromotion_limit` BEFORE INSERT ON `userpromotion`
  FOR EACH ROW BEGIN
 
-	DECLARE u_lim INT DEFAULT 0;
-	DECLARE g_lim INT DEFAULT 0;
-	DECLARE tmp INT DEFAULT 0;
-	DECLARE act SMALLINT(1) DEFAULT 0;
-	DECLARE t_end INT DEFAULT 0;
-	DECLARE t_init INT DEFAULT 0;
+  DECLARE u_lim INT DEFAULT 0;
+  DECLARE g_lim INT DEFAULT 0;
+  DECLARE tmp INT DEFAULT 0;
+  DECLARE tmp2 INT DEFAULT NULL;
+  DECLARE act SMALLINT(1) DEFAULT 0;
+  DECLARE t_end INT DEFAULT 0;
+  DECLARE t_init INT DEFAULT 0;
 
-	SELECT user_limit,grand_limit,active,init_date,end_date
-	INTO u_lim,g_lim,act,t_init,t_end
-	FROM promotion WHERE pid = NEW.pid LIMIT 1;
-	
-	SET @now = unix_timestamp(now());
+  SELECT user_limit,grand_limit,active,init_date,end_date
+  INTO u_lim,g_lim,act,t_init,t_end
+  FROM promotion WHERE pid = NEW.pid LIMIT 1;
+  
+  SET @now = unix_timestamp(now());
 
-	IF ( act <> 1 OR t_init > @now OR ( t_end > 0 AND t_end < @now ) ) THEN
-		signal sqlstate '45000' set message_text = "Promotion inactive, or out of valid timeframe";
-	END IF;
-	
-	IF g_lim > 0 THEN
+  IF ( act <> 1 OR t_init > @now OR ( t_end > 0 AND t_end < @now ) ) THEN
+    signal sqlstate '45000' set message_text = "Promotion inactive, or out of valid timeframe";
+  END IF;
 
-		SELECT count(*) INTO tmp
-		FROM promotion AS p
-		INNER JOIN userpromotion AS up
-		ON (up.pid = p.pid)
-		WHERE p.pid = NEW.pid
-		GROUP BY p.pid;
-		
-		IF tmp >= g_lim THEN
-			signal sqlstate '45000' set message_text = "Grand limit reached";
-		END IF;
-		
-	END IF;
+  
+  IF g_lim > 0 THEN
 
-	IF u_lim > 0 THEN
+    SELECT count(*) INTO tmp
+    FROM promotion AS p
+    INNER JOIN userpromotion AS up
+    ON (up.pid = p.pid)
+    WHERE p.pid = NEW.pid
+    GROUP BY p.pid;
+    
+    IF tmp >= g_lim THEN
+      signal sqlstate '45000' set message_text = "Grand limit reached";
+    END IF;
+    
+  END IF;
 
-		SELECT count(*) INTO tmp
-		FROM userpromotion
-		WHERE pid = NEW.pid AND uid = NEW.uid
-		GROUP BY pid;
-		
-		IF tmp >= u_lim THEN
-			signal sqlstate '45000' set message_text = "User limit reached";
-		END IF;
-		
-	END IF;
-	
+
+  SELECT count(*) INTO tmp2
+  FROM userpromotion
+  WHERE pid = NEW.pid AND uid = NEW.uid AND (end_date = NULL OR end_date = 0)
+  GROUP BY pid;
+
+  IF tmp2 IS NOT NULL AND tmp2 > 0 THEN
+    signal sqlstate '45000' set message_text = "You can only have one active participation at one time";
+  END IF;
+
+
+  IF u_lim > 0 THEN
+
+    SELECT count(*) INTO tmp
+    FROM userpromotion
+    WHERE pid = NEW.pid AND uid = NEW.uid
+    GROUP BY pid;
+
+    IF tmp >= u_lim THEN
+      signal sqlstate '45000' set message_text = "User limit reached";
+    END IF;
+    
+  END IF;
+  
 END
 //
 DELIMITER ;
@@ -511,6 +638,14 @@ CREATE TABLE IF NOT EXISTS `usertags` (
   KEY `i_usertags_tid` (`tid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONS FOR TABLE `usertags`:
+--   `uid`
+--       `user` -> `uid`
+--   `tid`
+--       `tag` -> `tid`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -527,6 +662,14 @@ CREATE TABLE IF NOT EXISTS `xppoints` (
   KEY `i_xppoints_uid` (`uid`),
   KEY `i_xppoints_pid` (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- RELATIONS FOR TABLE `xppoints`:
+--   `uid`
+--       `user` -> `uid`
+--   `pid`
+--       `promotion` -> `pid`
+--
 
 --
 -- Constraints for dumped tables

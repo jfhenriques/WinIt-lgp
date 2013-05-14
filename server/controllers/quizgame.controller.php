@@ -37,6 +37,7 @@
 		}
 
 
+
 		public function show()
 		{
 
@@ -94,22 +95,22 @@
 			$answers = valid_request_var( 'answer' );
 
 
-			if( $pid == 0 || $upid == 0 || is_null( $answers ) || !is_array($answers) )
+			if( $pid <= 0 || $upid <= 0 || is_null( $answers ) || !is_array($answers) )
 				$this->respond->setJSONCode( R_QUIZ_ERR_PARAM_2 );
 
 			else
 			{
-				$authUID = (int)Authenticator::getInstance()->getUserId();
-				$userProm = UserPromotion::findByUPID( $upid ) ;
-				$user = null;
+				//$authUID = (int)Authenticator::getInstance()->getUserId();
+				$user = Authenticator::getInstance()->getUser();
+				$userProm = null;
 				$promo = null;
 				$time = time();
 				$quiz = $questions = null;
 
 
 				// UserPromotion participation not found
-				if( is_null( $authUID ) || is_null( $userProm ) || is_null( $user = User::findByUID( $authUID ) )
-					|| $authUID <= 0 || $userProm->getUID() !== $authUID )
+				if( is_null( $user ) || is_null( $userProm = UserPromotion::findByUPID( $upid ) )
+					|| $userProm->getUID() !== $user->getUID() )
 						$this->respond->setJSONCode( R_QUIZ_ERR_USERPROM_NOT_FOUND );
 
 				// Check promotion expiration date
@@ -188,11 +189,11 @@
 								if( $won )
 								{
 									$pc = new PrizeCode();
-									$pc->setEmissionDate($time);
-									$pc->setUPID($userProm->getUPID());
-									$pc->setOwnerUID($authUID);
+									$pc->setEmissionDate( $time );
+									$pc->setUPID( $userProm->getUPID() );
+									$pc->setOwnerUID( $user->getUID() );
 
-									$pc->genValidCode($user->getSeed());
+									$pc->genValidCode( $user->getSeed() );
 									$prizecode = $pc->getCode();
 
 									if( !$pc->save() )

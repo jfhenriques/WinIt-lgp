@@ -1,33 +1,46 @@
 <?php
 
 
-	DEFINE( 'R_SESS_ERR_PARAM'				, 0x10 );
-	DEFINE( 'R_SESS_ERR_USER_NOT_FOUND'		, 0x11 );
+	DEFINE( 'R_TRAD_ERR_PARAM'				, 0x10 );
 
-	DEFINE( 'R_SESS_ERR_SESSION_NOT_FOUND'	, 0x20 );
 
 
 
 	class TradingController extends Controller {
 
 		private static $status = array(
-				R_SESS_ERR_PARAM				=> 'Utilizador e/ou password não especificado',
-				R_SESS_ERR_USER_NOT_FOUND		=> 'Utilizador e/ou password não encontrado',
-
-				R_SESS_ERR_SESSION_NOT_FOUND	=> 'Sessão não encontrado',
+				R_TRAD_ERR_PARAM				=> 'Erro de parâmetros',
 			);
 
 	
 
 		protected function __configure()
 		{
-			//$this->checkAuth();
+			$this->requireAuth();
 		}
 
 
 
-
 		public function index()
+		{
+			//$uid = (int)valid_request_var('pid');
+			$user = Authenticator::getInstance()->getUser();
+
+			if( is_null( $user ) )
+				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
+			else
+			{
+				//$prizes = PrizeCode::findOthersTradable( $user->getUID() );
+				$prizes = PrizeCode::findOwnTrading( $user->getUID() );
+				//$prizes = PrizeCode::findOwnTradable( $user->getUID() );
+
+				var_dump( $prizes );
+
+			}
+
+		}
+
+		public function _index()
 		{
 
 			$pc = new PrizeCode();

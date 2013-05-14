@@ -41,7 +41,7 @@
 				R_USER_BAD_OLD_PASS		=> 'A password antiga está errada',
 
 				R_USER_BAD_PROMO		=> 'Promoção não encontrada',
-				R_USER_PROMO_EXPIRED	=> 'A promoção expirou ou excedeu o limite de utilizações possíveis',
+				R_USER_PROMO_EXPIRED	=> 'A promoção expirou ou excedeu o limite de utilizações possíveis ou já se encontra a participar na mesma',
 			);
 
 		
@@ -58,11 +58,11 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
+			$user = Authenticator::getInstance()->getUser();
+			//$auth = Authenticator::getInstance(); // retorna uma class com o id do user logado
+			//$userId = $auth->getUserId();
 
-			$auth = Authenticator::getInstance(); // retorna uma class com o id do user logado
-			$userId = $auth->getUserId();
-
-			$user = User::findByUID($userId);
+			//$user = User::findByUID($userId);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -83,7 +83,7 @@
 					$district = $address->getDistrict();
 				}
 
-				$this->respond->setJSONResponse( array( 'uid' => $userId,
+				$this->respond->setJSONResponse( array( 'uid' => $user->getUID(),
 														  'name' => $user->getName(),
 														  'email' => $user->getEmail(),
 														  'adid' => $user->getADID(),
@@ -111,12 +111,13 @@
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
 
-			$auth = Authenticator::getInstance(); // retorna o id do user logado
-			$userId = $auth->getUserId();
+			$user = Authenticator::getInstance()->getUser();
+			//$auth = Authenticator::getInstance(); // retorna o id do user logado
+			//$userId = $auth->getUserId();
 
 			$resp = array();
 			
-			$user = User::findByUID($userId);
+			//$user = User::findByUID($userId);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -240,14 +241,15 @@
 			$this->respond->renderJSON( static::$status );
 		}
 		
-		public function list_promotions_won() {
-		
+		public function list_promotions_won()
+		{
 			$this->requireAuth();
 			
-			$auth = Authenticator::getInstance(); // retorna o id do user logado
-			$userId = $auth->getUserId();
+			$user = Authenticator::getInstance()->getUser();
+			//$auth = Authenticator::getInstance(); // retorna o id do user logado
+			//$userId = $auth->getUserId();
 			
-			$user = User::findByUID($userId);
+			//$user = User::findByUID($userId);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode ( R_USER_ERR_USER_NOT_FOUND );
@@ -267,16 +269,18 @@
 			$this->respond->renderJSON( static::$status );
 		}
 
-		public function list_badges_won() {
+		public function list_badges_won()
+		{
 			$this->requireAuth();
 
-			$auth = Authenticator::getInstance();
-			$userId = $auth->getUserId();
+			$user = Authenticator::getInstance()->getUser();
+			//$userId = $auth->getUID();
 
-			$user = User::findByUID($userId);
+			//$user = User::findByUID($userId);
 
 			if( is_null( $user ) ) {
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
 			} else {
 				$resp = $user->list_badges_won();
 				$response = array();
@@ -297,13 +301,16 @@
 		{
 			$this->requireAuth();
 			
-			$auth = Authenticator::getInstance(); // retorna o id do user logado
-			$userId = $auth->getUserId();
-			$pid	= (int)valid_request_var('promotion');
+			$pid = (int)valid_request_var('promotion');
+
+			$user = Authenticator::getInstance()->getUser();
 			$promo = null;
-			$user = User::findByUID($userId);
+			//$auth = Authenticator::getInstance(); // retorna o id do user logado
+			//$userId = $auth->getUserId();
+
+			//$user = User::findByUID($userId);
 			
-			if( is_null( $userId ) || is_null( $pid ) )
+			if( is_null( $user ) || is_null( $pid ) )
 				$this->respond->setJSONCode ( R_USER_ERR_PARAMS );
 
 			elseif( is_null( $promo = Promotion::findByPID($pid) ) )
@@ -313,7 +320,7 @@
 			{
 				$userProm = new UserPromotion();
 
-				$userProm->participate($pid, $userId);
+				$userProm->participate($pid, $user->getUID() );
 				$userProm->setInitDate(time());
 
 				try {
