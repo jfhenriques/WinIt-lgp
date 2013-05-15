@@ -67,12 +67,12 @@
 			return static::fillModel( $result, new Badge() );
 		}
 
-		public static function findByUIS($uid) {
+		public static function findByUID($uid) {
 
 			$result = static::query( 'SELECT b.bid AS bid, b.name AS bname, b.image AS bimage, ub.aquis_date AS bdata '.
 										'FROM self::TABLE_NAME AS b '.
 										'INNER JOIN self::TABLE_NAME_USERBADGES AS ub ON (ub.bid = b.bid) '.
-										'INNER JOIN self::TABLE_NAME_USER AS u ON (u.uid = ub.uid);'.
+										'INNER JOIN self::TABLE_NAME_USER AS u ON (u.uid = ub.uid) '.
 										'WHERE u.uid = ? LIMIT 1;',
 										array( $uid ));
 			return static::fillModel( $result, new Badge() );			
