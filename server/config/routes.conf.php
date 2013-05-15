@@ -90,7 +90,7 @@
 											),
 									),
 
-									array( 'match' => '/badges', 'controller' => 'user', 'via' => 'get', 'action' => 'list_badges' ),
+									array( 'match' => '/badges', 'controller' => 'user', 'via' => 'get', 'action' => 'list_badges_won' ),
 
 								),
 						),
