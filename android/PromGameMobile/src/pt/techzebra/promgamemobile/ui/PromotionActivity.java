@@ -75,6 +75,8 @@ public class PromotionActivity extends SherlockActivity {
 	
 	public void play(View view) {
 	    Intent intent = new Intent(this, QuizActivity.class);
+	    /*Bundle bun = new Bundle();
+	    bun.putInt("promotion_id", p.getPromotionID());*/
 	    startActivity(intent);
 	}
 }

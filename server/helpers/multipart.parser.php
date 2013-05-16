@@ -43,7 +43,7 @@ function parse_raw_http_request()
         if ( count($matches) == 0 )
         {
           preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $block, $matches);
-          $_REQUEST[$matches[1]] = $matches[2];
+          $_REQUEST[$matches[1]] = isset( $matches[2] ) ? $matches[2] : "" ;
         }
         else
         {

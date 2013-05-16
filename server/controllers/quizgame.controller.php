@@ -37,6 +37,7 @@
 		}
 
 
+
 		public function show()
 		{
 
@@ -94,27 +95,28 @@
 			$answers = valid_request_var( 'answer' );
 
 
-			if( $pid == 0 || $upid == 0 || is_null( $answers ) || !is_array($answers) )
+			if( $pid <= 0 || $upid <= 0 || is_null( $answers ) || !is_array($answers) )
 				$this->respond->setJSONCode( R_QUIZ_ERR_PARAM_2 );
 
 			else
 			{
-				$authUID = (int)Authenticator::getInstance()->getUserId();
-				$userProm = UserPromotion::findByUPID( $upid ) ;
+				//$authUID = (int)Authenticator::getInstance()->getUserId();
+				$user = Authenticator::getInstance()->getUser();
+				$userProm = null;
 				$promo = null;
 				$time = time();
 				$quiz = $questions = null;
 
 
 				// UserPromotion participation not found
-				if( is_null( $authUID ) || is_null( $userProm )
-					|| $authUID <= 0 || $userProm->getUID() !== $authUID )
+				if( is_null( $user ) || is_null( $userProm = UserPromotion::findByUPID( $upid ) )
+					|| $userProm->getUID() !== $user->getUID() )
 						$this->respond->setJSONCode( R_QUIZ_ERR_USERPROM_NOT_FOUND );
 
-				// Check promotion exepiration date
+				// Check promotion expiration date
 				elseif( is_null( $promo = $userProm->getPromotion() )
 						|| !$promo->isActive() || $pid !== $promo->getPID()
-						|| $promo->getEndDate() > 0 && $promo->getEndDate() < $time )
+						|| ( $promo->getEndDate() > 0 && $promo->getEndDate() < $time ) )
 							$this->respond->setJSONCode( R_QUIZ_ERR_PROM_AUTOFVALID );
 
 				// UserPromotion not available to be answered
@@ -136,10 +138,10 @@
 					$totalQuestions = count( $questions ) ;
 					$isQuiz = $quiz->isQuiz() ;
 
-					try {
+					// Start transaction
+					$dbh->beginTransaction();
 
-						// Start transaction
-						$dbh->beginTransaction();
+					try {
 
 						foreach($questions as $q)
 						{
@@ -176,18 +178,35 @@
 						if( !$hasError )
 						{
 							$won = ( !$isQuiz || $rightAnswers === $totalQuestions ) ;
-							$resp = array('won' => $won, 'correct' => $rightAnswers );
-
+							$prizecode = null;
 							$userProm->setEndDate( $time );
 
-							if( $won )	
+							if( $won )
 								$userProm->setState( UserPromotion::STATE_WON );
 
-							if( !$userProm->save() )
+							if( $userProm->save() ) // need to save now and get the auto-increment ID
 							{
-								$hasError = true ;
-								$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
+								if( $won )
+								{
+									$pc = new PrizeCode();
+									$pc->setEmissionDate( $time );
+									$pc->setUPID( $userProm->getUPID() );
+									$pc->setOwnerUID( $user->getUID() );
+
+									$pc->genValidCode( $user->getSeed() );
+									$prizecode = $pc->getCode();
+
+									if( !$pc->save() )
+										$hasError = true;
+								}
 							}
+							else
+								$hasError = true;
+
+							if( !$hasError )
+								$resp = array('won' => $won, 'correct' => $rightAnswers, 'prizecode' => $prizecode);
+							else
+								$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
 						}
 							
 						if( $hasError )

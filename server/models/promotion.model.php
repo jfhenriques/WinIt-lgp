@@ -73,6 +73,11 @@
 		// {
 		// 	$this->data['end_date'] = $end_date;
 		// }
+
+		public function getMaxUtilizationDate()
+		{
+			return (int)$this->getData('util_date');
+		}
 		
 		public function getGrandLimit()
 		{
@@ -207,7 +212,7 @@
 		
 		public static function findByPID($pid)
 		{
-			$result = static::query( 'SELECT p.pid AS pid, p.active AS active, p.name AS name, p.init_date AS init_date, ' .
+			$result = static::query( 'SELECT p.pid AS pid, p.active AS active, p.name AS name, p.init_date AS init_date, p.util_date AS util_date, ' .
 									  ' p.end_date AS end_date, p.grand_limit AS grand_limit, p.user_limit AS user_limit, ' .
 									  ' p.valid_coord AS valid_coord, p.valid_coord_radius AS valid_coord_radius, ' .
 									  ' p.transferable AS transferable, p.win_points AS win_points, p.func_type AS func_type ,' .

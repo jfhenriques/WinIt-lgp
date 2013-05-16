@@ -1,10 +1,5 @@
 <?php
 
-	DEFINE( 'AUTH_PREFIX', 'auth_' );
-	
-	
-	
-	
 	class Authenticator {
 	
 		static private $instance = null;
@@ -25,8 +20,15 @@
 		
 		private function __construct()
 		{
-			if( isset( $_REQUEST['token'] ) && strlen( $_REQUEST['token'] ) > 0 )
-				$this->session = Session::findById( $_REQUEST['token'] );
+			$sess = null;
+			$token = valid_request_var( 'token' );
+
+			if( !is_null( $token )
+				&& ( $sess = Session::findByToken( $token ) ) != null
+				&& $sess->getValidity() >= 0
+				&& ( TOKEN_VALIDITY === 0
+					|| $sess->getValidity() >= time() ) )
+					$this->session = $sess;
 		}
 		
 		public function getSession()
@@ -42,12 +44,20 @@
 			return false;
 		}
 		
-		public function getUserId()
+		public function getUID()
 		{
 			if( !is_null( $this->session ) )
-				return $this->session->getUserId();
+				return $this->session->getUID();
 				
 			return false;
+		}
+
+		public function getUser()
+		{
+			if( !is_null( $this->session ) )
+				return User::findByUID( $this->session->getUID() );
+				
+			return null;
 		}
 	
 	}

@@ -17,7 +17,7 @@
 	{
 		require_once( ROOT .'/helpers/print_error.inc.php' );
 		
-		error_log($exception);
+		error_log( $exception );
 		dumpException( $exception );
 		
 		exit(1);
@@ -32,17 +32,23 @@
 		else
 			error_log($exc);
 	});
-	
+
 	register_shutdown_function(function() {
 		$lErr = error_get_last();
+
+		if( DEVELOPMENT_ENVIRONMENT === true && isset($GLOBALS['init_time']) )
+		{
+			$took = 1000 * (microtime(true) - $GLOBALS['init_time']);
+			header("Execution-time: " . $took);
+		}
 		
 		if ( !is_null( $lErr ) && ( $lErr['type'] & ( E_ERROR | E_USER_ERROR | E_PARSE ) ) !== 0 )
 		{
 			$exc = new ErrorException($lErr['message'], $lErr['type'], 0, $lErr['file'], $lErr['line']);
 			my_exception_handler( $exc );
-		}	
+		}
 	});
-	
+
 	ini_set('log_errors', 1);
 	ini_set('ignore_repeated_errors', 1);
 	ini_set('error_log', '../tmp/error.log.txt' );

@@ -125,6 +125,15 @@
 			$this->data['reset_token_validity'] = $validity;
 		}
 
+		public function getSeed()
+		{
+			return $this->getData('ui_seed');
+		}
+		public function setSeed($seed)
+		{
+			$this->data['ui_seed'] = $seed;
+		}
+
 
 
 
@@ -136,11 +145,16 @@
 			$sth = null;
 			
 			$uid = $this->getUID();
-			$isInsert = $uid <= 0 ;
+			$isInsert = ( $uid <= 0 ) ;
 
 			if( $isInsert )
-				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, token_facebook, token_twitter, birth) ' .
-										' VALUES(:name, :email, :password, :adid, :address2, :token_facebook, :token_twitter, :birth)');
+			{
+				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, token_facebook, token_twitter, birth, ui_seed) ' .
+										' VALUES(:name, :email, :password, :adid, :address2, :token_facebook, :token_twitter, :birth, :seed)');
+				
+				$seed = $this->getSeed();
+				$sth->bindParam(':seed', $seed, PDO::PARAM_LOB );
+			}
 			else
 			{
 				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,' .
@@ -176,7 +190,7 @@
 			$ret = $sth->execute();
 			
 			if( $ret && $isInsert )
-				$this->uid = $dbh->lastInsertId();
+				$this->data['uid'] = $dbh->lastInsertId();
 
 			return $ret;
 		}
@@ -190,28 +204,6 @@
 			$salt = is_null($salt) ? md5(uniqid(mt_rand(), true)) : $salt ;
 			return ":${salt}:" . hash( 'sha256', $salt.$pass ) . ':';
 		}
-
-		// private static function fillUser($arr)
-		// {
-		// 	if( is_array( $arr ) && count( $arr ) > 0 )
-		// 	{
-		// 		$user = new User();
-				
-		// 		$user->uid = $arr['uid'];
-		// 		$user->name = $arr['name'];
-		// 		$user->email = $arr['email'];
-		// 		$user->password = $arr['password'];
-		// 		$user->adid = $arr['adid'];
-		// 		$user->address2 = $arr['door'];
-		// 		$user->token_facebook = $arr['token_facebook'];
-		// 		$user->token_twitter = $arr['token_twitter'];
-		// 		$user->birth = $arr['birth'];
-				
-		// 		return $user;
-		// 	}
-			
-		// 	return null;
-		// }
 
 		public static function findByResetToken( $token )
 		{
@@ -231,7 +223,7 @@
 			return static::fillModel( $result, new User() );
 		}
 
-		public static function findById($id)
+		public static function findByUID($id)
 		{
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
 									  array( $id ) );
@@ -262,7 +254,7 @@
 		
 		public function list_promotions_won() {
 		
-			$dbh = DbConn::getInstance()->getDB();
+/*			$dbh = DbConn::getInstance()->getDB();
 			$sth = null;
 			
 			$userID = $this->getUID();
@@ -271,17 +263,40 @@
 									'FROM promotion, user, userpromotion '.
 									'WHERE user.uid = userpromotion.uid '.
 									'AND promotion.pid = userpromotion.pid '.
-									'AND user.uid = '. $userID .' ;' );
+									'AND user.uid = ? ;' );
 			
-			$ret = $sth->execute();
+			$ret = $sth->execute(array());
 			
 			$result = $sth->fetchAll();
 			
 			// var_dump($result);
 
-			return $result;
+			return $result;*/
 			
 		
+		}
+		
+		
+		public function list_badges_won() {
+			
+			$dbh = DbConn::getInstance()->getDB();
+			$sth = null;
+			
+			$userID = $this->getUID();
+			
+			$sth = $dbh->prepare('SELECT b.bid AS bid, b.name AS bname, b.image AS bimage, ub.aquis_date AS bdata '.
+										'FROM badges AS b '.
+										'INNER JOIN userbadges AS ub ON (ub.bid = b.bid) '.
+										'INNER JOIN user AS u ON (u.uid = ub.uid) '.
+										'WHERE u.uid = '.$userID.' ;');
+			
+			$ret = $sth->execute(array());
+			
+			$result = $sth->fetchAll();
+			
+			// var_dump($result);
+
+			return $result;			
 		}
 
 	}

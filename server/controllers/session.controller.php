@@ -21,13 +21,13 @@
 
 		protected function __configure()
 		{
-			//$this->checkAuth();
+			$this->requireNoAuth();
 		}
+		
 		
 		
 		public function create()
 		{
-			$this->requireNoAuth();
 			
 			$mail = valid_request_var( 'email' );
 			$pass = valid_request_var( 'password' );
@@ -50,7 +50,7 @@
 					$success	= false;
 					$validity	= 0;
 					
-					$sess = Session::findByUserId( $userId );
+					$sess = Session::findByUID( $userId );
 
 					if( !is_null( $sess ) )
 					{
@@ -62,12 +62,12 @@
 					}
 					else
 					{
-						$token = hash('sha256', uniqid(rand(), true)) ;
+						$token = Controller::genRand64() ;
 					
 						$sess = new Session();
 						
 						$sess->setToken( $token );
-						$sess->setUserId( $userId );
+						$sess->setUID( $userId );
 						$sess->setValidity( TOKEN_VALIDITY == 0 ? 0 : ( time() + TOKEN_VALIDITY ) );
 						
 						$this->respond->setJSONCode( ( $success = $sess->save() ) ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
@@ -86,14 +86,14 @@
 
 		public function destroy()
 		{
-			$this->checkAuth();
+			//$this->checkAuth();
 
 			$resp = array();
 			
 			$token = valid_request_var( 'session' );
 			$sess = null;
 
-			if( is_null( $token ) || is_null( $sess = Session::findById( $token ) ) ) 
+			if( is_null( $token ) || is_null( $sess = Session::findByToken( $token ) ) ) 
 				$this->respond->setJSONCode( R_SESS_ERR_SESSION_NOT_FOUND );
 
 			else

@@ -41,7 +41,7 @@
 				R_USER_BAD_OLD_PASS		=> 'A password antiga está errada',
 
 				R_USER_BAD_PROMO		=> 'Promoção não encontrada',
-				R_USER_PROMO_EXPIRED	=> 'A promoção expirou ou excedeu o limite de utilizações possíveis',
+				R_USER_PROMO_EXPIRED	=> 'A promoção expirou ou excedeu o limite de utilizações possíveis ou já se encontra a participar na mesma',
 			);
 
 		
@@ -58,11 +58,11 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
+			$user = Authenticator::getInstance()->getUser();
+			//$auth = Authenticator::getInstance(); // retorna uma class com o id do user logado
+			//$userId = $auth->getUserId();
 
-			$auth = Authenticator::getInstance(); // retorna uma class com o id do user logado
-			$userId = $auth->getUserId();
-
-			$user = User::findById($userId);
+			//$user = User::findByUID($userId);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -83,7 +83,7 @@
 					$district = $address->getDistrict();
 				}
 
-				$this->respond->setJSONResponse( array( 'uid' => $userId,
+				$this->respond->setJSONResponse( array( 'uid' => $user->getUID(),
 														  'name' => $user->getName(),
 														  'email' => $user->getEmail(),
 														  'adid' => $user->getADID(),
@@ -111,12 +111,13 @@
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
 
-			$auth = Authenticator::getInstance(); // retorna o id do user logado
-			$userId = $auth->getUserId();
+			$user = Authenticator::getInstance()->getUser();
+			//$auth = Authenticator::getInstance(); // retorna o id do user logado
+			//$userId = $auth->getUserId();
 
 			$resp = array();
 			
-			$user = User::findById($userId);
+			//$user = User::findByUID($userId);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -170,8 +171,17 @@
 
 					if( !is_null($password) )
 						$user->setPassword( User::saltPass( $password ) );
-				
-					$this->respond->setJSONCode( $user->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+
+					if( !$user->save() )
+						$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
+
+					else
+					{
+						if( !is_null($password) )
+							Session::resetUserTokens( $user->getUID() );
+						
+						$this->respond->setJSONCode( R_STATUS_OK );
+					}
 				}
 							
 			}
@@ -217,6 +227,7 @@
 					$user->setAddress2($address2);
 					$user->setBirth($birth);
 					$user->setPassword( User::saltPass($password) );
+					$user->setSeed( Controller::genRand('sha256', true) );
 
 					$success = $user->save();
 
@@ -230,14 +241,15 @@
 			$this->respond->renderJSON( static::$status );
 		}
 		
-		public function list_promotions_won() {
-		
+		public function list_promotions_won()
+		{
 			$this->requireAuth();
 			
-			$auth = Authenticator::getInstance(); // retorna o id do user logado
-			$userId = $auth->getUserId();
+			$user = Authenticator::getInstance()->getUser();
+			//$auth = Authenticator::getInstance(); // retorna o id do user logado
+			//$userId = $auth->getUserId();
 			
-			$user = User::findById($userId);
+			//$user = User::findByUID($userId);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode ( R_USER_ERR_USER_NOT_FOUND );
@@ -257,19 +269,50 @@
 			$this->respond->renderJSON( static::$status );
 		}
 
+		public function list_badges_won()
+		{
+			$this->requireAuth();
+
+			$user = Authenticator::getInstance()->getUser();
+			//$userId = $auth->getUID();
+
+			//$user = User::findByUID($userId);
+
+			
+			if( is_null( $user ) ) {
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
+			} else {
+				$resp = $user->list_badges_won();
+				
+				$response = array();
+
+				foreach ( $resp as $linha) {
+					array_push($response, $linha);
+				}
+
+				$this->respond->setJSONResponse( $response );
+				$this->respond->setJSONCode( R_STATUS_OK );
+			}
+			$this->respond->renderJSON( static::$status);
+		}
+
 
 
 		public function promotion_enroll()
 		{
 			$this->requireAuth();
 			
-			$auth = Authenticator::getInstance(); // retorna o id do user logado
-			$userId = $auth->getUserId();
-			$pid	= (int)valid_request_var('promotion');
+			$pid = (int)valid_request_var('promotion');
+
+			$user = Authenticator::getInstance()->getUser();
 			$promo = null;
-			$user = User::findById($userId);
+			//$auth = Authenticator::getInstance(); // retorna o id do user logado
+			//$userId = $auth->getUserId();
+
+			//$user = User::findByUID($userId);
 			
-			if( is_null( $userId ) || is_null( $pid ) )
+			if( is_null( $user ) || is_null( $pid ) )
 				$this->respond->setJSONCode ( R_USER_ERR_PARAMS );
 
 			elseif( is_null( $promo = Promotion::findByPID($pid) ) )
@@ -279,11 +322,12 @@
 			{
 				$userProm = new UserPromotion();
 
-				$userProm->participate($pid, $userId);
+				$userProm->participate($pid, $user->getUID() );
 				$userProm->setInitDate(time());
 
 				try {
-					$success = $userProm->save();
+					if( $success = $userProm->save() )
+						$this->respond->setJSONResponse( array('upid' => $userProm->getUPID()) );
 
 					$this->respond->setJSONCode( $success ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 				} catch(PDOException $e) {
@@ -295,6 +339,47 @@
 			$this->respond->renderJSON( static::$status );
 		}
 
+
+
+
+		public function list_prizes_trading()
+		{
+			$this->requireAuth();
+
+			$user = Authenticator::getInstance()->getUser();
+
+			if( is_null( $user ) )
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
+			else
+			{
+				$prizes = PrizeCode::findOwnTrading( $user->getUID() );
+
+				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
+				$this->respond->setJSONCode( R_STATUS_OK );
+			}
+
+			$this->respond->renderJSON( static::$status );
+		}
+		public function list_prizes_tradable()
+		{
+			$this->requireAuth();
+
+			$user = Authenticator::getInstance()->getUser();
+
+			if( is_null( $user ) )
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
+			else
+			{
+				$prizes = PrizeCode::findOwnTradable( $user->getUID() );
+
+				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
+				$this->respond->setJSONCode( R_STATUS_OK );
+			}
+
+			$this->respond->renderJSON( static::$status );
+		}
 
 
 
@@ -314,7 +399,7 @@
 
 			else
 			{
-				$token = hash('sha512', uniqid(rand(), true)) ;
+				$token = Controller::genRand64() ;
 
 				$user->setResetToken($token);
 				$user->setResetTokenValidity(time()+600); // 10 minutos para fazer reset
@@ -340,6 +425,29 @@
 
 		public function reset_password_confirmation()
 		{
+			// function dump()
+			// {
+			//     $memcache = new Memcache();
+			//     $memcache->connect('127.0.0.1', 11211) or die ("Could not connect to memcache server");
+
+			//     $list = array();
+			//     $allSlabs = $memcache->getExtendedStats('slabs');
+			//     $items = $memcache->getExtendedStats('items');
+			//     foreach($allSlabs as $server => $slabs) {
+			//         foreach($slabs AS $slabId => $slabMeta) {
+			//            $cdump = $memcache->getExtendedStats('cachedump',(int)$slabId);
+			//             foreach($cdump AS $keys => $arrVal) {
+			//                 if (!is_array($arrVal)) continue;
+			//                 foreach($arrVal AS $k => $v) {                   
+			//                     $list[] = $k;
+			//                 }
+			//            }
+			//         }
+			//     }
+
+			//     var_dump($list);
+			// }
+
 			$this->requireNoAuth();
 
 
@@ -362,6 +470,8 @@
 
 				else
 				{
+					Session::resetUserTokens( $user->getUID() );
+
  					$pass = substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ#()+", 3)), 10, 8);
 
  					$user->setPassword( User::saltPass($pass) );

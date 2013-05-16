@@ -10,6 +10,7 @@
     <string name="or">or</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="password_old">Password Old</string>
     <string name="log_in">Sign in</string>
     <string name="sign_up">Sign up</string>
     <string name="sign_up_with_email">Sign up with email</string>
@@ -37,5 +38,6 @@
     <string name="step2">Step 2</string>
     <string name="prom_sample">Promotion X</string>
     <string name="test">test</string>
+    <string name="edit">Editar</string>
 
 </resources>

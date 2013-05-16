@@ -4,6 +4,7 @@
 	{
 		ob_end_clean();
 		
+		header('Content-type: text/html; charset=utf-8', true);
 		header("HTTP/1.0 500 Internal Server Error", true, 500);
 		
 		$dev = defined('DEVELOPMENT_ENVIRONMENT') ? DEVELOPMENT_ENVIRONMENT : false;

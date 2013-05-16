@@ -2,6 +2,9 @@ package pt.techzebra.promgamemobile.games.quiz;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
@@ -49,10 +52,9 @@ public class QuizActivity extends SherlockFragmentActivity {
     static Quiz quiz_;
     String authen_token;
     String promotion_id;
-    
+
     Handler handler_ = new Handler();
 
-    
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
@@ -72,14 +74,17 @@ public class QuizActivity extends SherlockFragmentActivity {
         authen_token = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
                 null);
         promotion_id = "1";
-        
+
         quiz_ = new Quiz("");
-        NetworkUtilities.attemptFetchQuizGame(promotion_id, authen_token, handler_, this);
-        
-//        if(quiz_ == null){
-//            Toast.makeText(this, "Pedimos desculpa, o erro será corrigido em breve!", Toast.LENGTH_SHORT).show();
-//            finish();
-//        }
+        NetworkUtilities.attemptFetchQuizGame(promotion_id, authen_token,
+                handler_, this);
+
+        // if(quiz_ == null){
+        // Toast.makeText(this,
+        // "Pedimos desculpa, o erro será corrigido em breve!",
+        // Toast.LENGTH_SHORT).show();
+        // finish();
+        // }
         /*
          * gesture_detector_ = new GestureDetector(this, new
          * QuizGestureDetector()); gesture_listener_ = new OnTouchListener() {
@@ -118,7 +123,7 @@ public class QuizActivity extends SherlockFragmentActivity {
         ViewGroup vg = (ViewGroup) findViewById(R.id.pager);
         vg.invalidate();
     }
-    
+
     private void submitAnswers() {
 
         for (int i = 0; i < quiz_.getQuestions().size(); i++) {
@@ -128,12 +133,9 @@ public class QuizActivity extends SherlockFragmentActivity {
                 return;
             }
         }
-        
-        Toast.makeText(this, "To do",
-                Toast.LENGTH_SHORT).show();
-        // TODO: falta update a isto
-        /*NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token,
-                quiz_.getQuestions(), getApplicationContext());*/
+
+        NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token,
+                quiz_.getQuestions(), handler_, this);
     }
 
     private static class QuizCollectionPagerAdapter extends
@@ -149,7 +151,8 @@ public class QuizActivity extends SherlockFragmentActivity {
             Bundle args = new Bundle();
             args.putString("question", quiz_.getQuestions().get(i).getTitle());
             args.putInt("num_question", i);
-            Log.d(TAG, "bundle");
+
+            @SuppressWarnings("unchecked")
             ArrayList<String> answerslist = ((ArrayList<String>) quiz_
                     .getQuestions().get(i).getAnswer().getContent());
             args.putInt("num_answers", answerslist.size());
@@ -209,6 +212,28 @@ public class QuizActivity extends SherlockFragmentActivity {
             });
 
             return root_view;
+        }
+    }
+
+    public void getResultSubmitedAnswers(JSONObject responseContent) {
+        try {
+            String won = NetworkUtilities.getResponseContent(responseContent)
+                    .getString("won");
+            String correct = NetworkUtilities.getResponseContent(
+                    responseContent).getString("correct");
+
+            // TODO: change
+            Toast.makeText(
+                    this,
+                    "Ganhaste: " + won + " com: " + correct
+                            + " respostas correctas!", Toast.LENGTH_SHORT)
+                    .show();
+
+        } catch (JSONException e) {
+            Log.i(TAG,
+                    "Error to get response: "
+                            + NetworkUtilities
+                                    .getResponseContent(responseContent));
         }
     }
 

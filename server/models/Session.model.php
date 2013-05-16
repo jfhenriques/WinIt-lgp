@@ -20,11 +20,11 @@
 		}
 		
 		
-		public function getUserId()
+		public function getUID()
 		{
 			return (int)$this->getData('uid');
 		}
-		public function setUserId($userId)
+		public function setUID($userId)
 		{
 			$this->data['uid'] = (int)$userId;
 		}
@@ -40,7 +40,10 @@
 		}
 		
 		
-		
+		public function deleteCache()
+		{
+			CommonCache::getInstance()->delete( CommonCache::buildVarName( self::TABLE_NAME, $this->getToken() ) );
+		}
 		
 		public function save()
 		{
@@ -49,7 +52,7 @@
 			$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (token, uid, validity) VALUES(:tok, :uid, :val) ON DUPLICATE KEY UPDATE validity = :val ;');	
 			
 			$tok = $this->getToken() ;
-			$uid = $this->getUserId() ;
+			$uid = $this->getUID() ;
 			$val = $this->getValidity() ;
 
 			$sth->bindParam(':tok', $tok, PDO::PARAM_STR);
@@ -57,14 +60,33 @@
 			$sth->bindParam(':val', $val, PDO::PARAM_INT);
 
 			// If this instance was cached, force its deletetion, so the next cache miss forces it to reload
-			CommonCache::getInstance()->delete( CommonCache::buildVarName( self::TABLE_NAME, $this->getToken() ) );
+			$this->deleteCache();
 
 			return $sth->execute();
 		}
 
 
-		
-		public static function findById($token)
+		public static function resetUserTokens($uid)
+		{
+			$return = static::executeQuery( 'SELECT * FROM '. self::TABLE_NAME .
+											' WHERE uid = ? AND validity >= 0;',
+									  			array( $uid ), $stmt );
+
+			if( $stmt !== null && $return !== false )
+			{
+				while( $row = $stmt->fetch() )
+				{
+					if( !is_null( $sess = static::fillModel( $row, new Session() ) ) )
+					{
+						$sess->setValidity(-1);
+						$sess->save();
+					}
+				}
+
+			}
+		}
+
+		public static function findByToken($token)
 		{
 			$result = static::cachedQuery( $token,
 											self::TABLE_NAME,
@@ -79,7 +101,7 @@
 		}
 		
 
-		public static function findByUserId($id)
+		public static function findByUID($id)
 		{
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME .
 											' WHERE uid = ? AND validity >= 0 AND ( ? = \'0\' OR validity >= ? ) ORDER BY validity DESC LIMIT 1;',
