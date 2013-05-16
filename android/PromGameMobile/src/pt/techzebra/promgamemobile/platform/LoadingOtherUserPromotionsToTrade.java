@@ -1,12 +1,15 @@
 package pt.techzebra.promgamemobile.platform;
 
+import java.util.ArrayList;
+
+import com.actionbarsherlock.R.style;
+
 import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.Utilities;
 import pt.techzebra.promgamemobile.client.NetworkUtilities;
 import pt.techzebra.promgamemobile.client.Promotion;
-import pt.techzebra.promgamemobile.ui.PromotionActivity;
-import pt.techzebra.promgamemobile.ui.TradingPromotionActivity;
+import pt.techzebra.promgamemobile.ui.PromotionsActivity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -15,68 +18,46 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
-import com.actionbarsherlock.R.style;
+public abstract class LoadingOtherUserPromotionsToTrade extends AsyncTask<Void, Void, ArrayList<Promotion>> {
 
-public class LoadingPromotionInfo extends AsyncTask<Integer, Void, Promotion> {
-	Promotion p_ = null;
+	ArrayList<Promotion> promos = null;
 	String auth_token;
 	private ProgressDialog progressDialog;
 	Context mContext = null;
-	int switcher_;
-
-	public LoadingPromotionInfo(Context c, int switcher){
-		mContext = c;
-		switcher_ = switcher;
+	
+	public LoadingOtherUserPromotionsToTrade(Context mContext){
+		this.mContext = mContext;
 	}
 
 	@Override
-	protected Promotion doInBackground(Integer... params) {
+	protected ArrayList<Promotion> doInBackground(Void... params) {
 		try {
 			SharedPreferences preferences_ = PromGame.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
 			auth_token = preferences_.getString(Constants.PREF_AUTH_TOKEN, "");
-			p_ = NetworkUtilities.fetchPromotionInformation(Integer.toString(params[0]), auth_token);
+			promos = NetworkUtilities.fetchOtherUsersTradings(auth_token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
-		if(p_ != null)
-			return p_;
+		if(promos != null)
+			return promos;
 		return null;
 	}
-
+	
 	protected void onPreExecute(){
 		super.onPreExecute();
 		progressDialog = new ProgressDialog(mContext);
 		progressDialog.setIndeterminate(true);
 		progressDialog.setProgressStyle(style.Sherlock___Widget_Holo_Spinner);
-		progressDialog.setMessage("Loading promotion information...");
+		progressDialog.setMessage("Loading promotions...");
 		progressDialog.show();
 	}
-
+	
 	@Override
-	protected void onPostExecute(Promotion result){
+	protected void onPostExecute(ArrayList<Promotion> result){
 		super.onPostExecute(result);
 		progressDialog.dismiss();
 		if(result != null){
-			try {
-				Intent i;
-				switch (switcher_) {
-				case 1:
-					i = new Intent(mContext, PromotionActivity.class);
-					i.putExtra("Promotion", p_);
-					mContext.startActivity(i);
-					break;
-				case 2: 
-					i = new Intent(mContext, TradingPromotionActivity.class);
-					i.putExtra("TradingPromotion", p_);
-					mContext.startActivity(i);
-
-				default:
-					break;
-				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			callMainWindow(result);
 		} else {
 			if(!Utilities.hasInternetConnection(mContext)){
 				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -96,6 +77,7 @@ public class LoadingPromotionInfo extends AsyncTask<Integer, Void, Promotion> {
 			}
 		}
 	}
-
 	
+	public abstract void callMainWindow(ArrayList<Promotion> result);
+
 }

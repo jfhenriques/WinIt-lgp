@@ -77,7 +77,9 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 			long id) {
 		
 		Promotion p = adapter.getItem(position);
-		new LoadingPromotionInfo(this).execute(p.getPromotionID());
+		new LoadingPromotionInfo(this, 1).execute(p.getPromotionID());
 		
 	}
+	
+	
 }

@@ -1,9 +1,13 @@
 package pt.techzebra.promgamemobile.ui;
 
+import pt.techzebra.promgamemobile.Constants;
+import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.Utilities;
 import pt.techzebra.promgamemobile.client.NetworkUtilities;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -81,13 +85,13 @@ public class AuthenticationActivity extends SherlockActivity {
             Utilities.showToast(this, "Loading...");
             NetworkUtilities.attemptAuth(email, password, handler_, this);
         }   
-        /*
+        
         SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
                 Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
         preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
         preferences_editor.commit();
         onAuthenticationResult(true);
-        */
+        
     }
 
     public void onAuthenticationResult(boolean result) {

@@ -38,6 +38,9 @@
         <activity android:name="pt.techzebra.promgamemobile.ui.ProfileActivity" />
         <activity android:name="pt.techzebra.promgamemobile.ui.TagsActivity" />
         <activity android:name="pt.techzebra.promgamemobile.games.quiz.QuizActivity" />
+        <activity android:name="pt.techzebra.promgamemobile.ui.TradingHouseActivity" />
+        <activity android:name="pt.techzebra.promgamemobile.ui.TradingPromotionActivity" />
+        <activity android:name="pt.techzebra.promgamemobile.ui.ShowPromotionsToTrade" />
     </application>
 
 </manifest>

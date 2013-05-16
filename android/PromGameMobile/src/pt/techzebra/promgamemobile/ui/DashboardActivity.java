@@ -104,6 +104,8 @@ public class DashboardActivity extends SherlockActivity {
             break;
         case R.id.trading_layout:
             msg = "Trading";
+            Intent intent = new Intent(this, TradingHouseActivity.class);
+            startActivity(intent);
             break;
         }
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();

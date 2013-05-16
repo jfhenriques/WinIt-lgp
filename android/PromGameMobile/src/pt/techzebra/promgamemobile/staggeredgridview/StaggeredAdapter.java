@@ -62,9 +62,9 @@ public class StaggeredAdapter extends ArrayAdapter<Promotion> {
 	}
 	
 
-	static class ViewHolder {
-		ScaleImageView imageView;
-		TextView imageDescription;
-		int promotion_id;
+	public static class ViewHolder {
+		public ScaleImageView imageView;
+		public TextView imageDescription;
+		public int promotion_id;
 	}
 }
