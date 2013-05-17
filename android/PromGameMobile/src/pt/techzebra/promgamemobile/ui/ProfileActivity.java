@@ -40,20 +40,15 @@ public class ProfileActivity extends SherlockActivity {
     /**
      * Set up user data that is displayed on this activity
      */
-    public void setUserData(User u) throws Exception {
-        // Set user name
+    public void setUserData(User u) {
         name_text_.setText(u.getName());
-        // Set email name
         email_text_.setText(u.getEmail());
-        // set user level
         level_text_.setText("Level " + u.getLevel());
-        // set user points
         points_text_.setText(u.getPoints() + "/500");
         
         String hash = MD5Util.md5Hex(u.getEmail().toLowerCase(Locale.getDefault()));
         String gravatar_url = "http://www.gravatar.com/avatar/" + hash + "?s=320&d=identicon";
         new DownloadImageTask(profile_image_).execute(gravatar_url);
-
     }
 
     @SuppressWarnings("deprecation")
@@ -64,6 +59,7 @@ public class ProfileActivity extends SherlockActivity {
 
         action_bar_ = getSupportActionBar();
         action_bar_.setTitle(R.string.profile);
+        action_bar_.setDisplayHomeAsUpEnabled(true);
         
         profile_image_ = (RoundedImageView) findViewById(R.id.profile_image);
         profile_image_.setBackgroundDrawable(getResources().getDrawable(
@@ -97,23 +93,27 @@ public class ProfileActivity extends SherlockActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_edit_profile:
-            Intent in = new Intent(this, EditProfileActivity.class);
-            Bundle myb = new Bundle();
-            myb.putString("name", user_.getName());
-            myb.putString("email", user_.getEmail());
-            myb.putString("birthday", user_.getBirthday());
-            myb.putString("address", user_.getAddress());
-            myb.putInt("cp4", user_.getCp4());
-            myb.putInt("cp3", user_.getCp3());
-            myb.putInt("id", user_.getUserId());
-            myb.putString("token", auth_token);
-            in.putExtras(myb);
-            startActivity(in);
-            break;
-        default:
-            return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            case R.id.menu_edit_profile:
+                Intent in = new Intent(this, EditProfileActivity.class);
+                Bundle myb = new Bundle();
+                myb.putString("name", user_.getName());
+                myb.putString("email", user_.getEmail());
+                myb.putString("birthday", user_.getBirthday());
+                myb.putString("address", user_.getAddress());
+                myb.putInt("cp4", user_.getCp4());
+                myb.putInt("cp3", user_.getCp3());
+                myb.putInt("id", user_.getUserId());
+                myb.putString("token", auth_token);
+                in.putExtras(myb);
+                startActivity(in);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+        
         return true;
     }
 

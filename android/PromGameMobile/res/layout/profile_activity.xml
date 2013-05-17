@@ -126,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="7dp"
                     android:onClick="handleProfileSelection"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="0dp"
@@ -143,10 +143,11 @@
                         android:textStyle="italic"
                         android:background="@drawable/rounded_rectangle_left" />
 
-                    <View
+                    <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:background="@drawable/rounded_rectangle_right" />
+                        android:background="@drawable/rounded_rectangle_right"
+                        android:src="@drawable/ic_badges" />
                 </LinearLayout>
 
                 <LinearLayout
