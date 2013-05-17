@@ -29,6 +29,8 @@ public class Promotion implements Serializable {
     private int retailer_id_;
     private int promotion_type_id_;
     private boolean transferable_;
+    private int max_util_date_;
+    
 
     
 	public Promotion(int pid, String name, String image_url){
@@ -37,7 +39,7 @@ public class Promotion implements Serializable {
 		image_url_ = image_url;
 	}
 	
-	public Promotion(int pid, String name, String description, String image_url, int init_date, int end_date, int user_limit, boolean transferable, int win_points, int retailer_id, int promotion_type_id){
+	public Promotion(int pid, String name, String description, String image_url, int init_date, int end_date, int user_limit, boolean transferable, int win_points, int retailer_id, int promotion_type_id, int max_util_date){
 		promotion_id_= pid;
     	name_ = name;
     	description_ = description;
@@ -50,6 +52,7 @@ public class Promotion implements Serializable {
     	retailer_id_ = retailer_id;
     	promotion_type_id_ = promotion_type_id;
     	transferable_ = transferable;
+    	max_util_date_ = max_util_date;
 	}
 	
 
@@ -152,6 +155,7 @@ public class Promotion implements Serializable {
             //final int active = promotion.optInt("active");
             final int init_date = promotion.optInt("init_date");
             final int end_date = promotion.optInt("end_date");
+            final int max_util_date = promotion.optInt("max_util_date");
             //final int grand_limit = promotion.optInt("grand_limit");
             final int user_limit = promotion.optInt("user_limit");
             final int win_points = promotion.optInt("win_points");
@@ -160,7 +164,7 @@ public class Promotion implements Serializable {
             final int promotion_type_id = promotion.optInt("ptid");
             final boolean transferable = promotion.optBoolean("transferable");
                        
-            return new Promotion(promotion_id, name, description, image_url, init_date, end_date, user_limit, transferable, win_points, retailer_id, promotion_type_id);
+            return new Promotion(promotion_id, name, description, image_url, init_date, end_date, user_limit, transferable, win_points, retailer_id, promotion_type_id, max_util_date);
 
         } catch (final Exception e) {
             Log.i("Promotion", "Error parsing JSON user object" + e.toString());

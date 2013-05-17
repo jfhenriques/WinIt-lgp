@@ -2,13 +2,12 @@
 
     <string name="app_name">PromGame Mobile</string>
     <string name="slogan">
-        <![CDATA[
+<![CDATA[
             <b>Discover</b> and <b>win</b> promotions
         ]]>
-    </string>    
+    </string>
     <string name="sign_in_with_facebook">Sign in with Facebook</string>
     <string name="or">or</string>
-
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="password_old">Password Old</string>
@@ -20,29 +19,26 @@
     <string name="birthday">Birthday</string>
     <string name="address">Address</string>
     <string name="empty_fields">Please fill in all fields</string>
-    
     <string name="settings">Settings</string>
     <string name="log_out">Log out</string>
-    
     <string name="dashboard">Dashboard</string>
     <string name="single_player">Single Player</string>
     <string name="cooperative">Cooperative</string>
     <string name="competitive">Competitive</string>
+    <string name="promotions_to_trade">Choose Promotion to Trade</string>
+    <string name="selected_promotion_to_send">Confirm the promotion selected</string>
     <string name="trading">Trading</string>
-     <string name="promotions">Promotions</string>
+    <string name="promotions">Promotions</string>
     <string name="profile">Profile</string>
     <string name="promotion">Promotion</string>
     <string name="next">Next</string>
     <string name="submit">Submit</string>
     <string name="reset">Reset your password!</string>
-    
     <string name="step1">Step 1</string>
     <string name="step2">Step 2</string>
-    
     <string name="prom_sample">Promotion X</string>
     <string name="test">test</string>
-    
     <string name="edit">Editar</string>
-    
-    
+    <string name="badges">Badges</string>
+
 </resources>

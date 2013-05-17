@@ -20,6 +20,6 @@
         android:text="@string/prom_sample"
         android:textColor="@color/black"
         android:textSize="20sp"
-        android:shadowColor="@color/black" />
+         />
 
 </FrameLayout>

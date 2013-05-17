@@ -21,9 +21,16 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.scheme.SocketFactory;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
@@ -79,11 +86,16 @@ public class NetworkUtilities {
     public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
     public static final String HOST = "tlantic.techzebra.pt";
-    public static final String BASE_URL = "http://tlantic.techzebra.pt/api";
+    public static final String SCHEME = "https";
+    public static final int PORT = 443;
+    public static final String BASE_URL = "https://tlantic.techzebra.pt/api";
 
     public static final String AUTH_URI = BASE_URL + "/session.json";
     public static final String USER_URI = BASE_URL + "/user.json";
     public static final String PROMOTION_URI = BASE_URL + "/promotion";
+    public static final String TRADING_URI = BASE_URL + "/trading.json";
+    public static final String MY_PROMOTIONS_IN_TRADING_URI = BASE_URL + "/user/promotions/trading.json";
+    public static final String MY_PROMOTIONS_TO_TRADE_URI = BASE_URL + "/user/promotions/tradable.json";
     public static final String ADDRESSES_URI = BASE_URL + "/address";
 
     public static final String QUIZ_URI = "/quizgame.json";
@@ -91,19 +103,34 @@ public class NetworkUtilities {
     private static final String PARAM_ADDRESS_ID = "adid";
 
     private static final String PARAM_ADDRESS_2 = "address2";
-
+    
+    
     private static HttpClient http_client_;
+    private static HttpHost http_host_;
+    private static SchemeRegistry scheme_registry_;
 
     /**
      * Configures the HttpClient to connect to the URL provided.
      */
     public static void maybeCreateHttpClient() {
         if (http_client_ == null) {
-            http_client_ = new DefaultHttpClient();
-            final HttpParams params = http_client_.getParams();
-            HttpConnectionParams.setConnectionTimeout(params,
-                    REGISTRATION_TIMEOUT);
-            ConnManagerParams.setTimeout(params, REGISTRATION_TIMEOUT);
+            SocketFactory socket_factory = SSLSocketFactory.getSocketFactory();
+            
+            scheme_registry_ = new SchemeRegistry();
+            scheme_registry_.register(new Scheme(SCHEME, socket_factory, PORT));
+            
+                       
+            HttpParams parameters = new BasicHttpParams();
+            
+            ClientConnectionManager connect_manager = new ThreadSafeClientConnManager(parameters, scheme_registry_);
+            
+            http_client_ = new DefaultHttpClient(connect_manager, parameters);
+        }
+    }
+    
+    public static void maybeCreateHttpHost() {
+        if (http_host_ == null) {
+            http_host_ = new HttpHost(HOST, PORT, SCHEME);
         }
     }
 
@@ -131,11 +158,11 @@ public class NetworkUtilities {
 
     private static JSONObject executeRequest(HttpRequest request) {
         maybeCreateHttpClient();
-        HttpHost host = new HttpHost(HOST);
+        maybeCreateHttpHost();
 
         HttpResponse response;
         try {
-            response = http_client_.execute(host, request);
+            response = http_client_.execute(http_host_, request);
             int status_code = response.getStatusLine().getStatusCode();
             if (status_code == HttpStatus.SC_OK) {
                 JSONObject json_response = new JSONObject(
@@ -640,6 +667,42 @@ public class NetworkUtilities {
 
         return promos;
     }
+
+    
+    public static ArrayList<Promotion> fetchOtherUsersTradings(String token){
+		
+    	ArrayList<Promotion> promos = new ArrayList<Promotion>();
+    	String uri = TRADING_URI + "?token=" + token;
+    	JSONObject response = get(uri);
+        JSONArray r = getResponseContentArray(response);
+        for(int i = 0; i < r.length(); i++) {
+        	try {
+				promos.add(Promotion.valueOf(r.getJSONObject(i)));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        }
+    	return promos;
+    	
+    }
+    
+ public static ArrayList<Promotion> fetchMyPromotionsInTrading(String token){
+		
+    	ArrayList<Promotion> promos = new ArrayList<Promotion>();
+    	String uri = MY_PROMOTIONS_TO_TRADE_URI + "?token=" + token;
+    	JSONObject response = get(uri);
+        JSONArray r = getResponseContentArray(response);
+        for(int i = 0; i < r.length(); i++) {
+        	try {
+				promos.add(Promotion.valueOf(r.getJSONObject(i)));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        }
+    	return promos;
+    	
+    }
+
 
     public static Thread attemptEditProfile(final String auth_token,
             final String name, final String email, final String new_password,

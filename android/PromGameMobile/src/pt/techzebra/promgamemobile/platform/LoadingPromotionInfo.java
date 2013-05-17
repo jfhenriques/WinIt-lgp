@@ -6,6 +6,7 @@ import pt.techzebra.promgamemobile.Utilities;
 import pt.techzebra.promgamemobile.client.NetworkUtilities;
 import pt.techzebra.promgamemobile.client.Promotion;
 import pt.techzebra.promgamemobile.ui.PromotionActivity;
+import pt.techzebra.promgamemobile.ui.TradingPromotionActivity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -21,9 +22,11 @@ public class LoadingPromotionInfo extends AsyncTask<Integer, Void, Promotion> {
 	String auth_token;
 	private ProgressDialog progressDialog;
 	Context mContext = null;
+	int switcher_;
 
-	public LoadingPromotionInfo(Context c){
+	public LoadingPromotionInfo(Context c, int switcher){
 		mContext = c;
+		switcher_ = switcher;
 	}
 
 	@Override
@@ -55,9 +58,22 @@ public class LoadingPromotionInfo extends AsyncTask<Integer, Void, Promotion> {
 		progressDialog.dismiss();
 		if(result != null){
 			try {
-				Intent i = new Intent(mContext, PromotionActivity.class);
-				i.putExtra("Promotion", p_);
-				mContext.startActivity(i);
+				Intent i;
+				switch (switcher_) {
+				case 1:
+					i = new Intent(mContext, PromotionActivity.class);
+					i.putExtra("Promotion", p_);
+					mContext.startActivity(i);
+					break;
+				case 2: 
+					i = new Intent(mContext, TradingPromotionActivity.class);
+					i.putExtra("TradingPromotion", p_);
+					mContext.startActivity(i);
+
+				default:
+					break;
+				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

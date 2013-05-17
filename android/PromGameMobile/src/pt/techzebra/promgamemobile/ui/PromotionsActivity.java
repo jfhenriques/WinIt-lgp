@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.origamilabs.library.views.StaggeredGridView;
 import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
 
@@ -30,6 +31,8 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.promotions);
+		action_bar_.setDisplayHomeAsUpEnabled(true);
+		
 		setContentView(R.layout.promotions_activity);
 		
 		promos = (ArrayList<Promotion>) getIntent().getSerializableExtra("Promotions");
@@ -77,7 +80,19 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 			long id) {
 		
 		Promotion p = adapter.getItem(position);
-		new LoadingPromotionInfo(this).execute(p.getPromotionID());
-		
+		new LoadingPromotionInfo(this, 1).execute(p.getPromotionID());
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case android.R.id.home:
+	            onBackPressed();
+	            break;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	    
+	    return true;
+	}	
 }

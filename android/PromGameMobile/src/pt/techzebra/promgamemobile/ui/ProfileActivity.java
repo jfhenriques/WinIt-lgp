@@ -1,5 +1,7 @@
 package pt.techzebra.promgamemobile.ui;
 
+import java.util.Locale;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -9,6 +11,8 @@ import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.client.User;
+import pt.techzebra.promgamemobile.platform.DownloadImageTask;
+import pt.techzebra.promgamemobile.platform.MD5Util;
 import pt.techzebra.promgamemobile.platform.RoundedImageView;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +20,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 public class ProfileActivity extends SherlockActivity {
@@ -37,20 +40,15 @@ public class ProfileActivity extends SherlockActivity {
     /**
      * Set up user data that is displayed on this activity
      */
-    public void setUserData(User u) throws Exception {
-        /*
-         * TODO Set user profile image (gravatar)
-         */
-
-        // Set user name
+    public void setUserData(User u) {
         name_text_.setText(u.getName());
-        // Set email name
         email_text_.setText(u.getEmail());
-        // set user level
         level_text_.setText("Level " + u.getLevel());
-        // set user points
         points_text_.setText(u.getPoints() + "/500");
-
+        
+        String hash = MD5Util.md5Hex(u.getEmail().toLowerCase(Locale.getDefault()));
+        String gravatar_url = "https://secure.gravatar.com/avatar/" + hash + "?s=320&d=identicon";
+        new DownloadImageTask(profile_image_).execute(gravatar_url);
     }
 
     @SuppressWarnings("deprecation")
@@ -61,24 +59,23 @@ public class ProfileActivity extends SherlockActivity {
 
         action_bar_ = getSupportActionBar();
         action_bar_.setTitle(R.string.profile);
-
+        action_bar_.setDisplayHomeAsUpEnabled(true);
+        
         profile_image_ = (RoundedImageView) findViewById(R.id.profile_image);
-        // profile_image_.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-        // R.drawable.photo));
         profile_image_.setBackgroundDrawable(getResources().getDrawable(
                 R.drawable.profile_picture));
-
+        
         name_text_ = (TextView) findViewById(R.id.name_text);
         email_text_ = (TextView) findViewById(R.id.email_text);
         level_text_ = (TextView) findViewById(R.id.level_text);
         points_text_ = (TextView) findViewById(R.id.points_text);
 
-        
         SharedPreferences preferences_editor = PromGame.getAppContext()
                 .getSharedPreferences(Constants.USER_PREFERENCES,
                         Context.MODE_PRIVATE);
         auth_token = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
                 null);
+        Log.d(TAG, "auth token");
         try {
             user_ = (User) getIntent().getSerializableExtra("User");
             setUserData(user_);
@@ -96,23 +93,27 @@ public class ProfileActivity extends SherlockActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_edit_profile:
-            Intent in = new Intent(this, EditProfileActivity.class);
-            Bundle myb = new Bundle();
-            myb.putString("name", user_.getName());
-            myb.putString("email", user_.getEmail());
-            myb.putString("birthday", user_.getBirthday());
-            myb.putString("address", user_.getAddress());
-            myb.putInt("cp4", user_.getCp4());
-            myb.putInt("cp3", user_.getCp3());
-            myb.putInt("id", user_.getUserId());
-            myb.putString("token", auth_token);
-            in.putExtras(myb);
-            startActivity(in);
-            break;
-        default:
-            return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            case R.id.menu_edit_profile:
+                Intent in = new Intent(this, EditProfileActivity.class);
+                Bundle myb = new Bundle();
+                myb.putString("name", user_.getName());
+                myb.putString("email", user_.getEmail());
+                myb.putString("birthday", user_.getBirthday());
+                myb.putString("address", user_.getAddress());
+                myb.putInt("cp4", user_.getCp4());
+                myb.putInt("cp3", user_.getCp3());
+                myb.putInt("id", user_.getUserId());
+                myb.putString("token", auth_token);
+                in.putExtras(myb);
+                startActivity(in);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+        
         return true;
     }
 
@@ -122,9 +123,9 @@ public class ProfileActivity extends SherlockActivity {
         case R.id.badges_view:
             cls = BadgesActivity.class;
             break;
-        case R.id.tags_view:
-            cls = TagsActivity.class;
-            break;
+//        case R.id.tags_view:
+//            cls = TagsActivity.class;
+//            break;
         }
 
         Intent intent = new Intent(this, cls);
