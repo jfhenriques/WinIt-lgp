@@ -9,6 +9,8 @@ import pt.techzebra.promgamemobile.Constants;
 import pt.techzebra.promgamemobile.PromGame;
 import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.client.User;
+import pt.techzebra.promgamemobile.platform.DownloadImageTask;
+import pt.techzebra.promgamemobile.platform.MD5Util;
 import pt.techzebra.promgamemobile.platform.RoundedImageView;
 import android.content.Context;
 import android.content.Intent;
@@ -37,10 +39,6 @@ public class ProfileActivity extends SherlockActivity {
      * Set up user data that is displayed on this activity
      */
     public void setUserData(User u) throws Exception {
-        /*
-         * TODO Set user profile image (gravatar)
-         */
-
         // Set user name
         name_text_.setText(u.getName());
         // Set email name
@@ -49,6 +47,10 @@ public class ProfileActivity extends SherlockActivity {
         level_text_.setText("Level " + u.getLevel());
         // set user points
         points_text_.setText(u.getPoints() + "/500");
+        
+        String hash = MD5Util.md5Hex(u.getEmail().toLowerCase());
+        String gravatar_url = "http://www.gravatar.com/avatar/" + hash + "?s=320&d=identicon";
+        new DownloadImageTask(profile_image_).execute(gravatar_url);
 
     }
 
