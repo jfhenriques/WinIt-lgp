@@ -24,6 +24,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -52,6 +55,8 @@ public class QuizActivity extends SherlockFragmentActivity {
     static Quiz quiz_;
     String authen_token;
     String promotion_id;
+    private TextView points_text_;
+    private TextView correct_answers_text_;
 
     Handler handler_ = new Handler();
 
@@ -223,12 +228,36 @@ public class QuizActivity extends SherlockFragmentActivity {
                     responseContent).getString("correct");
 
             // TODO: change
-            Toast.makeText(
+            /*Toast.makeText(
                     this,
                     "Ganhaste: " + won + " com: " + correct
                             + " respostas correctas!", Toast.LENGTH_SHORT)
-                    .show();
-
+                    .show();*/
+            
+            LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
+            View popupView = layoutInflater.inflate(R.layout.popup_endquiz, null);  
+            final PopupWindow popup_window = new PopupWindow(popupView,LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);  
+            
+            points_text_ = (TextView) findViewById(R.id.points_text);
+            points_text_.setText(won);
+            
+            correct_answers_text_ = (TextView) findViewById(R.id.correct_answers_text);
+            correct_answers_text_.setText(correct);
+            
+            Button dismiss_button = (Button)popupView.findViewById(R.id.dismiss_button);
+            dismiss_button.setOnClickListener(new Button.OnClickListener(){
+            	@Override
+            	public void onClick(View v) {
+            		// TODO Auto-generated method stub
+            		popup_window.dismiss();
+            	}
+            });
+            
+            
+            //popup_window.showAsDropDown(btnOpenPopup, 50, -30);
+            
+             
+            
         } catch (JSONException e) {
             Log.i(TAG,
                     "Error to get response: "
