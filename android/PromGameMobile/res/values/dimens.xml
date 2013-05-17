@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="dashboard_icon_size">60dp</dimen>
-    <dimen name="dashboard_icon_margin">8dp</dimen>
-    <dimen name="dashboard_label_margin">12dp</dimen>
     <dimen name="gap">10dp</dimen>
     <dimen name="button_primary_text_size">14sp</dimen>
     <dimen name="gap2">20dp</dimen>

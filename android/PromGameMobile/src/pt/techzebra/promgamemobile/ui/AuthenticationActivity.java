@@ -50,6 +50,7 @@ public class AuthenticationActivity extends SherlockActivity {
         
         handler_ = new Handler();
     }
+    
     @Override
     public void onBackPressed(){
     	 if (doubleBackToExitPressedOnce) {
@@ -84,14 +85,7 @@ public class AuthenticationActivity extends SherlockActivity {
                     + " password: " + password);
             Utilities.showToast(this, "Loading...");
             NetworkUtilities.attemptAuth(email, password, handler_, this);
-        }   
-        
-        SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
-                Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
-        preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
-        preferences_editor.commit();
-        onAuthenticationResult(true);
-        
+        }        
     }
 
     public void onAuthenticationResult(boolean result) {

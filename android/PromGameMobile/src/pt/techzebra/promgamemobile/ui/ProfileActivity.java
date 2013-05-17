@@ -16,7 +16,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 public class ProfileActivity extends SherlockActivity {
@@ -61,24 +60,22 @@ public class ProfileActivity extends SherlockActivity {
 
         action_bar_ = getSupportActionBar();
         action_bar_.setTitle(R.string.profile);
-
+        
         profile_image_ = (RoundedImageView) findViewById(R.id.profile_image);
-        // profile_image_.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-        // R.drawable.photo));
         profile_image_.setBackgroundDrawable(getResources().getDrawable(
                 R.drawable.profile_picture));
-
+        
         name_text_ = (TextView) findViewById(R.id.name_text);
         email_text_ = (TextView) findViewById(R.id.email_text);
         level_text_ = (TextView) findViewById(R.id.level_text);
         points_text_ = (TextView) findViewById(R.id.points_text);
 
-        
         SharedPreferences preferences_editor = PromGame.getAppContext()
                 .getSharedPreferences(Constants.USER_PREFERENCES,
                         Context.MODE_PRIVATE);
         auth_token = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
                 null);
+        Log.d(TAG, "auth token");
         try {
             user_ = (User) getIntent().getSerializableExtra("User");
             setUserData(user_);
@@ -122,9 +119,9 @@ public class ProfileActivity extends SherlockActivity {
         case R.id.badges_view:
             cls = BadgesActivity.class;
             break;
-        case R.id.tags_view:
-            cls = TagsActivity.class;
-            break;
+//        case R.id.tags_view:
+//            cls = TagsActivity.class;
+//            break;
         }
 
         Intent intent = new Intent(this, cls);

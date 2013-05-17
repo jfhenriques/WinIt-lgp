@@ -4,9 +4,9 @@
     android:layout_height="match_parent"
     android:background="@color/light_gray"
     android:orientation="vertical"
-    android:paddingTop="@dimen/gap"
-    android:paddingLeft="@dimen/gap"
-    android:paddingRight="@dimen/gap"
+    android:paddingTop="@dimen/gap2"
+    android:paddingLeft="@dimen/gap2"
+    android:paddingRight="@dimen/gap2"
     android:weightSum="1" >
 
     <LinearLayout
@@ -14,9 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@drawable/card_bg_play"
         android:onClick="handleRoomSelection"
-        android:layout_marginBottom="@dimen/gap" >
+        android:layout_marginBottom="@dimen/gap2"
+        style="@style/WhiteButtonAppTheme" >
 
         <ImageView
             android:layout_width="@dimen/dashboard_icon_size"
@@ -24,7 +24,7 @@
             android:layout_gravity="center_vertical"
             android:contentDescription=""
             android:src="@drawable/ic_single_player"
-            android:layout_marginLeft="@dimen/dashboard_icon_margin" />
+            android:layout_marginLeft="@dimen/gap2" />
 
         <TextView
             android:id="@+id/single_player_text"
@@ -36,7 +36,7 @@
             android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dark_gray"
-            android:layout_marginRight="@dimen/dashboard_label_margin" />
+            android:layout_marginRight="@dimen/gap2" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,9 +44,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@drawable/card_bg_play"
         android:onClick="handleRoomSelection"
-        android:layout_marginBottom="@dimen/gap" >
+        android:layout_marginBottom="@dimen/gap2"
+        style="@style/WhiteButtonAppTheme" >
 
         <ImageView
             android:layout_width="@dimen/dashboard_icon_size"
@@ -54,7 +54,7 @@
             android:layout_gravity="center_vertical"
             android:contentDescription=""
             android:src="@drawable/ic_cooperative"
-            android:layout_marginLeft="@dimen/dashboard_icon_margin"  />
+            android:layout_marginLeft="@dimen/gap2"  />
 
         <TextView
             android:id="@+id/cooperative_text"
@@ -66,7 +66,7 @@
             android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dark_gray"
-            android:layout_marginRight="@dimen/dashboard_label_margin" />
+            android:layout_marginRight="@dimen/gap2" />
     </LinearLayout>
 
     <LinearLayout
@@ -74,9 +74,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@drawable/card_bg_play"
         android:onClick="handleRoomSelection"
-        android:layout_marginBottom="@dimen/gap" >
+        android:layout_marginBottom="@dimen/gap2"
+        style="@style/WhiteButtonAppTheme" >
 
         <ImageView
             android:layout_width="@dimen/dashboard_icon_size"
@@ -84,7 +84,7 @@
             android:layout_gravity="center_vertical"
             android:contentDescription=""
             android:src="@drawable/ic_competitive"
-            android:layout_marginLeft="@dimen/dashboard_icon_margin"  />
+            android:layout_marginLeft="@dimen/gap2"  />
 
         <TextView
             android:id="@+id/competitive_text"
@@ -96,7 +96,7 @@
             android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dark_gray"
-            android:layout_marginRight="@dimen/dashboard_label_margin" />
+            android:layout_marginRight="@dimen/gap2" />
     </LinearLayout>
 
     <LinearLayout
@@ -104,9 +104,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        android:background="@drawable/card_bg_play"
         android:onClick="handleRoomSelection"
-        android:layout_marginBottom="@dimen/gap" >
+        android:layout_marginBottom="@dimen/gap2"
+        style="@style/WhiteButtonAppTheme" >
 
         <ImageView
             android:layout_width="@dimen/dashboard_icon_size"
@@ -114,7 +114,7 @@
             android:layout_gravity="center_vertical"
             android:contentDescription=""
             android:src="@drawable/ic_trading"
-            android:layout_marginLeft="@dimen/dashboard_icon_margin"  />
+            android:layout_marginLeft="@dimen/gap2"  />
 
         <TextView
             android:id="@+id/trading_text"
@@ -126,7 +126,7 @@
             android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dark_gray"
-            android:layout_marginRight="@dimen/dashboard_label_margin" />
+            android:layout_marginRight="@dimen/gap2" />
     </LinearLayout>
 
 </LinearLayout>

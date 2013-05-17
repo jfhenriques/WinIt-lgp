@@ -31,11 +31,10 @@
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_margin="6dp"
-                    android:contentDescription=""
                     android:scaleType="centerCrop"
-                    app:cornerRadius="75dp"
-                    app:borderWidth="8dp"
                     app:borderColor="@color/dark_gray"
+                    app:borderWidth="8dp"
+                    app:cornerRadius="75dp"
                     app:roundBackground="true" />
 
                 <TextView
@@ -160,7 +159,8 @@
                         android:layout_height="wrap_content"
                         android:measureWithLargestChild="false"
                         android:orientation="horizontal"
-                        android:weightSum="1" >
+                        android:weightSum="1"
+                        android:baselineAligned="false" >
 
                         <pt.techzebra.promgamemobile.platform.FixedAspectRatioFrameLayout
                             android:layout_width="0dp"
@@ -195,7 +195,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <!-- LinearLayout
                 android:id="@+id/tags_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -286,7 +286,7 @@
                             android:textSize="16sp" />
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout -->
         </LinearLayout>
     </RelativeLayout>
 
