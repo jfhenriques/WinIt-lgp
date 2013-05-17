@@ -108,6 +108,8 @@ public class AuthenticationActivity extends SherlockActivity {
     public void onAuthenticationResult(boolean result) {
         if (result == true) {
             Intent intent = new Intent(this, DashboardActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
         } else {
@@ -182,11 +184,6 @@ public class AuthenticationActivity extends SherlockActivity {
                             Log.i(TAG, "onCancel");
                         }
                     });
-            
-            
-            Intent intent = new Intent(this, DashboardActivity.class);
-            startActivity(intent);
-
         }
     }
 }
