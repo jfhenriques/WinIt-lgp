@@ -1,5 +1,7 @@
 package pt.techzebra.promgamemobile.ui;
 
+import java.util.Locale;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -48,7 +50,7 @@ public class ProfileActivity extends SherlockActivity {
         // set user points
         points_text_.setText(u.getPoints() + "/500");
         
-        String hash = MD5Util.md5Hex(u.getEmail().toLowerCase());
+        String hash = MD5Util.md5Hex(u.getEmail().toLowerCase(Locale.getDefault()));
         String gravatar_url = "http://www.gravatar.com/avatar/" + hash + "?s=320&d=identicon";
         new DownloadImageTask(profile_image_).execute(gravatar_url);
 
