@@ -15,11 +15,9 @@
         <ImageView
             android:id="@+id/image_view"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:contentDescription="Promotion_image"
-            android:paddingTop="15dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/abs__ab_bottom_solid_dark_holo" />
+            android:layout_height="150dp"
+            android:contentDescription=""
+            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,31 +30,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="@dimen/gap"
-                android:layout_marginTop="@dimen/gap"
                 android:text="Name"
-                android:textSize="22sp"
+                android:textSize="26sp"
+                android:fontFamily="sans-serif-light"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/description_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nibh diam, accumsan a eleifend eget, adipiscing vel eros. Proin in erat vitae lorem malesuada imperdiet. Nam eu mi sapien, sed blandit ligula. Donec luctus elit a purus viverra bibendum."
-                android:textSize="14sp" />
+            <View
+                android:id="@+id/separator"
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/dark_gray" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gap" >
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/gap" >
 
                 <TextView
                     android:id="@+id/textView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/gap"
-                    android:text="End Date"
-                    android:textSize="18sp"
+                    android:text="End Date:"
+                    android:textAllCaps="true"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -64,22 +64,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="22-12-2013"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gap"
-                android:layout_marginBottom="@dimen/gap" >
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/gap"
                     android:layout_marginRight="@dimen/gap"
-                    android:text="Win Points"
-                    android:textSize="18sp"
+                    android:text="Win Points:"
+                    android:textAllCaps="true"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -87,21 +82,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="50000"
-                    android:textSize="16sp" />
-            </LinearLayout>
-        </LinearLayout>
+                    android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/play_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:text="Play"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            style="@style/WhiteButtonAppTheme"
-            android:onClick="play" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/description_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nibh diam, accumsan a eleifend eget, adipiscing vel eros. Proin in erat vitae lorem malesuada imperdiet. Nam eu mi sapien, sed blandit ligula. Donec luctus elit a purus viverra bibendum."
+                android:textSize="14sp" />
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>

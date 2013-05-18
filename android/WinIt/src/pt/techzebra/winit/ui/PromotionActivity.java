@@ -16,17 +16,19 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 public class PromotionActivity extends SherlockActivity {
     private ActionBar action_bar_;
     
-	Promotion p;
-	private String auth_token_;
 	private TextView name_text_;
 	private TextView description_text_;
 	private TextView end_date_text_;
 	private TextView win_points_text_;
+	
+	private Promotion promotion_;
+	private String auth_token_;
 
 	private static final String TAG = "PromotionActivity";
 
@@ -40,17 +42,17 @@ public class PromotionActivity extends SherlockActivity {
 		action_bar_.setTitle(R.string.promotion);
 		action_bar_.setDisplayHomeAsUpEnabled(true);
 		
-		p = (Promotion) getIntent().getSerializableExtra("Promotion");
-		if (p.getImageUrl() == null){
-			p.setImageUrl("http://www.clker.com/cliparts/b/7/7/c/12247843801937558056schoolfreeware_Cancel.svg.med.png");
+		promotion_ = (Promotion) getIntent().getSerializableExtra("Promotion");
+		if (promotion_.getImageUrl() == null){
+			promotion_.setImageUrl("http://www.clker.com/cliparts/b/7/7/c/12247843801937558056schoolfreeware_Cancel.svg.med.png");
 		}
 		
-		SharedPreferences preferences_editor = PromGame.getAppContext()
-				.getSharedPreferences(Constants.USER_PREFERENCES,
-						Context.MODE_PRIVATE);
+        SharedPreferences preferences_editor = PromGame.getAppContext()
+                .getSharedPreferences(Constants.USER_PREFERENCES,
+                        Context.MODE_PRIVATE);
 
-		auth_token_ = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
-				null);
+        auth_token_ = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
+                null);
 		
 		name_text_ = (TextView) findViewById(R.id.name_text);
 		description_text_ = (TextView) findViewById(R.id.description_text);
@@ -58,15 +60,19 @@ public class PromotionActivity extends SherlockActivity {
 		win_points_text_ = (TextView) findViewById(R.id.win_points_text);
 
 		new DownloadImageTask((ImageView) findViewById(R.id.image_view))
-		.execute(p.getImageUrl());
+		.execute(promotion_.getImageUrl());
 
-		name_text_.setText(p.getName());
-		description_text_.setText(p.getDescription());
+		name_text_.setText(promotion_.getName());
+		description_text_.setText(promotion_.getDescription());
 		//TODO tornar isto numa data
 		//end_date_text_.setText(p.getEndDate());
-		win_points_text_.setText(Integer.toString(p.getWinPoints()));
-
-
+		win_points_text_.setText(Integer.toString(promotion_.getWinPoints()));
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    getSupportMenuInflater().inflate(R.menu.menu_promotion, menu);
+        return true;
 	}
 	
 	@Override
@@ -75,17 +81,14 @@ public class PromotionActivity extends SherlockActivity {
 	        case android.R.id.home:
 	            onBackPressed();
 	            break;
+	        case R.id.menu_play:
+	            Intent intent = new Intent(this, QuizActivity.class);
+	            startActivity(intent);
+	            break;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
 	    
 	    return true;
-	}
-	
-	public void play(View view) {
-	    Intent intent = new Intent(this, QuizActivity.class);
-	    /*Bundle bun = new Bundle();
-	    bun.putInt("promotion_id", p.getPromotionID());*/
-	    startActivity(intent);
 	}
 }
