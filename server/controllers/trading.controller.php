@@ -2,7 +2,7 @@
 
 
 	DEFINE( 'R_TRAD_ERR_PARAM'				, 0x10 );
-
+	DEFINE( 'R_TRAD_ERR_NO_MATCH_USER'				, 0x20 );
 
 
 
@@ -10,6 +10,8 @@
 
 		private static $status = array(
 				R_TRAD_ERR_PARAM				=> 'Erro de parâmetros',
+				
+				R_TRAD_ERR_NO_MATCH_USER				=> 'Erro de utilizador não coincide',
 			);
 
 	
@@ -50,6 +52,29 @@
 
 
 
+		}
+		
+		public function sendPromotionToTrading($pid) {
+		
+			$user = Authenticator::getInstance()->getUser();
+
+			if( is_null( $user ) ) 
+			{
+				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
+			} 
+			else if($user->getUID() != PrizeCode::getOwnerUID()) 
+			{
+				$this->respond->setJSONCode( R_TRAD_ERR_NO_MATCH_USER );
+			}
+			else
+			{
+
+				$this->respond->setJSONResponse( PrizeCode::sendPromoToTrading() );
+				$this->respond->setJSONCode( R_STATUS_OK );
+			}
+
+			$this->respond->renderJSON( static::$status );
+		
 		}
 
 

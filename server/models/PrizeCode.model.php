@@ -232,6 +232,15 @@
 			return static::fillModel( $result, new Promotion() );
 		}
 
+		public static function sendPromoToTrading() 
+		{
+		
+			$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET in_trading = 1 WHERE pcid = :pcid ;' );
+
+			$sth->bindParam(':pcid', $pcid, PDO::PARAM_INT);
+
+			return static::fillModel( $result, new Promotion() );
+		}
 
 
 	}
