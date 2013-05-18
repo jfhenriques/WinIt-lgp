@@ -106,7 +106,7 @@ public class DashboardActivity extends SherlockActivity {
             break;
         case R.id.trading_layout:
             msg = "Trading";
-            Intent intent = new Intent(this, TradingHouseActivity.class);
+            Intent intent = new Intent(this, TradingActivity.class);
             startActivity(intent);
             break;
         }

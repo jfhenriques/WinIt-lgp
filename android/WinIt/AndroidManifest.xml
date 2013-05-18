@@ -39,7 +39,7 @@
         <activity android:name="pt.techzebra.winit.ui.TagsActivity" />
         <activity android:name="pt.techzebra.winit.ui.EditProfileActivity" />
         <activity android:name="pt.techzebra.winit.games.quiz.QuizActivity" />
-        <activity android:name="pt.techzebra.winit.ui.TradingHouseActivity" />
+        <activity android:name="pt.techzebra.winit.ui.TradingActivity" />
         <activity android:name="pt.techzebra.winit.ui.TradingPromotionActivity" />
         <activity android:name="pt.techzebra.winit.ui.ShowPromotionsToTrade" />
     </application>

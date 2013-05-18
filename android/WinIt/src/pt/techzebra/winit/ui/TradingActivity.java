@@ -22,7 +22,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.origamilabs.library.views.StaggeredGridView;
 import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
 
-public class TradingHouseActivity extends SherlockActivity implements OnItemClickListener {
+public class TradingActivity extends SherlockActivity implements OnItemClickListener {
 	private ActionBar action_bar_;
 	StaggeredGridView gridView;
 	StaggeredAdapter adapter;
@@ -31,10 +31,11 @@ public class TradingHouseActivity extends SherlockActivity implements OnItemClic
 	@Override
 	protected void onCreate(Bundle saved_instance_state) {
 		super.onCreate(saved_instance_state);
-
-		action_bar_ = getSupportActionBar();
-		action_bar_.setTitle(R.string.trading);
 		setContentView(R.layout.trading_house_activity);
+		
+		action_bar_ = getSupportActionBar();
+		action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_trading));
+		action_bar_.setTitle(R.string.trading);
 		action_bar_.setDisplayHomeAsUpEnabled(true);
 		
 		(new LoadingOtherUserPromotionsToTrade(this){
@@ -50,7 +51,8 @@ public class TradingHouseActivity extends SherlockActivity implements OnItemClic
 
 		int margin = getResources().getDimensionPixelSize(R.dimen.promotions_list_margin);
 		gridView.setItemMargin(margin); // set the GridView margin
-		gridView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well 
+		gridView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well
+		gridView.setSelector(R.drawable.highlight_overlay);
 		adapter = new StaggeredAdapter(this, R.id.staggered_adapter, promos);
 
 		gridView.setAdapter(adapter);
