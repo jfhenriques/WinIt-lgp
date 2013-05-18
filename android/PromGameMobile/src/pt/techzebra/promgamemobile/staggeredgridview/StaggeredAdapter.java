@@ -46,7 +46,7 @@ public class StaggeredAdapter extends ArrayAdapter<Promotion> {
 			convertView = layoutInflator.inflate(R.layout.promotions_list_row,
 					null);
 			holder = new ViewHolder();
-			holder.imageView = (ScaleImageView) convertView .findViewById(R.id.imageView1);
+			holder.imageView = (ScaleImageView) convertView .findViewById(R.id.staggered_adapter);
 			holder.imageDescription = (TextView) convertView.findViewById(R.id.description);
 			convertView.setTag(holder);
 		}

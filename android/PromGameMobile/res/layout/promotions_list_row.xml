@@ -2,15 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    
-     >
+    android:background="@drawable/card_bg_play" >
 
     <pt.techzebra.promgamemobile.staggeredgridview.ScaleImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/staggered_adapter"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/highlight_overlay"
-        />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/description"
@@ -19,7 +16,6 @@
         android:layout_margin="1dp"
         android:text="@string/prom_sample"
         android:textColor="@color/black"
-        android:textSize="20sp"
-         />
+        android:textSize="12sp" />
 
 </FrameLayout>

@@ -7,7 +7,6 @@ import pt.techzebra.promgamemobile.R;
 import pt.techzebra.promgamemobile.client.Promotion;
 import pt.techzebra.promgamemobile.platform.LoadingPromotionInfo;
 import pt.techzebra.promgamemobile.staggeredgridview.StaggeredAdapter;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -41,13 +40,11 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 		int margin = getResources().getDimensionPixelSize(R.dimen.promotions_list_margin);
 		gridView.setItemMargin(margin); // set the GridView margin
 		gridView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well 
-		adapter = new StaggeredAdapter(this, R.id.imageView1, promos);
+		adapter = new StaggeredAdapter(this, R.id.staggered_adapter, promos);
 
 		gridView.setAdapter(adapter);
 		adapter.notifyDataSetChanged();
 		gridView.setOnItemClickListener(this);
-		
-
 	}
 	
 	/*private ArrayList<Promotion> populateDataToShow() {

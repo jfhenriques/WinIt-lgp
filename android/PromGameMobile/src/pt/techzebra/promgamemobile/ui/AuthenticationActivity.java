@@ -99,7 +99,6 @@ public class AuthenticationActivity extends SherlockActivity {
         }
     }
     
-    
     public void handleSignUp(View view) {
         Log.i(TAG, "Initialize Sign Up");
         

@@ -34,7 +34,7 @@ public class TradingHouseActivity extends SherlockActivity implements OnItemClic
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.trading);
 		setContentView(R.layout.trading_house_activity);
-		
+		action_bar_.setDisplayHomeAsUpEnabled(true);
 		
 		(new LoadingOtherUserPromotionsToTrade(this){
 
@@ -50,20 +50,17 @@ public class TradingHouseActivity extends SherlockActivity implements OnItemClic
 		int margin = getResources().getDimensionPixelSize(R.dimen.promotions_list_margin);
 		gridView.setItemMargin(margin); // set the GridView margin
 		gridView.setPadding(margin, 0, margin, 0); // have the margin on the sides as well 
-		adapter = new StaggeredAdapter(this, R.id.imageView1, promos);
+		adapter = new StaggeredAdapter(this, R.id.staggered_adapter, promos);
 
 		gridView.setAdapter(adapter);
 		
 		gridView.setOnItemClickListener(this);
-		
-
 	}
 	
 	
 	@Override
 	public void onItemClick(StaggeredGridView parent, View view, int position,
 			long id) {
-		
 		Promotion p = adapter.getItem(position);
 		new LoadingPromotionInfo(this, 2).execute(p.getPromotionID());
 		

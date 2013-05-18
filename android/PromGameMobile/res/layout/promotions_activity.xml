@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.origamilabs.library.views.StaggeredGridView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:staggered="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/staggeredGridView1"
+    staggered:numColumns="2"
+    staggered:drawSelectorOnTop="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/mainLayout"
-    tools:context=".PromotionsActivity">
-
-    <com.origamilabs.library.views.StaggeredGridView
-        android:id="@+id/staggeredGridView1"
-        staggered:numColumns="2"
-        staggered:drawSelectorOnTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-</LinearLayout>
+    android:layout_height="wrap_content" />
