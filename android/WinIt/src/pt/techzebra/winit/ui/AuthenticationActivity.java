@@ -3,15 +3,18 @@ package pt.techzebra.winit.ui;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
+import pt.techzebra.winit.platform.FontUtils;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +50,12 @@ public class AuthenticationActivity extends SherlockActivity {
 
         setContentView(R.layout.authentication_activity);
 
+        if (Build.VERSION.SDK_INT < 11) {
+            Log.d(TAG, "Loading custom typeface");
+            ViewGroup view = (ViewGroup) getWindow().getDecorView();
+            FontUtils.setRobotoFont(this, view);
+        }
+        
         getSupportActionBar().hide();
 
         email_edit_ = (EditText) findViewById(R.id.email_edit);

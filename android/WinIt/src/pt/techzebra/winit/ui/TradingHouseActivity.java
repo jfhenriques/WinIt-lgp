@@ -18,6 +18,7 @@ import android.view.View;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.origamilabs.library.views.StaggeredGridView;
 import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
 
@@ -63,6 +64,18 @@ public class TradingHouseActivity extends SherlockActivity implements OnItemClic
 			long id) {
 		Promotion p = adapter.getItem(position);
 		new LoadingPromotionInfo(this, 2).execute(p.getPromotionID());
-		
 	}
+	
+   @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        
+        return true;
+    }
 }

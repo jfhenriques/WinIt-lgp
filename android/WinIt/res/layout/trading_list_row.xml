@@ -24,7 +24,7 @@
         android:id="@+id/list_item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/list_image"
+        android:layout_toRightOf="@+id/thumbnail"
         android:layout_marginLeft="100dip"
         android:layout_centerVertical="true"
         android:paddingBottom ="10dip"

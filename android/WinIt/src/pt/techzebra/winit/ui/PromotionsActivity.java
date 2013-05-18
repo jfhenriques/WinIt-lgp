@@ -91,5 +91,5 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 	    }
 	    
 	    return true;
-	}	
+	}
 }

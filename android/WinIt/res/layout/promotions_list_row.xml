@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     android:background="@drawable/card_bg_play" >
 
     <pt.techzebra.winit.staggeredgridview.ScaleImageView
@@ -13,9 +14,10 @@
         android:id="@+id/description"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_margin="1dp"
+        android:padding="5dp"
         android:text="@string/prom_sample"
         android:textColor="@color/black"
-        android:textSize="12sp" />
+        android:fontFamily="sans-serif-light"
+        android:textSize="14sp" />
 
-</FrameLayout>
+</LinearLayout>
