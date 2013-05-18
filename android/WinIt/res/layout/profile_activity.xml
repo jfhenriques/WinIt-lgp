@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/pt.techzebra.winit"
+    android:id="@+id/scrollview1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/gap" >
+
+        <LinearLayout
+            android:id="@+id/LinearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/LinearLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <pt.techzebra.winit.platform.RoundedImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_margin="6dp"
+                    android:scaleType="centerCrop"
+                    app:borderColor="@color/dark_gray"
+                    app:borderWidth="8dp"
+                    app:cornerRadius="75dp"
+                    app:roundBackground="true" />
+
+                <TextView
+                    android:id="@+id/name_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jonh Doe"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/separator"
+                    android:layout_width="fill_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/dark_gray" />
+
+                <TextView
+                    android:id="@+id/email_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:text="jonhdoe@mail.com"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="20sp"
+                    android:textStyle="italic" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    android:weightSum="1" >
+
+                    <TextView
+                        android:id="@+id/level_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:fontFamily="sans-serif"
+                        android:text="Level 3"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/points_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="right"
+                        android:text="453/500"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/experience_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LinearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/LinearLayout1"
+            android:layout_marginTop="@dimen/gap2"
+            android:orientation="horizontal"
+            android:weightSum="1" >
+
+            <LinearLayout
+                android:id="@+id/badges_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.5"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/badges_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
+                    android:onClick="handleProfileSelection"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="1dp"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center_vertical|left"
+                        android:paddingLeft="10dp"
+                        android:text="Badges"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="italic"
+                        android:background="@drawable/rounded_rectangle_left" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/rounded_rectangle_right"
+                        android:src="@drawable/ic_badges" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:measureWithLargestChild="false"
+                        android:orientation="horizontal"
+                        android:weightSum="1"
+                        android:baselineAligned="false" >
+
+                        <pt.techzebra.winit.platform.FixedAspectRatioFrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0.25"
+                            android:background="@color/orange" />
+
+                        <include layout="@layout/spacer" />
+
+                        <pt.techzebra.winit.platform.FixedAspectRatioFrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0.25"
+                            android:background="@color/green" />
+
+                        <include layout="@layout/spacer" />
+
+                        <pt.techzebra.winit.platform.FixedAspectRatioFrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0.25"
+                            android:background="@color/red" />
+
+                        <include layout="@layout/spacer" />
+
+                        <pt.techzebra.winit.platform.FixedAspectRatioFrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0.25"
+                            android:background="@color/blue" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- LinearLayout
+                android:id="@+id/tags_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="0.5"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/tags_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
+                    android:onClick="handleProfileSelection"
+                    android:orientation="horizontal" >
+
+                    <View
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/rounded_rectangle_left"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="1dp"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center_vertical|right"
+                        android:paddingRight="10dp"
+                        android:text="Tags"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="italic"
+                        android:background="@drawable/rounded_rectangle_right" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="right"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="0.5"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:layout_width="75dp"
+                            android:layout_height="25dp"
+                            android:background="@color/gray"
+                            android:gravity="center"
+                            android:text="clothes"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <include layout="@layout/spacer" />
+                        
+                        <TextView
+                            android:layout_width="75dp"
+                            android:layout_height="25dp"
+                            android:background="@color/gray"
+                            android:gravity="center"
+                            android:text="shoes"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:layout_width="75dp"
+                            android:layout_height="25dp"
+                            android:background="@color/gray"
+                            android:gravity="center"
+                            android:text="slim fit"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout -->
+        </LinearLayout>
+    </RelativeLayout>
+
+</ScrollView>
