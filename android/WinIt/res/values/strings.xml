@@ -25,8 +25,7 @@
     <string name="single_player">Single Player</string>
     <string name="cooperative">Cooperative</string>
     <string name="competitive">Competitive</string>
-    <string name="promotions_to_trade">Choose Promotion to Trade</string>
-    <string name="selected_promotion_to_send">Confirm the promotion selected</string>
+    <string name="selected_promotion_to_send">Select promotion to trade</string>
     <string name="trading">Trading</string>
     <string name="promotions">Promotions</string>
     <string name="profile">Profile</string>
@@ -42,6 +41,7 @@
     <string name="badges">Badges</string>
     <string name="play">Play</string>
     <string name="propose">Propose Trade</string>
+    <string name="send_proposal">Send proposal</string>
 
 
 </resources>

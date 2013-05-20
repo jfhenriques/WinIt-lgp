@@ -3,6 +3,7 @@ package pt.techzebra.winit.ui;
 import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.PromGame;
 import pt.techzebra.winit.R;
+import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.games.quiz.QuizActivity;
 import pt.techzebra.winit.platform.LoadingAvailablePromotionsList;
 import pt.techzebra.winit.platform.LoadingUserInfo;
@@ -108,6 +109,8 @@ public class DashboardActivity extends SherlockActivity {
             msg = "Trading";
             Intent intent = new Intent(this, TradingActivity.class);
             startActivity(intent);
+            //TODO added transition animations, wainting feedback
+            Utilities.addActivityAnimations(this);
             break;
         }
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();

@@ -5,32 +5,44 @@
     android:background="@drawable/list_selector"
     android:orientation="horizontal"
     android:padding="5dip" >
+
     <!-- ListRow Left side Thumbnail image -->
+
     <LinearLayout
         android:id="@+id/thumbnail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="5dip"
-        android:padding="3dip" >
+        android:layout_alignParentLeft="true" >
+
         <pt.techzebra.winit.staggeredgridview.ScaleImageView
             android:id="@+id/list_image"
-            android:contentDescription="@string/app_name"
             android:layout_width="150dip"
-            android:layout_height="65dip"
-             />
-    </LinearLayout> 
+            android:layout_height="fill_parent"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"
+            />
+
+        <View
+            android:id="@+id/separator_list_row"
+            android:layout_width="3dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="5dp"
+            android:background="@color/dark_gray" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/list_item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:layout_marginLeft="100dip"
         android:layout_centerVertical="true"
-        android:paddingBottom ="10dip"
+        android:layout_marginLeft="@dimen/gap"
+        android:layout_marginRight="@dimen/gap"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:fontFamily="sans-serif"
         android:text="@string/promotion"
-        android:textColor="#040404"
+        android:textColor="@color/dark_gray"
         android:textSize="15sp"
-        android:textStyle="bold"
-        android:typeface="sans" />  
-</RelativeLayout> 
+        android:textStyle="italic" />
+
+</RelativeLayout>

@@ -60,7 +60,8 @@ public class ShowPromotionsToTrade extends SherlockActivity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		action_bar_ = getSupportActionBar();
-		action_bar_.setTitle(R.string.promotions_to_trade);
+		action_bar_.setTitle(R.string.trading);
+		action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_trading));
 		setContentView(R.layout.trading_promotions_to_trade);
 		mContext = ShowPromotionsToTrade.this;
 		promotion_wanted = (Promotion) getIntent().getSerializableExtra("Promotion");
