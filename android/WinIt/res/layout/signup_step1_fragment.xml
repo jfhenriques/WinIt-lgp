@@ -9,7 +9,8 @@
         android:id="@+id/signup_step_1_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" >
+        android:layout_marginTop="@dimen/gap"
+        android:layout_marginBottom="@dimen/gap" >
 
         <LinearLayout
             android:id="@+id/linearLayout1"

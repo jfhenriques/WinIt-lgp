@@ -10,7 +10,7 @@
     <string name="or">or</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="password_old">Password Old</string>
+    <string name="password_old">Old Password</string>
     <string name="log_in">Sign in</string>
     <string name="sign_up">Sign up</string>
     <string name="sign_up_with_email">Sign up with email</string>
@@ -30,6 +30,7 @@
     <string name="promotions">Promotions</string>
     <string name="profile">Profile</string>
     <string name="promotion">Promotion</string>
+    <string name="my_promotions">My Promotions</string>
     <string name="next">Next</string>
     <string name="submit">Submit</string>
     <string name="reset">Reset your password!</string>
@@ -37,7 +38,7 @@
     <string name="step2">Step 2</string>
     <string name="prom_sample">Promotion X</string>
     <string name="test">test</string>
-    <string name="edit">Editar</string>
+    <string name="edit">Edit</string>
     <string name="badges">Badges</string>
     <string name="play">Play</string>
     <string name="propose">Propose Trade</string>

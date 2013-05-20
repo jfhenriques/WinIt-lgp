@@ -34,6 +34,7 @@
         
         <activity android:name="pt.techzebra.winit.ui.PromotionsActivity" />
         <activity android:name="pt.techzebra.winit.ui.PromotionActivity" android:uiOptions="splitActionBarWhenNarrow"  />
+        <activity android:name="pt.techzebra.winit.ui.MyPromotionsActivity" />
         <activity android:name="pt.techzebra.winit.ui.BadgesActivity" />
         <activity android:name="pt.techzebra.winit.ui.ProfileActivity" />
         <activity android:name="pt.techzebra.winit.ui.TagsActivity" />

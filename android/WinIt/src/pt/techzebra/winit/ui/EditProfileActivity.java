@@ -71,7 +71,7 @@ public class EditProfileActivity extends SherlockActivity {
         String address_2 = "";
         
         if((!new_password.isEmpty() && old_password.isEmpty()) || (!old_password.isEmpty() && new_password.isEmpty())){
-            Toast.makeText(this, "Deve preencher o campo Password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You must fill in the Password field", Toast.LENGTH_SHORT).show();
             return;
         }
         

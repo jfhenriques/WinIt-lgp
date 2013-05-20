@@ -113,6 +113,91 @@
             android:weightSum="1" >
 
             <LinearLayout
+                android:id="@+id/my_promotions_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.5"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/my_promotions_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
+                    android:onClick="handleProfileSelection"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="1dp"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center_vertical|left"
+                        android:paddingLeft="10dp"
+                        android:text="My Promotions"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="italic"
+                        android:background="@drawable/rounded_rectangle_left" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/rounded_rectangle_right"
+                        android:src="@drawable/ic_badges" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:measureWithLargestChild="false"
+                        android:orientation="horizontal"
+                        android:weightSum="1"
+                        android:baselineAligned="false" >
+
+                        <pt.techzebra.winit.platform.FixedAspectRatioFrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0.25"
+                            android:background="@color/orange" />
+
+                        <include layout="@layout/spacer" />
+
+                        <pt.techzebra.winit.platform.FixedAspectRatioFrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0.25"
+                            android:background="@color/green" />
+
+                        <include layout="@layout/spacer" />
+
+                        <pt.techzebra.winit.platform.FixedAspectRatioFrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0.25"
+                            android:background="@color/red" />
+
+                        <include layout="@layout/spacer" />
+
+                        <pt.techzebra.winit.platform.FixedAspectRatioFrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0.25"
+                            android:background="@color/blue" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+            
+            <LinearLayout
                 android:id="@+id/badges_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -196,7 +281,7 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-
+            
             <!-- LinearLayout
                 android:id="@+id/tags_layout"
                 android:layout_width="match_parent"

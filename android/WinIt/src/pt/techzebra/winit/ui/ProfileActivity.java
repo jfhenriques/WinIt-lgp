@@ -123,6 +123,9 @@ public class ProfileActivity extends SherlockActivity {
         case R.id.badges_view:
             cls = BadgesActivity.class;
             break;
+        case R.id.my_promotions_view:
+            cls = MyPromotionsActivity.class;
+            break;
 //        case R.id.tags_view:
 //            cls = TagsActivity.class;
 //            break;

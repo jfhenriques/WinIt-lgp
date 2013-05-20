@@ -94,6 +94,7 @@ public class NetworkUtilities {
     public static final String USER_URI = BASE_URL + "/user.json";
     public static final String PROMOTION_URI = BASE_URL + "/promotion";
     public static final String TRADING_URI = BASE_URL + "/trading.json";
+    public static final String MY_PROMOTIONS_URI = BASE_URL + "/user/promotions/won.json";
     public static final String MY_PROMOTIONS_IN_TRADING_URI = BASE_URL + "/user/promotions/trading.json";
     public static final String MY_PROMOTIONS_TO_TRADE_URI = BASE_URL + "/user/promotions/tradable.json";
     public static final String ADDRESSES_URI = BASE_URL + "/address";
@@ -673,6 +674,24 @@ public class NetworkUtilities {
 		
     	ArrayList<Promotion> promos = new ArrayList<Promotion>();
     	String uri = TRADING_URI + "?token=" + token;
+    	JSONObject response = get(uri);
+        JSONArray r = getResponseContentArray(response);
+        for(int i = 0; i < r.length(); i++) {
+        	try {
+				promos.add(Promotion.valueOf(r.getJSONObject(i)));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        }
+    	return promos;
+    	
+    }
+
+ public static ArrayList<Promotion> fetchMyPromotions(String token){
+		
+    	ArrayList<Promotion> promos = new ArrayList<Promotion>();
+    	//TODO
+    	String uri = MY_PROMOTIONS_URI + "?token=" + token;
     	JSONObject response = get(uri);
         JSONArray r = getResponseContentArray(response);
         for(int i = 0; i < r.length(); i++) {
