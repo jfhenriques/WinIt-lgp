@@ -103,6 +103,8 @@ public class MyPromotionsActivity extends SherlockActivity {
 						map = new HashMap<String, String>();
 						map.put("id", Integer.toString(result.get(i).getPromotionID()));
 						map.put("name", result.get(i).getName());
+						map.put("end_date", Integer.toString(result.get(i).getEndDate()));
+						map.put("win_points", Integer.toString(result.get(i).getWinPoints()));
 						map.put("image", result.get(i).getImageUrl());
 						promotions.add(map);
 					//}
@@ -152,10 +154,12 @@ public class MyPromotionsActivity extends SherlockActivity {
 			View vi=convertView;
 			if(convertView==null){
 				LayoutInflater inflater = LayoutInflater.from(getBaseContext());;
-				vi = inflater.inflate(R.layout.trading_list_row, null);
+				vi = inflater.inflate(R.layout.my_promotions_list_row, null);
 				holder = new ViewHolder();
 
 				holder.name =  (TextView)vi.findViewById(R.id.list_item_name); 
+				holder.end_date =  (TextView)vi.findViewById(R.id.list_item_end_date); 
+				holder.win_points =  (TextView)vi.findViewById(R.id.list_item_win_points); 
 				holder.image =(ScaleImageView)vi.findViewById(R.id.list_image); 
 
 				vi.setTag(holder);
@@ -185,6 +189,8 @@ public class MyPromotionsActivity extends SherlockActivity {
 		public class ViewHolder{
 			String id;
 			TextView name;
+			TextView end_date;
+			TextView win_points;
 			ScaleImageView image;
 		} 
 	}
