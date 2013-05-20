@@ -14,9 +14,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class TradingPromotionActivity extends SherlockActivity{
 	Promotion p;
@@ -33,6 +36,7 @@ public class TradingPromotionActivity extends SherlockActivity{
 		super.onCreate(saved_instance_state);
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.trading);
+		action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_trading));
 		setContentView(R.layout.trading_promotion_activity);
 
 		p = (Promotion) getIntent().getSerializableExtra("TradingPromotion");
@@ -58,14 +62,28 @@ public class TradingPromotionActivity extends SherlockActivity{
 
 
 	}
-
-	public void proposeTrade(View view) {
-		
-		
-		Intent i = new Intent(this, ShowPromotionsToTrade.class);
-		i.putExtra("Promotion", p);
-		this.startActivity(i);
-		
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    getSupportMenuInflater().inflate(R.menu.menu_trading, menu);
+        return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case android.R.id.home:
+	            onBackPressed();
+	            break;
+	        case R.id.menu_propose:
+	        	Intent i = new Intent(this, ShowPromotionsToTrade.class);
+	    		i.putExtra("Promotion", p);
+	    		this.startActivity(i);
+	            break;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	    
+	    return true;
 	}
 
 }

@@ -40,6 +40,7 @@ public class PromotionActivity extends SherlockActivity {
 		
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.promotion);
+		action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_single_player));
 		action_bar_.setDisplayHomeAsUpEnabled(true);
 		
 		promotion_ = (Promotion) getIntent().getSerializableExtra("Promotion");

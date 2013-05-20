@@ -41,5 +41,7 @@
     <string name="edit">Editar</string>
     <string name="badges">Badges</string>
     <string name="play">Play</string>
+    <string name="propose">Propose Trade</string>
+
 
 </resources>
