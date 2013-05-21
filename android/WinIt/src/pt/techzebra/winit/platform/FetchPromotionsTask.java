@@ -9,7 +9,6 @@ import pt.techzebra.winit.client.Promotion;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class FetchPromotionsTask extends AsyncTask<Void, Void, ArrayList<Promotion>> {
     private static final String TAG = "FetchPromotionsTask";

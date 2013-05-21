@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.Quiz;
-import android.content.Context;
-import android.content.SharedPreferences;
+import pt.techzebra.winit.platform.FetchQuizTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -39,21 +37,15 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class QuizActivity extends SherlockFragmentActivity {
+public class QuizActivity extends SherlockFragmentActivity implements FetchQuizTask.AsyncResponse {
     private static final String TAG = "QuizActivity";
+    
     private ActionBar action_bar_;
-    /*
-     * private static final int SWIPE_MIN_DISTANCE = 50; private static final
-     * int SWIPE_MAX_OFF_PATH = 250; private static final int
-     * SWIPE_THRESHOLD_VELOCITY = 200;
-     * 
-     * private GestureDetector gesture_detector_; private OnTouchListener
-     * gesture_listener_;
-     */
+
     QuizCollectionPagerAdapter quiz_collection_adapter_;
     ViewPager view_pager_;
     static Quiz quiz_;
-    String authen_token;
+    String authen_token_;
     String promotion_id;
     private TextView points_text_;
     private TextView correct_answers_text_;
@@ -68,21 +60,15 @@ public class QuizActivity extends SherlockFragmentActivity {
 
         action_bar_ = getSupportActionBar();
         action_bar_.setTitle("Quiz Game");
+        action_bar_.setDisplayHomeAsUpEnabled(true);
 
-        quiz_collection_adapter_ = new QuizCollectionPagerAdapter(
-                getSupportFragmentManager());
-        view_pager_ = (ViewPager) findViewById(R.id.pager);
-        view_pager_.setAdapter(quiz_collection_adapter_);
-        SharedPreferences preferences_editor = WinIt.getAppContext()
-                .getSharedPreferences(Constants.USER_PREFERENCES,
-                        Context.MODE_PRIVATE);
-        authen_token = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
-                null);
+        authen_token_ = WinIt.getAuthToken();
         promotion_id = "1";
 
-        quiz_ = new Quiz("");
-        NetworkUtilities.attemptFetchQuizGame(promotion_id, authen_token,
-                handler_, this);
+//        
+        FetchQuizTask fetch_quiz_task = new FetchQuizTask(this);
+        fetch_quiz_task.setDelegate(this);
+        fetch_quiz_task.execute(promotion_id);
 
         // if(quiz_ == null){
         // Toast.makeText(this,
@@ -90,18 +76,12 @@ public class QuizActivity extends SherlockFragmentActivity {
         // Toast.LENGTH_SHORT).show();
         // finish();
         // }
-        /*
-         * gesture_detector_ = new GestureDetector(this, new
-         * QuizGestureDetector()); gesture_listener_ = new OnTouchListener() {
-         * 
-         * @Override public boolean onTouch(View v, MotionEvent event) { return
-         * gesture_detector_.onTouchEvent(event); } };
-         * 
-         * View question_layout_wrapper =
-         * findViewById(R.id.question_wrapper_layout);
-         * 
-         * question_layout_wrapper.setOnTouchListener(gesture_listener_);
-         */
+    }
+    
+    
+    
+    public void initializeAndPopulateView() {
+        
     }
 
     @Override
@@ -109,29 +89,26 @@ public class QuizActivity extends SherlockFragmentActivity {
         MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.menu_quiz, menu);
         return true;
-
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_submit:
-            submitAnswers();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            case R.id.menu_submit:
+                submitAnswers();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-    }
-
-    public void load(Quiz quiz) {
-        quiz_ = quiz;
-        ViewGroup vg = (ViewGroup) findViewById(R.id.pager);
-        vg.invalidate();
+        
+        return true;
     }
 
     private void submitAnswers() {
-
-        for (int i = 0; i < quiz_.getQuestions().size(); i++) {
+        for (int i = 0; i < quiz_.getQuestions().size(); ++i) {
             if (quiz_.getQuestions().get(i).getAnswered() == -1) {
                 Toast.makeText(this, "Responda a todas as questões",
                         Toast.LENGTH_SHORT).show();
@@ -139,7 +116,7 @@ public class QuizActivity extends SherlockFragmentActivity {
             }
         }
 
-        NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token,
+        NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token_,
                 quiz_.getQuestions(), handler_, this);
     }
 
@@ -266,22 +243,17 @@ public class QuizActivity extends SherlockFragmentActivity {
         }
     }
 
-    /*
-     * private static class QuizGestureDetector extends SimpleOnGestureListener
-     * {
-     * 
-     * @Override public boolean onFling(MotionEvent e1, MotionEvent e2, float
-     * velocity_x, float velocity_y) {
-     * 
-     * if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH) { return false;
-     * }
-     * 
-     * if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocity_x) >
-     * SWIPE_THRESHOLD_VELOCITY) { // right to left Log.d(TAG, "Left Swipe");
-     * return true; } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE &&
-     * Math.abs(velocity_x) > SWIPE_THRESHOLD_VELOCITY) { //left to right
-     * Log.d(TAG, "Right Swipe"); return true; } return false; }
-     * 
-     * @Override public boolean onDown(MotionEvent e) { return true; } }
-     */
+
+
+    @Override
+    public void processFinish(Quiz result) {
+        quiz_ = result;
+
+        quiz_collection_adapter_ = new QuizCollectionPagerAdapter(
+                getSupportFragmentManager());
+        view_pager_ = (ViewPager) findViewById(R.id.pager);
+        view_pager_.setAdapter(quiz_collection_adapter_);
+
+        view_pager_.invalidate();
+    }
 }
