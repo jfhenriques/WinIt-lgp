@@ -388,46 +388,27 @@ public class NetworkUtilities {
         return user;
     }
 
-    public static Thread attemptFetchQuizGame(final String promotionid,
-            final String auth_token, final Handler handler,
-            final Context context) {
+//    public static Thread attemptFetchQuizGame(final String promotionid,
+//            final String auth_token, final Handler handler,
+//            final Context context) {
+//
+//        final Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                fetchQuizGame(promotionid, auth_token, handler, context);
+//            }
+//        };
+//
+//        return NetworkUtilities.performOnBackgroundThread(runnable);
+//    }
 
-        final Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                fetchQuizGame(promotionid, auth_token, handler, context);
-            }
-        };
-
-        return NetworkUtilities.performOnBackgroundThread(runnable);
-    }
-
-    public static void sendQuizGameResultToActivity(final Quiz quiz,
-            final Handler handler, final Context context) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                ((QuizActivity) context).load(quiz);
-            }
-        });
-    }
-
-    public static Quiz fetchQuizGame(final String promotionid,
-            String auth_token, Handler handler, final Context context) {
+    public static Quiz fetchQuizGame(String promotionid, String auth_token) {
         String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "?token="
                 + auth_token;
 
         JSONObject response = get(uri);
 
-        try {
-            Log.d("DERP", response.toString(2));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
         Quiz quiz = Quiz.valueOf(response);
-
-        sendQuizGameResultToActivity(quiz, handler, context);
 
         return quiz;
     }
