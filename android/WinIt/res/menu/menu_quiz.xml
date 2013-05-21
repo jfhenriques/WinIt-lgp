@@ -3,6 +3,6 @@
     <item
         android:id="@+id/menu_submit"
         android:title="@string/submit"
-        android:icon="@drawable/btn_check_buttonless_on"
+        android:icon="@drawable/ic_accept"
         android:showAsAction="always" />
 </menu>

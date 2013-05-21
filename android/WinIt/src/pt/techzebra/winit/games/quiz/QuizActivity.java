@@ -61,21 +61,14 @@ public class QuizActivity extends SherlockFragmentActivity implements FetchQuizT
         action_bar_ = getSupportActionBar();
         action_bar_.setTitle("Quiz Game");
         action_bar_.setDisplayHomeAsUpEnabled(true);
+        action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_single_player));
 
         authen_token_ = WinIt.getAuthToken();
         promotion_id = "1";
-
-//        
+     
         FetchQuizTask fetch_quiz_task = new FetchQuizTask(this);
         fetch_quiz_task.setDelegate(this);
         fetch_quiz_task.execute(promotion_id);
-
-        // if(quiz_ == null){
-        // Toast.makeText(this,
-        // "Pedimos desculpa, o erro será corrigido em breve!",
-        // Toast.LENGTH_SHORT).show();
-        // finish();
-        // }
     }
     
     
