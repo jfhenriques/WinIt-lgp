@@ -103,7 +103,7 @@ public class MyPromotionsActivity extends SherlockActivity {
 						map = new HashMap<String, String>();
 						map.put("id", Integer.toString(result.get(i).getPromotionID()));
 						map.put("name", result.get(i).getName());
-						map.put("end_date", Integer.toString(result.get(i).getEndDate()));
+						map.put("end_date", Long.toString(result.get(i).getEndDate()));
 						map.put("win_points", Integer.toString(result.get(i).getWinPoints()));
 						map.put("image", result.get(i).getImageUrl());
 						promotions.add(map);

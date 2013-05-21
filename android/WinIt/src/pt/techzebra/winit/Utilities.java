@@ -1,7 +1,10 @@
 package pt.techzebra.winit;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -35,5 +38,10 @@ public class Utilities {
 	
 	public static void addActivityAnimations(Activity activity){
 		activity.overridePendingTransition(R.anim.enter_animation, R.anim.exit_animation);
+	}
+	
+	public static String convertUnixTimestamp(long millis) {
+	    SimpleDateFormat date_format = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+	    return date_format.format(new Date(millis * 1000));
 	}
 }

@@ -1,16 +1,13 @@
 package pt.techzebra.winit.ui;
 
-import pt.techzebra.winit.Constants;
-import pt.techzebra.winit.PromGame;
 import pt.techzebra.winit.R;
+import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.games.quiz.QuizActivity;
 import pt.techzebra.winit.platform.DownloadImageTask;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,7 +25,6 @@ public class PromotionActivity extends SherlockActivity {
 	private TextView win_points_text_;
 	
 	private Promotion promotion_;
-	private String auth_token_;
 
 	private static final String TAG = "PromotionActivity";
 
@@ -37,23 +33,12 @@ public class PromotionActivity extends SherlockActivity {
 		super.onCreate(saved_instance_state);
 		setContentView(R.layout.promotion_activity);
 		
-		
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.promotion);
 		action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_single_player));
 		action_bar_.setDisplayHomeAsUpEnabled(true);
 		
 		promotion_ = (Promotion) getIntent().getSerializableExtra("Promotion");
-		if (promotion_.getImageUrl() == null){
-			promotion_.setImageUrl("http://www.clker.com/cliparts/b/7/7/c/12247843801937558056schoolfreeware_Cancel.svg.med.png");
-		}
-		
-        SharedPreferences preferences_editor = PromGame.getAppContext()
-                .getSharedPreferences(Constants.USER_PREFERENCES,
-                        Context.MODE_PRIVATE);
-
-        auth_token_ = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
-                null);
 		
 		name_text_ = (TextView) findViewById(R.id.name_text);
 		description_text_ = (TextView) findViewById(R.id.description_text);
@@ -65,8 +50,7 @@ public class PromotionActivity extends SherlockActivity {
 
 		name_text_.setText(promotion_.getName());
 		description_text_.setText(promotion_.getDescription());
-		//TODO tornar isto numa data
-		//end_date_text_.setText(p.getEndDate());
+		end_date_text_.setText(Utilities.convertUnixTimestamp(promotion_.getEndDate()));
 		win_points_text_.setText(Integer.toString(promotion_.getWinPoints()));
 	}
 	

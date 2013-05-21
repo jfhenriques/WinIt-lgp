@@ -18,8 +18,8 @@ public class Promotion implements Serializable {
 	private String image_url_;
 	private int active_; //0 - not active | 1 - active
     //TODO check date types
-    private int init_date_;
-    private int end_date_;
+    private long init_date_;
+    private long end_date_;
     private int grand_limit_;
     private int user_limit_;
    // private String valid_coord_;
@@ -39,7 +39,7 @@ public class Promotion implements Serializable {
 		image_url_ = image_url;
 	}
 	
-	public Promotion(int pid, String name, String description, String image_url, int init_date, int end_date, int user_limit, boolean transferable, int win_points, int retailer_id, int promotion_type_id, int max_util_date){
+	public Promotion(int pid, String name, String description, String image_url, long init_date, long end_date, int user_limit, boolean transferable, int win_points, int retailer_id, int promotion_type_id, int max_util_date){
 		promotion_id_= pid;
     	name_ = name;
     	description_ = description;
@@ -117,11 +117,11 @@ public class Promotion implements Serializable {
 		this.image_url_ = url;
 	}
 
-	public int getInitDate() {
+	public long getInitDate() {
 		return init_date_;
 	}
 
-	public int getEndDate() {
+	public long getEndDate() {
 		return end_date_;
 	}
 
@@ -153,8 +153,8 @@ public class Promotion implements Serializable {
             final String image_url = promotion.isNull("image") ? null : promotion.getString("image");
             
             //final int active = promotion.optInt("active");
-            final int init_date = promotion.optInt("init_date");
-            final int end_date = promotion.optInt("end_date");
+            final long init_date = promotion.optLong("init_date");
+            final long end_date = promotion.optLong("end_date");
             final int max_util_date = promotion.optInt("max_util_date");
             //final int grand_limit = promotion.optInt("grand_limit");
             final int user_limit = promotion.optInt("user_limit");
