@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import pt.techzebra.winit.Constants;
-import pt.techzebra.winit.PromGame;
+import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
@@ -99,7 +99,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 		@Override
 		protected ArrayList<Promotion> doInBackground(Void... params) {
 			try {
-				SharedPreferences preferences_ = PromGame.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
+				SharedPreferences preferences_ = WinIt.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
 				auth_token = preferences_.getString(Constants.PREF_AUTH_TOKEN, "");
 				promos = NetworkUtilities.fetchMyPromotionsInTrading(auth_token);
 			} catch (Exception e) {

@@ -1,7 +1,7 @@
 package pt.techzebra.winit.ui;
 
 import pt.techzebra.winit.Constants;
-import pt.techzebra.winit.PromGame;
+import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.platform.LoadingAvailablePromotionsList;
@@ -66,7 +66,7 @@ public class DashboardActivity extends SherlockActivity {
                 Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.menu_log_out:
-            	clearUserData();
+            	WinIt.clearUserData();
                 Intent i = new Intent(this, AuthenticationActivity.class);
                 Toast.makeText(this, "Logout successful!", Toast.LENGTH_SHORT).show();
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -80,13 +80,7 @@ public class DashboardActivity extends SherlockActivity {
         return true;
     }
     
-    private void clearUserData() {
-        SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
-                Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
-        preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, false);
-        preferences_editor.putString(Constants.PREF_AUTH_TOKEN, "");
-        preferences_editor.commit();
-    }
+
     
     public void handleRoomSelection(View view) {
         switch (view.getId()) {

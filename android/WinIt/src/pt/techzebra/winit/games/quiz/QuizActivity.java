@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import pt.techzebra.winit.Constants;
-import pt.techzebra.winit.PromGame;
+import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.Quiz;
@@ -73,7 +73,7 @@ public class QuizActivity extends SherlockFragmentActivity {
                 getSupportFragmentManager());
         view_pager_ = (ViewPager) findViewById(R.id.pager);
         view_pager_.setAdapter(quiz_collection_adapter_);
-        SharedPreferences preferences_editor = PromGame.getAppContext()
+        SharedPreferences preferences_editor = WinIt.getAppContext()
                 .getSharedPreferences(Constants.USER_PREFERENCES,
                         Context.MODE_PRIVATE);
         authen_token = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,

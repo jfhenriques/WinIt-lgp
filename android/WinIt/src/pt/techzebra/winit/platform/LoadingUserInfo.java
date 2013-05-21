@@ -3,7 +3,7 @@ package pt.techzebra.winit.platform;
 import com.actionbarsherlock.R.style;
 
 import pt.techzebra.winit.Constants;
-import pt.techzebra.winit.PromGame;
+import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.User;
@@ -29,7 +29,7 @@ public class LoadingUserInfo extends AsyncTask<Void, Void, User> {
 	@Override
 	protected User doInBackground(Void... params) {
 		try {
-			SharedPreferences preferences_ = PromGame.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
+			SharedPreferences preferences_ = WinIt.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
 			auth_token = preferences_.getString(Constants.PREF_AUTH_TOKEN, "");
 			user_ = NetworkUtilities.fetchUserInformation(auth_token, null);
 		} catch (Exception e) {

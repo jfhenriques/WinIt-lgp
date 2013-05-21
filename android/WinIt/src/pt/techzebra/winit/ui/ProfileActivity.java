@@ -7,20 +7,18 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-import pt.techzebra.winit.Constants;
-import pt.techzebra.winit.PromGame;
+import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.User;
 import pt.techzebra.winit.platform.DownloadImageTask;
 import pt.techzebra.winit.platform.MD5Util;
 import pt.techzebra.winit.platform.RoundedImageView;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ProfileActivity extends SherlockActivity {
     private static final String TAG = "ProfileActivity";
@@ -70,11 +68,7 @@ public class ProfileActivity extends SherlockActivity {
         level_text_ = (TextView) findViewById(R.id.level_text);
         points_text_ = (TextView) findViewById(R.id.points_text);
 
-        SharedPreferences preferences_editor = PromGame.getAppContext()
-                .getSharedPreferences(Constants.USER_PREFERENCES,
-                        Context.MODE_PRIVATE);
-        auth_token = preferences_editor.getString(Constants.PREF_AUTH_TOKEN,
-                null);
+        auth_token = WinIt.getAuthToken();
         Log.d(TAG, "auth token");
         try {
             user_ = (User) getIntent().getSerializableExtra("User");
@@ -109,6 +103,16 @@ public class ProfileActivity extends SherlockActivity {
                 myb.putString("token", auth_token);
                 in.putExtras(myb);
                 startActivity(in);
+                break;
+            case R.id.menu_settings:
+                break;
+            case R.id.menu_log_out:
+                WinIt.clearUserData();
+                Intent i = new Intent(this, AuthenticationActivity.class);
+                Toast.makeText(this, "Logout successful!", Toast.LENGTH_SHORT).show();
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

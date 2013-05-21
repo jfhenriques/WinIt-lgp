@@ -39,7 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import pt.techzebra.winit.Constants;
-import pt.techzebra.winit.PromGame;
+import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.games.quiz.QuizActivity;
 import pt.techzebra.winit.ui.AuthenticationActivity;
 import pt.techzebra.winit.ui.EditProfileActivity;
@@ -304,7 +304,7 @@ public class NetworkUtilities {
         if (r == null) {
             sendResultToAuthenticationActivity(false, handler, context);
         } else {
-            SharedPreferences.Editor preferences_editor = PromGame
+            SharedPreferences.Editor preferences_editor = WinIt
                     .getAppContext()
                     .getSharedPreferences(Constants.USER_PREFERENCES,
                             Context.MODE_PRIVATE).edit();
@@ -495,7 +495,7 @@ public class NetworkUtilities {
                         sendSignupResultToSignupActivity(false, handler,
                                 context);
                     } else {
-                        SharedPreferences.Editor preferences_editor = PromGame
+                        SharedPreferences.Editor preferences_editor = WinIt
                                 .getAppContext()
                                 .getSharedPreferences(
                                         Constants.USER_PREFERENCES,

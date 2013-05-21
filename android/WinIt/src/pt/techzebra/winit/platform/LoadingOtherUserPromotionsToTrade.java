@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.actionbarsherlock.R.style;
 
 import pt.techzebra.winit.Constants;
-import pt.techzebra.winit.PromGame;
+import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.Promotion;
@@ -32,7 +32,7 @@ public abstract class LoadingOtherUserPromotionsToTrade extends AsyncTask<Void, 
 	@Override
 	protected ArrayList<Promotion> doInBackground(Void... params) {
 		try {
-			SharedPreferences preferences_ = PromGame.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
+			SharedPreferences preferences_ = WinIt.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
 			auth_token = preferences_.getString(Constants.PREF_AUTH_TOKEN, "");
 			promos = NetworkUtilities.fetchOtherUsersTradings(auth_token);
 		} catch (Exception e) {

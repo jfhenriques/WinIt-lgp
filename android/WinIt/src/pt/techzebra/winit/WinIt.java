@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class PromGame extends Application {
+public class WinIt extends Application {
 	private static Context context_;
 	
 	private static String auth_token_ = null;
@@ -13,7 +13,7 @@ public class PromGame extends Application {
 	public void onCreate() {
 		super.onCreate();
 		
-		PromGame.context_ = getApplicationContext();
+		WinIt.context_ = getApplicationContext();
 	}
 	
 	public static Context getAppContext() {
@@ -28,4 +28,12 @@ public class PromGame extends Application {
 	    
 	    return auth_token_;
 	}
+	
+    public static void clearUserData() {
+        SharedPreferences.Editor preferences_editor = context_.getSharedPreferences(
+                Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
+        preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, false);
+        preferences_editor.putString(Constants.PREF_AUTH_TOKEN, "");
+        preferences_editor.commit();
+    }
 }
