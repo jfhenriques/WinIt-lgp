@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res/pt.techzebra.winit"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/hipster" >
 
     <ScrollView
         android:id="@+id/scroll"
@@ -23,8 +24,8 @@
                 android:layout_height="150dp"
                 android:layout_margin="6dp"
                 android:scaleType="centerCrop"
-                app:borderColor="@color/dark_gray"
-                app:borderWidth="8dp"
+                app:borderColor="@color/white"
+                app:borderWidth="7dp"
                 app:cornerRadius="75dp"
                 app:roundBackground="true" />
 
@@ -34,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:text="Jonh Doe"
-                android:textColor="@color/dark_gray"
+                android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="normal" />
 
@@ -44,7 +45,7 @@
                 android:layout_height="2dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
-                android:background="@color/dark_gray" />
+                android:background="@color/dark_hipster" />
 
             <TextView
                 android:id="@+id/email_text"
@@ -52,8 +53,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:text="jonhdoe@mail.com"
-                android:textColor="@color/dark_gray"
-                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
                 android:textStyle="italic" />
 
             <LinearLayout
@@ -61,11 +62,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/gray"
+                android:background="@color/dark_hipster"
                 android:layout_marginTop="@dimen/gap2"
                 android:layout_marginBottom="@dimen/gap"
                 android:padding="@dimen/gap" >
-
+        
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Experience Points"
+                    android:textColor="@color/white"
+                    android:textAllCaps="true"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+                
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -79,7 +89,7 @@
                         android:layout_weight="0.5"
                         android:fontFamily="sans-serif"
                         android:text="Level 3"
-                        android:textColor="@color/dark_gray"
+                        android:textColor="@color/white"
                         android:textSize="14sp" />
 
                     <TextView
@@ -90,7 +100,7 @@
                         android:fontFamily="sans-serif-light"
                         android:gravity="right"
                         android:text="453/500"
-                        android:textColor="@color/dark_gray"
+                        android:textColor="@color/white"
                         android:textSize="14sp" />
                 </LinearLayout>
 

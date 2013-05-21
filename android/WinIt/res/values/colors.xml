@@ -15,5 +15,7 @@
     <color name="dark_red">#cc0000</color>
     <color name="green">#99cc00</color>
     <color name="dark_green">#669900</color>
+    <color name="hipster">#199ca4</color>
+    <color name="dark_hipster">#137f81</color>
     
 </resources>
