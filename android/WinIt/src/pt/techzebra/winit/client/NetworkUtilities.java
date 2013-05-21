@@ -379,11 +379,7 @@ public class NetworkUtilities {
     public static User fetchUserInformation(String auth_token, Date last_updated) {
         String uri = USER_URI + "?token=" + auth_token;
         JSONObject json_response = get(uri);
-        try {
-            Log.d(TAG, json_response.toString(2));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
         User user = null;
 
         JSONObject r = getResponseContent(json_response);
@@ -404,7 +400,6 @@ public class NetworkUtilities {
         };
 
         return NetworkUtilities.performOnBackgroundThread(runnable);
-
     }
 
     public static void sendQuizGameResultToActivity(final Quiz quiz,
@@ -655,11 +650,16 @@ public class NetworkUtilities {
         String uri = PROMOTION_URI + ".json?token=" + token;
         JSONObject response = get(uri);
         JSONArray r = getResponseContentArray(response);
+        
+        if (r == null) {
+            return null;
+        }
+        
         for (int i = 0; i < r.length(); i++) {
             try {
                 promos.add(Promotion.valueOf(r.getJSONObject(i)));
             } catch (JSONException e) {
-                e.printStackTrace();
+                return null;
             }
         }
 
@@ -673,11 +673,16 @@ public class NetworkUtilities {
     	String uri = TRADING_URI + "?token=" + token;
     	JSONObject response = get(uri);
         JSONArray r = getResponseContentArray(response);
+        
+        if (r == null) {
+            return null;
+        }
+        
         for(int i = 0; i < r.length(); i++) {
         	try {
 				promos.add(Promotion.valueOf(r.getJSONObject(i)));
 			} catch (JSONException e) {
-				e.printStackTrace();
+			    return null;
 			}
         }
     	return promos;

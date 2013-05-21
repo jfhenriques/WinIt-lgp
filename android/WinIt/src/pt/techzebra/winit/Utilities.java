@@ -24,22 +24,21 @@ public class Utilities {
 		return false;
 	}
 
-	public static void requireInternetConnection(final Context context) {
-	    if (!hasInternetConnection(context)) {
-	        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage("No Internet connection. Do you wish to open Settings?");
-            builder.setPositiveButton("Sure", new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                       context.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
-                   }
-               });
-        builder.setNegativeButton("No, thanks", new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                   }
-               });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-	    }
+	
+	public static void showInternetConnectionAlert(final Context context) {
+	    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+	    builder.setMessage("No Internet connection. Do you wish to open Settings?");
+	    builder.setPositiveButton("Sure", new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int id) {
+	            context.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+	        }
+	    });
+	    builder.setNegativeButton("No, thanks", new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int id) {
+	        }
+	    });
+	    AlertDialog dialog = builder.create();
+	    dialog.show();
 	}
 	
 	public static boolean hasGPSConnections(Context context) {

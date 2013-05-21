@@ -17,7 +17,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.origamilabs.library.views.StaggeredGridView;
 import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
 
-public class PromotionsActivity extends SherlockActivity implements OnItemClickListener{
+public class PromotionsActivity extends SherlockActivity implements OnItemClickListener {
 	private static final String TAG = "PromotionsActivity";
     
 	public static String KEY_SHOWCASE_MODE = "showcase_mode";
@@ -57,7 +57,7 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 	    return true;
 	}
 	
-	public static abstract class PromotionsShowcase {
+	public static abstract class PromotionsShowcase implements FetchPromotionsTask.AsyncResponse {
 	    protected SherlockActivity activity_;
 	    protected ActionBar action_bar_;
 	    
@@ -132,13 +132,9 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 
         @Override
         public void fetchPromotions() {
-            new FetchPromotionsTask(activity_, FetchPromotionsTask.AVAILABLE_PROMOTIONS) {
-                @Override
-                public void callMainWindow(ArrayList<Promotion> result) {
-                    promotions_.addAll(result);
-                    adapter_.notifyDataSetChanged();
-                }                
-            }.execute();
+            FetchPromotionsTask fetch_promotions_task = new FetchPromotionsTask(activity_, FetchPromotionsTask.AVAILABLE_PROMOTIONS);
+            fetch_promotions_task.setDelegate(this);
+            fetch_promotions_task.execute();  
         }
 
         @Override
@@ -149,6 +145,12 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
             intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PromotionAffinity.AVAILABLE_PROMOTION);
             intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
             activity_.startActivity(intent);
+        }
+
+        @Override
+        public void processFinish(ArrayList<Promotion> result) {
+            promotions_.addAll(result);
+            adapter_.notifyDataSetChanged();
         }	    
 	}
 	
@@ -166,13 +168,9 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
         
         @Override
         public void fetchPromotions() {
-            new FetchPromotionsTask(activity_, FetchPromotionsTask.OTHER_USERS_PROMOTIONS) {
-                @Override
-                public void callMainWindow(ArrayList<Promotion> result) {
-                    promotions_.addAll(result);
-                    adapter_.notifyDataSetChanged();
-                }                
-            }.execute();            
+            FetchPromotionsTask fetch_promotions_task = new FetchPromotionsTask(activity_, FetchPromotionsTask.OTHER_USERS_PROMOTIONS);
+            fetch_promotions_task.setDelegate(this);
+            fetch_promotions_task.execute();            
         }
 
         @Override
@@ -183,6 +181,12 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
             intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PromotionAffinity.TRADEABLE_PROMOTION);
             intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
             activity_.startActivity(intent);
+        }
+
+        @Override
+        public void processFinish(ArrayList<Promotion> result) {
+            promotions_.addAll(result);
+            adapter_.notifyDataSetChanged();
         }
 	}
 }

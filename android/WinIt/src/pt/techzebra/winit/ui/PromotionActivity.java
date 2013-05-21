@@ -62,7 +62,7 @@ public class PromotionActivity extends SherlockActivity {
 	    return true;
 	}
 	
-	public static abstract class PromotionView {
+	public static abstract class PromotionView implements FetchPromotionInfoTask.AsyncResponse {
 	    protected SherlockActivity activity_;
 	    protected ActionBar action_bar_;
 	    
@@ -135,13 +135,7 @@ public class PromotionActivity extends SherlockActivity {
 
 	    @Override
 	    public void fetchPromotion(int id) {
-            new FetchPromotionInfoTask(activity_, PromotionAffinity.OWNED_PROMOTION) {
-                @Override
-                public void callMainWindow(Promotion result) {
-                    promotion_ = result;
-                    populateFields();
-                }                
-            }.execute(id);
+            new FetchPromotionInfoTask(activity_, PromotionAffinity.OWNED_PROMOTION).execute(id);
 	    }
 	    
         @Override
@@ -157,6 +151,12 @@ public class PromotionActivity extends SherlockActivity {
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             return false;
+        }
+
+        @Override
+        public void processFinish(Promotion result) {
+            promotion_ = result;
+            populateFields();
         }    
 	}
 	
@@ -186,13 +186,9 @@ public class PromotionActivity extends SherlockActivity {
 	    
 	    @Override
 	    public void fetchPromotion(int id) {
-            new FetchPromotionInfoTask(activity_, PromotionAffinity.AVAILABLE_PROMOTION) {
-                @Override
-                public void callMainWindow(Promotion result) {
-                    promotion_ = result;
-                    populateFields();
-                }
-            }.execute(id);
+	        FetchPromotionInfoTask fetch_promotion_info_task = new FetchPromotionInfoTask(activity_, PromotionAffinity.AVAILABLE_PROMOTION);
+	        fetch_promotion_info_task.setDelegate(this);
+	        fetch_promotion_info_task.execute(id);
 	    }
 	    
 	    @Override
@@ -222,6 +218,12 @@ public class PromotionActivity extends SherlockActivity {
             
             return true;
         }
+
+        @Override
+        public void processFinish(Promotion result) {
+            promotion_ = result;
+            populateFields();
+        }
 	}
 	
 	public static class TradeablePromotion extends PromotionView {
@@ -248,13 +250,9 @@ public class PromotionActivity extends SherlockActivity {
 
 	    @Override
 	    public void fetchPromotion(int id) {
-	        new FetchPromotionInfoTask(activity_, PromotionAffinity.TRADEABLE_PROMOTION) {
-	            @Override
-	            public void callMainWindow(Promotion result) {
-	                promotion_ = result;
-	                populateFields();
-	            }
-	        }.execute(id);
+	        FetchPromotionInfoTask fetch_promotion_info_task = new FetchPromotionInfoTask(activity_, PromotionAffinity.TRADEABLE_PROMOTION);
+	        fetch_promotion_info_task.setDelegate(this);
+	        fetch_promotion_info_task.execute(id);
 	    }
 	    
         @Override
@@ -284,6 +282,12 @@ public class PromotionActivity extends SherlockActivity {
             }
 
             return true;
+        }
+
+        @Override
+        public void processFinish(Promotion result) {
+            promotion_ = result;
+            populateFields();
         }
 	}
 }

@@ -1,68 +1,50 @@
 package pt.techzebra.winit.platform;
 
-import com.actionbarsherlock.R.style;
-
-import pt.techzebra.winit.Constants;
-import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.Utilities;
+import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.User;
 import pt.techzebra.winit.ui.ProfileActivity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 public class LoadingUserInfo extends AsyncTask<Void, Void, User> {
-	User user_ = null;
-	String auth_token;
-	private ProgressDialog progressDialog;
-	Context mContext = null;
+	private Context context_ = null;
+	private ProgressDialog progress_dialog_;
 
-	public LoadingUserInfo(Context c){
-		mContext = c;
+	public LoadingUserInfo(Context context){
+		context_ = context;
 	}
 
 	@Override
 	protected User doInBackground(Void... params) {
-		try {
-			SharedPreferences preferences_ = WinIt.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
-			auth_token = preferences_.getString(Constants.PREF_AUTH_TOKEN, "");
-			user_ = NetworkUtilities.fetchUserInformation(auth_token, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
-		if(user_ != null)
-			return user_;
-		return null;
+	    String auth_token = WinIt.getAuthToken();
+		User user = NetworkUtilities.fetchUserInformation(auth_token, null);	
+		return user;
 	}
 
 	protected void onPreExecute(){
 		super.onPreExecute();
-		progressDialog = new ProgressDialog(mContext);
-		progressDialog.setIndeterminate(true);
-		progressDialog.setProgressStyle(style.Sherlock___Widget_Holo_Spinner);
-		progressDialog.setMessage("Loading user information...");
-		progressDialog.show();
+		progress_dialog_ = new ProgressDialog(context_);
+		progress_dialog_.setIndeterminate(true);
+		progress_dialog_.setMessage("Loading...");
+		progress_dialog_.show();
 	}
 
 	@Override
 	protected void onPostExecute(User result){
 		super.onPostExecute(result);
-		progressDialog.dismiss();
-		if(result != null){
-			try {
-				Intent i = new Intent(mContext, ProfileActivity.class);
-				i.putExtra("User", user_);
-				mContext.startActivity(i);
-			} catch (Exception e) {
-				e.printStackTrace();
+		progress_dialog_.dismiss();
+		if(result == null) {
+			if (!Utilities.hasInternetConnection(context_)) {
+			    Utilities.showInternetConnectionAlert(context_);
 			}
 		} else {
-			Utilities.requireInternetConnection(mContext);
+		    Intent intent = new Intent(context_, ProfileActivity.class);
+            intent.putExtra("User", result);
+            context_.startActivity(intent);
 		}
 	}
 }
