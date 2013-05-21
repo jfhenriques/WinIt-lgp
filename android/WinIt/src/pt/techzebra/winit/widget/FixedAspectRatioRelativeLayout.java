@@ -1,32 +1,34 @@
-package pt.techzebra.winit.platform;
+package pt.techzebra.winit.widget;
 
 import pt.techzebra.winit.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
-public class FixedAspectRatioFrameLayout extends FrameLayout {
+public class FixedAspectRatioRelativeLayout extends RelativeLayout {
     private int aspect_ratio_width_;
     private int aspect_ratio_height_;
     
-    public FixedAspectRatioFrameLayout(Context context, AttributeSet attrs) {
+    public FixedAspectRatioRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         
         initialize(context, attrs);
     }
 
-    public FixedAspectRatioFrameLayout(Context context, AttributeSet attrs, int def_style) {
+    public FixedAspectRatioRelativeLayout(Context context, AttributeSet attrs, int def_style) {
         super(context, attrs, def_style);
         
         initialize(context, attrs);
     }
     
     private void initialize(Context context, AttributeSet attrs) {
-        TypedArray styled_attributes = context.obtainStyledAttributes(attrs, R.styleable.FixedAspectRatioFrameLayout);
+        TypedArray styled_attributes = context.obtainStyledAttributes(attrs, R.styleable.FixedAspectRatioRelativeLayout);
         
-        aspect_ratio_width_ = styled_attributes.getInt(R.styleable.FixedAspectRatioFrameLayout_aspectRatioWidth, 1);
-        aspect_ratio_height_ = styled_attributes.getInt(R.styleable.FixedAspectRatioFrameLayout_aspectRatioHeight, 1);
+        aspect_ratio_width_ = styled_attributes.getInt(R.styleable.FixedAspectRatioRelativeLayout_aspectRatioWidth, 1);
+        aspect_ratio_height_ = styled_attributes.getInt(R.styleable.FixedAspectRatioRelativeLayout_aspectRatioHeight, 1);
         
         styled_attributes.recycle();
     }
