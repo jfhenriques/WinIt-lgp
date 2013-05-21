@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Name"
+                android:text="@string/name"
                 android:textSize="26sp"
                 android:fontFamily="sans-serif-light"
                 android:textStyle="bold" />
@@ -54,7 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/gap"
-                    android:text="End Date:"
+                    android:text="@string/end_date"
                     android:textAllCaps="true"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -72,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/gap"
                     android:layout_marginRight="@dimen/gap"
-                    android:text="Win Points:"
+                    android:text="@string/win_points"
                     android:textAllCaps="true"
                     android:textSize="14sp"
                     android:textStyle="bold" />
