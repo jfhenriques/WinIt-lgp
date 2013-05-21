@@ -44,13 +44,13 @@
                 android:background="@color/dark_gray" />
 
             <LinearLayout
+                android:id="@+id/unowned_promotion_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/gap" >
 
                 <TextView
-                    android:id="@+id/textView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/gap"
@@ -67,7 +67,6 @@
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/gap"
@@ -82,6 +81,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="50000"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+            
+            <LinearLayout
+                android:id="@+id/tradeable_promotion_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/gap" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/gap"
+                    android:text="@string/owner"
+                    android:textAllCaps="true"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/owner_name_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lorem"
                     android:textSize="14sp" />
 
             </LinearLayout>

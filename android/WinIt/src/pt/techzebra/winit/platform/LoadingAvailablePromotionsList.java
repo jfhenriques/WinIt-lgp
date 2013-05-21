@@ -7,6 +7,7 @@ import pt.techzebra.winit.PromGame;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.Promotion;
+import pt.techzebra.winit.ui.PromotionActivity;
 import pt.techzebra.winit.ui.PromotionsActivity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -58,6 +59,7 @@ public class LoadingAvailablePromotionsList extends AsyncTask<Void, Void, ArrayL
 		if(result != null){
 			try {
 				Intent i = new Intent(mContext, PromotionsActivity.class);
+				i.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PromotionAffinity.UNOWNED_PROMOTION);
 				i.putExtra("Promotions", promos);
 				mContext.startActivity(i);
 			} catch (Exception e) {

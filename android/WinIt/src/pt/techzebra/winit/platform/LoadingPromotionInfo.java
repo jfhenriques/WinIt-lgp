@@ -6,7 +6,6 @@ import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.ui.PromotionActivity;
-import pt.techzebra.winit.ui.TradingPromotionActivity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -66,8 +65,10 @@ public class LoadingPromotionInfo extends AsyncTask<Integer, Void, Promotion> {
 					mContext.startActivity(i);
 					break;
 				case 2: 
-					i = new Intent(mContext, TradingPromotionActivity.class);
-					i.putExtra("TradingPromotion", p_);
+					//i = new Intent(mContext, TradingPromotionActivity.class);
+				    i = new Intent(mContext, PromotionActivity.class);
+				    i.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PromotionAffinity.TRADEABLE_PROMOTION);
+					i.putExtra("Promotion", p_);
 					mContext.startActivity(i);
 
 				default:

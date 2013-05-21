@@ -59,8 +59,6 @@ public class DashboardActivity extends SherlockActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_profile:
-            	//TODO sempre que ele vai ao profile tenta ir sacar as cenas ao servidor. Talvez se existir um db local no android guardar esta informação. Neste momento só tá a aceder ao perfil se tiver internet activa
-                String auth = getSharedPreferences("auth_token", Context.MODE_PRIVATE).toString();
             	LoadingUserInfo lui = new LoadingUserInfo(this);
                 lui.execute();
                 break;
@@ -68,12 +66,7 @@ public class DashboardActivity extends SherlockActivity {
                 Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.menu_log_out:
-                // TODO: erase user local information
-            	SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
-                        Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
-                preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, false);
-                preferences_editor.putString(Constants.PREF_AUTH_TOKEN, "");
-                preferences_editor.commit();
+            	clearUserData();
                 Intent i = new Intent(this, AuthenticationActivity.class);
                 Toast.makeText(this, "Logout successful!", Toast.LENGTH_SHORT).show();
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -85,6 +78,14 @@ public class DashboardActivity extends SherlockActivity {
         }
         
         return true;
+    }
+    
+    private void clearUserData() {
+        SharedPreferences.Editor preferences_editor = PromGame.getAppContext().getSharedPreferences(
+                Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
+        preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, false);
+        preferences_editor.putString(Constants.PREF_AUTH_TOKEN, "");
+        preferences_editor.commit();
     }
     
     public void handleRoomSelection(View view) {
