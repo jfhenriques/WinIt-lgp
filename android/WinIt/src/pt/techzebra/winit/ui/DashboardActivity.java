@@ -4,7 +4,6 @@ import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.PromGame;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
-import pt.techzebra.winit.games.quiz.QuizActivity;
 import pt.techzebra.winit.platform.LoadingAvailablePromotionsList;
 import pt.techzebra.winit.platform.LoadingUserInfo;
 import android.content.Context;
@@ -89,30 +88,26 @@ public class DashboardActivity extends SherlockActivity {
     }
     
     public void handleRoomSelection(View view) {
-        String msg = null;
         switch (view.getId()) {
-        case R.id.single_player_layout:
-            msg = "Single Player";
-//            Intent intent = new Intent(this, PromotionsActivity.class);
-//            startActivity(intent);
-            LoadingAvailablePromotionsList apl = new LoadingAvailablePromotionsList(this);
-            apl.execute();
-            return;
-            //break;
-        case R.id.cooperative_layout:
-            msg = "Cooperative";
-            break;
-        case R.id.competitive_layout:
-            msg = "Competitive";
-            break;
-        case R.id.trading_layout:
-            msg = "Trading";
-            Intent intent = new Intent(this, TradingActivity.class);
-            startActivity(intent);
-            //TODO added transition animations, wainting feedback
-            Utilities.addActivityAnimations(this);
-            break;
+            case R.id.single_player_layout:
+    //            Intent intent = new Intent(this, PromotionsActivity.class);
+    //            startActivity(intent);
+                LoadingAvailablePromotionsList apl = new LoadingAvailablePromotionsList(this);
+                apl.execute();
+                break;
+            case R.id.cooperative_layout:
+                Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.competitive_layout:
+                Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.trading_layout:
+                Intent intent = new Intent(this, TradingActivity.class);
+                startActivity(intent);
+                //TODO added transition animations, wainting feedback
+                Utilities.addActivityAnimations(this);
+                break;
         }
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        
     }
 }

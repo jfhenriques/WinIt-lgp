@@ -118,20 +118,20 @@ public class ProfileActivity extends SherlockActivity {
     }
 
     public void handleProfileSelection(View view) {
-//        Class<?> cls = null;
-//        switch (view.getId()) {
-//        case R.id.badges_view:
-//            cls = BadgesActivity.class;
-//            break;
-//        case R.id.my_promotions_view:
-//            cls = MyPromotionsActivity.class;
-//            break;
-////        case R.id.tags_view:
-////            cls = TagsActivity.class;
-////            break;
-//        }
-//
-//        Intent intent = new Intent(this, cls);
-//        startActivity(intent);
+        Class<?> cls = null;
+        switch (view.getId()) {
+            case R.id.promotions_button:
+                cls = MyPromotionsActivity.class;
+                break;
+            case R.id.badges_button:
+                cls = BadgesActivity.class;
+                break;
+            case R.id.tags_button:
+                cls = TagsActivity.class;
+                break;
+        }
+
+        Intent intent = new Intent(this, cls);
+        startActivity(intent);
     }
 }

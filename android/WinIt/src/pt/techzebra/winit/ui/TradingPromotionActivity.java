@@ -75,7 +75,7 @@ public class TradingPromotionActivity extends SherlockActivity{
 	            onBackPressed();
 	            break;
 	        case R.id.menu_propose:
-	        	Intent i = new Intent(this, ShowPromotionsToTrade.class);
+	        	Intent i = new Intent(this, TradeablePromotionsFragmentActivity.class);
 	    		i.putExtra("Promotion", p);
 	    		this.startActivity(i);
 	            break;

@@ -131,7 +131,8 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:background="@drawable/highlight_overlay"
-            android:clickable="true">
+            android:clickable="true"
+            android:onClick="handleProfileSelection">
             
             <ImageView
                 android:layout_gravity="center_horizontal"
@@ -165,7 +166,8 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:background="@drawable/highlight_overlay"
-            android:clickable="true">
+            android:clickable="true"
+            android:onClick="handleProfileSelection">
             
             <ImageView
                 android:layout_gravity="center_horizontal"
@@ -199,7 +201,8 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:background="@drawable/highlight_overlay"
-            android:clickable="true">
+            android:clickable="true"
+            android:onClick="handleProfileSelection">
             
             <ImageView
                 android:layout_gravity="center_horizontal"

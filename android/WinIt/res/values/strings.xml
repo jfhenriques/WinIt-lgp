@@ -46,6 +46,8 @@
     <string name="propose">Propose Trade</string>
     <string name="send_proposal">Send proposal</string>
     <string name="tags">Tags</string>
+    <string name="dialog_propose_trade">Do you want to propose this trade?</string>
+    <string name="cancel">Cancel</string>
 
 
 </resources>
