@@ -3,8 +3,6 @@ package pt.techzebra.winit.ui;
 import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
-import pt.techzebra.winit.Utilities;
-import pt.techzebra.winit.platform.LoadingAvailablePromotionsList;
 import pt.techzebra.winit.platform.LoadingUserInfo;
 import android.content.Context;
 import android.content.Intent;
@@ -83,12 +81,12 @@ public class DashboardActivity extends SherlockActivity {
 
     
     public void handleRoomSelection(View view) {
+        Intent intent = null;
         switch (view.getId()) {
             case R.id.single_player_layout:
-    //            Intent intent = new Intent(this, PromotionsActivity.class);
-    //            startActivity(intent);
-                LoadingAvailablePromotionsList apl = new LoadingAvailablePromotionsList(this);
-                apl.execute();
+                intent = new Intent(this, PromotionsActivity.class);
+                intent.putExtra(PromotionsActivity.KEY_SHOWCASE_MODE, PromotionsActivity.PromotionsShowcaseMode.SINGLE_PLAYER_SHOWCASE);
+                startActivity(intent);
                 break;
             case R.id.cooperative_layout:
                 Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
@@ -97,10 +95,11 @@ public class DashboardActivity extends SherlockActivity {
                 Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.trading_layout:
-                Intent intent = new Intent(this, TradingActivity.class);
+                intent = new Intent(this, PromotionsActivity.class);
+                intent.putExtra(PromotionsActivity.KEY_SHOWCASE_MODE, PromotionsActivity.PromotionsShowcaseMode.TRADING_SHOWCASE);
                 startActivity(intent);
                 //TODO added transition animations, wainting feedback
-                Utilities.addActivityAnimations(this);
+                //Utilities.addActivityAnimations(this);
                 break;
         }
         

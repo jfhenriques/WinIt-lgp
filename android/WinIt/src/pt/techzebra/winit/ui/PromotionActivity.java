@@ -22,10 +22,10 @@ public class PromotionActivity extends SherlockActivity {
     
     public static String KEY_PROMOTION_AFFINITY = "promotion_affinity";
 	
-	private PromotionFactory promotion_factory_;
+	private PromotionView promotion_view_;
 	
 	public static class PromotionAffinity {
-	    public static final int UNOWNED_PROMOTION = 1;
+	    public static final int AVAILABLE_PROMOTION = 1;
 	    public static final int OWNED_PROMOTION = 2;
 	    public static final int TRADEABLE_PROMOTION = 3;
 	}
@@ -35,13 +35,13 @@ public class PromotionActivity extends SherlockActivity {
 		super.onCreate(saved_instance_state);
 		setContentView(R.layout.promotion_activity);
 		
-		int promotion_affinity = getIntent().getExtras().getInt(KEY_PROMOTION_AFFINITY, PromotionAffinity.UNOWNED_PROMOTION);
-		promotion_factory_ = PromotionFactory.createFactory(this, promotion_affinity);
+		int affinity = getIntent().getExtras().getInt(KEY_PROMOTION_AFFINITY);
+		promotion_view_ = PromotionView.createView(this, affinity);
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    return promotion_factory_.onCreateOptionsMenu(menu);
+	    return promotion_view_.onCreateOptionsMenu(menu);
 	}
 	
 	@Override
@@ -51,13 +51,13 @@ public class PromotionActivity extends SherlockActivity {
 	            onBackPressed();
 	            break;
 	        default:
-	            return promotion_factory_.onOptionsItemSelected(item);
+	            return promotion_view_.onOptionsItemSelected(item);
 	    }
 	    
 	    return true;
 	}
 	
-	public static abstract class PromotionFactory {
+	public static abstract class PromotionView {
 	    SherlockActivity activity_;
 	    ActionBar action_bar_;
 	    
@@ -66,7 +66,7 @@ public class PromotionActivity extends SherlockActivity {
 	    private TextView name_text_;
         private TextView description_text_;
 	    
-	    public PromotionFactory(SherlockActivity activity) {
+	    public PromotionView(SherlockActivity activity) {
 	        activity_ = activity;
 	        initializeActionBar();
 	        initializeFields();
@@ -82,11 +82,11 @@ public class PromotionActivity extends SherlockActivity {
 	        action_bar_.setDisplayHomeAsUpEnabled(true);
 	    }
 	    
-	    public static PromotionFactory createFactory(SherlockActivity activity, int promotion_affinity) {
-	        PromotionFactory promotion_factory = null;
+	    public static PromotionView createView(SherlockActivity activity, int promotion_affinity) {
+	        PromotionView promotion_factory = null;
 	        
 	        switch (promotion_affinity) {
-	            case PromotionAffinity.UNOWNED_PROMOTION:
+	            case PromotionAffinity.AVAILABLE_PROMOTION:
 	                promotion_factory = new UnownedPromotion(activity);
 	                break;
 	            case PromotionAffinity.OWNED_PROMOTION:
@@ -114,7 +114,7 @@ public class PromotionActivity extends SherlockActivity {
 	    public abstract boolean onOptionsItemSelected(MenuItem item);
 	}
 	
-	public static class OwnedPromotion extends PromotionFactory {
+	public static class OwnedPromotion extends PromotionView {
 	    public OwnedPromotion(SherlockActivity activity) {
             super(activity);
             Log.d(TAG, "OwnedPromotion constructor");
@@ -141,7 +141,7 @@ public class PromotionActivity extends SherlockActivity {
         }    
 	}
 	
-	public static class UnownedPromotion extends PromotionFactory {
+	public static class UnownedPromotion extends PromotionView {
 	    private TextView end_date_text_;
 	    private TextView win_points_text_;
 	    
@@ -195,7 +195,7 @@ public class PromotionActivity extends SherlockActivity {
         }
 	}
 	
-	public static class TradeablePromotion extends PromotionFactory {
+	public static class TradeablePromotion extends PromotionView {
 	    private TextView owner_text_;
 	    
 	    public TradeablePromotion(SherlockActivity activity) {
