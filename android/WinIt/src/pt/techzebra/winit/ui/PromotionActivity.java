@@ -5,6 +5,7 @@ import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.games.quiz.QuizActivity;
 import pt.techzebra.winit.platform.DownloadImageTask;
+import pt.techzebra.winit.platform.FetchPromotionInfoTask;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,7 @@ public class PromotionActivity extends SherlockActivity {
     private static final String TAG = "PromotionActivity";
     
     public static String KEY_PROMOTION_AFFINITY = "promotion_affinity";
+    public static String KEY_PROMOTION_ID = "promotion_id";
 	
 	private PromotionView promotion_view_;
 	
@@ -35,8 +37,11 @@ public class PromotionActivity extends SherlockActivity {
 		super.onCreate(saved_instance_state);
 		setContentView(R.layout.promotion_activity);
 		
-		int affinity = getIntent().getExtras().getInt(KEY_PROMOTION_AFFINITY);
-		promotion_view_ = PromotionView.createView(this, affinity);
+		Bundle extras = getIntent().getExtras();
+		int affinity = extras.getInt(KEY_PROMOTION_AFFINITY);
+		int id = extras.getInt(KEY_PROMOTION_ID);
+		
+		promotion_view_ = PromotionView.createView(this, affinity, id);
 	}
 	
 	@Override
@@ -58,22 +63,21 @@ public class PromotionActivity extends SherlockActivity {
 	}
 	
 	public static abstract class PromotionView {
-	    SherlockActivity activity_;
-	    ActionBar action_bar_;
+	    protected SherlockActivity activity_;
+	    protected ActionBar action_bar_;
 	    
-	    Promotion promotion_;
+	    protected Promotion promotion_;
 	    
-	    private TextView name_text_;
-        private TextView description_text_;
+	    protected TextView name_text_;
+        protected TextView description_text_;
 	    
-	    public PromotionView(SherlockActivity activity) {
+	    public PromotionView(SherlockActivity activity, int id) {
 	        activity_ = activity;
+	        
 	        initializeActionBar();
 	        initializeFields();
-	        
-	        promotion_ = (Promotion) activity_.getIntent().getSerializableExtra("Promotion");
-	        
-	        populateFields();
+
+	        fetchPromotion(id);
         }
 	    
 	    protected void initializeActionBar() {
@@ -82,18 +86,20 @@ public class PromotionActivity extends SherlockActivity {
 	        action_bar_.setDisplayHomeAsUpEnabled(true);
 	    }
 	    
-	    public static PromotionView createView(SherlockActivity activity, int promotion_affinity) {
+	    public static PromotionView createView(SherlockActivity activity, int promotion_affinity, int promotion_id) {
 	        PromotionView promotion_factory = null;
 	        
 	        switch (promotion_affinity) {
 	            case PromotionAffinity.AVAILABLE_PROMOTION:
-	                promotion_factory = new UnownedPromotion(activity);
+	                Log.d(TAG, "creating an available promotion");
+	                Log.d(TAG, Boolean.toString(activity != null));
+	                promotion_factory = new AvailablePromotion(activity, promotion_id);
 	                break;
 	            case PromotionAffinity.OWNED_PROMOTION:
-	                promotion_factory = new OwnedPromotion(activity);
+	                promotion_factory = new OwnedPromotion(activity, promotion_id);
 	                break;
 	            case PromotionAffinity.TRADEABLE_PROMOTION:
-	                promotion_factory = new TradeablePromotion(activity);
+	                promotion_factory = new TradeablePromotion(activity, promotion_id);
 	                break;
 	        }
 	        
@@ -105,6 +111,8 @@ public class PromotionActivity extends SherlockActivity {
             description_text_ = (TextView) activity_.findViewById(R.id.description_text);
 	    }
 	    
+	    public abstract void fetchPromotion(int id);
+	    
 	    public void populateFields() {
 	        name_text_.setText(promotion_.getName());
             description_text_.setText(promotion_.getDescription());
@@ -115,8 +123,8 @@ public class PromotionActivity extends SherlockActivity {
 	}
 	
 	public static class OwnedPromotion extends PromotionView {
-	    public OwnedPromotion(SherlockActivity activity) {
-            super(activity);
+	    public OwnedPromotion(SherlockActivity activity, int id) {
+            super(activity, id);
             Log.d(TAG, "OwnedPromotion constructor");
         }
 
@@ -125,6 +133,17 @@ public class PromotionActivity extends SherlockActivity {
             
         }
 
+	    @Override
+	    public void fetchPromotion(int id) {
+            new FetchPromotionInfoTask(activity_, PromotionAffinity.OWNED_PROMOTION) {
+                @Override
+                public void callMainWindow(Promotion result) {
+                    promotion_ = result;
+                    populateFields();
+                }                
+            }.execute(id);
+	    }
+	    
         @Override
         public void populateFields() {
             
@@ -141,13 +160,12 @@ public class PromotionActivity extends SherlockActivity {
         }    
 	}
 	
-	public static class UnownedPromotion extends PromotionView {
-	    private TextView end_date_text_;
+	public static class AvailablePromotion extends PromotionView {
+        private TextView end_date_text_;
 	    private TextView win_points_text_;
 	    
-	    public UnownedPromotion(SherlockActivity activity) {
-            super(activity);
-            Log.d(TAG, "UnownedPromotion constructor");
+	    public AvailablePromotion(SherlockActivity activity, int id) {
+            super(activity, id);
         }
 
 	    @Override
@@ -165,6 +183,17 @@ public class PromotionActivity extends SherlockActivity {
 	        
 	        activity_.findViewById(R.id.tradeable_promotion_details).setVisibility(View.GONE);
         }
+	    
+	    @Override
+	    public void fetchPromotion(int id) {
+            new FetchPromotionInfoTask(activity_, PromotionAffinity.AVAILABLE_PROMOTION) {
+                @Override
+                public void callMainWindow(Promotion result) {
+                    promotion_ = result;
+                    populateFields();
+                }
+            }.execute(id);
+	    }
 	    
 	    @Override
         public void populateFields() {
@@ -198,9 +227,8 @@ public class PromotionActivity extends SherlockActivity {
 	public static class TradeablePromotion extends PromotionView {
 	    private TextView owner_text_;
 	    
-	    public TradeablePromotion(SherlockActivity activity) {
-            super(activity);
-            Log.d(TAG, "TradeablePromotion constructor");
+	    public TradeablePromotion(SherlockActivity activity, int id) {
+            super(activity, id);
         }
 	    
 	    @Override
@@ -218,6 +246,17 @@ public class PromotionActivity extends SherlockActivity {
 	        activity_.findViewById(R.id.unowned_promotion_details).setVisibility(View.GONE);
         }
 
+	    @Override
+	    public void fetchPromotion(int id) {
+	        new FetchPromotionInfoTask(activity_, PromotionAffinity.TRADEABLE_PROMOTION) {
+	            @Override
+	            public void callMainWindow(Promotion result) {
+	                promotion_ = result;
+	                populateFields();
+	            }
+	        }.execute(id);
+	    }
+	    
         @Override
         public void populateFields() {
             super.populateFields();

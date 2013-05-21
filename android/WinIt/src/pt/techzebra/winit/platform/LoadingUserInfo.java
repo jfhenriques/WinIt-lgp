@@ -62,22 +62,7 @@ public class LoadingUserInfo extends AsyncTask<Void, Void, User> {
 				e.printStackTrace();
 			}
 		} else {
-			if(!Utilities.hasInternetConnection(mContext)){
-				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-				builder.setMessage("No Internet connection. Do you wish to open Settings?");
-				builder.setPositiveButton("Sure", new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			        	   mContext.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
-			           }
-			       });
-			builder.setNegativeButton("No, thanks", new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			               // User cancelled the dialog
-			           }
-			       });
-				AlertDialog dialog = builder.create();
-				dialog.show();
-			}
+			Utilities.requireInternetConnection(mContext);
 		}
 	}
 }

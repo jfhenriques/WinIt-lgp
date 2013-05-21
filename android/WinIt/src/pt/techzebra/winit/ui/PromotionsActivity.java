@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.platform.FetchPromotionsTask;
-import pt.techzebra.winit.platform.FetchPromotionInfoTask;
 import pt.techzebra.winit.staggeredgridview.StaggeredAdapter;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -146,7 +145,10 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
         public void onItemClick(StaggeredGridView parent, View view,
                 int position, long id) {
             Promotion promotion = adapter_.getItem(position);
-            new FetchPromotionInfoTask(activity_, 1).execute(promotion.getPromotionID());
+            Intent intent = new Intent(activity_, PromotionActivity.class);
+            intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PromotionAffinity.AVAILABLE_PROMOTION);
+            intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
+            activity_.startActivity(intent);
         }	    
 	}
 	
@@ -177,7 +179,10 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
         public void onItemClick(StaggeredGridView parent, View view,
                 int position, long id) {
             Promotion promotion = adapter_.getItem(position);
-            new FetchPromotionInfoTask(activity_, 2).execute(promotion.getPromotionID());
+            Intent intent = new Intent(activity_, PromotionActivity.class);
+            intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PromotionAffinity.TRADEABLE_PROMOTION);
+            intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
+            activity_.startActivity(intent);
         }
 	}
 }

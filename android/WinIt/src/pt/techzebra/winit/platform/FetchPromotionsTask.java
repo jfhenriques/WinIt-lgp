@@ -63,22 +63,7 @@ public abstract class FetchPromotionsTask extends AsyncTask<Void, Void, ArrayLis
 				e.printStackTrace();
 			}
 		} else {
-			if(!Utilities.hasInternetConnection(context_)) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(context_);
-				builder.setMessage("No Internet connection. Do you wish to open Settings?");
-				builder.setPositiveButton("Sure", new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			        	   context_.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
-			           }
-			       });
-			builder.setNegativeButton("No, thanks", new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			               // User cancelled the dialog
-			           }
-			       });
-				AlertDialog dialog = builder.create();
-				dialog.show();
-			}
+			Utilities.requireInternetConnection(context_);
 		}
 	}
 
