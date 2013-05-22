@@ -21,15 +21,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.scheme.SocketFactory;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -81,7 +75,6 @@ public class NetworkUtilities {
     public static final String PARAM_PROMO_RETAILER_ID = "rid";
     public static final String PARAM_PROMO_TYPE_ID = "ptid";
 
-    public static final String USER_AGENT = "AuthenticationService/1.0";
     public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
     public static final String HOST = "tlantic.techzebra.pt";
     public static final String SCHEME = "https";
@@ -106,24 +99,16 @@ public class NetworkUtilities {
     
     private static HttpClient http_client_;
     private static HttpHost http_host_;
-    private static SchemeRegistry scheme_registry_;
 
     /**
      * Configures the HttpClient to connect to the URL provided.
      */
     public static void maybeCreateHttpClient() {
-        if (http_client_ == null) {
-            SocketFactory socket_factory = SSLSocketFactory.getSocketFactory();
-            
-            scheme_registry_ = new SchemeRegistry();
-            scheme_registry_.register(new Scheme(SCHEME, socket_factory, PORT));
-            
-                       
+        if (http_client_ == null) {                       
             HttpParams parameters = new BasicHttpParams();
-            
-            ClientConnectionManager connect_manager = new ThreadSafeClientConnManager(parameters, scheme_registry_);
-            
-            http_client_ = new DefaultHttpClient(connect_manager, parameters);
+            HttpConnectionParams.setConnectionTimeout(parameters, 10000);
+            HttpConnectionParams.setSoTimeout(parameters, 10000);            
+            http_client_ = new CustomHttpClient(parameters, WinIt.getAppContext());
         }
     }
     
@@ -163,6 +148,7 @@ public class NetworkUtilities {
         try {
             response = http_client_.execute(http_host_, request);
             int status_code = response.getStatusLine().getStatusCode();
+            Log.d(TAG, "status code: " + status_code);
             if (status_code == HttpStatus.SC_OK) {
                 JSONObject json_response = new JSONObject(
                         EntityUtils.toString(response.getEntity()));

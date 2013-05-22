@@ -28,13 +28,14 @@
     </style>
     
     <style name="CustomTitlePageIndicator">
-        <item name="android:background">#18FF0000</item>
-        <item name="footerColor">#FFAA2222</item>
+        <item name="android:background">@color/belize_hole</item>
+        <item name="footerColor">@color/peter_river</item>
         <item name="footerLineHeight">1dp</item>
         <item name="footerIndicatorHeight">3dp</item>
         <item name="footerIndicatorStyle">underline</item>
-        <item name="android:textColor">#AA000000</item>
-        <item name="selectedColor">#FF000000</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="selectedColor">@color/white</item>
         <item name="selectedBold">true</item>
     </style>
 
