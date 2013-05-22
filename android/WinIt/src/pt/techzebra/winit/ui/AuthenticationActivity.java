@@ -186,6 +186,8 @@ public class AuthenticationActivity extends SherlockActivity {
                                     facebook_.getAccessToken());
                             editor.putLong("access_expires",
                                     facebook_.getAccessExpires());
+                            
+                            editor.commit();
                         }
 
                         @Override

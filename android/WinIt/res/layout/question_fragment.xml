@@ -1,41 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/question_wrapper_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/question_layout"
+    <TextView
+        android:id="@+id/question_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@color/dark_gray"
-        android:orientation="vertical"
-        android:padding="@dimen/gap" >
-
-        <TextView
-            android:id="@+id/question_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textIsSelectable="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white" />
-    </LinearLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="bottom"
+        android:fontFamily="sans-serif-light"
+        android:background="@color/belize_hole"
+        android:padding="@dimen/gap"
+        android:text="Lorem ipsum dolor sit amet"
+        android:textColor="@color/white"
+        android:textIsSelectable="true"
+        android:textSize="22sp" />
 
     <ScrollView
         android:id="@+id/answers_scroll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/question_layout" >
-        
+        android:layout_height="wrap_content" >
+
         <RadioGroup
             android:id="@+id/answers_group"
             android:layout_width="match_parent"
-       		android:layout_height="wrap_content">
-           
+            android:layout_height="wrap_content" >
         </RadioGroup>
-                
     </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

@@ -36,6 +36,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.viewpagerindicator.PageIndicator;
 
 public class QuizActivity extends SherlockFragmentActivity implements FetchQuizTask.AsyncResponse {
     private static final String TAG = "QuizActivity";
@@ -44,6 +45,7 @@ public class QuizActivity extends SherlockFragmentActivity implements FetchQuizT
 
     QuizCollectionPagerAdapter quiz_collection_adapter_;
     ViewPager view_pager_;
+    PageIndicator page_indicator_;
     static Quiz quiz_;
     String authen_token_;
     String promotion_id;
@@ -160,24 +162,25 @@ public class QuizActivity extends SherlockFragmentActivity implements FetchQuizT
                 Bundle saved_instance_state) {
             View root_view = inflater.inflate(R.layout.question_fragment,
                     container, false);
+            
             final Bundle args = getArguments();
             ((TextView) root_view.findViewById(R.id.question_text))
                     .setText(args.getString("question"));
 
             // TODO: mudar para vários tipos de resposta
-            RadioGroup radio = (RadioGroup) root_view
+            RadioGroup radio_group = (RadioGroup) root_view
                     .findViewById(R.id.answers_group);
             int size_answers = args.getInt("num_answers");
             for (int j = 0; j < size_answers; j++) {
-                RadioButton r = new RadioButton(getActivity());
+                View radio_button = inflater.inflate(R.layout.quiz_radio_button, radio_group, false);
                 String str = args.getString(("answer" + j));
-                r.setText(str);
-                r.setId(j);
-                r.setGravity(Gravity.CENTER_VERTICAL);
-                radio.addView(r);
+                ((RadioButton) radio_button).setText(str);
+                ((RadioButton) radio_button).setId(j);
+                ((RadioButton) radio_button).setGravity(Gravity.CENTER_VERTICAL);
+                radio_group.addView(radio_button);
             }
 
-            radio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            radio_group.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
                 @Override
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -247,6 +250,9 @@ public class QuizActivity extends SherlockFragmentActivity implements FetchQuizT
         view_pager_ = (ViewPager) findViewById(R.id.pager);
         view_pager_.setAdapter(quiz_collection_adapter_);
 
+        page_indicator_ = (PageIndicator) findViewById(R.id.indicator);
+        page_indicator_.setViewPager(view_pager_);
+        
         view_pager_.invalidate();
     }
 }
