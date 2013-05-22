@@ -168,9 +168,9 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
         String pc3 = pc3_edit_.getText().toString();
         String house_number = house_number_edit_.getText().toString();
         
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty()
-                || birthday.isEmpty() || pc4.isEmpty() || pc3.isEmpty()
-                || house_number.isEmpty() || address_id_ == -1) {
+        if (name.equals("") || email.equals("") || password.equals("")
+                || birthday.equals("") || pc4.equals("") || pc3.equals("")
+                || house_number.equals("") || address_id_ == -1) {
             Log.i(TAG, "Empty fields");
             Utilities.showToast(this, R.string.empty_fields);
         } else {

@@ -70,7 +70,7 @@ public class EditProfileActivity extends SherlockActivity {
         int address_id = -1;
         String address_2 = "";
         
-        if((!new_password.isEmpty() && old_password.isEmpty()) || (!old_password.isEmpty() && new_password.isEmpty())){
+        if((!new_password.equals("") && old_password.equals("")) || (!old_password.equals("") && new_password.equals(""))) {
             Toast.makeText(this, "You must fill in the Password field", Toast.LENGTH_SHORT).show();
             return;
         }
