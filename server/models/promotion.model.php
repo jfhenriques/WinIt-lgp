@@ -226,6 +226,20 @@
 
 			return static::fillModel( $result, new Promotion() );
 		}
+		
+		public static function getPrizeCodePromo($pid, $uid) {
+			var_dump('entrou');
+			$result = static::query('select prizecode.pcid, prizecode.emiss_date, prizecode.util_date, prizecode.cur_uid, prizecode.valid_code, prizecode.in_trading, prizecode.upid '.
+										'from promotion, user, userpromotion, prizecode where promotion.pid = userpromotion.pid '.
+										'and user.uid = userpromotion.uid '.
+										'and userpromotion.upid = prizecode.upid '.
+										'and user.uid = ? '.
+										'and promotion.pid = ?;', array($uid, $pid));
+			
+			var_dump('passou');
+			return static::fillModel($result, new PrizeCode() );
+		
+		}
 
 		public static function findValidPromotions($uid)
 		{

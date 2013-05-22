@@ -109,6 +109,11 @@
 							   			   	),
 
 							   			),
+										
+									array( 'match' => '/send', 'controller' => 'promotion', 'via' => 'get', 'action' => 'sendPromoToTrading'),
+									array( 'match' => '/remove', 'controller' => 'promotion', 'via' => 'get', 'action' => 'removePromoToTrading'),
+									array( 'match' => '/accept', 'controller' => 'promotion', 'via' => 'get', 'action' => 'acceptPromo'),
+									array( 'match' => '/refuse', 'controller' => 'promotion', 'via' => 'get', 'action' => 'refusePromo'),
 							   	),
 						),
 
