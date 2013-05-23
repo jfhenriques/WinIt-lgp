@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 14, 2013 at 04:55 PM
+-- Generation Time: May 23, 2013 at 10:50 AM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -12,6 +12,12 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT=0;
 START TRANSACTION;
 SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
 
 --
 -- Database: `tlantic`
@@ -144,10 +150,11 @@ CREATE TABLE IF NOT EXISTS `prizecode` (
   `cur_uid` int(11) NOT NULL,
   `valid_code` varchar(100) NOT NULL,
   `in_trading` smallint(1) NOT NULL DEFAULT '0',
+  `transaction` int(11) NOT NULL DEFAULT '0',
   `upid` int(11) NOT NULL,
   PRIMARY KEY (`pcid`),
-  UNIQUE KEY `uq_prizecode_valid_code` (`valid_code`),
-  UNIQUE KEY `uq_prizecode_upid` (`upid`),
+  UNIQUE KEY `valid_code` (`valid_code`),
+  UNIQUE KEY `i_prizecode_upid` (`upid`),
   KEY `i_prizecode_cur_uid` (`cur_uid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
@@ -345,7 +352,7 @@ CREATE TABLE IF NOT EXISTS `session` (
   `uid` int(11) NOT NULL,
   `validity` int(11) NOT NULL,
   PRIMARY KEY (`token`),
-  KEY `i_session_uid` (`uid`)
+  KEY `uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -373,8 +380,9 @@ CREATE TABLE IF NOT EXISTS `tradingsuggestion` (
   `pcid_orig` int(11) NOT NULL,
   `pcid_dest` int(11) NOT NULL,
   `date` int(11) NOT NULL,
+  `transaction` int(11) NOT NULL,
   `state` smallint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`pcid_orig`,`pcid_dest`),
+  PRIMARY KEY (`pcid_orig`,`pcid_dest`,`transaction`),
   KEY `i_tradingsuggestion_pcid_orig` (`pcid_orig`),
   KEY `i_tradingsuggestion_pcid_dest` (`pcid_dest`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -401,7 +409,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `ui_seed` binary(32) NOT NULL,
   PRIMARY KEY (`uid`),
   UNIQUE KEY `uq_user_email` (`email`),
-  UNIQUE KEY `uq_user_reset_token` (`reset_token`),
+  UNIQUE KEY `reset_token` (`reset_token`),
   KEY `i_user_adid` (`adid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
@@ -666,3 +674,7 @@ ALTER TABLE `xppoints`
   ADD CONSTRAINT `xppoints_ibfk_2` FOREIGN KEY (`pid`) REFERENCES `promotion` (`pid`);
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

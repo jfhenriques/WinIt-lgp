@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.8.1
+-- version 3.4.5
 -- http://www.phpmyadmin.net
 --
--- Máquina: localhost
--- Data de Criação: 14-Maio-2013 às 16:14
--- Versão do servidor: 5.5.31
--- versão do PHP: 5.5.0RC1
+-- Host: localhost
+-- Generation Time: May 23, 2013 at 10:47 AM
+-- Server version: 5.5.16
+-- PHP Version: 5.3.8
 
 SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
@@ -14,89 +14,110 @@ START TRANSACTION;
 SET time_zone = "+00:00";
 
 --
--- Base de Dados: `tlantic`
+-- Database: `tlantic`
 --
 
 --
--- Extraindo dados da tabela `item`
+-- Dumping data for table `item`
 --
 
 INSERT INTO `item` (`iid`, `name`, `image`) VALUES
-(1, 'Ruffles com mayonese', 'mayonese.png'),
-(2, 'RedBull', 'tourovermelho.png');
+(1, 'item 1', 'img1.png'),
+(2, 'item 2', 'img2.png');
 
 --
--- Extraindo dados da tabela `itempromotion`
+-- Dumping data for table `itempromotion`
 --
 
 INSERT INTO `itempromotion` (`iid`, `pid`, `percent`) VALUES
-(1, 2, 0),
-(2, 2, 0);
+(1, 3, 0),
+(2, 3, 0);
 
 --
--- Extraindo dados da tabela `promotion`
+-- Dumping data for table `prizecode`
 --
 
-INSERT INTO `promotion` (`pid`, `active`, `name`, `desc`, `image`, `init_date`, `end_date`, `grand_limit`, `user_limit`, `valid_coord`, `valid_coord_radius`, `transferable`, `win_points`, `func_type`, `rid`, `ptid`) VALUES
-(1, 1, 'Promoção do dia', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pellentesque elementum arcu. Integer vitae eros ante, a pharetra enim. Nam cursus pulvinar magna et scelerisque.', 'promo.jpg', 0, 0, 0, 0, NULL, NULL, 0, 0, 0, 1, 1);
+INSERT INTO `prizecode` (`pcid`, `emiss_date`, `util_date`, `cur_uid`, `valid_code`, `in_trading`, `transaction`, `upid`) VALUES
+(14, 1368536898, 0, 2, '10OtX2vjKa0YE8EgRtmfft3Aaw9HzkybaozqbK4Bb0igtGlSsGpgFh8h3PiS6nnCzIe9AiX2gT/u8dNKyOvI4Q==', 1, 0, 44),
+(15, 0, 0, 1, '1', 1, 0, 45),
+(16, 0, 0, 2, '2', 1, 0, 46);
 
 --
--- Extraindo dados da tabela `promotiontype`
+-- Dumping data for table `promotion`
+--
+
+INSERT INTO `promotion` (`pid`, `active`, `name`, `desc`, `image`, `init_date`, `end_date`, `util_date`, `grand_limit`, `user_limit`, `valid_coord`, `valid_coord_radius`, `transferable`, `win_points`, `func_type`, `rid`, `ptid`) VALUES
+(3, 1, 'Batatas fritas', NULL, 'superpromo.png', 0, 0, 0, 0, 0, NULL, NULL, 1, 0, 0, 1, 1),
+(8, 1, 'ewrw', '', NULL, 0, 0, 0, 0, 0, NULL, NULL, 1, 0, 1, 1, 1),
+(9, 1, 's', NULL, 's', 0, 0, 0, 0, 0, NULL, NULL, 1, 0, 1, 1, 1);
+
+--
+-- Dumping data for table `promotiontype`
 --
 
 INSERT INTO `promotiontype` (`ptid`, `name`) VALUES
-(1, 'Pague 10 Leve apena 1!');
+(1, 'Desconto Percentagem');
 
 --
--- Extraindo dados da tabela `qganswer`
+-- Dumping data for table `qganswer`
 --
 
 INSERT INTO `qganswer` (`qid`, `upid`, `answer`) VALUES
-(1, 2, '1');
+(1, 44, '1'),
+(2, 44, '1  ;    0');
 
 --
--- Extraindo dados da tabela `qgquestion`
+-- Dumping data for table `qgquestion`
 --
 
 INSERT INTO `qgquestion` (`qid`, `question`, `question_type`, `answer_choices`, `expected_answer`, `pid`) VALUES
-(1, 'Que nome se dá a alguém que nega a existência de Deus?', 2, 'Judeu;Ateu;Cristão;Pagão', '1', 1);
+(1, 'Pergunta 1', 2, 'a;b;c;d', '1', 3),
+(2, 'pergunta 2', 3, 'a;b;c', '0;1', 3);
 
 --
--- Extraindo dados da tabela `quizgame`
+-- Dumping data for table `quizgame`
 --
 
 INSERT INTO `quizgame` (`pid`, `name`, `is_quiz`) VALUES
-(1, 'Quiz', 1);
+(3, 'Perguntas parvas', 1);
 
 --
--- Extraindo dados da tabela `retailer`
+-- Dumping data for table `retailer`
 --
 
 INSERT INTO `retailer` (`rid`, `name`, `image`, `nif`, `email`, `password`, `adid`, `door`) VALUES
-(1, 'Continestes', 'continestes.png', NULL, 'naotem@nao.com', '123456', NULL, NULL);
+(1, 'Continente', 'continente.png', NULL, 'mail@continente.pt', 'algumapass', NULL, NULL);
 
 --
--- Extraindo dados da tabela `session`
+-- Dumping data for table `session`
 --
 
 INSERT INTO `session` (`token`, `uid`, `validity`) VALUES
-('2db3aa75a874240edb845639bde3d298ad41b7d3d8a75d95f7c45187abfa83d1', 1, 1367821365),
-('4c2830e0262a7fa89f242af8606deea2954ecfe6e41d086fd04024ecd418ebc4', 2, 1367883119),
-('9c738b74c2cc057b923347daf0a96b60ba602524d3436ec1129a7bfaffe6f7d9', 2, 1368628101);
+('1f54f7c87771d963fc15a36c85399d0fc0a83f7c457e424c58d4fc7483a13dc5', 2, 0);
 
 --
--- Extraindo dados da tabela `user`
+-- Dumping data for table `tradingsuggestion`
+--
+
+INSERT INTO `tradingsuggestion` (`pcid_orig`, `pcid_dest`, `date`, `transaction`, `state`) VALUES
+(16, 15, 1369296852, 0, 0);
+
+--
+-- Dumping data for table `user`
 --
 
 INSERT INTO `user` (`uid`, `name`, `email`, `password`, `birth`, `adid`, `door`, `token_facebook`, `token_twitter`, `reset_token`, `reset_token_validity`, `ui_seed`) VALUES
-(1, 'João Henriques', 'ei11026', ':666a0c23c33615f9b87a1190558f8e17:443d832c47ab9a780ca01d66d39ee53c39da034550036e2c56bc4d7fc50d684f:', 123, 10000, NULL, NULL, NULL, NULL, 0, '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0'),
-(2, 'Renato', 'r@gmail.com', ':b2aa9898333a0f288fdb29f47a88a484:e19c47dee278593c831f5aae6f487b33337e0ccaa7d24feec740a7f81da4fe0e:', 25, 190699, '4dto', NULL, NULL, NULL, NULL, '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0');
+(1, 'Joããão Henriques', 'jf@netmadeira.com', ':151577b869f9817fa145d349a72476ba:7555e36ddb61a84006751448232c93baf51b58071bc03cc1653adb366877ad66:', 0, 123, NULL, NULL, NULL, '758e8f965268eb82db15264ae87bb60db5a7c3bc08c9437f01ad1b36e0bcce29f6e04af4d713aa012334c9d3bea8c44f706887b9a968ee89b511146ea7011881', 1367105506, '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0'),
+(2, 'João Henr', 'jf2', ':a97a5cb1405b2c1e1a1d655e6a50c6c7:02aef59391424211b562b65f828329c676825c8b42742742121982eb17abd324:', 1, 20001, NULL, NULL, NULL, NULL, 0, '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0'),
+(11, 'john', 'aasaaaaa', ':a87e4763eeed75b61cfa8f91fd1b8498:63cbb81d027fefaff1fb8b04220ae0e987c2d94880d89f6a7067581df3090718:', 123, 1, NULL, NULL, NULL, NULL, NULL, '��xv[t�O��-�؇��Ib�����h�,[vH\0�');
 
 --
--- Extraindo dados da tabela `userpromotion`
+-- Dumping data for table `userpromotion`
 --
 
 INSERT INTO `userpromotion` (`upid`, `uid`, `pid`, `init_date`, `end_date`, `state`) VALUES
-(2, 1, 1, 1, 1367262244, 1);
+(44, 2, 3, 1368536803, 1368536898, 1),
+(45, 1, 3, 1, 1, 1),
+(46, 2, 8, 1, 1, 1);
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
