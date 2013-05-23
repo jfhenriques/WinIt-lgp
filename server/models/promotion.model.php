@@ -212,7 +212,6 @@
 		
 		public static function findByPID($pid)
 		{
-			var_dump('1');
 			$result = static::query( 'SELECT p.pid AS pid, p.active AS active, p.name AS name, p.init_date AS init_date, p.util_date AS util_date, ' .
 									  ' p.end_date AS end_date, p.grand_limit AS grand_limit, p.user_limit AS user_limit, ' .
 									  ' p.valid_coord AS valid_coord, p.valid_coord_radius AS valid_coord_radius, ' .
@@ -228,7 +227,8 @@
 			return static::fillModel( $result, new Promotion() );
 		}
 		
-		public static function getPrizeCodePromo($pid, $uid) {
+		/*public static function getPrizeCodePromo($pid, $uid) {
+		
 			$result = static::query('select prizecode.pcid, prizecode.emiss_date, prizecode.util_date, prizecode.cur_uid, prizecode.valid_code, prizecode.in_trading, prizecode.upid '.
 										'from promotion, user, userpromotion, prizecode where promotion.pid = userpromotion.pid '.
 										'and user.uid = userpromotion.uid '.
@@ -236,13 +236,11 @@
 										'and user.uid = ? '.
 										'and promotion.pid = ?;', array($uid, $pid));
 			
-			return static::fillModel($result, new PrizeCode() );
-		
-		}
+			return static::fillModel( $result, new PrizeCode() );
+		}*/
 
 		public static function findValidPromotions($uid)
 		{
-			var_dump('4');
 			$promos = array();
 			$return = static::executeQuery( 'CALL proc_avail_prom(?);', array( $uid ), $stmt );
 

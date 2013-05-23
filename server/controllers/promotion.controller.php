@@ -3,6 +3,8 @@
 	DEFINE( 'R_PROM_ERR_PARAMS'			, 0x10 );
 
 	DEFINE( 'R_PROM_ERR_USER_NOT_FOUND'	, 0x20 );
+	
+	DEFINE ('R_TRAD_ERR_NO_MATCH_USER', 0x30);
 
 	// include '../models/PrizeCode.model.php';
 
@@ -103,7 +105,7 @@
 		}
 		
 			
-		
+		/*
 		public function sendPromoToTrading() {
 			
 			$pid = (int)valid_request_var( 'promotion' );
@@ -124,20 +126,14 @@
 				$this->respond->setJSONCode( R_TRAD_ERR_NO_MATCH_USER );
 				
 			} else {
-				var_dump('bananas');
-
-				$this->respond->setJSONResponse( $prizecode->sendPromoToTrading($pid, $uid) );
+				// utilizada
+				// 
+				$prizecode->sendPromoToTrading($pid, $uid);
 				$this->respond->setJSONCode( R_STATUS_OK );
+				
 			}
 			$this->respond->renderJSON( static::$status );			
-		}
-	
-		public function removePromoToTrading() {
-		}
-		public function acceptPromo() {
-		}
-		public function refusePromo() {
-		}
+		}*/
 	}
 
 ?>
