@@ -288,6 +288,7 @@
 				{
 					$response[] = array('bid' => $b->getBID(),
 										'name' => $b->getName(),
+										'description' => $b->getDescription(),
 										'image' => $b->getImageSrc(),
 										'aquis_date' => $b->getAquisDate() );
 				}

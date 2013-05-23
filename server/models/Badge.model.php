@@ -79,7 +79,7 @@
 
 			$badges = array();
 
-			$return = static::executeQuery( 'SELECT b.bid AS bid, b.name AS name, b.image AS image, ub.aquis_date AS aquis_date '.
+			$return = static::executeQuery( 'SELECT b.bid AS bid, b.name AS name, b.image AS image, ub.aquis_date AS aquis_date, b.description AS description '.
 										'FROM ' . self::TABLE_NAME . ' AS b '.
 										'INNER JOIN ' . self::TABLE_NAME_USERBADGES . ' AS ub ON (ub.bid = b.bid) '.
 										'INNER JOIN ' . self::TABLE_NAME_USER . ' AS u ON (u.uid = ub.uid) '.
