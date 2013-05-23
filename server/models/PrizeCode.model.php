@@ -229,7 +229,7 @@
 											' FROM ' . self::TABLE_NAME . ' WHERE pcid = ? ;',
 									  			array(  $pcid ) );
 
-			return static::fillModel( $result, new Promotion() );
+			return static::fillModel( $result, new PrizeCode() );
 		}
 
 		/*public static function sendPromoToTrading($pcid, $uid) 
@@ -247,10 +247,33 @@
 			/*$result = static::query( 'SELECT pcid, emiss_date, util_date, cur_uid, valid_code, in_trading, upid' .
 											' FROM prizecode WHERE prizecode.upid = (select userpromotion.upid from userpromotion where userpromotion.uid = ? and userpromotion.pid = ?);',
 									  			array(  $uid, $pid ) );*/
-		/*	
+		
 			// return static::fillModel( $ret, new PrizeCode() );
-			return $ret;
+			/*return $ret;
 		}*/
+		
+		/*public static function is_transferable() {
+			$result = static::query( 'SELECT promotion.transferable '.
+											'FROM promotion, userpromotion, prizecode '.
+											'WHERE pcid = ? ;',
+									  			array(  $pcid ) );
+
+			return static::fillModel( $result, new PrizeCode() );
+		}*/
+		
+		public static function send_promo($pcid, $uid) {
+		
+			$dbh = DbConn::getInstance()->getDB();
+			$sth = null;
+			
+			$sth = $dbh->prepare('UPDATE '.self::TABLE_NAME.' SET in_trading = 1 WHERE pcid = :pcid');
+			
+			$sth->bindParam(':pcid', $pcid, PDO::PARAM_INT);
+		
+			$ret = $sth->execute();
+
+			return $ret;
+		}
 
 
 	}

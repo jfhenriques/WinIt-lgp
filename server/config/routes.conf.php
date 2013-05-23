@@ -123,10 +123,10 @@
 									array( 'match' => '/:prizecode',
 										   'matches' => array(
 							
-												array( 'match' => '/send', 'controller' => 'promotion', 'via' => 'get', 'action' => 'send_to_trading'),
-												array( 'match' => '/remove', 'controller' => 'promotion', 'via' => 'get', 'action' => 'remove_from_trading'),
-												array( 'match' => '/accept', 'controller' => 'promotion', 'via' => 'get', 'action' => 'accept_trading'),
-												array( 'match' => '/refuse', 'controller' => 'promotion', 'via' => 'get', 'action' => 'refuse_trading'),
+												array( 'match' => '/send', 'controller' => 'trading', 'via' => 'get', 'action' => 'send_to_trading'),
+												array( 'match' => '/remove', 'controller' => 'trading', 'via' => 'get', 'action' => 'remove_from_trading'),
+												array( 'match' => '/accept', 'controller' => 'trading', 'via' => 'get', 'action' => 'accept_trading'),
+												array( 'match' => '/refuse', 'controller' => 'trading', 'via' => 'get', 'action' => 'refuse_trading'),
 												
 											),
 											

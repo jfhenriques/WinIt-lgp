@@ -134,13 +134,6 @@
 			}
 			$this->respond->renderJSON( static::$status );			
 		}*/
-	
-		public function removePromoToTrading() {
-		}
-		public function acceptPromo() {
-		}
-		public function refusePromo() {
-		}
 	}
 
 ?>
