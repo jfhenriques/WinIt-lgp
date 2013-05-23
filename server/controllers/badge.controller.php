@@ -62,7 +62,7 @@
 							array(  'pid' => $badge->getBID(),
 									'name' => $badge->getName(),
 									'description' => $badge->getDescription(),
-									'image' => Controller::formatURL( $badge->getImage() ) ));
+									'image' => Controller::formatURL( $badge->getImageSRC() ) ));
 
 				$this->respond->setJSONCode( R_STATUS_OK );
 			}

@@ -289,7 +289,7 @@
 					$response[] = array('bid' => $b->getBID(),
 										'name' => $b->getName(),
 										'description' => $b->getDescription(),
-										'image' => $b->getImageSrc(),
+										'image' => Controller::formatURL( $b->getImageSRC() ),
 										'aquis_date' => $b->getAquisDate() );
 				}
 
