@@ -85,7 +85,7 @@
 										   		array( 'match' => '/tradable', 'controller' => 'user', 'via' => 'get', 'action' => 'list_prizes_tradable' ),
 
 												array( 'match' => '/won', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions_won' ),
-												array( 'match' => '/active', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions_active' ),
+												//array( 'match' => '/active', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions_active' ),
 
 											),
 									),
@@ -110,10 +110,7 @@
 
 							   			),
 										
-									array( 'match' => '/send', 'controller' => 'promotion', 'via' => 'get', 'action' => 'sendPromoToTrading'),
-									array( 'match' => '/remove', 'controller' => 'promotion', 'via' => 'get', 'action' => 'removePromoToTrading'),
-									array( 'match' => '/accept', 'controller' => 'promotion', 'via' => 'get', 'action' => 'acceptPromo'),
-									array( 'match' => '/refuse', 'controller' => 'promotion', 'via' => 'get', 'action' => 'refusePromo'),
+
 							   	),
 						),
 
@@ -121,26 +118,21 @@
 
 
 						array( 'match' => '/trading', 'controller' => 'trading', 'via' => 'get', 'action' => 'index',
-/*							   'matches' => array(
-
-							   		array( 'match' => '/reset_password', 'controller' => 'user', 'via' => 'post', 'action' => 'reset_password' ),
-
-									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
-									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'post', 'action' => 'assoc_tags' ),
-									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'delete', 'action' => 'remove_tags' ),
-
-									array( 'match' => '/promotions',
+							   'matches' => array(
+							   
+									array( 'match' => '/:prizecode',
 										   'matches' => array(
-
-												array( 'match' => '/won', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions_won' ),
-												array( 'match' => '/active', 'controller' => 'user', 'via' => 'get', 'action' => 'list_promotions_active' ),
-
+							
+												array( 'match' => '/send', 'controller' => 'promotion', 'via' => 'get', 'action' => 'send_to_trading'),
+												array( 'match' => '/remove', 'controller' => 'promotion', 'via' => 'get', 'action' => 'remove_from_trading'),
+												array( 'match' => '/accept', 'controller' => 'promotion', 'via' => 'get', 'action' => 'accept_trading'),
+												array( 'match' => '/refuse', 'controller' => 'promotion', 'via' => 'get', 'action' => 'refuse_trading'),
+												
 											),
+											
 									),
-
-									array( 'match' => '/badges', 'controller' => 'user', 'via' => 'get', 'action' => 'list_badges' ),
-
-								),*/
+									
+								),
 						),
 
 				   	),

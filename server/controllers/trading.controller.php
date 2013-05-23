@@ -40,7 +40,7 @@
 			$this->respond->renderJSON( static::$status );
 		}
 
-		public function _index()
+		/*public function _index()
 		{
 
 			$pc = new PrizeCode();
@@ -52,9 +52,9 @@
 
 
 
-		}
+		}*/
 		
-		public function sendPromotionToTrading($pid) {
+		/*public function sendPromotionToTrading($pid) {
 		
 			$user = Authenticator::getInstance()->getUser();
 
@@ -74,6 +74,12 @@
 			}
 
 			$this->respond->renderJSON( static::$status );
+		
+		}*/
+		
+		public function send_to_trading() {
+		
+			
 		
 		}
 
