@@ -40,7 +40,7 @@ import com.actionbarsherlock.view.Window;
 
 public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivity implements ProposePromotionListener {
 	private ActionBar action_bar_;
-	
+
 	List<HashMap<String,String>> promotions_ = new ArrayList<HashMap<String,String>>();
 	HashMap<String, String> map_ = new HashMap<String, String>();
 	private BinderData binding_data_;
@@ -54,12 +54,12 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.trading_promotions_to_trade);
-		
+
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.trading);
 		action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_trading));
 		action_bar_.setDisplayHomeAsUpEnabled(true);
-		
+
 		context_ = TradeablePromotionsFragmentActivity.this;
 		promotion_wanted = (Promotion) getIntent().getSerializableExtra("Promotion");
 		list_ = (ListView) findViewById(R.id.list);
@@ -86,12 +86,12 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 	}
 
 	private class LoadingMyPromotionsInTrading extends AsyncTask<Void, Void, ArrayList<Promotion>> {
-	    private ProgressDialog progress_dialog_ = new ProgressDialog(TradeablePromotionsFragmentActivity.this);
-	    
+		private ProgressDialog progress_dialog_ = new ProgressDialog(TradeablePromotionsFragmentActivity.this);
+
 		String auth_token;
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
 		private Context mContext = null;
-
+		AlertDialog.Builder builder;
 		public LoadingMyPromotionsInTrading(Context mContext) {
 			this.mContext = mContext;
 		}
@@ -105,11 +105,11 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 			} catch (Exception e) {
 				e.printStackTrace();
 			}	
-			
+
 			if (promos != null) {
-			    return promos;
+				return promos;
 			}
-				
+
 			return null;
 		}
 
@@ -124,22 +124,35 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 		protected void onPostExecute(ArrayList<Promotion> result){
 			super.onPostExecute(result);
 			progress_dialog_.dismiss();
-			
+
 			if(result != null){
-				for(int i=0; i < result.size(); i++){
-					if(result.get(i).getPromotionID() != promotion_wanted.getPromotionID()){
-						map_ = new HashMap<String, String>();
-						map_.put("id", Integer.toString(result.get(i).getPromotionID()));
-						map_.put("name", result.get(i).getName());
-						map_.put("image", result.get(i).getImageUrl());
-						promotions_.add(map_);
+				if(result.size() != 0){
+					for(int i=0; i < result.size(); i++){
+						if(result.get(i).getPromotionID() != promotion_wanted.getPromotionID()){
+							map_ = new HashMap<String, String>();
+							map_.put("id", Integer.toString(result.get(i).getPromotionID()));
+							map_.put("name", result.get(i).getName());
+							map_.put("image", result.get(i).getImageUrl());
+							promotions_.add(map_);
+						}
 					}
+				}
+				else{
+					builder = new AlertDialog.Builder(mContext);
+					builder.setMessage("You have no promotions to trade!");
+					builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							finish();
+						}
+					});
+					AlertDialog dialog = builder.create();
+					dialog.show();
 				}
 
 				binding_data_.notifyDataSetChanged();
 			} else {
 				if(!Utilities.hasInternetConnection(mContext)){
-					AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+					builder = new AlertDialog.Builder(mContext);
 					builder.setMessage("No Internet connection. Do you wish to open Settings?");
 					builder.setPositiveButton("Sure", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
@@ -198,11 +211,11 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 
 			return vi;
 		}
-		
+
 		public int getPromotionID(int position){
 			return Integer.parseInt(objects.get(position).get("id"));
 		}
-		
+
 		public String getPromotionImageUrl(int position){
 			return objects.get(position).get("image");
 		}
@@ -215,26 +228,26 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 		} 
 	}
 
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        
-    }
+	@Override
+	public void onDialogPositiveClick(DialogFragment dialog) {
 
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        
-        return true;
-    }
+	}
+
+	@Override
+	public void onDialogNegativeClick(DialogFragment dialog) {
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+
+		return true;
+	}
 }

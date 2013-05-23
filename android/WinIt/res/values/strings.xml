@@ -49,6 +49,8 @@
     <string name="tags">Tags</string>
     <string name="dialog_propose_trade">Do you want to propose this trade?</string>
     <string name="cancel">Cancel</string>
+    <string name="unlocked">Unlocked: </string>
+    <string name="share">Share</string>
 
 
 </resources>

@@ -207,7 +207,7 @@
 											' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid)' .
 											' WHERE p.transferable = 1 AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
 											' AND up.end_date > 0 AND up.state = 1 AND pc.util_date = 0 ' .
-											' AND pc.in_trading = ? AND up.uid ' . ( $owned ? '=' : '<>' ) . ' ? ;',
+											' AND pc.in_trading = ? AND pc.cur_uid ' . ( $owned ? '=' : '<>' ) . ' ? ;',
 									  			array(  $time, $inTrading, $uid ), $stmt );
 
 			if( $stmt !== null && $return !== false )
@@ -229,19 +229,65 @@
 											' FROM ' . self::TABLE_NAME . ' WHERE pcid = ? ;',
 									  			array(  $pcid ) );
 
-			return static::fillModel( $result, new Promotion() );
+			return static::fillModel( $result, new PrizeCode() );
 		}
 
-		public static function sendPromoToTrading() 
-		{
+		/*public static function sendPromoToTrading($pcid, $uid) 
+		{			
+			$dbh = DbConn::getInstance()->getDB();
+			$sth = null;
+			
+			$sth = $dbh->prepare('PROEDURE(?, ?);');//update prizecode SET in_trading = 1 where prizecode.upid = (select userpromotion.upid from userpromotion where userpromotion.uid = :uid and userpromotion.pid = :pid);' );
+			
+			$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
+			$sth->bindParam(':pid', $pid, PDO::PARAM_INT);
+						
+			$ret = $sth->execute(); // try catch PDOException 
+			*/
+			/*$result = static::query( 'SELECT pcid, emiss_date, util_date, cur_uid, valid_code, in_trading, upid' .
+											' FROM prizecode WHERE prizecode.upid = (select userpromotion.upid from userpromotion where userpromotion.uid = ? and userpromotion.pid = ?);',
+									  			array(  $uid, $pid ) );*/
 		
-			$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET in_trading = 1 WHERE pcid = :pcid ;' );
+			// return static::fillModel( $ret, new PrizeCode() );
+			/*return $ret;
+		}*/
+		
+		/*public static function is_transferable() {
+			$result = static::query( 'SELECT promotion.transferable '.
+											'FROM promotion, userpromotion, prizecode '.
+											'WHERE pcid = ? ;',
+									  			array(  $pcid ) );
 
+			return static::fillModel( $result, new PrizeCode() );
+		}*/
+		
+		public static function send_promo($pcid, $uid) {
+		
+			$dbh = DbConn::getInstance()->getDB();
+			$sth = null;
+			
+			$sth = $dbh->prepare('UPDATE '.self::TABLE_NAME.' SET in_trading = 1 WHERE pcid = :pcid');
+			
 			$sth->bindParam(':pcid', $pcid, PDO::PARAM_INT);
+		
+			$ret = $sth->execute();
 
-			return static::fillModel( $result, new Promotion() );
+			return $ret;
 		}
 
+		public static function remove_promo($pcid, $uid) {
+		
+			$dbh = DbConn::getInstance()->getDB();
+			$sth = null;
+			
+			$sth = $dbh->prepare('UPDATE '.self::TABLE_NAME.' SET in_trading = 0 WHERE pcid = :pcid');
+			
+			$sth->bindParam(':pcid', $pcid, PDO::PARAM_INT);
+		
+			$ret = $sth->execute();
+
+			return $ret;
+		}
 
 	}
 
