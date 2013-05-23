@@ -5,6 +5,7 @@ import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -32,7 +33,8 @@ public class EditProfileActivity extends SherlockActivity {
 
     String auth_token_;
     String address_;
-
+	int address_id = -1;
+	
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
         setContentView(R.layout.edit_profile_activity);
@@ -67,7 +69,7 @@ public class EditProfileActivity extends SherlockActivity {
         String new_password = pass_edit_text_.getText().toString();
         String old_password = pass_old_edit_text_.getText().toString();
         String birthday = birth_edit_text_.getText().toString();
-        int address_id = -1;
+        
         String address_2 = "";
         
         if((!new_password.equals("") && old_password.equals("")) || (!old_password.equals("") && new_password.equals(""))) {
