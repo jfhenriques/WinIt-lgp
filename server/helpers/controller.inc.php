@@ -10,7 +10,7 @@
 	DEFINE( 'R_GLOB_ERR_MUST_NOT_AUTH'	, 0x151	);
 
 
-
+	
 
 	function valid_var( $var, $arr, $trim = true )
 	{

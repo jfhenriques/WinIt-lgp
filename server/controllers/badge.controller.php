@@ -3,8 +3,6 @@
 	DEFINE( 'R_BADGE_ERR_PARAMS'			, 0x10 );
 	DEFINE( 'R_BADGE_ERR_USER_NOT_FOUND'	, 0x20 );
 
-	
-	DEFINE( 'BADGE_IMG_SRC_DIR', 'img/9cc030d4cccab8c52273613ef010120eb9e3228c/' );
 
 
 
@@ -43,6 +41,9 @@
 			*/
 			// $this->respond->renderJSON( $resposta, $render_code, describeMessage( $render_code, static::$status ) );			
 		}
+
+
+
 		
 		public function show()
 		{			

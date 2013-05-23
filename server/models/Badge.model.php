@@ -1,8 +1,12 @@
 <?php
+
+
+	DEFINE( 'BADGE_IMG_SRC_DIR', 'img/9cc030d4cccab8c52273613ef010120eb9e3228c/' );
+
+
 	
 	class Badge
-		extends ActiveRecord
-		implements SavableActiveRecord {
+		extends ActiveRecord {
 		
 
 		const TABLE_NAME = 'badges' ;
@@ -55,9 +59,12 @@
 			$this->data['description'] = $description;
 		}
 
-		public function save()
+
+		public function getAquisDate()
 		{
+			return (int)$this->getData('aquis_date');
 		}
+
 		
 		public static function findByBID($id)
 		{
@@ -67,15 +74,28 @@
 			return static::fillModel( $result, new Badge() );
 		}
 
-		public static function findByUID($uid) {
+		public static function findByUID($uid)
+		{
 
-			$result = static::query( 'SELECT b.bid AS bid, b.name AS bname, b.image AS bimage, ub.aquis_date AS bdata '.
-										'FROM self::TABLE_NAME AS b '.
-										'INNER JOIN self::TABLE_NAME_USERBADGES AS ub ON (ub.bid = b.bid) '.
-										'INNER JOIN self::TABLE_NAME_USER AS u ON (u.uid = ub.uid) '.
+			$badges = array();
+
+			$return = static::executeQuery( 'SELECT b.bid AS bid, b.name AS name, b.image AS image, ub.aquis_date AS aquis_date '.
+										'FROM ' . self::TABLE_NAME . ' AS b '.
+										'INNER JOIN ' . self::TABLE_NAME_USERBADGES . ' AS ub ON (ub.bid = b.bid) '.
+										'INNER JOIN ' . self::TABLE_NAME_USER . ' AS u ON (u.uid = ub.uid) '.
 										'WHERE u.uid = ? LIMIT 1;',
-										array( $uid ));
-			return static::fillModel( $result, new Badge() );			
+										array( $uid ), $stmt );
+
+			if( $stmt !== null && $return !== false )
+			{
+				while( $row = $stmt->fetch() )
+				{
+					if( !is_null( $res = static::fillModel( $row, new Badge() ) ) )
+						$badges[] = $res ;
+				}
+			}
+
+			return $badges;	
 		}
 	}
 

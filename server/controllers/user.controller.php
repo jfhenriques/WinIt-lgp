@@ -275,16 +275,21 @@
 			//$user = User::findByUID($userId);
 
 			
-			if( is_null( $user ) ) {
+			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
-			} else {
-				$resp = $user->list_badges_won();
+			else
+			{
+				$resp = Badge::findByUID( $user->getUID() );
 				
 				$response = array();
 
-				foreach ( $resp as $linha) {
-					array_push($response, $linha);
+				foreach ( $resp as $b)
+				{
+					$response[] = array('bid' => $b->getBID(),
+										'name' => $b->getName(),
+										'image' => $b->getImageSrc(),
+										'aquis_date' => $b->getAquisDate() );
 				}
 
 				$this->respond->setJSONResponse( $response );

@@ -277,8 +277,9 @@
 		}
 		
 		
-		public function list_badges_won() {
-			
+		/*public function list_badges_won()
+		{
+				
 			$dbh = DbConn::getInstance()->getDB();
 			$sth = null;
 			
@@ -297,7 +298,7 @@
 			// var_dump($result);
 
 			return $result;			
-		}
+		}*/
 
 	}
 
