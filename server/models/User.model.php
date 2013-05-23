@@ -284,7 +284,7 @@
 			
 			$userID = $this->getUID();
 			
-			$sth = $dbh->prepare('SELECT b.bid AS bid, b.name AS bname, b.image AS bimage, ub.aquis_date AS bdata '.
+			$sth = $dbh->prepare('SELECT b.bid AS bid, b.name AS bname, b.image AS bimage, b.description AS description, ub.aquis_date AS bdata'.
 										'FROM badges AS b '.
 										'INNER JOIN userbadges AS ub ON (ub.bid = b.bid) '.
 										'INNER JOIN user AS u ON (u.uid = ub.uid) '.
