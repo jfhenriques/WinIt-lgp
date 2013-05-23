@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/question_wrapper_layout"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/question_scroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/question_text"
+    <LinearLayout
+        android:id="@+id/question"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="bottom"
-        android:fontFamily="sans-serif-light"
-        android:background="@color/belize_hole"
-        android:padding="@dimen/gap"
-        android:text="Lorem ipsum dolor sit amet"
-        android:textColor="@color/white"
-        android:textIsSelectable="true"
-        android:textSize="22sp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
 
-    <ScrollView
-        android:id="@+id/answers_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <RadioGroup
-            android:id="@+id/answers_group"
+        <TextView
+            android:id="@+id/question_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </RadioGroup>
-    </ScrollView>
+            android:layout_height="wrap_content"
+            android:background="@color/belize_hole"
+            android:fontFamily="sans-serif-light"
+            android:gravity="bottom"
+            android:padding="@dimen/gap"
+            android:text="Lorem ipsum dolor sit amet"
+            android:textColor="@color/white"
+            android:textIsSelectable="true"
+            android:textSize="22sp" />
 
-</LinearLayout>
+        <ScrollView
+            android:id="@+id/answers_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <RadioGroup
+                android:id="@+id/answers_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </RadioGroup>
+        </ScrollView>
+    </LinearLayout>
+
+</ScrollView>
