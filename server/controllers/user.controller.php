@@ -246,6 +246,7 @@
 			$this->requireAuth();
 			
 			$user = Authenticator::getInstance()->getUser();
+			$wonPrizes = null;
 			//$auth = Authenticator::getInstance(); // retorna o id do user logado
 			//$userId = $auth->getUserId();
 			
@@ -253,17 +254,12 @@
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode ( R_USER_ERR_USER_NOT_FOUND );
-				
-			else {
-			
-				$resp = $user->list_promotions_won();				
-				$response = array();
-				
-				foreach ( $resp as $linha ) {
-					array_push($response, $linha);
-				}
-				
-				$this->respond->setJSONResponse( $response );
+
+			else
+			{
+				$prizes = PrizeCode::findOwnUnused( $user->getUID() );
+
+				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
 				$this->respond->setJSONCode( R_STATUS_OK );
 			}
 			$this->respond->renderJSON( static::$status );

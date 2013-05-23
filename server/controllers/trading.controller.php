@@ -11,6 +11,9 @@
 	DEFINE( 'R_TRAD_ERR_ALREADY_TRADING'		, 0x30 );
 	DEFINE( 'R_TRAD_ERR_NOT_TRADING'			, 0x31 );
 
+	DEFINE( 'R_TRAD_ERR_PROMO_NOT_AVAIL'		, 0x40 );
+	DEFINE( 'R_TRAD_ERR_PROMO_STUPID'			, 0x41 );
+
 	DEFINE( 'R_TRAD_ERR_PROMO_SELECT'			, 0x60 );
 	DEFINE( 'R_TRAD_ERR_PROMO_SAME'				, 0x61 );
 	DEFINE( 'R_TRAD_ERR_USER_SAME'				, 0x62 );
@@ -26,6 +29,8 @@
 				R_TRAD_ERR_PROMO_SELECT			=> 'Erro a encontrar a promoção selecionada ou de sugestão',
 				R_TRAD_ERR_PROMO_SAME			=> 'A promoção selecionada e de sugestão não podem ser as mesmas',
 				R_TRAD_ERR_USER_SAME			=> 'Não pode trocar promoções consigo próprio',
+
+				R_TRAD_ERR_PROMO_NOT_AVAIL		=> 'Promoção não disponível por ter expirado, por não pertencer ao utilizador, ou por não se encontrar em trading',
 
 				R_TRAD_ERR_ALREADY_TRADING		=> 'Promoção já se encontra em trading',
 				R_TRAD_ERR_NOT_TRADING			=> 'Promoção não se encontra em trading',
@@ -56,6 +61,55 @@
 
 			$this->respond->renderJSON( static::$status );
 		}
+
+
+
+
+		public function in_trading_suggestions()
+		{
+		
+			$pcid = (int)valid_request_var( 'prizecode' );
+			$time = time();
+		
+			$user = Authenticator::getInstance()->getUser();
+			$prizeCodeArr = null;
+
+			$sugestions = null;
+			
+			if( is_null( $user ) || $pcid <= 0 )
+				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
+
+			else if(	is_null( $prizeCodeArr = PrizeCode::findOwnTrading( $user->getUID(), $time, $pcid ) )
+					 || !is_array( $prizeCodeArr ) || count( $prizeCodeArr ) !== 1 )
+				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_NOT_AVAIL );
+			
+			else if(	is_null( $sugestions  = TradingSuggestion::findPrizeSuggestions( $pcid, $time ) )
+					 || !is_array( $sugestions ) )
+				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_STUPID );
+
+			else
+			{
+				$ret = array();
+
+				foreach($sugestions as $s)
+				{
+					$ret[] = array('pcid' => $s->getPCIDOrig(),
+								   'pid' => $s->getPID(),
+								   'name' => $s->getPromotionName(),
+								   'image' => Controller::formatURL( $s->getPromotionImageSRC() ),
+						);
+
+				}
+
+				$this->respond->setJSONResponse( $ret );
+				$this->respond->setJSONCode( R_STATUS_OK );
+
+			}
+
+			$this->respond->renderJSON( static::$status );
+		
+		}
+
 
 		/*public function _index()
 		{
@@ -125,7 +179,7 @@
 			else
 			{
 
-				$traddSuggest = new TradingSuggestion($prizecodeSuggest[0], $prizecodeOthers[0]);
+				$traddSuggest = TradingSuggestion::instanciate($prizecodeSuggest[0], $prizecodeOthers[0]);
 				$traddSuggest->setDate( $time );
 
 				$this->respond->setJSONCode( $traddSuggest->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
@@ -169,8 +223,10 @@
 			
 			else
 			{
-				
+
 				$prizecode->setTrading( $sendTo );
+				if( $sendTo )
+					$prizecode->incTransactionID();
 
 				$this->respond->setJSONCode( $prizecode->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 		
