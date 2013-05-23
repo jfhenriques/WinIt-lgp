@@ -123,6 +123,7 @@
 									array( 'match' => '/:prizecode',
 										   'matches' => array(
 							
+												array( 'match' => '/suggestions', 'controller' => 'trading', 'via' => 'get', 'action' => 'in_trading_suggestions'),
 												array( 'match' => '/suggest/:suggestion', 'controller' => 'trading', 'via' => 'post', 'action' => 'suggest_trading'),
 												array( 'match' => '/send', 'controller' => 'trading', 'via' => 'post', 'action' => 'send_to_trading'),
 												array( 'match' => '/remove', 'controller' => 'trading', 'via' => 'post', 'action' => 'remove_from_trading'),
