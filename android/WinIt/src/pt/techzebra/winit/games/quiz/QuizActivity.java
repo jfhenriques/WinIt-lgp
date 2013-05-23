@@ -8,8 +8,11 @@ import org.json.JSONObject;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.NetworkUtilities;
+import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.client.Quiz;
 import pt.techzebra.winit.platform.FetchQuizTask;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -38,221 +41,255 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.PageIndicator;
 
-public class QuizActivity extends SherlockFragmentActivity implements FetchQuizTask.AsyncResponse {
-    private static final String TAG = "QuizActivity";
-    
-    private ActionBar action_bar_;
+public class QuizActivity extends SherlockFragmentActivity implements
+		FetchQuizTask.AsyncResponse {
+	private static final String TAG = "QuizActivity";
 
-    QuizCollectionPagerAdapter quiz_collection_adapter_;
-    ViewPager view_pager_;
-    PageIndicator page_indicator_;
-    static Quiz quiz_;
-    String authen_token_;
-    String promotion_id;
-    private TextView points_text_;
-    private TextView correct_answers_text_;
+	private ActionBar action_bar_;
 
-    Handler handler_ = new Handler();
+	QuizCollectionPagerAdapter quiz_collection_adapter_;
+	ViewPager view_pager_;
+	PageIndicator page_indicator_;
+	static Quiz quiz_;
+	String authen_token_;
+	String promotion_id_;
+	static String user_promotion_id_;
+	TextView points_text_;
+	TextView correct_answers_text_;
 
-    @Override
-    protected void onCreate(Bundle saved_instance_state) {
-        super.onCreate(saved_instance_state);
+	Handler handler_ = new Handler();
 
-        setContentView(R.layout.quiz_pager);
+	@Override
+	protected void onCreate(Bundle saved_instance_state) {
+		super.onCreate(saved_instance_state);
 
-        action_bar_ = getSupportActionBar();
-        action_bar_.setTitle("Quiz Game");
-        action_bar_.setDisplayHomeAsUpEnabled(true);
-        action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_single_player));
+		setContentView(R.layout.quiz_pager);
 
-        authen_token_ = WinIt.getAuthToken();
-        promotion_id = "1";
-     
-        FetchQuizTask fetch_quiz_task = new FetchQuizTask(this);
-        fetch_quiz_task.setDelegate(this);
-        fetch_quiz_task.execute(promotion_id);
-    }
-    
-    
-    
-    public void initializeAndPopulateView() {
-        
-    }
+		action_bar_ = getSupportActionBar();
+		action_bar_.setTitle("Quiz Game");
+		action_bar_.setDisplayHomeAsUpEnabled(true);
+		action_bar_.setBackgroundDrawable(getResources().getDrawable(
+				R.drawable.action_bar_bg_single_player));
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getSupportMenuInflater();
-        inflater.inflate(R.menu.menu_quiz, menu);
-        return true;
-    }
+		authen_token_ = WinIt.getAuthToken();
+		Promotion promotion = (Promotion) getIntent().getSerializableExtra(
+				"Promotion");
+		promotion_id_ = String.valueOf(promotion.getPromotionID());
+		Log.i(TAG, "Question: " + promotion_id_);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-            case R.id.menu_submit:
-                submitAnswers();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        
-        return true;
-    }
+		FetchQuizTask fetch_quiz_task = new FetchQuizTask(this);
+		fetch_quiz_task.setDelegate(this);
+		fetch_quiz_task.execute(promotion_id_);
 
-    private void submitAnswers() {
-        for (int i = 0; i < quiz_.getQuestions().size(); ++i) {
-            if (quiz_.getQuestions().get(i).getAnswered() == -1) {
-                Toast.makeText(this, "Responda a todas as questões",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
+		new UserPromotionID().execute(promotion_id_, authen_token_);
+		
+	}
 
-        NetworkUtilities.submitAnswersQuizGame(promotion_id, authen_token_,
-                quiz_.getQuestions(), handler_, this);
-    }
+	public void initializeAndPopulateView() {
 
-    private static class QuizCollectionPagerAdapter extends
-            FragmentStatePagerAdapter {
-        public QuizCollectionPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+	}
 
-        @Override
-        public Fragment getItem(int i) {
-            Log.d(TAG, "" + i);
-            Fragment fragment = new QuestionObjectFragment();
-            Bundle args = new Bundle();
-            args.putString("question", quiz_.getQuestions().get(i).getTitle());
-            args.putInt("num_question", i);
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.menu_quiz, menu);
+		return true;
+	}
 
-            @SuppressWarnings("unchecked")
-            ArrayList<String> answerslist = ((ArrayList<String>) quiz_
-                    .getQuestions().get(i).getAnswer().getContent());
-            args.putInt("num_answers", answerslist.size());
-            Log.d(TAG, "num answers: " + answerslist.size());
-            for (int j = 0; j < answerslist.size(); j++) {
-                args.putString("answer" + j, answerslist.get(j));
-            }
-            fragment.setArguments(args);
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			break;
+		case R.id.menu_submit:
+			submitAnswers();
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 
-            return fragment;
-        }
+		return true;
+	}
 
-        @Override
-        public int getCount() {
-            return quiz_.getQuestions().size();
-        }
+	private void submitAnswers() {
+		for (int i = 0; i < quiz_.getQuestions().size(); ++i) {
+			if (quiz_.getQuestions().get(i).getAnswered() == -1) {
+				Toast.makeText(this, "Responda a todas as questões",
+						Toast.LENGTH_SHORT).show();
+				return;
+			}
+		}
+		NetworkUtilities.submitAnswersQuizGame(promotion_id_, authen_token_,
+				user_promotion_id_ , quiz_.getQuestions(), handler_, this);
+	}
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return String.valueOf((position + 1));
-        }
+	private static class QuizCollectionPagerAdapter extends
+			FragmentStatePagerAdapter {
+		public QuizCollectionPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
 
-    }
+		@Override
+		public Fragment getItem(int i) {
+			Log.d(TAG, "" + i);
+			Fragment fragment = new QuestionObjectFragment();
+			Bundle args = new Bundle();
+			args.putString("question", quiz_.getQuestions().get(i).getTitle());
+			args.putInt("num_question", i);
 
-    public static class QuestionObjectFragment extends Fragment {
-        public static final String ARG_OBJECT = "question";
+			@SuppressWarnings("unchecked")
+			ArrayList<String> answerslist = ((ArrayList<String>) quiz_
+					.getQuestions().get(i).getAnswer().getContent());
+			args.putInt("num_answers", answerslist.size());
+			Log.d(TAG, "num answers: " + answerslist.size());
+			for (int j = 0; j < answerslist.size(); j++) {
+				args.putString("answer" + j, answerslist.get(j));
+			}
+			fragment.setArguments(args);
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle saved_instance_state) {
-            View root_view = inflater.inflate(R.layout.question_fragment,
-                    container, false);
-            
-            final Bundle args = getArguments();
-            ((TextView) root_view.findViewById(R.id.question_text))
-                    .setText(args.getString("question"));
+			return fragment;
+		}
 
-            // TODO: mudar para vários tipos de resposta
-            RadioGroup radio_group = (RadioGroup) root_view
-                    .findViewById(R.id.answers_group);
-            int size_answers = args.getInt("num_answers");
-            for (int j = 0; j < size_answers; j++) {
-                View radio_button = inflater.inflate(R.layout.quiz_radio_button, radio_group, false);
-                String str = args.getString(("answer" + j));
-                ((RadioButton) radio_button).setText(str);
-                ((RadioButton) radio_button).setId(j);
-                ((RadioButton) radio_button).setGravity(Gravity.CENTER_VERTICAL);
-                radio_group.addView(radio_button);
-            }
+		@Override
+		public int getCount() {
+			return quiz_.getQuestions().size();
+		}
 
-            radio_group.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return String.valueOf((position + 1));
+		}
 
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    quiz_.getQuestions().get(args.getInt("num_question"))
-                            .setAnswered(checkedId);
-                }
-            });
+	}
 
-            return root_view;
-        }
-    }
+	public static class QuestionObjectFragment extends Fragment {
+		public static final String ARG_OBJECT = "question";
 
-    public void getResultSubmitedAnswers(JSONObject responseContent) {
-        try {
-            String won = NetworkUtilities.getResponseContent(responseContent)
-                    .getString("won");
-            String correct = NetworkUtilities.getResponseContent(
-                    responseContent).getString("correct");
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle saved_instance_state) {
+			View root_view = inflater.inflate(R.layout.question_fragment,
+					container, false);
 
-            // TODO: change
-            /*Toast.makeText(
-                    this,
-                    "Ganhaste: " + won + " com: " + correct
-                            + " respostas correctas!", Toast.LENGTH_SHORT)
-                    .show();*/
-            
-            LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
-            View popupView = layoutInflater.inflate(R.layout.popup_endquiz, null);  
-            final PopupWindow popup_window = new PopupWindow(popupView,LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);  
-            
-            points_text_ = (TextView) findViewById(R.id.points_text);
-            points_text_.setText(won);
-            
-            correct_answers_text_ = (TextView) findViewById(R.id.correct_answers_text);
-            correct_answers_text_.setText(correct);
-            
-            Button dismiss_button = (Button)popupView.findViewById(R.id.dismiss_button);
-            dismiss_button.setOnClickListener(new Button.OnClickListener(){
-            	@Override
-            	public void onClick(View v) {
-            		// TODO Auto-generated method stub
-            		popup_window.dismiss();
-            	}
-            });
-            
-            
-            //popup_window.showAsDropDown(btnOpenPopup, 50, -30);
-            
-             
-            
-        } catch (JSONException e) {
-            Log.i(TAG,
-                    "Error to get response: "
-                            + NetworkUtilities
-                                    .getResponseContent(responseContent));
-        }
-    }
+			final Bundle args = getArguments();
+			((TextView) root_view.findViewById(R.id.question_text))
+					.setText(args.getString("question"));
 
+			// TODO: mudar para vários tipos de resposta
+			RadioGroup radio_group = (RadioGroup) root_view
+					.findViewById(R.id.answers_group);
+			int size_answers = args.getInt("num_answers");
+			for (int j = 0; j < size_answers; j++) {
+				View radio_button = inflater.inflate(
+						R.layout.quiz_radio_button, radio_group, false);
+				String str = args.getString(("answer" + j));
+				((RadioButton) radio_button).setText(str);
+				((RadioButton) radio_button).setId(j);
+				((RadioButton) radio_button)
+						.setGravity(Gravity.CENTER_VERTICAL);
+				radio_group.addView(radio_button);
+			}
 
+			radio_group
+					.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-    @Override
-    public void processFinish(Quiz result) {
-        quiz_ = result;
+						@Override
+						public void onCheckedChanged(RadioGroup group,
+								int checkedId) {
+							quiz_.getQuestions()
+									.get(args.getInt("num_question"))
+									.setAnswered(checkedId);
+						}
+					});
 
-        quiz_collection_adapter_ = new QuizCollectionPagerAdapter(
-                getSupportFragmentManager());
-        view_pager_ = (ViewPager) findViewById(R.id.pager);
-        view_pager_.setAdapter(quiz_collection_adapter_);
+			return root_view;
+		}
+	}
 
-        page_indicator_ = (PageIndicator) findViewById(R.id.indicator);
-        page_indicator_.setViewPager(view_pager_);
-        
-        view_pager_.invalidate();
-    }
+	public void getResultSubmitedAnswers(JSONObject responseContent) {
+		try {
+
+			LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
+					.getSystemService(LAYOUT_INFLATER_SERVICE);
+			final View popupView = layoutInflater.inflate(
+					R.layout.popup_endquiz, null);
+			final PopupWindow popup_window = new PopupWindow(popupView,
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+			points_text_ = (TextView) popupView
+					.findViewById(R.id.points_quiz_text);
+			correct_answers_text_ = (TextView) popupView
+					.findViewById(R.id.correct_answers_text);
+
+			points_text_.setText(responseContent.getString("won"));
+			correct_answers_text_.setText(responseContent.getString("correct"));
+
+			Button dismiss_button = (Button) popupView
+					.findViewById(R.id.dismiss_button);
+			dismiss_button.setOnClickListener(new Button.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					popup_window.dismiss();
+					finish();
+				}
+			});
+
+			popupView.post(new Runnable() {
+
+				@Override
+				public void run() {
+					popup_window
+							.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+				}
+			});
+			// popup_window.showAsDropDown(btnOpenPopup, 50, -30);
+
+		} catch (JSONException e) {
+			Log.i(TAG,
+					"Error to get response: "
+							+ NetworkUtilities
+									.getResponseContent(responseContent));
+		}
+	}
+
+	@Override
+	public void processFinish(Quiz result) {
+		quiz_ = result;
+
+		quiz_collection_adapter_ = new QuizCollectionPagerAdapter(
+				getSupportFragmentManager());
+		view_pager_ = (ViewPager) findViewById(R.id.pager);
+		view_pager_.setAdapter(quiz_collection_adapter_);
+
+		page_indicator_ = (PageIndicator) findViewById(R.id.indicator);
+		page_indicator_.setViewPager(view_pager_);
+
+		view_pager_.invalidate();
+	}
+
+	private class UserPromotionID extends AsyncTask<String, Void, String> {
+		
+		ProgressDialog pg = new ProgressDialog(QuizActivity.this);
+		
+		@Override
+		protected String doInBackground(String... params) {
+			user_promotion_id_ = NetworkUtilities.getUserPromotionId(params[0], params[1]);
+			return user_promotion_id_;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			submitAnswers();
+			pg.dismiss();
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			pg.setIndeterminate(true);
+			pg.setMessage("Loading...");
+			pg.show();
+		}
+
+	}
 }

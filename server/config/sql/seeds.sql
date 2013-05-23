@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Máquina: localhost
--- Data de Criação: 14-Maio-2013 às 16:14
+-- Data de Criação: 23-Maio-2013 às 09:57
 -- Versão do servidor: 5.5.31
 -- versão do PHP: 5.5.0RC1
 
@@ -37,8 +37,8 @@ INSERT INTO `itempromotion` (`iid`, `pid`, `percent`) VALUES
 -- Extraindo dados da tabela `promotion`
 --
 
-INSERT INTO `promotion` (`pid`, `active`, `name`, `desc`, `image`, `init_date`, `end_date`, `grand_limit`, `user_limit`, `valid_coord`, `valid_coord_radius`, `transferable`, `win_points`, `func_type`, `rid`, `ptid`) VALUES
-(1, 1, 'Promoção do dia', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pellentesque elementum arcu. Integer vitae eros ante, a pharetra enim. Nam cursus pulvinar magna et scelerisque.', 'promo.jpg', 0, 0, 0, 0, NULL, NULL, 0, 0, 0, 1, 1);
+INSERT INTO `promotion` (`pid`, `active`, `name`, `desc`, `image`, `init_date`, `end_date`, `util_date`, `grand_limit`, `user_limit`, `valid_coord`, `valid_coord_radius`, `transferable`, `win_points`, `func_type`, `rid`, `ptid`) VALUES
+(1, 1, 'Promoção do dia', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pellentesque elementum arcu. Integer vitae eros ante, a pharetra enim. Nam cursus pulvinar magna et scelerisque.', 'promo.jpg', 0, 0, 0, 0, 0, NULL, NULL, 0, 0, 0, 1, 1);
 
 --
 -- Extraindo dados da tabela `promotiontype`

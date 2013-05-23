@@ -212,6 +212,7 @@ public class PromotionActivity extends SherlockActivity {
             switch (item.getItemId()) {
                 case R.id.menu_play:
                     Intent intent = new Intent(activity_, QuizActivity.class);
+                    intent.putExtra("Promotion", promotion_);
                     activity_.startActivity(intent);
                     break;
             }

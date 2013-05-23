@@ -19,7 +19,7 @@
 	         android:layout_margin="20dp">
 	      
 	         <TextView
-	             android:id="@+id/textView1"
+	             android:id="@+id/you_win_"
 	             android:layout_width="wrap_content"
 	             android:layout_height="wrap_content"
 	             android:layout_marginBottom="10dp"
@@ -49,7 +49,8 @@
 	                 android:layout_width="wrap_content"
 	                 android:layout_height="wrap_content"
 	                 android:textSize="16sp"
-	                 android:textColor="@color/gray" />
+	                 android:textColor="@color/gray"
+	                 android:text="correct" />
 
 	         </LinearLayout>
 	         
@@ -68,9 +69,10 @@
 	                 android:textColor="@color/gray" />
 
 	             <TextView
-	                 android:id="@+id/points_text"
+	                 android:id="@+id/points_quiz_text"
 	                 android:layout_width="fill_parent"
 	                 android:layout_height="wrap_content"
+	                 android:text="qwert"
 	                 android:textSize="16sp"
 	                 android:textColor="@color/gray" />
 	         </LinearLayout>
@@ -79,6 +81,7 @@
 	          	android:id="@+id/dismiss_button"
 	          	android:layout_width="match_parent"
 	          	android:layout_height="wrap_content"
+	          	android:background="#aaa"
 	          	android:text="Dismiss"
 	          	android:textAllCaps="true"
 	          	android:textColor="@color/white"

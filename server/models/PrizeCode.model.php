@@ -67,6 +67,15 @@
 			$this->data['upid'] = $upid;
 		}
 
+		public function getTransactionID()
+		{
+			return (int)$this->getData('transaction');
+		}
+		public function incTransactionID()
+		{
+			$this->data['transaction'] = 1 + $this->getTransactionID() ;
+		}
+
 		/* START: Only available on tradable finds, for performance boost */
 
 			public function getOriginalUID()
@@ -131,10 +140,16 @@
 			else
 			{
 				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET emiss_date = :emiss_date , util_date = :util_date, cur_uid = :cur_uid,' .
-												' valid_code = :valid_code, in_trading = :in_trading WHERE pcid = :pcid ;' );
+												' valid_code = :valid_code, in_trading = :in_trading, transaction = :transaction WHERE pcid = :pcid ;' );
 
 				$inTrading = $this->inTrading();
+				$transaction = $this->getTransactionID();
+
+				$sth->bindParam(':transaction', $transaction, PDO::PARAM_INT);
 				$sth->bindParam(':in_trading', $inTrading, PDO::PARAM_INT);
+
+				$sth->bindParam(':pcid', $pcid, PDO::PARAM_INT);
+
 			}
 
 			$emiss_date = $this->getEmissionDate();
@@ -178,37 +193,46 @@
 			return $ret;
 		}
 
-
-		public static function findOwnTrading($uid, $time = null)
+		public static function findOwnUnused($uid, $time = null, $restrict = null)
 		{
-			return self::_findTradable($uid, true, 1, $time);
-		}
-		public static function findOwnTradable($uid, $time = null)
-		{
-			return self::_findTradable($uid, true, 0, $time);
-		}
-		public static function findOthersTradable($uid, $time = null)
-		{
-			return self::_findTradable($uid, false, 1, $time);
+			return self::_findTradable($uid, true, false, $time, true, $restrict);
 		}
 
+		public static function findOwnTrading($uid, $time = null, $restrict = null)
+		{
+			return self::_findTradable($uid, true, true, $time, true, $restrict);
+		}
+		public static function findOwnTradable($uid, $time = null, $restrict = null)
+		{
+			return self::_findTradable($uid, true, false, $time, true, $restrict);
+		}
+		public static function findOthersTradable($uid, $time = null, $restrict = null)
+		{
+			return self::_findTradable($uid, false, true, $time, true, $restrict);
+		}
 
-		private static function _findTradable($uid, $owned, $inTrading, $time)
+
+		private static function _findTradable($uid, $owned, $inTrading, $time, $transferable = true, $restrict = null)
 		{
 			$prizes = array();
 			$time = is_null( $time ) ? time() : $time ;
 
+			$params = array( $transferable ? 1 : 0 , $time, $inTrading ? 1 : 0 , $uid );
+
+			if( !is_null($restrict) )
+				$params[] = $restrict;
+
 			$return = static::executeQuery( 'SELECT pc.pcid AS pcid, pc.emiss_date AS emiss_date, pc.util_date AS util_date, ' .
-											' pc.cur_uid AS cuir_uid, pc.valid_code AS valid_code, pc.in_trading AS in_trading, ' .
+											' pc.cur_uid AS cur_uid, pc.valid_code AS valid_code, pc.in_trading AS in_trading, ' .
 											' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid, p.util_date AS p_util_date, ' .
-											' p.name AS p_name, p.image AS p_image ' .
+											' p.name AS p_name, p.image AS p_image, pc.transaction AS transaction ' .
 											' FROM ' . self::TABLE_NAME .' AS pc ' .
 											' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid)' .
 											' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid)' .
-											' WHERE p.transferable = 1 AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
-											' AND up.end_date > 0 AND up.state = 1 AND pc.util_date = 0 ' .
-											' AND pc.in_trading = ? AND pc.cur_uid ' . ( $owned ? '=' : '<>' ) . ' ? ;',
-									  			array(  $time, $inTrading, $uid ), $stmt );
+											' WHERE p.transferable = ? AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
+											//' AND up.end_date > 0 AND up.state = 1 ' .
+											' AND pc.util_date = 0 AND pc.in_trading = ? AND pc.cur_uid ' . ( $owned ? '=' : '<>' ) . ' ? ' . ( is_null( $restrict ) ? '' : ' AND pc.pcid = ? ' ) . ';',
+									  			$params , $stmt );
 
 			if( $stmt !== null && $return !== false )
 			{
@@ -225,7 +249,7 @@
 
 		public static function findByPCID($pcid)
 		{
-			$result = static::query( 'SELECT pcid, emiss_date, util_date, cur_uid, valid_code, in_trading, upid' .
+			$result = static::query( 'SELECT pcid, emiss_date, util_date, cur_uid, valid_code, in_trading, upid, transaction ' .
 											' FROM ' . self::TABLE_NAME . ' WHERE pcid = ? ;',
 									  			array(  $pcid ) );
 
@@ -261,6 +285,10 @@
 			return static::fillModel( $result, new PrizeCode() );
 		}*/
 		
+		/*
+
+		????????? WHYYYYYYYY ANA MARGARIDA ?????????
+
 		public static function send_promo($pcid, $uid) {
 		
 			$dbh = DbConn::getInstance()->getDB();
@@ -288,6 +316,7 @@
 
 			return $ret;
 		}
+		*/
 
 	}
 

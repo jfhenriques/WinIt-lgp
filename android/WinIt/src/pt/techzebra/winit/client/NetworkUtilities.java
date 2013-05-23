@@ -85,18 +85,20 @@ public class NetworkUtilities {
 	public static final String USER_URI = BASE_URL + "/user.json";
 	public static final String PROMOTION_URI = BASE_URL + "/promotion";
 	public static final String TRADING_URI = BASE_URL + "/trading.json";
-	public static final String MY_PROMOTIONS_URI = BASE_URL + "/user/promotions/won.json";
-	public static final String MY_PROMOTIONS_IN_TRADING_URI = BASE_URL + "/user/promotions/trading.json";
-	public static final String MY_PROMOTIONS_TO_TRADE_URI = BASE_URL + "/user/promotions/tradable.json";
+
+	public static final String MY_PROMOTIONS_URI = BASE_URL
+			+ "/user/promotions/won.json";
+	public static final String MY_PROMOTIONS_IN_TRADING_URI = BASE_URL
+			+ "/user/promotions/trading.json";
+	public static final String MY_PROMOTIONS_TO_TRADE_URI = BASE_URL
+			+ "/user/promotions/tradable.json";
 	public static final String ADDRESSES_URI = BASE_URL + "/address";
 	public static final String MY_BADGES_URI = BASE_URL + "/user/badges.json";
-
 	public static final String QUIZ_URI = "/quizgame.json";
 
 	private static final String PARAM_ADDRESS_ID = "adid";
 
 	private static final String PARAM_ADDRESS_2 = "address2";
-
 
 	private static HttpClient http_client_;
 	private static HttpHost http_host_;
@@ -105,11 +107,13 @@ public class NetworkUtilities {
 	 * Configures the HttpClient to connect to the URL provided.
 	 */
 	public static void maybeCreateHttpClient() {
-		if (http_client_ == null) {                       
+
+		if (http_client_ == null) {
 			HttpParams parameters = new BasicHttpParams();
 			HttpConnectionParams.setConnectionTimeout(parameters, 10000);
-			HttpConnectionParams.setSoTimeout(parameters, 10000);            
-			http_client_ = new CustomHttpClient(parameters, WinIt.getAppContext());
+			HttpConnectionParams.setSoTimeout(parameters, 10000);
+			http_client_ = new CustomHttpClient(parameters,
+					WinIt.getAppContext());
 		}
 	}
 
@@ -330,7 +334,7 @@ public class NetworkUtilities {
 			@Override
 			public void run() {
 				((AuthenticationActivity) context)
-				.onAuthenticationResult(result);
+						.onAuthenticationResult(result);
 			}
 		});
 	}
@@ -375,19 +379,19 @@ public class NetworkUtilities {
 		return user;
 	}
 
-	//    public static Thread attemptFetchQuizGame(final String promotionid,
-	//            final String auth_token, final Handler handler,
-	//            final Context context) {
+	// public static Thread attemptFetchQuizGame(final String promotionid,
+	// final String auth_token, final Handler handler,
+	// final Context context) {
 	//
-	//        final Runnable runnable = new Runnable() {
-	//            @Override
-	//            public void run() {
-	//                fetchQuizGame(promotionid, auth_token, handler, context);
-	//            }
-	//        };
+	// final Runnable runnable = new Runnable() {
+	// @Override
+	// public void run() {
+	// fetchQuizGame(promotionid, auth_token, handler, context);
+	// }
+	// };
 	//
-	//        return NetworkUtilities.performOnBackgroundThread(runnable);
-	//    }
+	// return NetworkUtilities.performOnBackgroundThread(runnable);
+	// }
 
 	public static Quiz fetchQuizGame(String promotionid, String auth_token) {
 		String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "?token="
@@ -484,15 +488,16 @@ public class NetworkUtilities {
 	}
 
 	public static Thread submitAnswersQuizGame(final String promotion_id,
-			final String auth_token, final ArrayList<Question> arrayList,
-			final Handler handler, final Context context) {
+			final String auth_token, final String userpromotionid,
+			final ArrayList<Question> arrayList, final Handler handler,
+			final Context context) {
 
 		final Runnable runnable = new Runnable() {
 
 			@Override
 			public void run() {
-				submitAnswersAction(promotion_id, auth_token, arrayList,
-						handler, context);
+				submitAnswersAction(promotion_id, auth_token, userpromotionid,
+						arrayList, handler, context);
 			}
 		};
 
@@ -501,13 +506,11 @@ public class NetworkUtilities {
 	}
 
 	public static void submitAnswersAction(String promotion_id,
-			String auth_token, ArrayList<Question> arrayList, Handler handler,
-			Context context) {
-		// TODO: see this case!! change userpromotionid
-		String userpromotionid = "1";
-		// TODO: change
+			String auth_token, String user_promotion_id,
+			ArrayList<Question> arrayList, Handler handler, Context context) {
+		// TODO: Be careful when user go back without conclude quiz
 		String uri = PROMOTION_URI + "/" + promotion_id + "/quizgame/"
-				+ userpromotionid + ".json";
+				+ user_promotion_id + ".json";
 
 		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("token", auth_token));
@@ -515,7 +518,7 @@ public class NetworkUtilities {
 		for (int j = 0; j < arrayList.size(); j++) {
 			params.add(new BasicNameValuePair(String.format("answer[%d]",
 					arrayList.get(j).getId()), String.format("%d", arrayList
-							.get(j).getAnswered())));
+					.get(j).getAnswered())));
 		}
 
 		JSONObject json_response = post(uri, params);
@@ -531,6 +534,26 @@ public class NetworkUtilities {
 
 	}
 
+	public static String getUserPromotionId(final String promotion_id,
+			final String auth_token) {
+		String userpromotionid = null;
+		String uritemp = PROMOTION_URI + "/" + promotion_id + "/enroll.json";
+		ArrayList<NameValuePair> paramstemp = new ArrayList<NameValuePair>();
+		paramstemp.add(new BasicNameValuePair("token", auth_token));
+		JSONObject json_response_temp = post(uritemp, paramstemp);
+		Log.i(TAG, json_response_temp.toString());
+		if (validResponse(json_response_temp)) {
+			json_response_temp = getResponseContent(json_response_temp);
+			try {
+				userpromotionid = json_response_temp.getString("upid");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return userpromotionid;
+	}
+
 	private static void sendResponseToQuizGameActivity(
 			final JSONObject responseContent, Handler handler,
 			final Context context) {
@@ -542,7 +565,7 @@ public class NetworkUtilities {
 			@Override
 			public void run() {
 				((QuizActivity) context)
-				.getResultSubmitedAnswers(responseContent);
+						.getResultSubmitedAnswers(responseContent);
 			}
 		});
 	}
@@ -634,8 +657,7 @@ public class NetworkUtilities {
 		return promos;
 	}
 
-
-	public static ArrayList<Promotion> fetchOtherUsersTradings(String token){
+	public static ArrayList<Promotion> fetchOtherUsersTradings(String token) {
 
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
 		String uri = TRADING_URI + "?token=" + token;
@@ -646,7 +668,7 @@ public class NetworkUtilities {
 			return null;
 		}
 
-		for(int i = 0; i < r.length(); i++) {
+		for (int i = 0; i < r.length(); i++) {
 			try {
 				promos.add(Promotion.valueOf(r.getJSONObject(i)));
 			} catch (JSONException e) {
@@ -657,31 +679,31 @@ public class NetworkUtilities {
 
 	}
 
-	public static ArrayList<Promotion> fetchMyPromotions(String token){
+	public static ArrayList<Promotion> fetchMyPromotions(String token) {
 
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
-		//TODO
+		// TODO
 		String uri = MY_PROMOTIONS_URI + "?token=" + token;
 		JSONObject response = get(uri);
 		JSONArray r = getResponseContentArray(response);
-		for(int i = 0; i < r.length(); i++) {
+		for (int i = 0; i < r.length(); i++) {
 			try {
 				promos.add(Promotion.valueOfTrading(r.getJSONObject(i)));
 			} catch (JSONException e) {
 				e.printStackTrace();
+				return promos;
 			}
 		}
 		return promos;
-
 	}
 
-	public static ArrayList<Promotion> fetchMyPromotionsTradeable(String token){
+	public static ArrayList<Promotion> fetchMyPromotionsTradeable(String token) {
 
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
 		String uri = MY_PROMOTIONS_TO_TRADE_URI + "?token=" + token;
 		JSONObject response = get(uri);
 		JSONArray r = getResponseContentArray(response);
-		for(int i = 0; i < r.length(); i++) {
+		for (int i = 0; i < r.length(); i++) {
 			try {
 				promos.add(Promotion.valueOf(r.getJSONObject(i)));
 			} catch (JSONException e) {
@@ -691,13 +713,14 @@ public class NetworkUtilities {
 		return promos;
 
 	}
-	public static ArrayList<Promotion> fetchMyPromotionsInTrading(String token){
+
+	public static ArrayList<Promotion> fetchMyPromotionsInTrading(String token) {
 
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
 		String uri = MY_PROMOTIONS_IN_TRADING_URI + "?token=" + token;
 		JSONObject response = get(uri);
 		JSONArray r = getResponseContentArray(response);
-		for(int i = 0; i < r.length(); i++) {
+		for (int i = 0; i < r.length(); i++) {
 			try {
 				promos.add(Promotion.valueOf(r.getJSONObject(i)));
 			} catch (JSONException e) {
@@ -707,13 +730,13 @@ public class NetworkUtilities {
 		return promos;
 
 	}
-	
-	public static ArrayList<Badge> fetchMyBadges(String token){
+
+	public static ArrayList<Badge> fetchMyBadges(String token) {
 		ArrayList<Badge> badges = new ArrayList<Badge>();
 		String uri = MY_BADGES_URI + "?token=" + token;
 		JSONObject response = get(uri);
 		JSONArray r = getResponseContentArray(response);
-		for(int i = 0; i < r.length(); i++) {
+		for (int i = 0; i < r.length(); i++) {
 			try {
 				badges.add(Badge.valueOf(r.getJSONObject(i)));
 			} catch (JSONException e) {
@@ -722,7 +745,6 @@ public class NetworkUtilities {
 		}
 		return badges;
 	}
-
 
 	public static Thread attemptEditProfile(final String auth_token,
 			final String name, final String email, final String new_password,
@@ -755,8 +777,10 @@ public class NetworkUtilities {
 		profile_edited.add(new BasicNameValuePair("password", new_password));
 		profile_edited.add(new BasicNameValuePair("password", old_password));
 		profile_edited.add(new BasicNameValuePair("birth", birthday));
-		profile_edited.add(new BasicNameValuePair("adid", address_id));
-		profile_edited.add(new BasicNameValuePair("address2", address_2));
+		/*
+		 * profile_edited.add(new BasicNameValuePair("adid", address_id));
+		 * profile_edited.add(new BasicNameValuePair("address2", address_2));
+		 */
 
 		JSONObject response = put(uri, profile_edited);
 		String r = getResponseMessage(response);
@@ -778,5 +802,4 @@ public class NetworkUtilities {
 		});
 
 	}
-
 }
