@@ -19,7 +19,10 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity android:name="pt.techzebra.winit.ui.DashboardActivity" >
+        <activity
+            android:name="pt.techzebra.winit.ui.DashboardActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,20 +31,56 @@
         </activity>
         <activity
             android:name="pt.techzebra.winit.ui.AuthenticationActivity"
+            android:configChanges="orientation"
             android:excludeFromRecents="true"
-            android:noHistory="true" />
-        <activity android:name="pt.techzebra.winit.ui.SignupActivity" />
-        
-        <activity android:name="pt.techzebra.winit.ui.PromotionsActivity" />
-        <activity android:name="pt.techzebra.winit.ui.PromotionActivity" android:uiOptions="splitActionBarWhenNarrow"  />
-        <activity android:name="pt.techzebra.winit.ui.MyPromotionsActivity" />
-        <activity android:name="pt.techzebra.winit.ui.BadgesActivity" />
-        <activity android:name="pt.techzebra.winit.ui.ProfileActivity" />
-        <activity android:name="pt.techzebra.winit.ui.TagsActivity" />
-        <activity android:name="pt.techzebra.winit.ui.EditProfileActivity" />
-        <activity android:name="pt.techzebra.winit.games.quiz.QuizActivity" android:theme="@style/Theme.VPI"/>
-        <activity android:name="pt.techzebra.winit.ui.TradingActivity" />
-        <activity android:name="pt.techzebra.winit.ui.TradeablePromotionsFragmentActivity" />
+            android:noHistory="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="pt.techzebra.winit.ui.SignupActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="pt.techzebra.winit.ui.PromotionsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="pt.techzebra.winit.ui.PromotionActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:uiOptions="splitActionBarWhenNarrow" />
+        <activity
+            android:name="pt.techzebra.winit.ui.MyPromotionsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="pt.techzebra.winit.ui.BadgesActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="pt.techzebra.winit.ui.ProfileActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="pt.techzebra.winit.ui.TagsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="pt.techzebra.winit.ui.EditProfileActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="pt.techzebra.winit.games.quiz.QuizActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.VPI" />
+        <activity
+            android:name="pt.techzebra.winit.ui.TradingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="pt.techzebra.winit.ui.TradeablePromotionsFragmentActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
