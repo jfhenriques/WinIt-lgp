@@ -275,6 +275,19 @@
 			return $ret;
 		}
 
+		public static function remove_promo($pcid, $uid) {
+		
+			$dbh = DbConn::getInstance()->getDB();
+			$sth = null;
+			
+			$sth = $dbh->prepare('UPDATE '.self::TABLE_NAME.' SET in_trading = 0 WHERE pcid = :pcid');
+			
+			$sth->bindParam(':pcid', $pcid, PDO::PARAM_INT);
+		
+			$ret = $sth->execute();
+
+			return $ret;
+		}
 
 	}
 
