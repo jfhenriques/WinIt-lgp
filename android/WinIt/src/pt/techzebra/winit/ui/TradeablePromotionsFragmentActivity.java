@@ -101,7 +101,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 			try {
 				SharedPreferences preferences_ = WinIt.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
 				auth_token = preferences_.getString(Constants.PREF_AUTH_TOKEN, "");
-				promos = NetworkUtilities.fetchMyPromotionsInTrading(auth_token);
+				promos = NetworkUtilities.fetchMyPromotionsTradeable(auth_token);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}	

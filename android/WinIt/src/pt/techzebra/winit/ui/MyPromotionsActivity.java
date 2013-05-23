@@ -59,7 +59,7 @@ public class MyPromotionsActivity extends SherlockActivity {
 	
 	private class LoadingMyPromotions extends AsyncTask<Void, Void, ArrayList<Promotion>>{
 
-		String auth_token;
+		String auth_token = WinIt.getAuthToken();
 		private ProgressDialog progressDialog;
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
 		private Context mContext = null;
@@ -72,8 +72,6 @@ public class MyPromotionsActivity extends SherlockActivity {
 		@Override
 		protected ArrayList<Promotion> doInBackground(Void... params) {
 			try {
-				SharedPreferences preferences_ = WinIt.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
-				auth_token = preferences_.getString(Constants.PREF_AUTH_TOKEN, "");
 				promos = NetworkUtilities.fetchMyPromotions(auth_token);
 			} catch (Exception e) {
 				e.printStackTrace();
