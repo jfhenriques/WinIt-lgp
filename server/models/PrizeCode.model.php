@@ -98,7 +98,7 @@
 			public function getPromotionImageSRC()
 			{
 				$img = $this->getData('p_image');
-				return is_null( $img ) ? null : ( PROM_IMG_SRC_DIR . $img );
+				return is_null( $img ) ? null : ( Promotion::PROM_IMG_SRC_DIR . $img );
 			}
 
 		/* END */
