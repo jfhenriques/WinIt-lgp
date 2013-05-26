@@ -206,18 +206,22 @@
 		{
 			return self::_findTradable($uid, true, false, $time, true, $restrict);
 		}
-		public static function findOthersTradable($uid, $time = null, $restrict = null)
+		public static function findOthersTrading($uid, $time = null, $restrict = null)
 		{
 			return self::_findTradable($uid, false, true, $time, true, $restrict);
 		}
+		public static function findOthersTradable($uid, $time = null, $restrict = null)
+		{
+			return self::_findTradable($uid, false, false, $time, true, $restrict);
+		}
 
 
-		private static function _findTradable($uid, $owned, $inTrading, $time, $transferable = true, $restrict = null)
+		private static function _findTradable($uid, $owned, $inTrading, $time, $forceTransferable = true, $restrict = null)
 		{
 			$prizes = array();
 			$time = is_null( $time ) ? time() : $time ;
 
-			$params = array( $transferable ? 1 : 0 , $time, $inTrading ? 1 : 0 , $uid );
+			$params = array( $forceTransferable ? 1 : 0 , $time, $inTrading ? 1 : 0 , $uid );
 
 			if( !is_null($restrict) )
 				$params[] = $restrict;
@@ -255,68 +259,6 @@
 
 			return static::fillModel( $result, new PrizeCode() );
 		}
-
-		/*public static function sendPromoToTrading($pcid, $uid) 
-		{			
-			$dbh = DbConn::getInstance()->getDB();
-			$sth = null;
-			
-			$sth = $dbh->prepare('PROEDURE(?, ?);');//update prizecode SET in_trading = 1 where prizecode.upid = (select userpromotion.upid from userpromotion where userpromotion.uid = :uid and userpromotion.pid = :pid);' );
-			
-			$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
-			$sth->bindParam(':pid', $pid, PDO::PARAM_INT);
-						
-			$ret = $sth->execute(); // try catch PDOException 
-			*/
-			/*$result = static::query( 'SELECT pcid, emiss_date, util_date, cur_uid, valid_code, in_trading, upid' .
-											' FROM prizecode WHERE prizecode.upid = (select userpromotion.upid from userpromotion where userpromotion.uid = ? and userpromotion.pid = ?);',
-									  			array(  $uid, $pid ) );*/
-		
-			// return static::fillModel( $ret, new PrizeCode() );
-			/*return $ret;
-		}*/
-		
-		/*public static function is_transferable() {
-			$result = static::query( 'SELECT promotion.transferable '.
-											'FROM promotion, userpromotion, prizecode '.
-											'WHERE pcid = ? ;',
-									  			array(  $pcid ) );
-
-			return static::fillModel( $result, new PrizeCode() );
-		}*/
-		
-		/*
-
-		????????? WHYYYYYYYY ANA MARGARIDA ?????????
-
-		public static function send_promo($pcid, $uid) {
-		
-			$dbh = DbConn::getInstance()->getDB();
-			$sth = null;
-			
-			$sth = $dbh->prepare('UPDATE '.self::TABLE_NAME.' SET in_trading = 1 WHERE pcid = :pcid');
-			
-			$sth->bindParam(':pcid', $pcid, PDO::PARAM_INT);
-		
-			$ret = $sth->execute();
-
-			return $ret;
-		}
-
-		public static function remove_promo($pcid, $uid) {
-		
-			$dbh = DbConn::getInstance()->getDB();
-			$sth = null;
-			
-			$sth = $dbh->prepare('UPDATE '.self::TABLE_NAME.' SET in_trading = 0 WHERE pcid = :pcid');
-			
-			$sth->bindParam(':pcid', $pcid, PDO::PARAM_INT);
-		
-			$ret = $sth->execute();
-
-			return $ret;
-		}
-		*/
 
 	}
 

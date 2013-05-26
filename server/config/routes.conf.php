@@ -10,37 +10,49 @@
 		 *****************************************************************************************/
 		 
 		'namespace' => array(
-			'name' => 'api',		// Sem barras nem espaços, de preferência só letras
-
-			'resources' => array(
 			
-				':session' => array( 'only' => array( 'create', 'destroy' ) ),
-				
-				':user' => array( 'only' => array( 'create', 'index' ) ),
-				
-				// considerar o id do user que esta logado
-				':promotion' => array( 'only' => array( 'index', 'show' ),
+			array( 'name' => 'api',		// Sem barras nem espaços, de preferência só letras
+				   
+				   'resources' => array(
+					
+						':session' => array( 'only' => array( 'create', 'destroy' ) ),
+						
+						':user' => array( 'only' => array( 'create', 'index' ) ),
+						
+						// considerar o id do user que esta logado
+						':promotion' => array( 'only' => array( 'index', 'show' ),
 
-					':tag'  => array( 'only' => array( 'index', 'show' ) ),
-					// ':game' => array(
-					// 	':quizgame' => array(
-					// 		':question' => null,
-					// 		':answer' => null,
-					// 	),
-					// 	':proximtygame' => null,
-					// ),
-				),
-				
-				':tag' => array( 'only' => array( 'index', 'show' ) ),
+							':tag'  => array( 'only' => array( 'index', 'show' ) ),
+							// ':game' => array(
+							// 	':quizgame' => array(
+							// 		':question' => null,
+							// 		':answer' => null,
+							// 	),
+							// 	':proximtygame' => null,
+							// ),
+						),
+						
+						':tag' => array( 'only' => array( 'index', 'show' ) ),
 
-				':badge' => array( 'only' => array( 'index', 'show' ) ),
-				
-				// ':trade' => array(
-				// 	':promotion' => null,
-				// 	':sugestion' => null,
-				// ),
-				
+						':badge' => array( 'only' => array( 'index', 'show' ) ),
+						
+						// ':trade' => array(
+						// 	':promotion' => null,
+						// 	':sugestion' => null,
+						// ),
+						
+					),
 			),
+
+			/*array( 'name' => 'admin',
+
+					'resources' => array(
+
+						':promotion' => array( 'controller' => 'admin_promotion'),
+
+					),
+
+				),*/
 		),
 		
 		
@@ -120,15 +132,18 @@
 						array( 'match' => '/trading', 'controller' => 'trading', 'via' => 'get', 'action' => 'index',
 							   'matches' => array(
 							   
+									array( 'match' => '/:prizecode', 'controller' => 'trading', 'via' => 'get', 'action' => 'in_trading_suggestions'),
+									array( 'match' => '/:prizecode', 'controller' => 'trading', 'via' => 'put', 'action' => 'send_to_trading'),
+									array( 'match' => '/:prizecode', 'controller' => 'trading', 'via' => 'delete', 'action' => 'remove_from_trading'),
+
 									array( 'match' => '/:prizecode',
 										   'matches' => array(
 							
-												array( 'match' => '/suggestions', 'controller' => 'trading', 'via' => 'get', 'action' => 'in_trading_suggestions'),
-												array( 'match' => '/suggest/:suggestion', 'controller' => 'trading', 'via' => 'post', 'action' => 'suggest_trading'),
-												array( 'match' => '/send', 'controller' => 'trading', 'via' => 'post', 'action' => 'send_to_trading'),
-												array( 'match' => '/remove', 'controller' => 'trading', 'via' => 'post', 'action' => 'remove_from_trading'),
-												array( 'match' => '/accept', 'controller' => 'trading', 'via' => 'post', 'action' => 'accept_trading'),
-												array( 'match' => '/refuse', 'controller' => 'trading', 'via' => 'post', 'action' => 'refuse_trading'),
+												array( 'match' => '/suggest/:suggest', 'controller' => 'trading', 'via' => 'post', 'action' => 'suggest_trading'),
+												array( 'match' => '/suggest/:suggest', 'controller' => 'trading', 'via' => 'delete', 'action' => 'unsuggest_trading'),
+												array( 'match' => '/suggested/:suggest', 'controller' => 'trading', 'via' => 'get', 'action' => 'accept_trading'),
+												array( 'match' => '/suggested/:suggest', 'controller' => 'trading', 'via' => 'delete', 'action' => 'reject_trading'),
+
 												
 											),
 											
