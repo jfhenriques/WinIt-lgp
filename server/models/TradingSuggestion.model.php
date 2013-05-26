@@ -46,6 +46,14 @@
 		{
 			$this->data['date'] = $date;
 		}
+		public function getEndDate()
+		{
+			return (int)$this->getData('end_date');
+		}
+		public function setEndDate($date)
+		{
+			$this->data['end_date'] = $date;
+		}
 
 
 		public function getTransactionID()
@@ -56,11 +64,11 @@
 
 		public function getState()
 		{
-			return (int)$this->getData('sate');
+			return (int)$this->getData('state');
 		}
 		public function setState($sate)
 		{
-			$this->data['sate'] = $sate;
+			$this->data['state'] = $sate;
 		}
 
 
@@ -75,6 +83,10 @@
 			public function getPID()
 			{
 				return (int)$this->getData('pid');
+			}
+			public function getMaxUtilizationDate()
+			{
+				return (int)$this->getData('p_util_date');
 			}
 			public function getPromotionName()
 			{
@@ -99,19 +111,21 @@
 			$pcid_orig = $this->getPCIDOrig();
 			$pcid_dest = $this->getPCIDDest();
 			$date = $this->getDate();
+			$end_date = $this->getEndDate();
 			$transaction = $this->getTransactionID();
 			$state = $this->getState();
 
 			if( $pcid_orig <= 0 || $pcid_dest <= 0 )
 				throw new Exception("Chave primária não definida");
 			
-			$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (pcid_orig,pcid_dest,date,transaction,state) ' .
-								 ' VALUES(:pcid_orig, :pcid_dest, :date, :transaction, :state) ' .
-								 ' ON DUPLICATE KEY UPDATE state = :state, date = :date ;');
+			$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (pcid_orig,pcid_dest,date,end_date,transaction,state) ' .
+								 ' VALUES(:pcid_orig, :pcid_dest, :date, :end_date, :transaction, :state) ' .
+								 ' ON DUPLICATE KEY UPDATE state = :state, date = :date, end_date = :end_date ;');
 			
 			$sth->bindParam(':pcid_orig', $pcid_orig, PDO::PARAM_INT);
 			$sth->bindParam(':pcid_dest', $pcid_dest, PDO::PARAM_INT);
 			$sth->bindParam(':date', $date, PDO::PARAM_INT);
+			$sth->bindParam(':end_date', $end_date, PDO::PARAM_INT);
 			$sth->bindParam(':transaction', $transaction, PDO::PARAM_INT);
 			$sth->bindParam(':state', $state, PDO::PARAM_INT);
 
@@ -135,12 +149,14 @@
 											' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid, p.util_date AS p_util_date, ' .
 											' p.name AS p_name, p.image AS p_image ' .
 											' FROM ' . self::TABLE_NAME .' AS pcs ' .
-											' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pcF ON ( pcF.pcid = pcs.pcid_dest AND pcF.transaction = pcs.transaction )' .
-											' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pc ON (pc.pcid = pcs.pcid_orig)' .
-											' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid)' .
-											' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid)' .
+											' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pcF ON (pcF.pcid = pcs.pcid_dest AND pcF.transaction = pcs.transaction) ' .
+											' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pc ON (pc.pcid = pcs.pcid_orig) ' .
+											' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid) ' .
+											' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid) ' .
 											' WHERE p.transferable = 1 AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
-											' AND pcs.pcid_dest = ? AND pc.util_date = 0 AND pc.in_trading = 0 ' . ( is_null( $restrict ) ? '' : ' AND pcs.pcid_orig = ? ' ) . ';',
+											' AND pcs.pcid_dest = ? AND pcs.state = 0 AND pcs.end_date = 0 ' . 
+											' AND pc.util_date  = 0 AND pc.in_trading  = 0 ' .
+											' AND pcF.util_date = 0 AND pcF.in_trading = 1 ' . ( is_null( $restrict ) ? '' : ' AND pcs.pcid_orig = ? ' ) . ';',
 									  			$params , $stmt );
 			
 			if( $stmt !== null && $return !== false )
@@ -154,6 +170,16 @@
 
 			return $prizes;
 		}
+
+		public static function findByTransaction($trading, $transaction, $suggestion)
+		{
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE pcid_dest = ? AND transaction = ? AND pcid_orig = ? LIMIT 1;',
+									  array( $trading, $transaction, $suggestion ) );
+
+							
+			return static::fillModel( $result, new TradingSuggestion() );
+		}
+
 
 	}
 

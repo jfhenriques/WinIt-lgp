@@ -103,7 +103,8 @@
 				switch( $this->TYPE )
 				{
 					case COMMON_CACHE_APC:
-						apc_clear_cache();
+						apc_clear_cache('user');
+						apc_clear_cache('opcode');
 						break;
 						
 					case COMMON_CACHE_MEMCACHED:
@@ -140,7 +141,7 @@
 			switch( $this->TYPE )
 			{
 				case COMMON_CACHE_APC:
-					return unserialize( apc_fetch( $var0 ) );
+					return apc_fetch( $var0 );
 					
 				case COMMON_CACHE_MEMCACHED:
 					return $this->mc->get( $var0 ) ;
@@ -181,7 +182,7 @@
 			switch( $this->TYPE )
 			{
 				case COMMON_CACHE_APC:
-					return apc_store( $var0, serialize( $val ) );
+					return apc_store( $var0, $val );
 					
 				case COMMON_CACHE_MEMCACHED:
 					return $this->mc->set($var0, $val) ;

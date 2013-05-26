@@ -17,6 +17,14 @@
 	DEFINE( 'R_TRAD_ERR_PROMO_SELECT'			, 0x60 );
 	DEFINE( 'R_TRAD_ERR_PROMO_SAME'				, 0x61 );
 	DEFINE( 'R_TRAD_ERR_USER_SAME'				, 0x62 );
+	DEFINE( 'R_TRAD_ERR_NOT_OWNER'				, 0x63 );
+	DEFINE( 'R_TRAD_ERR_ALREADY_SUGGESTED'		, 0x64 );
+
+	DEFINE( 'R_TRAD_ERR_ALREADY_ACCEPTED'		, 0x70 );
+	DEFINE( 'R_TRAD_ERR_ALREADY_REJECTED'		, 0x71 );
+	DEFINE( 'R_TRAD_ERR_ALREADY_CANCELED'		, 0x72 );
+
+	DEFINE( 'R_TRAD_ERR_SUGGESTION_CANCELED'	, 0x73 );
 
 
 	class TradingController extends Controller {
@@ -29,14 +37,28 @@
 				R_TRAD_ERR_PROMO_SELECT			=> 'Erro a encontrar a promoção selecionada ou de sugestão',
 				R_TRAD_ERR_PROMO_SAME			=> 'A promoção selecionada e de sugestão não podem ser as mesmas',
 				R_TRAD_ERR_USER_SAME			=> 'Não pode trocar promoções consigo próprio',
+				R_TRAD_ERR_NOT_OWNER			=> 'A promoção não pertence ao utilizador',
+
+				R_TRAD_ERR_ALREADY_SUGGESTED	=> 'Sugestão já feita anteriormente',
 
 				R_TRAD_ERR_PROMO_NOT_AVAIL		=> 'Promoção não disponível por ter expirado, por não pertencer ao utilizador, ou por não se encontrar em trading',
 
 				R_TRAD_ERR_ALREADY_TRADING		=> 'Promoção já se encontra em trading',
 				R_TRAD_ERR_NOT_TRADING			=> 'Promoção não se encontra em trading',
+
+				R_TRAD_ERR_ALREADY_ACCEPTED		=> 'A sugestão já foi aceite anteriormente',
+				R_TRAD_ERR_ALREADY_REJECTED		=> 'A sugestão já foi rejeitada anteriormente',
+				R_TRAD_ERR_ALREADY_CANCELED		=> 'A sugestão já foi cancelada anteriormente',
+
+				R_TRAD_ERR_SUGGESTION_CANCELED	=> 'A sugestão foi cancelada pelo utilizador',
 			);
 
-	
+
+		const STATE_UNREVIEWED	= 0;
+		const STATE_REJECTED	= 1;
+		const STATE_ACCEPTED	= 2;
+		const STATE_CANCELED	= 3;
+
 
 		protected function __configure()
 		{
@@ -53,7 +75,7 @@
 
 			else
 			{
-				$prizes = PrizeCode::findOthersTradable( $user->getUID() );
+				$prizes = PrizeCode::findOthersTrading( $user->getUID() );
 
 				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
 				$this->respond->setJSONCode( R_STATUS_OK );
@@ -95,6 +117,7 @@
 				{
 					$ret[] = array('pcid' => $s->getPCIDOrig(),
 								   'pid' => $s->getPID(),
+								   'max_util_date' => $s->getMaxUtilizationDate(),
 								   'name' => $s->getPromotionName(),
 								   'image' => Controller::formatURL( $s->getPromotionImageSRC() ),
 						);
@@ -111,55 +134,18 @@
 		}
 
 
-		/*public function _index()
-		{
-
-			$pc = new PrizeCode();
-			$pc->setEmissionDate(time());
-			$pc->genValidCode("12345678901234567890123456789012");
-			$pc->setUPID(1);
-			$pc->setOwnerUID(1);
-			$pc->save();
-
-
-
-		}*/
-		
-		/*public function sendPromotionToTrading($pid) {
-		
-			$user = Authenticator::getInstance()->getUser();
-
-			if( is_null( $user ) ) 
-			{
-				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
-			} 
-			else if($user->getUID() != PrizeCode::getOwnerUID()) 
-			{
-				$this->respond->setJSONCode( R_TRAD_ERR_NO_MATCH_USER );
-			}
-			else
-			{
-
-				$this->respond->setJSONResponse( PrizeCode::sendPromoToTrading() );
-				$this->respond->setJSONCode( R_STATUS_OK );
-			}
-
-			$this->respond->renderJSON( static::$status );
-		
-		}*/
-
-		public function suggest_trading()
+		private function accept_reject_trading( $accept )
 		{
 		
 			$pcid = (int)valid_request_var( 'prizecode' );
-			$suggestId = (int)valid_request_var( 'suggestion' );
+			$suggestId = (int)valid_request_var( 'suggest' );
 			$time = time();
 
-		
 			$user = Authenticator::getInstance()->getUser();
 
-			$prizecodeOthers = null;
-			$prizecodeSuggest = null;
+			$suggestion = null;
+			$prizeMine = null;
+			$prizeSuggest = null;
 			
 			if( is_null( $user ) || $pcid <= 0 || $suggestId <= 0 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
@@ -167,23 +153,224 @@
 			else if( $pcid == $suggestId )
 				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SAME );
 
-			else if( 	is_null( $prizecodeOthers  = PrizeCode::findOthersTradable( $user->getUID(), $time, $pcid      ) )
-					 || !is_array( $prizecodeOthers ) || count( $prizecodeOthers ) !== 1
-					 || is_null( $prizecodeSuggest = PrizeCode::findOwnTradable   ( $user->getUID(), $time, $suggestId ) )
-					 || !is_array( $prizecodeSuggest ) || count( $prizecodeSuggest ) !== 1 )
+			else if( 	is_null( $prizeMine = PrizeCode::findOwnTrading( $user->getUID(), $time, $pcid ) )
+					 || !is_array( $prizeMine ) || count( $prizeMine ) !== 1
+					 || is_null( $suggestion = TradingSuggestion::findByTransaction(
+					 													$pcid,
+					 													$prizeMine[0]->getTransactionID(),
+					 													$suggestId ) )
+					 || is_null( $prizeSuggest = PrizeCode::findOthersTradable( $user->getUID(), $time, $suggestId ) )
+					 || !is_array( $prizeSuggest ) || count( $prizeSuggest ) !== 1 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SELECT );
 
-			else if( $prizecodeOthers[0]->getOwnerUID() === $prizecodeSuggest[0]->getOwnerUID() ) // verificar se o utilizador coincide
-					$this->respond->setJSONCode( R_TRAD_ERR_USER_SAME );
+			else if( $prizeSuggest[0]->getOwnerUID() === $prizeMine[0]->getOwnerUID() ) // verificar se o utilizador coincide
+				$this->respond->setJSONCode( R_TRAD_ERR_USER_SAME );
 				
+			else if( $suggestion->getState() === self::STATE_ACCEPTED )
+				$this->respond->setJSONCode( R_TRAD_ERR_ALREADY_ACCEPTED );
+
+			else if( $suggestion->getState() === self::STATE_REJECTED )
+				$this->respond->setJSONCode( R_TRAD_ERR_ALREADY_REJECTED );
+
+			else if( $suggestion->getState() === self::STATE_CANCELED )
+				$this->respond->setJSONCode( R_TRAD_ERR_SUGGESTION_CANCELED );
+
 			else
 			{
 
-				$traddSuggest = TradingSuggestion::instanciate($prizecodeSuggest[0], $prizecodeOthers[0]);
-				$traddSuggest->setDate( $time );
+				$suggestion->setEndDate( $time );
 
-				$this->respond->setJSONCode( $traddSuggest->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+				if( $accept )
+				{
 
+					$dbh = DbConn::getInstance()->getDB();
+					$dbh->beginTransaction();
+
+					try {
+
+						$prizeMine[0]->setOwnerUID( $prizeSuggest[0]->getOwnerUID() );
+						$prizeMine[0]->setTrading(false);
+
+						$prizeSuggest[0]->setOwnerUID( $user->getUID() );
+						$prizeSuggest[0]->setTrading(false);
+
+						$suggestion->setState( self::STATE_ACCEPTED );
+
+						$success = $prizeMine[0]->save() && $prizeSuggest[0]->save() && $suggestion->save() ;
+
+						if( $success )
+						{
+							$dbh->commit();
+							$this->respond->setJSONCode( R_STATUS_OK );
+						}
+
+						else
+						{
+							$dbh->rollBack();
+							$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
+						}
+
+					} catch(PDOException $e) {
+						$dbh->rollBack();
+
+						$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
+					}
+
+
+				}
+				else
+				{
+					$suggestion->setState( self::STATE_REJECTED );
+					$this->respond->setJSONCode( $suggestion->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+				}
+
+			}
+
+			$this->respond->renderJSON( static::$status );
+		
+		}
+
+		public function accept_trading()
+		{
+			$this->accept_reject_trading( true );
+		}
+		public function reject_trading()
+		{
+			$this->accept_reject_trading( false );
+		}
+
+
+
+
+		public function suggest_trading()
+		{
+		
+			$pcid = (int)valid_request_var( 'prizecode' );
+			$suggestId = (int)valid_request_var( 'suggest' );
+			$time = time();
+
+		
+			$user = Authenticator::getInstance()->getUser();
+
+			$prizeWanted = null;
+			$prizeMine = null;
+			
+			if( is_null( $user ) || $pcid <= 0 || $suggestId <= 0 )
+				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
+
+			else if( $pcid == $suggestId )
+				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SAME );
+
+			else if( 	is_null( $prizeWanted  = PrizeCode::findOthersTrading( $user->getUID(), $time, $pcid ) )
+					 || !is_array( $prizeWanted ) || count( $prizeWanted ) !== 1
+					 || is_null( $prizeMine = PrizeCode::findOwnTradable( $user->getUID(), $time, $suggestId ) )
+					 || !is_array( $prizeMine ) || count( $prizeMine ) !== 1 )
+				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SELECT );
+
+			else if( $prizeWanted[0]->getOwnerUID() === $prizeMine[0]->getOwnerUID() ) // verificar se o utilizador coincide
+					$this->respond->setJSONCode( R_TRAD_ERR_USER_SAME );
+
+			else
+			{
+
+				if( !is_null( $suggestion = TradingSuggestion::findByTransaction(
+																		$prizeWanted[0]->getPCID(),
+																		$prizeWanted[0]->getTransactionID(),
+																		$prizeMine[0]->getPCID() ) ) )
+				{
+
+					switch( $suggestion->getState() )
+					{
+						case self::STATE_UNREVIEWED:
+							$this->respond->setJSONCode( R_TRAD_ERR_ALREADY_SUGGESTED );
+									
+							break;
+
+						case self::STATE_ACCEPTED:
+							$this->respond->setJSONCode( R_TRAD_ERR_ALREADY_ACCEPTED );
+									
+							break;
+
+						case self::STATE_REJECTED:
+							$this->respond->setJSONCode( R_TRAD_ERR_ALREADY_REJECTED );
+									
+							break;
+
+						default:
+
+							$suggestion->setState( self::STATE_UNREVIEWED );
+							$suggestion->setEndDate( 0 );
+
+							$this->respond->setJSONCode( $suggestion->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+
+							break;
+					}
+
+				}
+					
+				else
+				{
+
+					$traddSuggest = TradingSuggestion::instanciate($prizeMine[0], $prizeWanted[0]);
+					$traddSuggest->setDate( $time );
+
+					$this->respond->setJSONCode( $traddSuggest->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+
+				}
+
+			}
+
+			$this->respond->renderJSON( static::$status );
+		
+		}
+
+		public function unsuggest_trading()
+		{
+		
+			$pcid = (int)valid_request_var( 'prizecode' );
+			$suggestId = (int)valid_request_var( 'suggest' );
+			$time = time();
+
+			$user = Authenticator::getInstance()->getUser();
+
+			$suggestion = null;
+			$prizeWanted = null;
+			$prizeMine = null;
+			
+			if( is_null( $user ) || $pcid <= 0 || $suggestId <= 0 )
+				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
+
+			else if( $pcid == $suggestId )
+				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SAME );
+
+			else if( 	is_null( $prizeWanted = PrizeCode::findOthersTrading( $user->getUID(), $time, $pcid ) )
+					 || !is_array( $prizeWanted ) || count( $prizeWanted ) !== 1
+					 || is_null( $suggestion = TradingSuggestion::findByTransaction(
+					 													$pcid,
+					 													$prizeWanted[0]->getTransactionID(),
+					 													$suggestId ) )
+					 || is_null( $prizeMine = PrizeCode::findOwnTradable( $user->getUID(), $time, $suggestId ) )
+					 || !is_array( $prizeMine ) || count( $prizeMine ) !== 1 )
+				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SELECT );
+
+			else if( $prizeWanted[0]->getOwnerUID() === $prizeMine[0]->getOwnerUID() ) // verificar se o utilizador coincide
+				$this->respond->setJSONCode( R_TRAD_ERR_USER_SAME );
+				
+			else if( $suggestion->getState() === self::STATE_ACCEPTED )
+				$this->respond->setJSONCode( R_TRAD_ERR_ALREADY_ACCEPTED );
+
+			else if( $suggestion->getState() === self::STATE_REJECTED )
+				$this->respond->setJSONCode( R_TRAD_ERR_ALREADY_REJECTED );
+
+			else if( $suggestion->getState() === self::STATE_CANCELED )
+				$this->respond->setJSONCode( R_TRAD_ERR_ALREADY_CANCELED );
+
+			else
+			{
+				$suggestion->setEndDate( $time );
+				$suggestion->setState( self::STATE_CANCELED );
+				
+				$this->respond->setJSONCode( $suggestion->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 			}
 
 			$this->respond->renderJSON( static::$status );
@@ -194,42 +381,66 @@
 
 		private function _send_remove_trading( $sendTo )
 		{
+			function only_one_arr( $arr, &$out )
+			{
+				if( is_array( $arr ) && count( $arr ) == 1 )
+				{
+					$out = $arr[0];
+
+					return true;
+				}
+
+				return false;
+			}
 		
 			$pcid = (int)valid_request_var( 'prizecode' );
 		
 			$user = Authenticator::getInstance()->getUser();
+			$time = time();
 
-			$prizecode = null;
-			$upromo = null;
-			$promotion = null;
-			
-			if( is_null( $user )
-					|| is_null( $prizecode = PrizeCode::findByPCID($pcid) )
-					|| is_null( $upromo = UserPromotion::findByUPID($prizecode->getUPID() ) )
-					|| is_null( $promotion = Promotion::findByPID( $upromo->getPID() ) ) )  // verificar se utilizador é válido
+			if( is_null( $user ) || $pcid <= 0 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
 
-			else if($user->getUID() != $prizecode->getOwnerUID()) // verificar se o utilizador coincide
-				$this->respond->setJSONCode( R_TRAD_ERR_NO_MATCH_USER );
-
-			else if($promotion->isTransferable() === false)
-				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_UNTRANSFERABLE );
-
-			else if($prizecode->getUtilizationDate() !== 0) // verificar se nao foi utilizada
-				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_USED );
-
-			else if( $prizecode->inTrading() === $sendTo ) // verificar se nao foi utilizada
-				$this->respond->setJSONCode( $sendTo ? R_TRAD_ERR_ALREADY_TRADING : R_TRAD_ERR_NOT_TRADING );
-			
 			else
 			{
+				$not = null;
+				$in  = null;
 
-				$prizecode->setTrading( $sendTo );
+				// Search only if needed, in this case, if not not found in first condition, saving one new database connection
 				if( $sendTo )
-					$prizecode->incTransactionID();
+				{
+					if( !only_one_arr( PrizeCode::findOwnTradable( $user->getUID(), $time, $pcid ) , $not) )
+						only_one_arr( PrizeCode::findOwnTrading ( $user->getUID(), $time, $pcid ) , $in );
+				}
+				else
+				{
+					if( !only_one_arr( PrizeCode::findOwnTrading( $user->getUID(), $time, $pcid ) , $in) )
+						only_one_arr( PrizeCode::findOwnTradable ( $user->getUID(), $time, $pcid ) , $not );	
+				}
 
-				$this->respond->setJSONCode( $prizecode->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
-		
+
+				if( is_null( $in ) && is_null($not) )
+					$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SELECT );
+
+				else if( $sendTo && is_null($not) )
+					$this->respond->setJSONCode( R_TRAD_ERR_ALREADY_TRADING );
+
+				else if( !$sendTo && is_null($in) )
+					$this->respond->setJSONCode( R_TRAD_ERR_NOT_TRADING );
+
+				else
+				{
+
+					$prizecode = $sendTo ? $not : $in;
+
+					$prizecode->setTrading( $sendTo );
+
+					if( $sendTo )
+						$not->incTransactionID();
+
+					$this->respond->setJSONCode( $prizecode->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+
+				}
 			}
 
 			$this->respond->renderJSON( static::$status );
@@ -238,64 +449,13 @@
 
 		public function send_to_trading()
 		{
-		
 			$this->_send_remove_trading( true );
 		}
 
 		public function remove_from_trading()
 		{
-		
 			$this->_send_remove_trading( false );
 		}
-
-		
-		/*public function remove_from_trading() {
-		
-			$pcid = (int)valid_request_var( 'prizecode' );
-		
-			$user = Authenticator::getInstance()->getUser();
-
-			$prizecode = PrizeCode::findByPCID($pcid);			
-			$upromoId = $prizecode->getUPID();
-			
-			$upromo = UserPromotion::findByUPID($upromoId);
-			$promoId = $upromo->getPID();
-			
-			$promotion = Promotion::findByPID($promoId);
-			
-			if( is_null( $user ) ) // verificar se utilizador é válido
-			{
-				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
-			} 
-			else if($user->getUID() != $prizecode->getOwnerUID()) // verificar se o utilizador coincide
-			{
-				$this->respond->setJSONCode( R_TRAD_ERR_NO_MATCH_USER );
-			} 
-			else if($prizecode->getUtilizationDate() != 0) // verificar se nao foi utilizada
-			{
-				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_USED );
-			}
-			else if($promotion->isTransferable() === false) {
-				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_UNTRANSFERABLE );
-			}
-			else
-			{
-				$uid = $user->getUID();
-				
-				$prizecode->setTrading(false);
-				$result = $prizecode->remove_promo($pcid, $uid);
-				
-				if($result === false) {
-					$this->respond->setJSONCode( R_TRAD_ERR_TRADE_FAIL );
-				}
-				
-				// $this->respond->setJSONResponse( PrizeCode::send_promo($pcid, $uid) );
-				$this->respond->setJSONCode( R_STATUS_OK );
-			}
-
-			$this->respond->renderJSON( static::$status );
-		
-		}*/
 		
 	}
 

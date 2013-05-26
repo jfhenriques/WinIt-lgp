@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 23, 2013 at 10:50 AM
+-- Generation Time: May 26, 2013 at 06:08 AM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -12,12 +12,6 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT=0;
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
 
 --
 -- Database: `tlantic`
@@ -104,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `badges` (
   `image` varchar(300) DEFAULT NULL,
   `description` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`bid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -154,8 +148,8 @@ CREATE TABLE IF NOT EXISTS `prizecode` (
   `upid` int(11) NOT NULL,
   PRIMARY KEY (`pcid`),
   UNIQUE KEY `valid_code` (`valid_code`),
-  UNIQUE KEY `i_prizecode_upid` (`upid`),
-  KEY `i_prizecode_cur_uid` (`cur_uid`)
+  KEY `i_prizecode_cur_uid` (`cur_uid`),
+  KEY `i_prizecode_upid` (`upid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -379,12 +373,14 @@ DROP TABLE IF EXISTS `tradingsuggestion`;
 CREATE TABLE IF NOT EXISTS `tradingsuggestion` (
   `pcid_orig` int(11) NOT NULL,
   `pcid_dest` int(11) NOT NULL,
-  `date` int(11) NOT NULL,
   `transaction` int(11) NOT NULL,
+  `date` int(11) NOT NULL,
+  `end_date` int(11) NOT NULL DEFAULT '0',
   `state` smallint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`pcid_orig`,`pcid_dest`,`transaction`),
   KEY `i_tradingsuggestion_pcid_orig` (`pcid_orig`),
-  KEY `i_tradingsuggestion_pcid_dest` (`pcid_dest`)
+  KEY `i_tradingsuggestion_pcid_dest` (`pcid_dest`),
+  KEY `i_tradingsuggestion_transaction` (`transaction`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -440,8 +436,8 @@ CREATE TABLE IF NOT EXISTS `userpromotion` (
   `upid` int(11) NOT NULL AUTO_INCREMENT,
   `uid` int(11) NOT NULL,
   `pid` int(11) NOT NULL,
-  `init_date` int(11) DEFAULT NULL,
-  `end_date` int(11) DEFAULT NULL,
+  `init_date` int(11) NOT NULL,
+  `end_date` int(11) NOT NULL DEFAULT '0',
   `state` smallint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`upid`),
   KEY `i_userpromotion_uid` (`uid`),
@@ -674,7 +670,3 @@ ALTER TABLE `xppoints`
   ADD CONSTRAINT `xppoints_ibfk_2` FOREIGN KEY (`pid`) REFERENCES `promotion` (`pid`);
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
