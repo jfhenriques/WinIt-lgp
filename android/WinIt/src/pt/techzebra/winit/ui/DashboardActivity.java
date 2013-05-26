@@ -78,8 +78,6 @@ public class DashboardActivity extends SherlockActivity {
         return true;
     }
     
-
-    
     public void handleRoomSelection(View view) {
         Intent intent = null;
         switch (view.getId()) {

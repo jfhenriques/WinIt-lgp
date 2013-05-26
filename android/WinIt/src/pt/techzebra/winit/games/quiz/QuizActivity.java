@@ -11,8 +11,11 @@ import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.client.Quiz;
 import pt.techzebra.winit.platform.FetchQuizTask;
+import pt.techzebra.winit.platform.ObservableScrollView;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -26,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
@@ -36,6 +40,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -133,7 +138,7 @@ public class QuizActivity extends SherlockFragmentActivity implements
 		@Override
 		public Fragment getItem(int i) {
 			Log.d(TAG, "" + i);
-			Fragment fragment = new QuestionObjectFragment();
+			Fragment fragment = new QuestionFragment();
 			Bundle args = new Bundle();
 			args.putString("question", quiz_.getQuestions().get(i).getTitle());
 			args.putInt("num_question", i);
@@ -163,18 +168,21 @@ public class QuizActivity extends SherlockFragmentActivity implements
 
 	}
 
-	public static class QuestionObjectFragment extends Fragment {
+	public static class QuestionFragment extends Fragment {
 		public static final String ARG_OBJECT = "question";
-
+	    
+	    public QuestionFragment() {}
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle saved_instance_state) {
 			View root_view = inflater.inflate(R.layout.question_fragment,
-					container, false);
-
+					container, false);	
+	        TextView question_text = (TextView) root_view.findViewById(R.id.question_text);
+   
+	        
 			final Bundle args = getArguments();
-			((TextView) root_view.findViewById(R.id.question_text))
-					.setText(args.getString("question"));
+			question_text.setText(args.getString("question"));
 
 			// TODO: mudar para vários tipos de resposta
 			RadioGroup radio_group = (RadioGroup) root_view
@@ -193,7 +201,6 @@ public class QuizActivity extends SherlockFragmentActivity implements
 
 			radio_group
 					.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
 						@Override
 						public void onCheckedChanged(RadioGroup group,
 								int checkedId) {
