@@ -1,198 +1,163 @@
 package pt.techzebra.winit.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
-import pt.techzebra.winit.Utilities;
-import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.Promotion;
-import pt.techzebra.winit.staggeredgridview.ImageLoader;
-import pt.techzebra.winit.staggeredgridview.ScaleImageView;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import pt.techzebra.winit.staggeredgridview.StaggeredAdapter;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.actionbarsherlock.R.style;
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.origamilabs.library.views.StaggeredGridView;
+import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
 
-public class MyPromotionsActivity extends SherlockActivity {
+public class MyPromotionsActivity extends SherlockFragmentActivity implements OnItemClickListener {
 
 	private ActionBar action_bar_;
-	List<HashMap<String,String>> promotions = new ArrayList<HashMap<String,String>>();
-	HashMap<String, String> map = new HashMap<String, String>();
-	private BinderData bindingData;
-	//private Promotion promotion_wanted;
-	private Context mContext = null;
-	View layout = null;
-	ListView list = null;
+	static ViewPager view_pager_;
+	private MyPromotionsPagerAdapter pager_adapter_;
+	StaggeredGridView staggered_grid_view_won;
+	StaggeredGridView staggered_grid_view_in_trading;
+	StaggeredAdapter adapter_won_;
+	StaggeredAdapter adapter_in_trading_;
+	TextView page_title_;
+	String auth_token;
+	Context mContext_;
+	
+	ArrayList<Promotion> promotions_in_trading_ = new ArrayList<Promotion>();
+	ArrayList<Promotion> promotions_won_ = new ArrayList<Promotion>();
+	
+	private static final int NUM_STEPS_ = 2;
+	
+
+	protected void onCreate(Bundle savedInstanceState) {  
+
+		super.onCreate(savedInstanceState);  
+		setContentView(R.layout.my_promotions_activity); 
+		ArrayList<ArrayList<Promotion>> tmp = new ArrayList<ArrayList<Promotion>>();
+		tmp = (ArrayList<ArrayList<Promotion>>) getIntent().getSerializableExtra("Promotions");
+		promotions_in_trading_ = tmp.get(0);
+		promotions_won_ = tmp.get(1);
+		action_bar_ = getSupportActionBar();
+		action_bar_.setTitle(R.string.my_promotions);
+		action_bar_.setDisplayHomeAsUpEnabled(true);
+
+		
+		pager_adapter_ = new MyPromotionsPagerAdapter(getSupportFragmentManager());
+
+		view_pager_ = (ViewPager) findViewById(R.id.pager);
+		view_pager_.setOffscreenPageLimit(1);
+		view_pager_.setAdapter(pager_adapter_);
+		
+		adapter_in_trading_ = new StaggeredAdapter(this,R.id.list_image, promotions_in_trading_);
+		adapter_won_ = new StaggeredAdapter(this,R.id.list_image, promotions_won_);
+		
+		auth_token = WinIt.getAuthToken();
+		mContext_ = this;
+
+	}  
+
+	@Override
+	public void onBackPressed(){
+		super.onBackPressed();
+		finish();
+	}
+
+
+	private static class MyPromotionsPagerAdapter extends FragmentStatePagerAdapter {
+
+		public MyPromotionsPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int i) {
+			return MyPromotionsStepFragment.newInstance(i);
+		}
+
+		@Override
+		public int getCount() {
+			return NUM_STEPS_;
+		}
+
+
+	}
+
+
+	public static class MyPromotionsStepFragment extends SherlockFragment{
+		private int step_;
+
+		static MyPromotionsStepFragment newInstance(int step) {
+			MyPromotionsStepFragment f = new MyPromotionsStepFragment();
+
+			Bundle args = new Bundle();
+			args.putInt("step", step);
+			f.setArguments(args);
+
+			return f;
+		}
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			step_ = getArguments() != null ? getArguments().getInt("step") : 0;
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saved_instance_state) {
+			View v = inflater.inflate(step_ == 0 ? R.layout.my_promotions_fragment
+                    : R.layout.my_promotions_fragment , container, false);
+			return v;
+		}
+
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			SherlockFragmentActivity activity = getSherlockActivity();
+
+			int margin = activity.getResources().getDimensionPixelSize(R.dimen.promotions_list_margin);
+			if(step_ == 0){
+				((MyPromotionsActivity) activity).page_title_ = (TextView) activity.findViewById(R.id.page_title);
+				((MyPromotionsActivity) activity).page_title_.setText("Promotions In Trading");
+				((MyPromotionsActivity) activity).staggered_grid_view_in_trading = (StaggeredGridView) activity.findViewById(R.id.listMyPromotions);
+				((MyPromotionsActivity) activity).staggered_grid_view_in_trading.setItemMargin(margin);
+				((MyPromotionsActivity) activity).staggered_grid_view_in_trading.setPadding(margin, 0, margin, 0);
+				((MyPromotionsActivity) activity).staggered_grid_view_in_trading.setSelector(R.drawable.highlight_overlay);
+				((MyPromotionsActivity) activity).staggered_grid_view_in_trading.setAdapter(((MyPromotionsActivity) activity).adapter_in_trading_);
+				((MyPromotionsActivity) activity).adapter_in_trading_.notifyDataSetChanged();
+			}
+			else{
+				((MyPromotionsActivity) activity).page_title_ = (TextView) activity.findViewById(R.id.page_title);
+				((MyPromotionsActivity) activity).page_title_.setText("Won Promotions");
+				((MyPromotionsActivity) activity).staggered_grid_view_won = (StaggeredGridView) activity.findViewById(R.id.listMyPromotions);
+				((MyPromotionsActivity) activity).staggered_grid_view_won.setItemMargin(margin);
+				((MyPromotionsActivity) activity).staggered_grid_view_won.setPadding(margin, 0, margin, 0);
+				((MyPromotionsActivity) activity).staggered_grid_view_won.setSelector(R.drawable.highlight_overlay);
+				((MyPromotionsActivity) activity).staggered_grid_view_won.setAdapter(((MyPromotionsActivity) activity).adapter_won_);
+				((MyPromotionsActivity) activity).adapter_won_.notifyDataSetChanged();
+			}
+		
+		}
+		
+	}
 
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		action_bar_ = getSupportActionBar();
-		action_bar_.setTitle(R.string.my_promotions);
-		setContentView(R.layout.my_promotions_activity);
-		mContext = MyPromotionsActivity.this;
-		list = (ListView) findViewById(R.id.list);
-		new LoadingMyPromotions(this).execute();
-		bindingData = new BinderData(this, R.id.list_image, promotions);
-		list.setAdapter(bindingData);
-
-	}
-	
-	private class LoadingMyPromotions extends AsyncTask<Void, Void, ArrayList<Promotion>>{
-
-		String auth_token;
-		private ProgressDialog progressDialog;
-		ArrayList<Promotion> promos = new ArrayList<Promotion>();
-		private Context mContext = null;
-
-		public LoadingMyPromotions(Context mContext)
-		{
-			this.mContext = mContext;
-		}
-
-		@Override
-		protected ArrayList<Promotion> doInBackground(Void... params) {
-			try {
-				SharedPreferences preferences_ = WinIt.getAppContext().getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
-				auth_token = preferences_.getString(Constants.PREF_AUTH_TOKEN, "");
-				promos = NetworkUtilities.fetchMyPromotions(auth_token);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}		
-			if(promos != null)
-				return promos;
-			return null;
-		}
-
-		protected void onPreExecute(){
-			super.onPreExecute();
-			progressDialog = new ProgressDialog(mContext);
-			progressDialog.setIndeterminate(true);
-			progressDialog.setProgressStyle(style.Sherlock___Widget_Holo_Spinner);
-			progressDialog.setMessage("Loading promotions...");
-			progressDialog.show();
-		}
-
-		
-		@Override
-		protected void onPostExecute(ArrayList<Promotion> result){
-			super.onPostExecute(result);
-			progressDialog.dismiss();
-			if(result != null){
-				for(int i=0; i < result.size(); i++){ // TODO
-					//if(result.get(i).getPromotionID() != promotion_wanted.getPromotionID()){
-						map = new HashMap<String, String>();
-						map.put("id", Integer.toString(result.get(i).getPromotionID()));
-						map.put("name", result.get(i).getName());
-						map.put("end_date", Long.toString(result.get(i).getEndDate()));
-						map.put("win_points", Integer.toString(result.get(i).getWinPoints()));
-						map.put("image", result.get(i).getImageUrl());
-						promotions.add(map);
-					//}
-				}
-
-				bindingData.notifyDataSetChanged();
-			} else {
-				if(!Utilities.hasInternetConnection(mContext)){
-					AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-					builder.setMessage("No Internet connection. Do you wish to open Settings?");
-					builder.setPositiveButton("Sure", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							mContext.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
-						}
-					});
-					builder.setNegativeButton("No, thanks", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// User cancelled the dialog
-						}
-					});
-					AlertDialog dialog = builder.create();
-					dialog.show();
-				}
-			}
-		}
-
-	}
-
-
-	private class BinderData extends SimpleAdapter{
-
-		List<HashMap<String,String>> objects;
-		private ImageLoader mLoader;
-
-		public BinderData(Context context, int textViewResourceId, List<HashMap<String,String>> objects) {
-			super(context, objects, textViewResourceId, null, null);
-			// TODO Auto-generated constructor stub
-			this.objects = objects;
-			mLoader = new ImageLoader(context);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-
-			ViewHolder holder;
-
-			View vi=convertView;
-			if(convertView==null){
-				LayoutInflater inflater = LayoutInflater.from(getBaseContext());;
-				vi = inflater.inflate(R.layout.my_promotions_list_row, null);
-				holder = new ViewHolder();
-
-				holder.name =  (TextView)vi.findViewById(R.id.list_item_name); 
-				holder.end_date =  (TextView)vi.findViewById(R.id.list_item_end_date); 
-				holder.win_points =  (TextView)vi.findViewById(R.id.list_item_win_points); 
-				holder.image =(ScaleImageView)vi.findViewById(R.id.list_image); 
-
-				vi.setTag(holder);
-			}
-			else{
-				holder = (ViewHolder)vi.getTag();
-			}
-
-			// Setting all values in listview
-
-			holder.id = objects.get(position).get("id");
-			holder.name.setText(objects.get(position).get("name"));
-			mLoader.DisplayImage(objects.get(position).get("image"), holder.image);      
-
-			return vi;
-		}
-		
-		public int getPromotionID(int position){
-			return Integer.parseInt(objects.get(position).get("id"));
-		}
-		
-		public String getPromotionImageUrl(int position){
-			return objects.get(position).get("image");
-		}
-
-
-		public class ViewHolder{
-			String id;
-			TextView name;
-			TextView end_date;
-			TextView win_points;
-			ScaleImageView image;
-		} 
+	public void onItemClick(StaggeredGridView parent, View view, int position,
+			long id) {
+		//TODO
 	}
 }
- 
+
+

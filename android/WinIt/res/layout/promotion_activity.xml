@@ -3,13 +3,13 @@
     android:id="@+id/scroll_view1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray" >
+    android:background="@color/clouds" >
 
     <LinearLayout
         android:id="@+id/LinearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/light_gray"
+        android:background="@color/clouds"
         android:orientation="vertical" >
 
         <ImageView

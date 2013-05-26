@@ -36,7 +36,7 @@
 			//$cc_key = //CommonCache::buildVarName('cached', 'routes');
 
 			$cache = $cc->get( self::ROUTES_KEY );
-			
+
 			$lastMod = @filemtime(ROUTES_FILE) ;
 			
 			if( $cache === false || !is_array( $cache ) ||
@@ -163,7 +163,7 @@
 						insertMethod($controller, $name, 'post', 'create', $output);
 					
 					if( checkInArray('new', $only) )	
-						insertMethod($controller, 'new', 'get', 'new', $output[$name]);
+						insertMethod($controller, 'new', 'get', 'mnew', $output[$name]);
 
 					if( checkInArray('show', $only) )
 						insertMethod($controller, $id, 'get', 'show', $output[$name]);
@@ -230,13 +230,14 @@
 			{
 				if( isset( $arr['namespace'] ) && is_array( $arr['namespace'] ) )
 				{
-					$arr_recur = &$arr['namespace'];
-					
-					if( isset( $arr_recur['name'] ) )
+					foreach( $arr['namespace'] as $space )
 					{
-						Router::add_key_to_array( $arr_recur['name'], $output );
+						if( !is_array( $space ) || !isset( $space['name'] ) )
+							continue;
+
+						Router::add_key_to_array( $space['name'], $output );
 						
-						processNamespace( $arr_recur, $output[ $arr_recur['name'] ] );
+						processNamespace( $space, $output[ $space['name'] ] );
 					}
 				}
 				

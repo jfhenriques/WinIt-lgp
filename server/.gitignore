@@ -1,5 +1,7 @@
 config/environment.conf.php
 public/.htaccess
 tmp
+controllers/admin_promotion.controller.php
+views/admin_promotion
 tlantic_server.sublime-*
 public/p.php

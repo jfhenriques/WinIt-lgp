@@ -6,6 +6,11 @@
 
 		const TABLE_NAME = "prizecode";
 
+		const KEY_PRIZECODE_O_RE = "sql.tradableprizes.o.re";
+		const KEY_PRIZECODE_O_NR = "sql.tradableprizes.o.nr";
+		const KEY_PRIZECODE_NO_RE = "sql.tradableprizes.no.re";
+		const KEY_PRIZECODE_NO_NR = "sql.tradableprizes.no.nr";
+
 		
 
 		public function getPCID()
@@ -44,10 +49,6 @@
 		{
 			return $this->getData('valid_code');
 		}
-		// public function setCode($code)
-		// {
-		// 	$this->data['valid_code'] = $code;
-		// }
 
 		public function inTrading()
 		{
@@ -97,7 +98,7 @@
 			public function getPromotionImageSRC()
 			{
 				$img = $this->getData('p_image');
-				return is_null( $img ) ? null : ( PROM_IMG_SRC_DIR . $img );
+				return is_null( $img ) ? null : ( Promotion::PROM_IMG_SRC_DIR . $img );
 			}
 
 		/* END */
@@ -206,33 +207,52 @@
 		{
 			return self::_findTradable($uid, true, false, $time, true, $restrict);
 		}
-		public static function findOthersTradable($uid, $time = null, $restrict = null)
+		public static function findOthersTrading($uid, $time = null, $restrict = null)
 		{
 			return self::_findTradable($uid, false, true, $time, true, $restrict);
 		}
+		public static function findOthersTradable($uid, $time = null, $restrict = null)
+		{
+			return self::_findTradable($uid, false, false, $time, true, $restrict);
+		}
 
 
-		private static function _findTradable($uid, $owned, $inTrading, $time, $transferable = true, $restrict = null)
+		private static function _findTradable($uid, $owned, $inTrading, $time, $forceTransferable = true, $restrict = null)
 		{
 			$prizes = array();
 			$time = is_null( $time ) ? time() : $time ;
 
-			$params = array( $transferable ? 1 : 0 , $time, $inTrading ? 1 : 0 , $uid );
+			$params = array( $forceTransferable ? 1 : 0 , $time, $inTrading ? 1 : 0 , $uid );
 
 			if( !is_null($restrict) )
 				$params[] = $restrict;
 
-			$return = static::executeQuery( 'SELECT pc.pcid AS pcid, pc.emiss_date AS emiss_date, pc.util_date AS util_date, ' .
-											' pc.cur_uid AS cur_uid, pc.valid_code AS valid_code, pc.in_trading AS in_trading, ' .
-											' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid, p.util_date AS p_util_date, ' .
-											' p.name AS p_name, p.image AS p_image, pc.transaction AS transaction ' .
-											' FROM ' . self::TABLE_NAME .' AS pc ' .
-											' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid)' .
-											' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid)' .
-											' WHERE p.transferable = ? AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
-											//' AND up.end_date > 0 AND up.state = 1 ' .
-											' AND pc.util_date = 0 AND pc.in_trading = ? AND pc.cur_uid ' . ( $owned ? '=' : '<>' ) . ' ? ' . ( is_null( $restrict ) ? '' : ' AND pc.pcid = ? ' ) . ';',
-									  			$params , $stmt );
+			$cc = CommonCache::getInstance();
+			$key = null;
+
+			if( is_null( $restrict ) )
+				$key = ( $owned ? self::KEY_PRIZECODE_O_RE : self::KEY_PRIZECODE_NO_RE );
+			else
+				$key = ( $owned ? self::KEY_PRIZECODE_O_NR : self::KEY_PRIZECODE_NO_NR );
+
+			$sql = $cc->get( $key );
+
+			if( $sql === false )
+			{
+				$sql =  'SELECT pc.pcid AS pcid, pc.emiss_date AS emiss_date, pc.util_date AS util_date, ' .
+						' pc.cur_uid AS cur_uid, pc.valid_code AS valid_code, pc.in_trading AS in_trading, ' .
+						' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid, p.util_date AS p_util_date, ' .
+						' p.name AS p_name, p.image AS p_image, pc.transaction AS transaction ' .
+						' FROM ' . self::TABLE_NAME .' AS pc ' .
+						' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid)' .
+						' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid)' .
+						' WHERE p.transferable = ? AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
+						' AND pc.util_date = 0 AND pc.in_trading = ? AND pc.cur_uid ' . ( $owned ? '=' : '<>' ) . ' ? ' . ( is_null( $restrict ) ? '' : ' AND pc.pcid = ? ' ) . ';' ;
+
+				$cc->set( $key, $sql );
+			}
+
+			$return = static::executeQuery( $sql, $params , $stmt );
 
 			if( $stmt !== null && $return !== false )
 			{
@@ -255,68 +275,6 @@
 
 			return static::fillModel( $result, new PrizeCode() );
 		}
-
-		/*public static function sendPromoToTrading($pcid, $uid) 
-		{			
-			$dbh = DbConn::getInstance()->getDB();
-			$sth = null;
-			
-			$sth = $dbh->prepare('PROEDURE(?, ?);');//update prizecode SET in_trading = 1 where prizecode.upid = (select userpromotion.upid from userpromotion where userpromotion.uid = :uid and userpromotion.pid = :pid);' );
-			
-			$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
-			$sth->bindParam(':pid', $pid, PDO::PARAM_INT);
-						
-			$ret = $sth->execute(); // try catch PDOException 
-			*/
-			/*$result = static::query( 'SELECT pcid, emiss_date, util_date, cur_uid, valid_code, in_trading, upid' .
-											' FROM prizecode WHERE prizecode.upid = (select userpromotion.upid from userpromotion where userpromotion.uid = ? and userpromotion.pid = ?);',
-									  			array(  $uid, $pid ) );*/
-		
-			// return static::fillModel( $ret, new PrizeCode() );
-			/*return $ret;
-		}*/
-		
-		/*public static function is_transferable() {
-			$result = static::query( 'SELECT promotion.transferable '.
-											'FROM promotion, userpromotion, prizecode '.
-											'WHERE pcid = ? ;',
-									  			array(  $pcid ) );
-
-			return static::fillModel( $result, new PrizeCode() );
-		}*/
-		
-		/*
-
-		????????? WHYYYYYYYY ANA MARGARIDA ?????????
-
-		public static function send_promo($pcid, $uid) {
-		
-			$dbh = DbConn::getInstance()->getDB();
-			$sth = null;
-			
-			$sth = $dbh->prepare('UPDATE '.self::TABLE_NAME.' SET in_trading = 1 WHERE pcid = :pcid');
-			
-			$sth->bindParam(':pcid', $pcid, PDO::PARAM_INT);
-		
-			$ret = $sth->execute();
-
-			return $ret;
-		}
-
-		public static function remove_promo($pcid, $uid) {
-		
-			$dbh = DbConn::getInstance()->getDB();
-			$sth = null;
-			
-			$sth = $dbh->prepare('UPDATE '.self::TABLE_NAME.' SET in_trading = 0 WHERE pcid = :pcid');
-			
-			$sth->bindParam(':pcid', $pcid, PDO::PARAM_INT);
-		
-			$ret = $sth->execute();
-
-			return $ret;
-		}
-		*/
 
 	}
 

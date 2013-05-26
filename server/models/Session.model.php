@@ -1,7 +1,5 @@
 <?php
 	
-	
-	
 	class Session
 		extends ActiveRecord
 		implements SavableActiveRecord {

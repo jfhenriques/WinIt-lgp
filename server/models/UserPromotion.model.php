@@ -11,13 +11,6 @@
 		const STATE_WON			  = 1;
 
 
-
-
-		// public function __construct(User $user, Promotion $promotion)
-		// {
-
-		// }
-
 		public function getUPID()
 		{
 			return (int)$this->getData('upid');

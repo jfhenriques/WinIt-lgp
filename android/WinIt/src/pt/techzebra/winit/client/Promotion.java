@@ -30,6 +30,7 @@ public class Promotion implements Serializable {
     private int promotion_type_id_;
     private boolean transferable_;
     private int max_util_date_;
+    private int pcid;
     
 
     
@@ -37,6 +38,14 @@ public class Promotion implements Serializable {
 		promotion_id_ = pid;
 		name_ = name;
 		image_url_ = image_url;
+	}
+	
+	public Promotion(int pid, int pcid, String name, int max_util_date, String image){
+		this.promotion_id_ = pid;
+		this.pcid = pcid;
+		this.name_ = name;
+		this.max_util_date_ = max_util_date;
+		this.image_url_ = image;
 	}
 	
 	public Promotion(int pid, String name, String description, String image_url, long init_date, long end_date, int user_limit, boolean transferable, int win_points, int retailer_id, int promotion_type_id, int max_util_date){
@@ -55,6 +64,15 @@ public class Promotion implements Serializable {
     	max_util_date_ = max_util_date;
 	}
 	
+	
+	
+	public int getPcid() {
+		return pcid;
+	}
+
+	public void setPcid(int pcid) {
+		this.pcid = pcid;
+	}
 
 	public int getPromotionID() {
 		return promotion_id_;
@@ -149,7 +167,7 @@ public class Promotion implements Serializable {
             final int promotion_id = promotion.optInt("pid");
             final String name = promotion.optString("name");
             final String description = promotion.optString("desc");
-
+            //final int promotion_code_id = promotion.optInt("pcid");
             final String image_url = promotion.isNull("image") ? null : promotion.getString("image");
             
             //final int active = promotion.optInt("active");
@@ -167,9 +185,25 @@ public class Promotion implements Serializable {
             return new Promotion(promotion_id, name, description, image_url, init_date, end_date, user_limit, transferable, win_points, retailer_id, promotion_type_id, max_util_date);
 
         } catch (final Exception e) {
-            Log.i("Promotion", "Error parsing JSON user object" + e.toString());
+            Log.i("Promotion", "Error parsing JSON promotion object" + e.toString());
         }
         
         return null;
+    }
+    
+    public static Promotion valueOfTrading(JSONObject promotion){
+    	try {
+    		final int promotion_id = promotion.optInt("pid");
+            final String name = promotion.optString("name");
+            final int promotion_code_id = promotion.optInt("pcid");
+            final int max_util_date = promotion.optInt("max_util_date");
+            final String image_url = promotion.isNull("image") ? null : promotion.getString("image");
+            
+            return new Promotion(promotion_id, promotion_code_id, name, max_util_date, image_url);
+            	
+		} catch (Exception e) {
+			 Log.i("Promotion", "Error parsing JSON promotion object" + e.toString());
+		}
+		return null;
     }
 }

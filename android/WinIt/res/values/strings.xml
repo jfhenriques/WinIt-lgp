@@ -14,7 +14,7 @@
     <string name="log_in">Sign in</string>
     <string name="sign_up">Sign up</string>
     <string name="sign_up_with_email">Sign up with email</string>
-    <string name="forgot">Forgot your password?</string>
+    <string name="forgot_your_password">Forgot your password?</string>
     <string name="name">Name</string>
     <string name="birthday">Birthday</string>
     <string name="address">Address</string>
@@ -55,6 +55,8 @@
     <string name="cancel">Cancel</string>
     <string name="unlocked">Unlocked: </string>
     <string name="share">Share</string>
-
+	<string name="my_promotions">My Promotions</string>
+    <string name="sticky_item">Sticky</string>
+    <string name="quick_return_item">Quick Return</string>
 
 </resources>

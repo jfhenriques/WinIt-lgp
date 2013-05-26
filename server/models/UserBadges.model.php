@@ -1,6 +1,6 @@
 <?php
 
-	class UserBadge
+	class UserBadges
 		extends ActiveRecord
 		implements SavableActiveRecord {
 
@@ -10,13 +10,6 @@
 		const STATE_UNKNOWN		  = 0;
 		const STATE_WON			  = 1;
 
-
-
-
-		// public function __construct(User $user, Promotion $promotion)
-		// {
-
-		// }
 
 		public function getUID()
 		{

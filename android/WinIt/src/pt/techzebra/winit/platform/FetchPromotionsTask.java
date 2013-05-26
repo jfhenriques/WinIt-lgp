@@ -55,6 +55,7 @@ public class FetchPromotionsTask extends AsyncTask<Void, Void, ArrayList<Promoti
 			promotions_ = NetworkUtilities.fetchOtherUsersTradings(auth_token);
 			break;
 		case OWNED_PROMOTIONS:
+			
 			break;
 		}
 		return promotions_;

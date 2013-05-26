@@ -94,7 +94,7 @@
             android:layout_marginTop="100dp"
             android:layout_marginBottom="5dp"
             android:layout_marginRight="5dp"
-            android:background="@color/blue"
+            android:background="@color/peter_river"
             android:fontFamily="sans-serif"
             android:text="@string/share"
             android:textColor="@color/white"

@@ -1,13 +1,13 @@
 <?php
 
-	DEFINE('ITEM_IMG_SRC_DIR', 'img/eef8ac0ae5c57b53321cc1b14e34bc7b7494c649/');
-
 
 	class ItemPromotion extends ActiveRecord {
 
 
 		const TABLE_NAME = "item";
 		const TABLE_NAME_IP = "itempromotion";
+
+		const ITEM_IMG_SRC_DIR = 'img/eef8ac0ae5c57b53321cc1b14e34bc7b7494c649/';
 
 
 
@@ -29,7 +29,7 @@
 		public function getImageSRC()
 		{
 			$img = $this->getData('image');
-			return is_null( $img ) ? null : ( ITEM_IMG_SRC_DIR . $img );
+			return is_null( $img ) ? null : ( self::ITEM_IMG_SRC_DIR . $img );
 		}
 
 		public function getPercent()

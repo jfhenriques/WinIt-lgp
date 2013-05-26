@@ -85,6 +85,7 @@ public class NetworkUtilities {
 	public static final String USER_URI = BASE_URL + "/user.json";
 	public static final String PROMOTION_URI = BASE_URL + "/promotion";
 	public static final String TRADING_URI = BASE_URL + "/trading.json";
+
 	public static final String MY_PROMOTIONS_URI = BASE_URL
 			+ "/user/promotions/won.json";
 	public static final String MY_PROMOTIONS_IN_TRADING_URI = BASE_URL
@@ -92,7 +93,7 @@ public class NetworkUtilities {
 	public static final String MY_PROMOTIONS_TO_TRADE_URI = BASE_URL
 			+ "/user/promotions/tradable.json";
 	public static final String ADDRESSES_URI = BASE_URL + "/address";
-
+	public static final String MY_BADGES_URI = BASE_URL + "/user/badges.json";
 	public static final String QUIZ_URI = "/quizgame.json";
 
 	private static final String PARAM_ADDRESS_ID = "adid";
@@ -106,6 +107,7 @@ public class NetworkUtilities {
 	 * Configures the HttpClient to connect to the URL provided.
 	 */
 	public static void maybeCreateHttpClient() {
+
 		if (http_client_ == null) {
 			HttpParams parameters = new BasicHttpParams();
 			HttpConnectionParams.setConnectionTimeout(parameters, 10000);
@@ -486,15 +488,16 @@ public class NetworkUtilities {
 	}
 
 	public static Thread submitAnswersQuizGame(final String promotion_id,
-			final String auth_token, final String userpromotionid, final ArrayList<Question> arrayList,
-			final Handler handler, final Context context) {
+			final String auth_token, final String userpromotionid,
+			final ArrayList<Question> arrayList, final Handler handler,
+			final Context context) {
 
 		final Runnable runnable = new Runnable() {
 
 			@Override
 			public void run() {
-				submitAnswersAction(promotion_id, auth_token, userpromotionid, arrayList,
-						handler, context);
+				submitAnswersAction(promotion_id, auth_token, userpromotionid,
+						arrayList, handler, context);
 			}
 		};
 
@@ -685,16 +688,16 @@ public class NetworkUtilities {
 		JSONArray r = getResponseContentArray(response);
 		for (int i = 0; i < r.length(); i++) {
 			try {
-				promos.add(Promotion.valueOf(r.getJSONObject(i)));
+				promos.add(Promotion.valueOfTrading(r.getJSONObject(i)));
 			} catch (JSONException e) {
 				e.printStackTrace();
+				return promos;
 			}
 		}
 		return promos;
-
 	}
 
-	public static ArrayList<Promotion> fetchMyPromotionsInTrading(String token) {
+	public static ArrayList<Promotion> fetchMyPromotionsTradeable(String token) {
 
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
 		String uri = MY_PROMOTIONS_TO_TRADE_URI + "?token=" + token;
@@ -709,6 +712,38 @@ public class NetworkUtilities {
 		}
 		return promos;
 
+	}
+
+	public static ArrayList<Promotion> fetchMyPromotionsInTrading(String token) {
+
+		ArrayList<Promotion> promos = new ArrayList<Promotion>();
+		String uri = MY_PROMOTIONS_IN_TRADING_URI + "?token=" + token;
+		JSONObject response = get(uri);
+		JSONArray r = getResponseContentArray(response);
+		for (int i = 0; i < r.length(); i++) {
+			try {
+				promos.add(Promotion.valueOf(r.getJSONObject(i)));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return promos;
+
+	}
+
+	public static ArrayList<Badge> fetchMyBadges(String token) {
+		ArrayList<Badge> badges = new ArrayList<Badge>();
+		String uri = MY_BADGES_URI + "?token=" + token;
+		JSONObject response = get(uri);
+		JSONArray r = getResponseContentArray(response);
+		for (int i = 0; i < r.length(); i++) {
+			try {
+				badges.add(Badge.valueOf(r.getJSONObject(i)));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return badges;
 	}
 
 	public static Thread attemptEditProfile(final String auth_token,
@@ -742,8 +777,10 @@ public class NetworkUtilities {
 		profile_edited.add(new BasicNameValuePair("password", new_password));
 		profile_edited.add(new BasicNameValuePair("password", old_password));
 		profile_edited.add(new BasicNameValuePair("birth", birthday));
-		/*profile_edited.add(new BasicNameValuePair("adid", address_id));
-		profile_edited.add(new BasicNameValuePair("address2", address_2));*/
+		/*
+		 * profile_edited.add(new BasicNameValuePair("adid", address_id));
+		 * profile_edited.add(new BasicNameValuePair("address2", address_2));
+		 */
 
 		JSONObject response = put(uri, profile_edited);
 		String r = getResponseMessage(response);
@@ -765,5 +802,4 @@ public class NetworkUtilities {
 		});
 
 	}
-
 }
