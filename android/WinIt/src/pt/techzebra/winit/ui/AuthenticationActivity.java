@@ -4,12 +4,14 @@ import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.platform.FontUtils;
+import pt.techzebra.winit.ui.ForgotPasswordDialogFragment.ForgotPasswordDialogListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.DialogFragment;
 import android.text.Html;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -19,14 +21,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
-public class AuthenticationActivity extends SherlockActivity {
+public class AuthenticationActivity extends SherlockFragmentActivity implements ForgotPasswordDialogListener {
     // Own Facebook APP ID
     private static final String APP_ID = "104075696465886";
     private static final String TAG = "AuthenticationActivity";
@@ -137,7 +139,8 @@ public class AuthenticationActivity extends SherlockActivity {
 
     public void handleForgotPassword(View view) {
         Log.i(TAG, "Initialize Forgot Password");
-        Utilities.showToast(this, "Coming soon");
+        DialogFragment dialog = new ForgotPasswordDialogFragment();
+        dialog.show(getSupportFragmentManager(), "ForgotPasswordDialogFragment");
     }
 
     @SuppressWarnings("deprecation")
@@ -174,7 +177,6 @@ public class AuthenticationActivity extends SherlockActivity {
                             // TODO Auto-generated method stub
 
                             Log.i(TAG, "onError");
-
                         }
 
                         @Override
@@ -197,4 +199,10 @@ public class AuthenticationActivity extends SherlockActivity {
                     });
         }
     }
+
+    @Override
+    public void onFinishForgotPasswordDialog(String email) {
+        Utilities.showToast(this, "Yeah");
+    }
+
 }

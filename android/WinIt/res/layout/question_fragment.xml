@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/question_scroll"
+<com.emilsjolander.components.StickyScrollViewItems.StickyScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <LinearLayout
-        android:id="@+id/question"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical" >
 
         <TextView
@@ -18,23 +18,16 @@
             android:fontFamily="sans-serif-light"
             android:gravity="bottom"
             android:padding="@dimen/gap"
-            android:text="Lorem ipsum dolor sit amet"
             android:textColor="@color/white"
-            android:textIsSelectable="true"
-            android:textSize="22sp" />
+            android:textIsSelectable="false"
+            android:textSize="22sp"
+            android:tag="sticky-nonconstant" />
 
-        <ScrollView
-            android:id="@+id/answers_scroll"
+        <RadioGroup
+            android:id="@+id/answers_group"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" >
-
-            <RadioGroup
-                android:id="@+id/answers_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-            </RadioGroup>
-        </ScrollView>
+            android:layout_height="wrap_content" >
+        </RadioGroup>
     </LinearLayout>
 
-</ScrollView>
+</com.emilsjolander.components.StickyScrollViewItems.StickyScrollView>

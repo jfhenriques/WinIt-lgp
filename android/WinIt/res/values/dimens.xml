@@ -6,4 +6,7 @@
     <dimen name="gap2">20dp</dimen>
     <dimen name="gap3">30dp</dimen>
     <dimen name="promotions_list_margin">10dp</dimen>
+    
+    <dimen name="sticky_height">120dp</dimen>
+    <dimen name="page_margin">16dp</dimen>
 </resources>
