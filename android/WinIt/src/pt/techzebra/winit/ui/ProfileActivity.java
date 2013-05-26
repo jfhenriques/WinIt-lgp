@@ -11,6 +11,7 @@ import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.User;
 import pt.techzebra.winit.platform.DownloadImageTask;
+import pt.techzebra.winit.platform.LoadMyPromotionsInfo;
 import pt.techzebra.winit.platform.MD5Util;
 import pt.techzebra.winit.platform.RoundedImageView;
 import android.content.Intent;
@@ -126,8 +127,9 @@ public class ProfileActivity extends SherlockActivity {
 		switch (view.getId()) {
 		case R.id.promotions_button:
 			//cls = MyPromotionsActivity.class;
-			cls = null;
-			Toast.makeText(this, "Comming soon!", Toast.LENGTH_SHORT).show();
+//			cls = null;
+//			Toast.makeText(this, "Comming soon!", Toast.LENGTH_SHORT).show();
+			new LoadMyPromotionsInfo(this).execute();
 			break;
 		case R.id.badges_button:
 			cls = BadgesActivity.class;

@@ -55,6 +55,6 @@
     <string name="cancel">Cancel</string>
     <string name="unlocked">Unlocked: </string>
     <string name="share">Share</string>
-
+	<string name="my_promotions">My Promotions</string>
 
 </resources>
