@@ -56,6 +56,7 @@ public class QuizActivity extends SherlockFragmentActivity implements
 	static String user_promotion_id_;
 	TextView points_text_;
 	TextView correct_answers_text_;
+	TextView you_win_text_;
 
 	Handler handler_ = new Handler();
 
@@ -206,10 +207,14 @@ public class QuizActivity extends SherlockFragmentActivity implements
 			return root_view;
 		}
 	}
-
+ 
 	public void getResultSubmitedAnswers(JSONObject responseContent) {
 		try {
-
+			
+			String won = responseContent.getString("won");
+			String prizecode = responseContent.getString("prizecode");
+			String points = null;
+			String correct = responseContent.getString("correct");
 			LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
 					.getSystemService(LAYOUT_INFLATER_SERVICE);
 			final View popupView = layoutInflater.inflate(
@@ -222,8 +227,14 @@ public class QuizActivity extends SherlockFragmentActivity implements
 			correct_answers_text_ = (TextView) popupView
 					.findViewById(R.id.correct_answers_text);
 
-			points_text_.setText(responseContent.getString("won"));
-			correct_answers_text_.setText(responseContent.getString("correct"));
+			you_win_text_ = (TextView) popupView.findViewById(R.id.you_win_);
+
+			if(won.equals("false"))
+				you_win_text_.setText("You LOSE :(");
+		
+			
+			points_text_.setText(points);
+			correct_answers_text_.setText(correct);
 
 			Button dismiss_button = (Button) popupView
 					.findViewById(R.id.dismiss_button);
@@ -275,12 +286,13 @@ public class QuizActivity extends SherlockFragmentActivity implements
 		@Override
 		protected String doInBackground(String... params) {
 			user_promotion_id_ = NetworkUtilities.getUserPromotionId(params[0], params[1]);
+			Log.i(TAG, String.valueOf(user_promotion_id_));
 			return user_promotion_id_;
 		}
 		
 		@Override
 		protected void onPostExecute(String result) {
-			submitAnswers();
+			//submitAnswers();
 			pg.dismiss();
 		}
 		
