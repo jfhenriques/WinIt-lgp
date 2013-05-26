@@ -3,16 +3,6 @@
 	class User
 		extends ActiveRecord
 		implements SavableActiveRecord {
-
-		// private $uid = null;
-		// private $name;
-		// private $email;
-		// private $password;
-		// private $adid;
-		// private $birth = 0;
-		// private $address2;
-		// private $token_facebook;
-		// private $token_twitter;
 		
 
 		const TABLE_NAME = 'user' ;

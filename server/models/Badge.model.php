@@ -1,17 +1,15 @@
 <?php
 
 
-	DEFINE( 'BADGE_IMG_SRC_DIR', 'img/9cc030d4cccab8c52273613ef010120eb9e3228c/' );
-
-
-	
 	class Badge
 		extends ActiveRecord {
 		
 
 		const TABLE_NAME = 'badges' ;
-		const TABLE_NAME_USER = 'user' ;
-		const TABLE_NAME_USERBADGES = 'userbadges' ;
+
+		const BADGE_IMG_SRC_DIR = 'img/9cc030d4cccab8c52273613ef010120eb9e3228c/';
+
+		const KEY_USERBADGES = 'sql.userbadges';
 
 
 		//public function __construct() {}
@@ -47,7 +45,7 @@
 		public function getImageSRC()
 		{
 			$img = $this->getData('image');
-			return is_null( $img ) ? null : ( BADGE_IMG_SRC_DIR . $img );
+			return is_null( $img ) ? null : ( self::BADGE_IMG_SRC_DIR . $img );
 		}
 
 		public function getDescription()
@@ -76,15 +74,23 @@
 
 		public static function findByUID($uid)
 		{
-
 			$badges = array();
 
-			$return = static::executeQuery( 'SELECT b.bid AS bid, b.name AS name, b.image AS image, ub.aquis_date AS aquis_date, b.description AS description '.
-										'FROM ' . self::TABLE_NAME . ' AS b '.
-										'INNER JOIN ' . self::TABLE_NAME_USERBADGES . ' AS ub ON (ub.bid = b.bid) '.
-										'INNER JOIN ' . self::TABLE_NAME_USER . ' AS u ON (u.uid = ub.uid) '.
-										'WHERE u.uid = ? LIMIT 1;',
-										array( $uid ), $stmt );
+			$cc = CommonCache::getInstance();
+			$sql = $cc->get( self::KEY_USERBADGES );
+
+			if( $sql === false )
+			{
+				$sql =  'SELECT b.bid AS bid, b.name AS name, b.image AS image, ub.aquis_date AS aquis_date, b.description AS description '.
+						' FROM ' . self::TABLE_NAME . ' AS b '.
+						' INNER JOIN ' . UserBadges::TABLE_NAME . ' AS ub ON (ub.bid = b.bid) '.
+						' INNER JOIN ' . User::TABLE_NAME . ' AS u ON (u.uid = ub.uid) '.
+						' WHERE u.uid = ? LIMIT 1;';
+
+				$cc->set( self::KEY_USERBADGES, $sql );
+			}
+
+			$return = static::executeQuery( $sql, array( $uid ), $stmt );
 
 			if( $stmt !== null && $return !== false )
 			{
