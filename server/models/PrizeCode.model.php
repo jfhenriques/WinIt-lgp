@@ -6,6 +6,11 @@
 
 		const TABLE_NAME = "prizecode";
 
+		const KEY_PRIZECODE_O_RE = "sql.tradableprizes.o.re";
+		const KEY_PRIZECODE_O_NR = "sql.tradableprizes.o.nr";
+		const KEY_PRIZECODE_NO_RE = "sql.tradableprizes.no.re";
+		const KEY_PRIZECODE_NO_NR = "sql.tradableprizes.no.nr";
+
 		
 
 		public function getPCID()
@@ -44,10 +49,6 @@
 		{
 			return $this->getData('valid_code');
 		}
-		// public function setCode($code)
-		// {
-		// 	$this->data['valid_code'] = $code;
-		// }
 
 		public function inTrading()
 		{
@@ -226,17 +227,32 @@
 			if( !is_null($restrict) )
 				$params[] = $restrict;
 
-			$return = static::executeQuery( 'SELECT pc.pcid AS pcid, pc.emiss_date AS emiss_date, pc.util_date AS util_date, ' .
-											' pc.cur_uid AS cur_uid, pc.valid_code AS valid_code, pc.in_trading AS in_trading, ' .
-											' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid, p.util_date AS p_util_date, ' .
-											' p.name AS p_name, p.image AS p_image, pc.transaction AS transaction ' .
-											' FROM ' . self::TABLE_NAME .' AS pc ' .
-											' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid)' .
-											' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid)' .
-											' WHERE p.transferable = ? AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
-											//' AND up.end_date > 0 AND up.state = 1 ' .
-											' AND pc.util_date = 0 AND pc.in_trading = ? AND pc.cur_uid ' . ( $owned ? '=' : '<>' ) . ' ? ' . ( is_null( $restrict ) ? '' : ' AND pc.pcid = ? ' ) . ';',
-									  			$params , $stmt );
+			$cc = CommonCache::getInstance();
+			$key = null;
+
+			if( is_null( $restrict ) )
+				$key = ( $owned ? self::KEY_PRIZECODE_O_RE : self::KEY_PRIZECODE_NO_RE );
+			else
+				$key = ( $owned ? self::KEY_PRIZECODE_O_NR : self::KEY_PRIZECODE_NO_NR );
+
+			$sql = $cc->get( $key );
+
+			if( $sql === false )
+			{
+				$sql =  'SELECT pc.pcid AS pcid, pc.emiss_date AS emiss_date, pc.util_date AS util_date, ' .
+						' pc.cur_uid AS cur_uid, pc.valid_code AS valid_code, pc.in_trading AS in_trading, ' .
+						' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid, p.util_date AS p_util_date, ' .
+						' p.name AS p_name, p.image AS p_image, pc.transaction AS transaction ' .
+						' FROM ' . self::TABLE_NAME .' AS pc ' .
+						' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid)' .
+						' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid)' .
+						' WHERE p.transferable = ? AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
+						' AND pc.util_date = 0 AND pc.in_trading = ? AND pc.cur_uid ' . ( $owned ? '=' : '<>' ) . ' ? ' . ( is_null( $restrict ) ? '' : ' AND pc.pcid = ? ' ) . ';' ;
+
+				$cc->set( $key, $sql );
+			}
+
+			$return = static::executeQuery( $sql, $params , $stmt );
 
 			if( $stmt !== null && $return !== false )
 			{

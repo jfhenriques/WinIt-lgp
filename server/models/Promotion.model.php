@@ -1,7 +1,6 @@
 <?php
 
-	DEFINE('RET_IMG_SRC_DIR', 'img/eef8ac0ae5c57b53321cc1b14e34bc7b7494c649/');
-	DEFINE('PROM_IMG_SRC_DIR', 'img/0bb53157538fde36def76790f3d674969cba5218/');
+
 
 	class Promotion extends ActiveRecord {
 	
@@ -24,10 +23,14 @@
 		const TABLE_NAME_RET = 'retailer' ;
 		const TABLE_NAME_TYPE = 'promotiontype' ;
 
-
+		const KEY_PROMOTIONS = "sql.promotions";
 
 		const TYPE_QUIZ_GAME = 1;
 		const TYPE_PROXIMITY_ALERT = 2;
+
+
+		const RET_IMG_SRC_DIR = 'img/eef8ac0ae5c57b53321cc1b14e34bc7b7494c649/';
+		const PROM_IMG_SRC_DIR = 'img/0bb53157538fde36def76790f3d674969cba5218/';
 
 
 		private function __construct() { }
@@ -176,7 +179,7 @@
 		public function getImageSRC()
 		{
 			$img = $this->getData('image');
-			return is_null( $img ) ? null : ( PROM_IMG_SRC_DIR . $img );
+			return is_null( $img ) ? null : ( self::PROM_IMG_SRC_DIR . $img );
 		}
 
 
@@ -193,7 +196,7 @@
 		public function getRetailerImageSRC()
 		{
 			$img = $this->getData('ret_image');
-			return is_null( $img ) ? null : ( RET_IMG_SRC_DIR . $img );
+			return is_null( $img ) ? null : ( self::RET_IMG_SRC_DIR . $img );
 		}
 
 		public function getPromotionType()
@@ -212,32 +215,31 @@
 		
 		public static function findByPID($pid)
 		{
-			$result = static::query( 'SELECT p.pid AS pid, p.active AS active, p.name AS name, p.init_date AS init_date, p.util_date AS util_date, ' .
-									  ' p.end_date AS end_date, p.grand_limit AS grand_limit, p.user_limit AS user_limit, ' .
-									  ' p.valid_coord AS valid_coord, p.valid_coord_radius AS valid_coord_radius, ' .
-									  ' p.transferable AS transferable, p.win_points AS win_points, p.func_type AS func_type ,' .
-									  ' p.rid AS rid, p.ptid AS ptid, r.name AS ret_name, t.name AS prom_type, r.image AS ret_image, ' .
-									  ' p.desc AS description, p.image AS image ' .
-									  ' FROM ' . self::TABLE_NAME . ' AS p ' .
-									  'INNER JOIN ' . self::TABLE_NAME_RET . ' AS r ON(r.rid = p.rid) ' .
-									  'INNER JOIN ' . self::TABLE_NAME_TYPE . ' AS t ON(t.ptid = p.ptid) ' .
-									  'WHERE p.pid = ? AND p.active = 1 LIMIT 1;',
-									  array( $pid ) );
+			$cc = CommonCache::getInstance();
+			$sql = $cc->get( self::KEY_PROMOTIONS );
+
+			if( $sql === false )
+			{
+				$sql = 'SELECT p.pid AS pid, p.active AS active, p.name AS name, p.init_date AS init_date, p.util_date AS util_date, ' .
+					   ' p.end_date AS end_date, p.grand_limit AS grand_limit, p.user_limit AS user_limit, ' .
+					   ' p.valid_coord AS valid_coord, p.valid_coord_radius AS valid_coord_radius, ' .
+					   ' p.transferable AS transferable, p.win_points AS win_points, p.func_type AS func_type ,' .
+					   ' p.rid AS rid, p.ptid AS ptid, r.name AS ret_name, t.name AS prom_type, r.image AS ret_image, ' .
+					   ' p.desc AS description, p.image AS image ' .
+					   ' FROM ' . self::TABLE_NAME . ' AS p ' .
+					   ' INNER JOIN ' . self::TABLE_NAME_RET . ' AS r ON(r.rid = p.rid) ' .
+					   ' INNER JOIN ' . self::TABLE_NAME_TYPE . ' AS t ON(t.ptid = p.ptid) ' .
+					   ' WHERE p.pid = ? AND p.active = 1 LIMIT 1;' ;
+
+				$cc->set(self::KEY_PROMOTIONS, $sql);
+			}
+
+
+			$result = static::query( $sql, array( $pid ) );
 
 			return static::fillModel( $result, new Promotion() );
 		}
-		
-		/*public static function getPrizeCodePromo($pid, $uid) {
-		
-			$result = static::query('select prizecode.pcid, prizecode.emiss_date, prizecode.util_date, prizecode.cur_uid, prizecode.valid_code, prizecode.in_trading, prizecode.upid '.
-										'from promotion, user, userpromotion, prizecode where promotion.pid = userpromotion.pid '.
-										'and user.uid = userpromotion.uid '.
-										'and userpromotion.upid = prizecode.upid '.
-										'and user.uid = ? '.
-										'and promotion.pid = ?;', array($uid, $pid));
-			
-			return static::fillModel( $result, new PrizeCode() );
-		}*/
+
 
 		public static function findValidPromotions($uid)
 		{

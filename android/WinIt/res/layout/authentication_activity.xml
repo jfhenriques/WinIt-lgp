@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue"
+    android:background="@color/peter_river"
     android:gravity="center_horizontal" >
 
     <LinearLayout
@@ -66,12 +66,9 @@
             style="@style/WhiteButtonAppTheme" />
 
         <TextView
-            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/gap"
-            android:layout_marginTop="@dimen/gap"
             android:fontFamily="sans-serif-light"
             android:text="@string/or"
             android:textColor="@color/white"
@@ -83,7 +80,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/dark_blue"
+        android:background="@color/belize_hole"
         android:orientation="vertical"
         android:padding="@dimen/gap" >
 
@@ -126,7 +123,7 @@
             android:background="@drawable/highlight_overlay"
             android:fontFamily="sans-serif-light"
             android:onClick="handleForgotPassword"
-            android:text="@string/forgot"
+            android:text="@string/forgot_your_password"
             android:textColor="@color/white"
             android:textSize="12sp" />
     </LinearLayout>

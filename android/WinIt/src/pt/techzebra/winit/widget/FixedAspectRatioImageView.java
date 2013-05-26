@@ -4,31 +4,29 @@ import pt.techzebra.winit.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 
-public class FixedAspectRatioRelativeLayout extends RelativeLayout {
+public class FixedAspectRatioImageView extends ImageView {
     private int aspect_ratio_width_;
     private int aspect_ratio_height_;
     
-    public FixedAspectRatioRelativeLayout(Context context, AttributeSet attrs) {
+    public FixedAspectRatioImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         
         initialize(context, attrs);
     }
 
-    public FixedAspectRatioRelativeLayout(Context context, AttributeSet attrs, int def_style) {
+    public FixedAspectRatioImageView(Context context, AttributeSet attrs, int def_style) {
         super(context, attrs, def_style);
         
         initialize(context, attrs);
     }
     
     private void initialize(Context context, AttributeSet attrs) {
-        TypedArray styled_attributes = context.obtainStyledAttributes(attrs, R.styleable.FixedAspectRatioRelativeLayout);
+        TypedArray styled_attributes = context.obtainStyledAttributes(attrs, R.styleable.FixedAspectRatioImageView);
         
-        aspect_ratio_width_ = styled_attributes.getInt(R.styleable.FixedAspectRatioRelativeLayout_aspectRatioWidth, 1);
-        aspect_ratio_height_ = styled_attributes.getInt(R.styleable.FixedAspectRatioRelativeLayout_aspectRatioHeight, 1);
+        aspect_ratio_width_ = styled_attributes.getInt(R.styleable.FixedAspectRatioImageView_aspectRatioWidth, 1);
+        aspect_ratio_height_ = styled_attributes.getInt(R.styleable.FixedAspectRatioImageView_aspectRatioHeight, 1);
         
         styled_attributes.recycle();
     }
