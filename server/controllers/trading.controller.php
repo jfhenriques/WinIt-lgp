@@ -311,7 +311,7 @@
 				else
 				{
 
-					$traddSuggest = TradingSuggestion::instanciate($prizeMine[0], $prizeWanted[0]);
+					$traddSuggest = TradingSuggestion::instantiate($prizeMine[0], $prizeWanted[0]);
 					$traddSuggest->setDate( $time );
 
 					$this->respond->setJSONCode( $traddSuggest->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );

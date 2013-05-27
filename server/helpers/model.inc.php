@@ -124,4 +124,8 @@
 		public function save();
 	}
 
+	interface DeletableActiveRecord {
+		public function delete();
+	}
+
 ?>

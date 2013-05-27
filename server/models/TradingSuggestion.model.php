@@ -13,7 +13,7 @@
 		private function __construct() { }
 
 
-		public static function instanciate(PrizeCode $orig, PrizeCode $dest)
+		public static function instantiate(PrizeCode $orig, PrizeCode $dest)
 		{
 			$suggestion = new TradingSuggestion();
 

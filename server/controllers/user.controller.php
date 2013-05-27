@@ -15,7 +15,9 @@
 	DEFINE( 'R_USER_BAD_PROMO'			, 0x40 );
 	DEFINE( 'R_USER_PROMO_EXPIRED'		, 0x41 );
 
-	
+	DEFINE( 'R_USER_DONT_OWN_GCM'		, 0x50 );
+	DEFINE( 'R_USER_GCM_NOT_FOUND'		, 0x51 );
+
 
 
 	DEFINE( 'MAIL_SUBJECT_RESET_PASS' , 'Tlantic PromGame Mobile - Password Reset' );
@@ -42,6 +44,9 @@
 
 				R_USER_BAD_PROMO		=> 'Promoção não encontrada',
 				R_USER_PROMO_EXPIRED	=> 'A promoção expirou ou excedeu o limite de utilizações possíveis ou já se encontra a participar na mesma',
+
+				R_USER_DONT_OWN_GCM		=> 'O Token GCM não pertece ao utilizador',
+				R_USER_GCM_NOT_FOUND	=> 'O Token GCM não foi encontrado',
 			);
 
 		
@@ -517,6 +522,7 @@
 
 			$user = Authenticator::getInstance()->getUser();
 			$token_gcm = valid_request_var('token_gcm');
+			$gcm = null;
 
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -526,15 +532,26 @@
 
 			else
 			{
-				$user->setTokenGCM( $token_gcm );
+				if ( !is_null( $gcm = UserGCM::findByToken( $token_gcm ) ) )
+				{
+					if( $gcm->getUID() !== $user->getUID() )
+						$this->respond->setJSONCode( R_USER_DONT_OWN_GCM );
 
-				$this->respond->setJSONCode( $user->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
-				
+					else
+						$this->respond->setJSONCode( R_STATUS_OK );
+				}
+				else
+				{
+					$gcm = UserGCM::instantiate( $user, $token_gcm );
+
+					$this->respond->setJSONCode( $gcm->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+				}
+
 			}
 
 			$this->respond->renderJSON( static::$status );
-		}
 
+		}
 
 
 
@@ -543,20 +560,28 @@
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
 			$user = Authenticator::getInstance()->getUser();
+			$token_gcm = valid_request_var('token_gcm');
+			$gcm = null;
 
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
-			else
-			{
-				$user->setTokenGCM( NULL );
+			else if( is_null( $token_gcm ) )
+				$this->respond->setJSONCode( R_USER_ERR_PARAMS );
 
-				$this->respond->setJSONCode( $user->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
-				
-			}
+			else if ( is_null( $gcm = UserGCM::findByToken( $token_gcm ) ) )
+				$this->respond->setJSONCode( R_USER_GCM_NOT_FOUND );
+
+			else if( $gcm->getUID() !== $user->getUID() )
+				$this->respond->setJSONCode( R_USER_DONT_OWN_GCM );
+
+			else
+				$this->respond->setJSONCode( $gcm->delete() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 
 			$this->respond->renderJSON( static::$status );
+
 		}
+
 
 
 

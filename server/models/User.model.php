@@ -88,14 +88,14 @@
 			$this->data['token_twitter'] = $token_twitter;
 		}
 
-		public function getTokenGCM()
-		{
-			return $this->getData('token_gcm');
-		}
-		public function setTokenGCM($token_gcm)
-		{
-			$this->data['token_gcm'] = $token_gcm;
-		}
+		// public function getTokenGCM()
+		// {
+		// 	return $this->getData('token_gcm');
+		// }
+		// public function setTokenGCM($token_gcm)
+		// {
+		// 	$this->data['token_gcm'] = $token_gcm;
+		// }
 
 		public function getBirth()
 		{
@@ -157,17 +157,17 @@
 			else
 			{
 				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,' .
-												' adid = :adid, door = :address2, birth = :birth, token_facebook = :token_facebook, token_gcm = :token_gcm, ' .
+												' adid = :adid, door = :address2, birth = :birth, token_facebook = :token_facebook, ' .
 												' token_twitter = :token_twitter , reset_token = :res_token , reset_token_validity = :res_token_val WHERE uid = :uid ;' );
 				
 				$res_token = $this->getResetToken();
 				$res_token_val = $this->getResetTokenValidity();
-				$token_gcm = $this->getTokenGCM();
+				//$token_gcm = $this->getTokenGCM();
 
 				$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
 				$sth->bindParam(':res_token', $res_token, PDO::PARAM_STR);
 				$sth->bindParam(':res_token_val', $res_token_val, PDO::PARAM_INT);
-				$sth->bindParam(':token_gcm', $token_gcm, is_null( $token_gcm ) ? PDO::PARAM_NULL : PDO::PARAM_STR );
+				//$sth->bindParam(':token_gcm', $token_gcm, is_null( $token_gcm ) ? PDO::PARAM_NULL : PDO::PARAM_STR );
 			}
 
 			$name = $this->getName();

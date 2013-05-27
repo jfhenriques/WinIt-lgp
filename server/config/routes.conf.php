@@ -90,7 +90,7 @@
 									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'post', 'action' => 'assoc_tags' ),
 									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'delete', 'action' => 'remove_tags' ),*/
 
-									array( 'match' => '/gcm', 'controller' => 'user', 'via' => 'put', 'action' => 'register_gcm' ),
+									array( 'match' => '/gcm', 'controller' => 'user', 'via' => 'post', 'action' => 'register_gcm' ),
 									array( 'match' => '/gcm', 'controller' => 'user', 'via' => 'delete', 'action' => 'unregister_gcm' ),
 
 									array( 'match' => '/promotions',
