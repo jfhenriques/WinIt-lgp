@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Máquina: localhost
--- Data de Criação: 26-Maio-2013 às 05:09
+-- Data de Criação: 27-Maio-2013 às 04:37
 -- Versão do servidor: 5.5.31
--- versão do PHP: 5.5.0RC1
+-- versão do PHP: 5.5.0RC2
 
 SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
@@ -65,7 +65,8 @@ INSERT INTO `prizecode` (`pcid`, `emiss_date`, `util_date`, `cur_uid`, `valid_co
 (9, 1369320865, 0, 2, 'lSp+Y6l87Q3f/cEPtF4CDWImhhYvW9Jy2/dpHnu78jGFV3UFzySEpJbuHOmOpvrOvkNUanrYMHrxClOvtl075w==', 0, 0, 10),
 (10, 1369320886, 0, 2, 'hrUk2TGq4HzlOZrLUvnWNB1avLjnAGSvJD7h28AK26yvOxYgC8EKWM8pNlphyI7JNS/WA5ZY3l4Fr1bPeW/qaA==', 0, 0, 11),
 (11, 1369321750, 0, 2, 'Ho00w4dlB2nENMotwIJQO5rhIQ30ylpxWjdeNNSw9FpdFZrvGgdl7LiEvuhhM9AiqOLGjF2B/T29C99feWvk9Q==', 0, 0, 16),
-(12, 1369321887, 0, 2, 'J2/1koerTZNU0n3BxXJ/SnkjQRXyuBZsrAXzgPE+ZJQuipJoXS6MyU72C1oX75QNIKXAQEvK8UNbHA5I2kObZw==', 0, 0, 18);
+(12, 1369321887, 0, 2, 'J2/1koerTZNU0n3BxXJ/SnkjQRXyuBZsrAXzgPE+ZJQuipJoXS6MyU72C1oX75QNIKXAQEvK8UNbHA5I2kObZw==', 0, 0, 18),
+(13, 1369608573, 0, 2, 'DSLzg6HlLbJou8JazDuvmayPDQpL7y5phQOvvg4gd4gDk9yYqiFMlBQny6keUD0aTbzwvnGMDs5RQXAcRCHkCg==', 0, 0, 29);
 
 --
 -- Extraindo dados da tabela `promotion`
@@ -77,7 +78,8 @@ INSERT INTO `promotion` (`pid`, `active`, `name`, `desc`, `image`, `init_date`, 
 (3, 1, 'Promoção do Mês', 'É um facto estabelecido de que um leitor é distraído pelo conteúdo legível de uma página quando analisa a sua mancha gráfica. Logo, o uso de Lorem Ipsum leva a uma distribuição mais ou menos normal de letras, ao contrário do uso de "Conteúdo aqui, conteúdo aqui", tornando-o texto legível. Muitas ferramentas de publicação electrónica e editores de páginas web usam actualmente o Lorem Ipsum como o modelo de texto usado por omissão, e uma pesquisa por "lorem ipsum" irá encontrar muitos websites ainda na sua infância. Várias versões têm evoluído ao longo dos anos, por vezes por acidente, por vezes propositadamente (como no caso do humor).', 'poupe-iva-lidl-300x276.png', 0, 1412939410, 0, 0, 0, NULL, NULL, 1, 100, 1, 1, 1),
 (4, 1, 'Feliz dia da Mãe', 'Existem muitas variações das passagens do Lorem Ipsum disponíveis, mas a maior parte sofreu alterações de alguma forma, pela injecção de humor, ou de palavras aleatórias que nem sequer parecem suficientemente credíveis. Se vai usar uma passagem do Lorem Ipsum, deve ter a certeza que não contém nada de embaraçoso escondido no meio do texto. Todos os geradores de Lorem Ipsum na Internet acabam por repetir porções de texto pré-definido, como necessário, fazendo com que este seja o primeiro verdadeiro gerador na Internet. Usa um dicionário de 200 palavras em Latim, combinado com uma dúzia de modelos de frases, para gerar Lorem Ipsum que pareçam razoáveis. Desta forma, o Lorem Ipsum gerado é sempre livre de repetição, ou de injecção humorística, etc.', 'hiper-desconto-continente-300x236.png', 0, 1412943010, 0, 0, 0, NULL, NULL, 0, 0, 1, 1, 1),
 (5, 1, 'Ovos da Páscoa', 'Ao contrário da crença popular, o Lorem Ipsum não é simplesmente texto aleatório. Tem raízes numa peça de literatura clássica em Latim, de 45 AC, tornando-o com mais de 2000 anos. Richard McClintock, um professor de Latim no Colégio Hampden-Sydney, na Virgínia, procurou uma das palavras em Latim mais obscuras (consectetur) numa passagem Lorem Ipsum, e atravessando as cidades do mundo na literatura clássica, descobriu a sua origem. Lorem Ipsum vem das secções 1.10.32 e 1.10.33 do "de Finibus Bonorum et Malorum" (Os Extremos do Bem e do Mal), por Cícero, escrito a 45AC. Este livro é um tratado na teoria da ética, muito popular durante a Renascença. A primeira linha de Lorem Ipsum, "Lorem ipsum dolor sit amet..." aparece de uma linha na secção 1.10.32.', 'continente-promoÃ§Ã£o-resmas-de-papel.jpg', 0, 1412943010, 0, 0, 0, NULL, NULL, 0, 1000, 1, 1, 1),
-(6, 1, 'HappyHour', 'O pedaço mais habitual do Lorem Ipsum usado desde os anos 1500 é reproduzido abaixo para os interessados. As secções 1.10.32 e 1.10.33 do "de Finibus Bonorum et Malorum" do Cícero também estão reproduzidos na sua forma original, acompanhados pela sua tradução em Inglês, versões da tradução de 1914 por H. Rackham.', 'zebra_180_1222446a.jpg', 0, 1412943010, 0, 0, 0, NULL, NULL, 0, 40, 1, 1, 1);
+(6, 1, 'HappyHour', 'O pedaço mais habitual do Lorem Ipsum usado desde os anos 1500 é reproduzido abaixo para os interessados. As secções 1.10.32 e 1.10.33 do "de Finibus Bonorum et Malorum" do Cícero também estão reproduzidos na sua forma original, acompanhados pela sua tradução em Inglês, versões da tradução de 1914 por H. Rackham.', 'zebra_180_1222446a.jpg', 0, 1412943010, 0, 0, 0, NULL, NULL, 0, 40, 1, 1, 1),
+(7, 1, 'Super Promoção', 'Estamos com saudade de trocar ideias com todos vocês... por isso, a partir de hoje temos uma novidade imperdível para os amantes de uma boa leitura: está no ar a promoção exclusiva do Fluindo o Olhar!', 'Promocao', 0, 1412935810, 0, 0, 1, NULL, NULL, 1, 200, 0, 1, 1);
 
 --
 -- Extraindo dados da tabela `promotiontype`
@@ -91,25 +93,14 @@ INSERT INTO `promotiontype` (`ptid`, `name`) VALUES
 --
 
 INSERT INTO `qganswer` (`qid`, `upid`, `answer`) VALUES
-(1, 2, '1'),
-(1, 9, '1'),
-(1, 10, '1'),
-(1, 11, '1'),
-(1, 15, '1'),
-(1, 16, '1'),
-(1, 17, '1'),
-(1, 18, '1'),
-(2, 9, '1'),
-(2, 10, '0'),
-(2, 11, '0'),
-(2, 15, '1'),
-(2, 16, '0'),
-(2, 17, '1'),
-(2, 18, '0'),
-(3, 15, '1'),
-(3, 16, '1'),
-(3, 17, '1'),
-(3, 18, '1');
+(1, 28, '2'),
+(1, 29, '1'),
+(2, 28, '1'),
+(2, 29, '0'),
+(3, 28, '1'),
+(3, 29, '1'),
+(4, 28, '1'),
+(4, 29, '4');
 
 --
 -- Extraindo dados da tabela `qgquestion`
@@ -180,12 +171,12 @@ INSERT INTO `userpromotion` (`upid`, `uid`, `pid`, `init_date`, `end_date`, `sta
 (12, 2, 2, 1369321606, 0, 0),
 (13, 2, 3, 1369321612, 0, 0),
 (14, 2, 5, 1369321649, 0, 0),
-(15, 2, 1, 1369321680, 1, 0),
 (16, 2, 1, 1, 1, 1),
 (17, 2, 1, 1, 1, 0),
-(18, 2, 1, 1369321880, 1369321887, 1),
-(19, 2, 1, 1369403948, 0, 0),
-(20, 2, 4, 1369403961, 0, 0),
-(21, 2, 6, 1369403995, 0, 0);
+(18, 2, 1, 1, 1, 1),
+(20, 2, 4, 1369403961, 1, 0),
+(21, 2, 6, 1369403995, 1, 1),
+(28, 2, 1, 1369608526, 1369608532, 0),
+(29, 2, 1, 1369608553, 1369608573, 1);
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;

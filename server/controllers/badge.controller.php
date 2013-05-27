@@ -69,7 +69,6 @@
 
 			$this->respond->renderJSON( static::$status );
 
-			// $this->respond->renderJSON( $resp, $render_code, describeMessage( $render_code, static::$status ) );
 		}
 		
 	

@@ -88,6 +88,15 @@
 			$this->data['token_twitter'] = $token_twitter;
 		}
 
+		public function getTokenGCM()
+		{
+			return $this->getData('token_gcm');
+		}
+		public function setTokenGCM($token_gcm)
+		{
+			$this->data['token_gcm'] = $token_gcm;
+		}
+
 		public function getBirth()
 		{
 			return (int)$this->getData('birth');
@@ -148,15 +157,17 @@
 			else
 			{
 				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,' .
-												' adid = :adid, door = :address2, birth = :birth, token_facebook = :token_facebook,' .
+												' adid = :adid, door = :address2, birth = :birth, token_facebook = :token_facebook, token_gcm = :token_gcm, ' .
 												' token_twitter = :token_twitter , reset_token = :res_token , reset_token_validity = :res_token_val WHERE uid = :uid ;' );
 				
 				$res_token = $this->getResetToken();
 				$res_token_val = $this->getResetTokenValidity();
+				$token_gcm = $this->getTokenGCM();
 
 				$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
 				$sth->bindParam(':res_token', $res_token, PDO::PARAM_STR);
 				$sth->bindParam(':res_token_val', $res_token_val, PDO::PARAM_INT);
+				$sth->bindParam(':token_gcm', $token_gcm, is_null( $token_gcm ) ? PDO::PARAM_NULL : PDO::PARAM_STR );
 			}
 
 			$name = $this->getName();
@@ -241,54 +252,6 @@
 
 			return null;
 		}
-		
-		public function list_promotions_won() {
-		
-/*			$dbh = DbConn::getInstance()->getDB();
-			$sth = null;
-			
-			$userID = $this->getUID();
-		
-			$sth = $dbh->prepare('SELECT promotion.pid, promotion.name, promotion.active, promotion.end_date '.
-									'FROM promotion, user, userpromotion '.
-									'WHERE user.uid = userpromotion.uid '.
-									'AND promotion.pid = userpromotion.pid '.
-									'AND user.uid = ? ;' );
-			
-			$ret = $sth->execute(array());
-			
-			$result = $sth->fetchAll();
-			
-			// var_dump($result);
-
-			return $result;*/
-			
-		
-		}
-		
-		
-		/*public function list_badges_won()
-		{
-				
-			$dbh = DbConn::getInstance()->getDB();
-			$sth = null;
-			
-			$userID = $this->getUID();
-			
-			$sth = $dbh->prepare('SELECT b.bid AS bid, b.name AS bname, b.image AS bimage, b.description AS description, ub.aquis_date AS bdata'.
-										'FROM badges AS b '.
-										'INNER JOIN userbadges AS ub ON (ub.bid = b.bid) '.
-										'INNER JOIN user AS u ON (u.uid = ub.uid) '.
-										'WHERE u.uid = '.$userID.' ;');
-			
-			$ret = $sth->execute(array());
-			
-			$result = $sth->fetchAll();
-			
-			// var_dump($result);
-
-			return $result;			
-		}*/
 
 	}
 

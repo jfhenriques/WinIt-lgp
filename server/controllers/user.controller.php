@@ -134,6 +134,7 @@
 				//$token_tw = valid_request_var('token_twitter');
 				$password = valid_request_var('password', false);
 				$password_old = valid_request_var('password_old', false);
+				//$token_gcm = valid_request_var('token_gcm');
 				
 
 				// Must verifiy if mail is not taken
@@ -168,6 +169,9 @@
 
 					if( !is_null($birth) )
 						$user->setBirth($birth);
+
+					// if( !is_null($token_gcm) )
+					// 	$user->setTokenGCM($token_gcm);
 
 					if( !is_null($password) )
 						$user->setPassword( User::saltPass( $password ) );
@@ -309,10 +313,7 @@
 
 			$user = Authenticator::getInstance()->getUser();
 			$promo = null;
-			//$auth = Authenticator::getInstance(); // retorna o id do user logado
-			//$userId = $auth->getUserId();
 
-			//$user = User::findByUID($userId);
 			
 			if( is_null( $user ) || is_null( $pid ) )
 				$this->respond->setJSONCode ( R_USER_ERR_PARAMS );
@@ -363,6 +364,7 @@
 
 			$this->respond->renderJSON( static::$status );
 		}
+		
 		public function list_prizes_tradable()
 		{
 			$this->requireAuth();
@@ -505,6 +507,59 @@
 
 			$this->respond->renderHTML( $renderText );
 		}
+
+
+
+
+		public function register_gcm()
+		{
+			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
+
+			$user = Authenticator::getInstance()->getUser();
+			$token_gcm = valid_request_var('token_gcm');
+
+			if( is_null( $user ) )
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
+			else if( is_null( $token_gcm ) )
+				$this->respond->setJSONCode( R_USER_ERR_PARAMS );
+
+			else
+			{
+				$user->setTokenGCM( $token_gcm );
+
+				$this->respond->setJSONCode( $user->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+				
+			}
+
+			$this->respond->renderJSON( static::$status );
+		}
+
+
+
+
+		public function unregister_gcm()
+		{
+			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
+
+			$user = Authenticator::getInstance()->getUser();
+
+			if( is_null( $user ) )
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
+			else
+			{
+				$user->setTokenGCM( NULL );
+
+				$this->respond->setJSONCode( $user->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+				
+			}
+
+			$this->respond->renderJSON( static::$status );
+		}
+
+
+
 	}
 	
 	
