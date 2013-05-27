@@ -136,6 +136,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 							promotions_.add(map_);
 						}
 					}
+					binding_data_.notifyDataSetChanged();
 				}
 				else{
 					builder = new AlertDialog.Builder(mContext);
@@ -148,8 +149,6 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 					AlertDialog dialog = builder.create();
 					dialog.show();
 				}
-
-				binding_data_.notifyDataSetChanged();
 			} else {
 				if(!Utilities.hasInternetConnection(mContext)){
 					builder = new AlertDialog.Builder(mContext);
