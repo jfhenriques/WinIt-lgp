@@ -199,6 +199,17 @@
 									if( !$pc->save() )
 										$hasError = true;
 								}
+								
+								if( !$hasError )
+								{ // buscar points da promoção
+									// perguntas_certas/total_perguntas*pontos da promoção
+								
+									$pontos_finais = $rightAnswers/$totalQuestions;
+									
+									$points = UserPoints::instantiate($user, $promo, $pontos_finais, $time);
+									$hasError = $points->save();
+								
+								}
 							}
 							else
 								$hasError = true;
