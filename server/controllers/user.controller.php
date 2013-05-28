@@ -583,7 +583,7 @@
 		}
 		
 		
-		public function listPoints() {
+		public function showPoints() {
 			
 			$this->requireAuth();
 
@@ -591,14 +591,12 @@
 
 			$u = $user->getUID();
 			
-			var_dump($u);
-			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
 			else
 			{
-				$points = UserPoints::listUserPoints( $user->getUID() );
+				$points = UserPoints::showUserPoints( $user->getUID() );
 
 				$this->respond->setJSONResponse( $points );
 				$this->respond->setJSONCode( R_STATUS_OK );

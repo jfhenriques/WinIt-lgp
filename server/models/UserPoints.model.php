@@ -105,16 +105,12 @@
 			return $userpoints;
 		}
 		
-		public static function listUserPoints($uid) {
+		public static function showUserPoints($uid) {
 		
-			var_dump('dentro');
-			var_dump($uid);
 			$result = static::query( 'SELECT SUM(xp_points) AS pts FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
 									  array( $uid ) );
-									  
-			var_dump($result);
 			
-			return static::fillModel( $result, new UserPoints() );
+			return $result;
 			
 		}
 

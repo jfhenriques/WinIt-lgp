@@ -93,7 +93,7 @@
 									array( 'match' => '/gcm', 'controller' => 'user', 'via' => 'post', 'action' => 'register_gcm' ),
 									array( 'match' => '/gcm', 'controller' => 'user', 'via' => 'delete', 'action' => 'unregister_gcm' ),
 
-									array( 'match' => '/points', 'controller' => 'user', 'via' => 'get', 'action' => 'listPoints' ),
+									array( 'match' => '/points', 'controller' => 'user', 'via' => 'get', 'action' => 'showPoints' ),
 									
 									array( 'match' => '/promotions',
 										   'matches' => array(
