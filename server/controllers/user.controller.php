@@ -583,7 +583,7 @@
 		}
 		
 		
-		public function showPoints() {
+/*		public function showPoints() {
 			
 			$this->requireAuth();
 
@@ -604,7 +604,7 @@
 
 			$this->respond->renderJSON( static::$status );
 		
-		}
+		}*/
 
 	}
 	
