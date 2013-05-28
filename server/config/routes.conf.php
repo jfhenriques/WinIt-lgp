@@ -86,9 +86,12 @@
 
 							   		array( 'match' => '/reset_password', 'controller' => 'user', 'via' => 'post', 'action' => 'reset_password' ),
 
-									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
+/*									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'get', 'action' => 'list_tags' ),
 									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'post', 'action' => 'assoc_tags' ),
-									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'delete', 'action' => 'remove_tags' ),
+									array( 'match' => '/tags', 'controller' => 'user', 'via' => 'delete', 'action' => 'remove_tags' ),*/
+
+									array( 'match' => '/gcm', 'controller' => 'user', 'via' => 'post', 'action' => 'register_gcm' ),
+									array( 'match' => '/gcm', 'controller' => 'user', 'via' => 'delete', 'action' => 'unregister_gcm' ),
 
 									array( 'match' => '/promotions',
 										   'matches' => array(

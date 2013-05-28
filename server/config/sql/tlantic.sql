@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 26, 2013 at 06:08 AM
+-- Generation Time: May 27, 2013 at 05:38 AM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -400,6 +400,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `door` varchar(200) DEFAULT NULL,
   `token_facebook` varchar(200) DEFAULT NULL,
   `token_twitter` varchar(200) DEFAULT NULL,
+  `token_gcm` varchar(200) DEFAULT NULL,
   `reset_token` varchar(150) DEFAULT NULL,
   `reset_token_validity` int(11) DEFAULT NULL,
   `ui_seed` binary(32) NOT NULL,
@@ -627,13 +628,6 @@ ALTER TABLE `retailer`
 --
 ALTER TABLE `session`
   ADD CONSTRAINT `session_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`);
-
---
--- Constraints for table `tradingsuggestion`
---
-ALTER TABLE `tradingsuggestion`
-  ADD CONSTRAINT `tradingsuggestion_ibfk_1` FOREIGN KEY (`pcid_orig`) REFERENCES `prizecode` (`pcid`),
-  ADD CONSTRAINT `tradingsuggestion_ibfk_2` FOREIGN KEY (`pcid_dest`) REFERENCES `prizecode` (`pcid`);
 
 --
 -- Constraints for table `user`

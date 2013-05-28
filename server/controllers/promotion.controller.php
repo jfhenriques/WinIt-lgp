@@ -4,9 +4,8 @@
 
 	DEFINE( 'R_PROM_ERR_USER_NOT_FOUND'	, 0x20 );
 	
-	DEFINE ('R_TRAD_ERR_NO_MATCH_USER', 0x30);
 
-	// include '../models/PrizeCode.model.php';
+
 
 	class PromotionController extends Controller {
 	
@@ -101,39 +100,8 @@
 
 			$this->respond->renderJSON( static::$status );
 
-			// $this->respond->renderJSON( $resp, $render_code, describeMessage( $render_code, static::$status ) );
 		}
 		
-			
-		/*
-		public function sendPromoToTrading() {
-			
-			$pid = (int)valid_request_var( 'promotion' );
-			
-			$user = Authenticator::getInstance()->getUser();	
-			
-			$uid = $user->getUID();			
-			
-			$prizecode = Promotion::getPrizeCodePromo($pid, $uid);
-			$owneruid = $prizecode->getOwnerUID();
-			
-			if( is_null( $user ) ) {
-			
-				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
-				
-			} else if($user->getUID() != $prizecode->getOwnerUID()) {
-			
-				$this->respond->setJSONCode( R_TRAD_ERR_NO_MATCH_USER );
-				
-			} else {
-				// utilizada
-				// 
-				$prizecode->sendPromoToTrading($pid, $uid);
-				$this->respond->setJSONCode( R_STATUS_OK );
-				
-			}
-			$this->respond->renderJSON( static::$status );			
-		}*/
 	}
 
 ?>
