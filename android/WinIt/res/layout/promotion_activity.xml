@@ -17,13 +17,14 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:contentDescription=""
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:background="@color/concrete"
+            android:layout_marginBottom="@dimen/gap" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/gap" >
+            android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/name_text"
@@ -43,11 +44,12 @@
                 android:background="@color/dark_gray" />
 
             <LinearLayout
-                android:id="@+id/unowned_promotion_details"
+                android:id="@+id/playable_promotion_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/gap" >
+                android:layout_marginBottom="@dimen/gap"
+                android:visibility="gone" >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -83,11 +85,11 @@
             </LinearLayout>
             
             <LinearLayout
-                android:id="@+id/tradeable_promotion_details"
+                android:id="@+id/proposable_promotion_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/gap" >
+                android:visibility="gone" >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -110,6 +112,7 @@
                 android:id="@+id/description_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/gap"
                 android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>

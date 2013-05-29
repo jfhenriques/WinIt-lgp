@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +25,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.origamilabs.library.views.StaggeredGridView;
-import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
 
-public class MyPromotionsActivity extends SherlockFragmentActivity implements OnItemClickListener {
-
+public class MyPromotionsActivity extends SherlockFragmentActivity {
 	private ActionBar action_bar_;
 	
 	private PagerSlidingTabStrip tabs_;
@@ -141,6 +138,7 @@ public class MyPromotionsActivity extends SherlockFragmentActivity implements On
 	    private Activity activity_;
 	    
 	    private int step_;
+	    private int affinity_;
 	    
 	    private StaggeredGridView staggered_view_;
 	    private StaggeredAdapter staggered_adapter_;
@@ -161,12 +159,15 @@ public class MyPromotionsActivity extends SherlockFragmentActivity implements On
 			switch (step_) {
                 case 0:
                     promotions = promotions_won_;
+                    affinity_ = PromotionActivity.WON_PROMOTION;
                     break;
                 case 1:
                     promotions = promotions_in_trading_;
+                    affinity_ = PromotionActivity.IN_TRADING_PROMOTION;
                     break;
                 case 2:
                     promotions = promotions_tradeable_;
+                    affinity_ = PromotionActivity.TRADEABLE_PROMOTION;
                     break;
 			}
 			staggered_adapter_ = new StaggeredAdapter(getActivity(), R.id.list_image, promotions);
@@ -185,14 +186,20 @@ public class MyPromotionsActivity extends SherlockFragmentActivity implements On
 			staggered_view_.setAdapter(staggered_adapter_);
 			staggered_adapter_.notifyDataSetChanged();
 			
+			staggered_view_.setOnItemClickListener(new StaggeredGridView.OnItemClickListener() {
+                @Override
+                public void onItemClick(StaggeredGridView parent, View view, int position,
+                        long id) {
+                    Promotion promotion = staggered_adapter_.getItem(position);
+                    
+                    Intent intent = new Intent(activity_, PromotionActivity.class);
+                    intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, affinity_);
+                    intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
+                    activity_.startActivity(intent);
+                }
+            });
+			
 			return root_view;
 		}
-	}
-
-
-	@Override
-	public void onItemClick(StaggeredGridView parent, View view, int position,
-			long id) {
-		//TODO
 	}
 }

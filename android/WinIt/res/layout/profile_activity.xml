@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/turquoise" >
+    android:background="@color/concrete" >
 
     <ScrollView
         android:id="@+id/scroll"
@@ -45,7 +45,7 @@
                 android:layout_height="2dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
-                android:background="@color/green_sea" />
+                android:background="@color/silver" />
 
             <TextView
                 android:id="@+id/email_text"
@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/green_sea"
+                android:background="@color/silver"
                 android:layout_marginTop="@dimen/gap2"
                 android:layout_marginBottom="@dimen/gap"
                 android:padding="@dimen/gap" >
