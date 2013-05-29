@@ -149,7 +149,7 @@
 					$this->respond->setJSONCode( R_USER_MUST_SEND_OLD_P );
 
 				// Old password must be correct
-				elseif( !$isFacebook && !is_null($password) && User::compareWithHashedPass($password_old, $user->getPassword()) === false )
+				elseif( $isInHouse && !is_null($password) && User::compareWithHashedPass($password_old, $user->getPassword()) === false )
 					$this->respond->setJSONCode( R_USER_BAD_OLD_PASS );
 
 				// if changic address, must check if adid exists
@@ -171,7 +171,7 @@
 					if( !is_null($birth) )
 						$user->setBirth($birth);
 
-					if( !$isFacebook )
+					if( $isInHouse )
 					{
 						if( !is_null($email) )
 							$user->setEmail($email);
@@ -185,7 +185,7 @@
 
 					else
 					{
-						if( !$isFacebook && !is_null($password) )
+						if( $isInHouse && !is_null($password) )
 							Session::resetUserTokens( $user->getUID() );
 						
 						$this->respond->setJSONCode( R_STATUS_OK );
