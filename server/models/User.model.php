@@ -55,7 +55,7 @@
 		}
 		public function setADID($adid)
 		{
-			$this->data['adid'] = $adid;
+			$this->data['adid'] = (int)$adid;
 		}
 
 		
@@ -67,17 +67,17 @@
 		{
 			$this->data['address2'] = $address2;
 		}
+		
 
-		
-		public function getTokenFacebook()
+		public function getFacebookUID()
 		{
-			return $this->getData('token_facebook');
+			return (int)$this->getData('facebook_uid');
 		}
-		public function setTokenFacebook($token_facebook)
+		public function setFacebookUID($facebook_uid)
 		{
-			$this->data['token_facebook'] = $token_facebook;
+			$this->data['facebook_uid'] = (int)$facebook_uid;
 		}
-		
+
 
 		public function getTokenTwitter()
 		{
@@ -88,14 +88,6 @@
 			$this->data['token_twitter'] = $token_twitter;
 		}
 
-		// public function getTokenGCM()
-		// {
-		// 	return $this->getData('token_gcm');
-		// }
-		// public function setTokenGCM($token_gcm)
-		// {
-		// 	$this->data['token_gcm'] = $token_gcm;
-		// }
 
 		public function getBirth()
 		{
@@ -103,7 +95,7 @@
 		}
 		public function setBirth($birth)
 		{
-			$this->data['birth'] = $birth;
+			$this->data['birth'] = (int)$birth;
 		}
 
 		public function getResetToken()
@@ -148,26 +140,26 @@
 
 			if( $isInsert )
 			{
-				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, token_facebook, token_twitter, birth, ui_seed) ' .
-										' VALUES(:name, :email, :password, :adid, :address2, :token_facebook, :token_twitter, :birth, :seed)');
+				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, facebook_uid, birth, ui_seed) ' .
+										' VALUES(:name, :email, :password, :adid, :address2, :facebook_uid, :birth, :seed)');
 				
 				$seed = $this->getSeed();
+				$facebook_uid = $this->getFacebookUID();
+
 				$sth->bindParam(':seed', $seed, PDO::PARAM_LOB );
+				$sth->bindParam(':facebook_uid', $facebook_uid, ( $facebook_uid > 0 ) ? PDO::PARAM_INT : PDO::PARAM_NULL );
 			}
 			else
 			{
-				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,' .
-												' adid = :adid, door = :address2, birth = :birth, token_facebook = :token_facebook, ' .
-												' token_twitter = :token_twitter , reset_token = :res_token , reset_token_validity = :res_token_val WHERE uid = :uid ;' );
+				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,  adid = :adid, door = :address2, ' .
+												' birth = :birth, reset_token = :res_token , reset_token_validity = :res_token_val WHERE uid = :uid ;' );
 				
 				$res_token = $this->getResetToken();
 				$res_token_val = $this->getResetTokenValidity();
-				//$token_gcm = $this->getTokenGCM();
 
 				$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
 				$sth->bindParam(':res_token', $res_token, PDO::PARAM_STR);
 				$sth->bindParam(':res_token_val', $res_token_val, PDO::PARAM_INT);
-				//$sth->bindParam(':token_gcm', $token_gcm, is_null( $token_gcm ) ? PDO::PARAM_NULL : PDO::PARAM_STR );
 			}
 
 			$name = $this->getName();
@@ -175,17 +167,13 @@
 			$password = $this->getPassword();
 			$adid = $this->getADID();
 			$address2 = $this->getAddress2();
-			$token_facebook = $this->getTokenFacebook();
-			$token_twitter = $this->getTokenTwitter();
 			$birth = $this->getBirth();
 
 			$sth->bindParam(':name', $name, PDO::PARAM_STR);
-			$sth->bindParam(':email', $email, PDO::PARAM_STR);
-			$sth->bindParam(':password', $password, PDO::PARAM_STR);
-			$sth->bindParam(':adid', $adid, PDO::PARAM_INT);
+			$sth->bindParam(':email', $email, is_null( $email ) ? PDO::PARAM_NULL : PDO::PARAM_STR );
+			$sth->bindParam(':password', $password, is_null( $password ) ? PDO::PARAM_NULL : PDO::PARAM_STR );
+			$sth->bindParam(':adid', $adid, ( $adid > 0 ) ? PDO::PARAM_INT : PDO::PARAM_NULL );
 			$sth->bindParam(':address2', $address2, PDO::PARAM_STR);
-			$sth->bindParam(':token_facebook', $token_facebook, PDO::PARAM_STR);
-			$sth->bindParam(':token_twitter', $token_twitter, PDO::PARAM_STR);
 			$sth->bindParam(':birth', $birth, PDO::PARAM_INT);
 			
 			$ret = $sth->execute();
@@ -196,9 +184,33 @@
 			return $ret;
 		}
 
+		public static function validadeFacebookToken($accessToken)
+		{
 
+			$url = "https://graph.facebook.com/me?fields=id&access_token=" . $accessToken;
 
+			if( false !== ( $ch = curl_init($url) ) )
+			{
 
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+				curl_setopt($ch, CURLOPT_BINARYTRANSFER, TRUE);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+				curl_setopt($ch, CURLOPT_HEADER, FALSE);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Host: graph.facebook.com'));
+
+				$return = curl_exec($ch);
+				curl_close($ch);
+
+				if( $return !== false )
+				{
+					if ( false !== ( $json = json_decode( $return, true ) ) && isset( $json['id'] ) )
+						return $json['id'] ;
+				}
+
+			}
+
+			return false;
+		}
 
 		public static function saltPass( $pass, $salt = null )
 		{
@@ -228,6 +240,14 @@
 		{
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
 									  array( $id ) );
+
+			return static::fillModel( $result, new User() );
+		}
+
+		public static function findByFacebookUID($facebook_uid)
+		{
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE facebook_uid = ? LIMIT 1;',
+									  array( $facebook_uid ) );
 
 			return static::fillModel( $result, new User() );
 		}
