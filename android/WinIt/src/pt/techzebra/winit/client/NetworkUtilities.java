@@ -2,9 +2,18 @@ package pt.techzebra.winit.client;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -21,10 +30,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,17 +114,50 @@ public class NetworkUtilities {
 	private static HttpClient http_client_;
 	private static HttpHost http_host_;
 
+	static private HttpClient sslClient(HttpClient client) throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
+        X509TrustManager tm = new X509TrustManager() {
+            @Override
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+            @Override
+            public void checkClientTrusted(
+                    java.security.cert.X509Certificate[] chain, String authType)
+                    throws CertificateException {
+            }
+
+            @Override
+            public void checkServerTrusted(
+                    java.security.cert.X509Certificate[] chain, String authType)
+                    throws CertificateException {
+            }
+        };
+        
+        SSLContext ssl_context = SSLContext.getInstance("TLS");
+        ssl_context.init(null, new TrustManager[]{ tm }, null);
+
+        SSLSocketFactory ssl_socket_factory = new CustomSSLSocketFactory(ssl_context);
+
+        ssl_socket_factory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        ClientConnectionManager connection_manager = client.getConnectionManager();
+        SchemeRegistry scheme_registry = connection_manager.getSchemeRegistry();
+        scheme_registry.register(new Scheme("https", ssl_socket_factory, 443));
+        
+        return new DefaultHttpClient(connection_manager, client.getParams());
+	}
+	
 	/**
 	 * Configures the HttpClient to connect to the URL provided.
 	 */
 	public static void maybeCreateHttpClient() {
-
 		if (http_client_ == null) {
-			HttpParams parameters = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(parameters, 10000);
-			HttpConnectionParams.setSoTimeout(parameters, 10000);
-			http_client_ = new CustomHttpClient(parameters,
-					WinIt.getAppContext());
+		    http_client_ = new DefaultHttpClient();
+		    try {
+                http_client_ = sslClient(http_client_);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 		}
 	}
 
