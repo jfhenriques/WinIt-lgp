@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 27, 2013 at 05:38 AM
+-- Generation Time: May 29, 2013 at 06:10 AM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -394,19 +394,19 @@ CREATE TABLE IF NOT EXISTS `user` (
   `uid` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   `email` varchar(300) NOT NULL,
-  `password` varchar(100) NOT NULL,
+  `password` varchar(100) DEFAULT NULL,
   `birth` int(11) DEFAULT NULL,
   `adid` int(11) DEFAULT NULL,
   `door` varchar(200) DEFAULT NULL,
-  `token_facebook` varchar(200) DEFAULT NULL,
+  `facebook_uid` int(11) DEFAULT NULL,
   `token_twitter` varchar(200) DEFAULT NULL,
-  `token_gcm` varchar(200) DEFAULT NULL,
   `reset_token` varchar(150) DEFAULT NULL,
   `reset_token_validity` int(11) DEFAULT NULL,
   `ui_seed` binary(32) NOT NULL,
   PRIMARY KEY (`uid`),
   UNIQUE KEY `uq_user_email` (`email`),
   UNIQUE KEY `reset_token` (`reset_token`),
+  UNIQUE KEY `facebook_uid` (`facebook_uid`),
   KEY `i_user_adid` (`adid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
@@ -424,6 +424,21 @@ CREATE TABLE IF NOT EXISTS `userbadges` (
   PRIMARY KEY (`uid`,`bid`),
   KEY `i_userbadges_uid` (`uid`),
   KEY `i_userbadges_bid` (`bid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usergcm`
+--
+
+DROP TABLE IF EXISTS `usergcm`;
+CREATE TABLE IF NOT EXISTS `usergcm` (
+  `uid` int(11) NOT NULL,
+  `gcm` int(11) NOT NULL,
+  `date` int(11) NOT NULL,
+  PRIMARY KEY (`uid`,`gcm`),
+  UNIQUE KEY `uq_usergcm_gcm` (`gcm`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -641,6 +656,12 @@ ALTER TABLE `user`
 ALTER TABLE `userbadges`
   ADD CONSTRAINT `userbadges_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
   ADD CONSTRAINT `userbadges_ibfk_2` FOREIGN KEY (`bid`) REFERENCES `badges` (`bid`);
+
+--
+-- Constraints for table `usergcm`
+--
+ALTER TABLE `usergcm`
+  ADD CONSTRAINT `usergcm_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`);
 
 --
 -- Constraints for table `userpromotion`
