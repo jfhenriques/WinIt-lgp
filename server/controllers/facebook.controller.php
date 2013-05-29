@@ -47,7 +47,7 @@
 
 		public function receive_update_list()
 		{
-			FacebookPlugin::getUsersInfo(array("100002664202285", "100006002378496"));
+			//FacebookPlugin::getUsersInfo(array("100002664202285", "100006002378496"));
 
 			$signature = valid_var( 'HTTP_X_HUB_SIGNATURE', $_SERVER );
 			$payload = null;

@@ -68,7 +68,7 @@
 			if( false !== ( $ch = curl_init() ) )
 			{
 				$uidList = implode(",", $uidsList);
-				
+
 				$sql = "SELECT uid,name,birthday,email FROM user WHERE uid IN({$uidList}) ;";
 
 				$params = http_build_query(
@@ -84,7 +84,7 @@
 				curl_setopt_array( $ch, static::$opts );
 
 				$return = curl_exec($ch);
-				var_dump($return);
+				//var_dump($return);
 				curl_close($ch);
 
 				if( $return !== false )
