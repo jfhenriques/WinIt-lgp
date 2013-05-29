@@ -83,6 +83,8 @@
 
 				   		array( 'match' => '/facebook', 'controller' => 'facebook', 'via' => 'get', 'action' => 'echo_back' ),
 				   		array( 'match' => '/facebook', 'controller' => 'facebook', 'via' => 'post', 'action' => 'receive_update_list' ),
+				   		//array( 'match' => '/facebook/deauth', 'controller' => 'facebook', 'via' => 'get', 'action' => 'echo_back' ),
+				   		array( 'match' => '/facebook/deauth', 'controller' => 'facebook', 'via' => 'post', 'action' => 'deauth_user' ),
 
 						array( 'match' => '/user', 'controller' => 'user', 'via' => 'put', 'action' => 'edit',
 							   'matches' => array(

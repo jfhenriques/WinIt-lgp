@@ -18,6 +18,8 @@
 	DEFINE( 'R_USER_DONT_OWN_GCM'		, 0x50 );
 	DEFINE( 'R_USER_GCM_NOT_FOUND'		, 0x51 );
 
+	DEFINE( 'R_USER_RESET_FACE_USER'	, 0x60 );
+
 
 
 	DEFINE( 'MAIL_SUBJECT_RESET_PASS' , 'Tlantic PromGame Mobile - Password Reset' );
@@ -47,6 +49,8 @@
 
 				R_USER_DONT_OWN_GCM		=> 'O Token GCM não pertece ao utilizador',
 				R_USER_GCM_NOT_FOUND	=> 'O Token GCM não foi encontrado',
+
+				R_USER_RESET_FACE_USER	=> 'Não é possível fazer reset à password de um user registado pelo facebook',
 			);
 
 		
@@ -129,7 +133,7 @@
 
 			else
 			{
-				$isInHouse = $user->getFacebookUID() <= 0 ;
+				$isInHouse = is_null( $user->getFacebookUID() ) ;
 
 				$name = valid_request_var('name');
 				$email = valid_request_var('email');
@@ -214,15 +218,11 @@
 			$birth = valid_request_var('birth');
 			$password = valid_request_var('password', false);
 
-			$token_fb = valid_request_var('token_fb');
-			$isInHouse = is_null( $token_fb );
 
-			if( is_null($name) || is_null($birth) || ($isInHouse && (
-					   is_null( $email )
-					|| is_null( $password ) ) ) )
+			if( is_null($name) || is_null($birth) || is_null( $email ) || is_null( $password ) )
 				$this->respond->setJSONCode( R_USER_ERR_PARAMS );
 
-			else if( $isInHouse && !is_null( User::findByEmail( $email ) ) )
+			else if( !is_null( User::findByEmail( $email ) ) )
 				$this->respond->setJSONCode( R_USER_ERR_EMAIL_EXISTS );
 
 			elseif( !is_null( $adid ) && is_null( Address::findByADID($adid) ) )
@@ -237,19 +237,8 @@
 				$user->setAddress2($address2);
 				$user->setBirth($birth);
 
-				if( !$isInHouse )
-				{
-					$facebookUID = FacebookPlugin::validadeUserToken( $token_fb );
-					
-					if( $facebookUID !== false && $facebookUID > 0 )
-						$user->setFacebookUID( $facebookUID );
-
-				}
-				else
-				{
-					$user->setEmail( strtolower($email) );
-					$user->setPassword( User::saltPass($password) );
-				}
+				$user->setEmail( strtolower($email) );
+				$user->setPassword( User::saltPass($password) );
 
 				$user->setSeed( Controller::genRand('sha256', true) );
 
@@ -423,7 +412,10 @@
 				$this->respond->setJSONCode( R_USER_EMAIL_MISSING );
 			
 			elseif( is_null( $user = User::findByEmail( $email ) ) )
-					$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
+			elseif( !is_null( $user->getFacebookUID() ) )
+				$this->respond->setJSONCode( R_USER_RESET_FACE_USER );
 
 			else
 			{

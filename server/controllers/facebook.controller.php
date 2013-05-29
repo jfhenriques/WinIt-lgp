@@ -65,6 +65,38 @@
 			}
 
 		}
+
+
+		public function deauth_user()
+		{
+			$fp = fopen('data.txt', 'w');
+
+			$h = var_export(apache_request_headers(), true);
+			$payload = file_get_contents( 'php://input' );
+			fwrite($fp, "{$h}\n");
+			fwrite($fp, $payload);
+			fclose($fp);
+
+		}
+
+
+
+
+		private function parse_signed_request($signed_request)
+		{
+			list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
+
+			// decode the data
+			$sig = base64_url_decode($encoded_sig);
+			$data = json_decode(base64_url_decode($payload), true);
+
+			return $data;
+		}
+
+		private function base64_url_decode($input)
+		{
+			return base64_decode(strtr($input, '-_', '+/'));
+		}
 	
 	}
 ?>

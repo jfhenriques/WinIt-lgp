@@ -25,6 +25,8 @@
 									  CURLOPT_CAINFO		 => FACEBOOK_CA_BUNDLE,
 									  CURLOPT_HTTPHEADER	 => array('Host: graph.facebook.com') );
 
+		private static $appsecret_proof = null;
+
 
 		public static function verifyPayload($signature, $payload)
 		{
@@ -33,14 +35,28 @@
 			return $signature === $hash ;
 		}
 
+		public static function getAppSecretProof($accessToken)
+		{
+			return hash_hmac('sha256', $accessToken, self::WINIT_SECRET);
+		}
 
-		public static function validadeUserToken($accessToken)
+		private static function _buil_query($array)
+		{
+			return http_build_query( $array , null, '&' );
+		}
+
+
+		public static function fetchInfoByUserAccessToken($accessToken)
 		{
 
 			if( false !== ( $ch = curl_init() ) )
 			{
+				$params = self::_buil_query( array( 'fields' => 'id,installed,birthday,email,name',
+													'access_token' => $accessToken,
+													'appsecret_proof' => FacebookPlugin::getAppSecretProof($accessToken) ) );
 
-				$url = "https://graph.facebook.com/me?fields=id&access_token=" . $accessToken;
+
+				$url = "https://graph.facebook.com/me?{$params}";
 
 				curl_setopt($ch, CURLOPT_URL, $url);
 				curl_setopt_array( $ch, static::$opts );
@@ -50,9 +66,8 @@
 
 				if( $return !== false )
 				{
-					if ( false !== ( $json = @json_decode( $return, true ) )
-							&& isset( $json['id'] ) )
-						return $json['id'] ;
+					if ( false !== ( $json = @json_decode( $return, true ) ) )
+						return $json;
 				}
 
 			}
@@ -69,14 +84,11 @@
 			{
 				$uidList = implode(",", $uidsList);
 
-				$sql = "SELECT uid,name,birthday,email FROM user WHERE uid IN({$uidList}) ;";
+				$sql = "SELECT uid,name,birthday,email,installed FROM user WHERE uid IN({$uidList}) ;";
 
-				$params = http_build_query(
-										array(
-											'q' => $sql,
-											'access_token' => self::WINIT_ACCESS_CODE
-										)
-										, null, '&' );
+				$params = self::_buil_query( array( 'q' => $sql,
+													'access_token' => self::WINIT_ACCESS_CODE,
+													'appsecret_proof' => FacebookPlugin::getAppSecretProof(self::WINIT_ACCESS_CODE) ) );
 
 				$url = "https://graph.facebook.com/fql?{$params}" ;
 

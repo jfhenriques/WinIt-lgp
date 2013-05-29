@@ -12,7 +12,7 @@
 
 	
 
-	function valid_var( $var, $arr, $trim = true )
+	function valid_var( $var, $arr, $trim = true, $default = null )
 	{
 		if( is_array( $arr ) && isset( $arr[ $var ] ) && !is_null( $arr[ $var ] ) )
 		{
@@ -28,11 +28,11 @@
 				return $arr[ $var ];
 		}
 
-		return null;
+		return $default;
 	}
-	function valid_request_var( $var, $trim = true )
+	function valid_request_var( $var, $trim = true, $default = null )
 	{
-		return valid_var( $var, $_REQUEST, $trim );
+		return valid_var( $var, $_REQUEST, $trim, $default );
 	}
 
 

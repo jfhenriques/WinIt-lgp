@@ -71,11 +71,11 @@
 
 		public function getFacebookUID()
 		{
-			return (int)$this->getData('facebook_uid');
+			return $this->getData('facebook_uid');
 		}
 		public function setFacebookUID($facebook_uid)
 		{
-			$this->data['facebook_uid'] = (int)$facebook_uid;
+			$this->data['facebook_uid'] = $facebook_uid;
 		}
 
 
@@ -125,6 +125,15 @@
 			$this->data['ui_seed'] = $seed;
 		}
 
+		public function isActive()
+		{
+			return (bool)$this->getData('active');
+		}
+		public function setActive($state)
+		{
+			$this->data['active'] = $state;
+		}
+
 
 
 
@@ -147,17 +156,19 @@
 				$facebook_uid = $this->getFacebookUID();
 
 				$sth->bindParam(':seed', $seed, PDO::PARAM_LOB );
-				$sth->bindParam(':facebook_uid', $facebook_uid, ( $facebook_uid > 0 ) ? PDO::PARAM_INT : PDO::PARAM_NULL );
+				$sth->bindParam(':facebook_uid', $facebook_uid, is_null( $facebook_uid ) ?  PDO::PARAM_NULL : PDO::PARAM_INT );
 			}
 			else
 			{
 				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,  adid = :adid, door = :address2, ' .
-												' birth = :birth, reset_token = :res_token , reset_token_validity = :res_token_val WHERE uid = :uid ;' );
+												' birth = :birth, active = :active, reset_token = :res_token , reset_token_validity = :res_token_val WHERE uid = :uid ;' );
 				
 				$res_token = $this->getResetToken();
 				$res_token_val = $this->getResetTokenValidity();
+				$active = $this->isActive();
 
 				$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
+				$sth->bindParam(':active', $active ? 1 : 0 , PDO::PARAM_INT);
 				$sth->bindParam(':res_token', $res_token, PDO::PARAM_STR);
 				$sth->bindParam(':res_token_val', $res_token_val, PDO::PARAM_INT);
 			}
@@ -165,9 +176,12 @@
 			$name = $this->getName();
 			$email = $this->getEmail();
 			$password = $this->getPassword();
-			$adid = $this->getADID();
 			$address2 = $this->getAddress2();
 			$birth = $this->getBirth();
+
+			$adid = $this->getADID();
+			if( $adid <= 0 )
+				$adid = NULL;
 
 			$sth->bindParam(':name', $name, PDO::PARAM_STR);
 			$sth->bindParam(':email', $email, is_null( $email ) ? PDO::PARAM_NULL : PDO::PARAM_STR );
@@ -194,7 +208,7 @@
 
 		public static function findByResetToken( $token )
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE reset_token = ? LIMIT 1;',
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE active = 1 AND facebook_uid <> NULL AND reset_token = ? LIMIT 1;',
 									  array( $token ) );
 
 							
@@ -203,7 +217,7 @@
 
 		public static function findByEmail( $email )
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE email = ? LIMIT 1;',
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE active = 1 AND email = ? LIMIT 1;',
 									  array( $email ) );
 
 							
@@ -212,7 +226,7 @@
 
 		public static function findByUID($id)
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE active = 1 AND uid = ? LIMIT 1;',
 									  array( $id ) );
 
 			return static::fillModel( $result, new User() );
@@ -241,7 +255,8 @@
 		{
 			$user = static::findByEmail( $email );
 
-			if( !is_null( $user ) && self::compareWithHashedPass( $pass, $user->getPassword() ) !== false )
+			if(   !is_null( $user ) && !is_null( $user->getPassword() )
+				&& self::compareWithHashedPass( $pass, $user->getPassword() ) !== false )
 				return $user;
 
 			return null;
