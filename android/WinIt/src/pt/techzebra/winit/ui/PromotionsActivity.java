@@ -150,7 +150,7 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 				int position, long id) {
 			Promotion promotion = adapter_.getItem(position);
 			Intent intent = new Intent(activity_, PromotionActivity.class);
-			intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PromotionAffinity.AVAILABLE_PROMOTION);
+			intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PLAYABLE_PROMOTION);
 			intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
 			activity_.startActivity(intent);
 		}
@@ -159,7 +159,7 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 		public void processFinish(ArrayList<Promotion> result) {
 			promotions_.addAll(result);
 			adapter_.notifyDataSetChanged();
-		}	    
+		}
 	}
 
 	public static class TradingPromotionsShowcase extends PromotionsShowcase {
@@ -170,13 +170,11 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 		@Override
 		protected void initializeActionBar() {
 			super.initializeActionBar();
-
 			action_bar_.setBackgroundDrawable(activity_.getResources().getDrawable(R.drawable.action_bar_bg_trading));
 		}
 		
 		@Override
 		public void initializeFields() {
-			// TODO Auto-generated method stub
 			super.initializeFields();
 		}
 
@@ -192,7 +190,7 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 				int position, long id) {
 			Promotion promotion = adapter_.getItem(position);
 			Intent intent = new Intent(activity_, PromotionActivity.class);
-			intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PromotionAffinity.TRADEABLE_PROMOTION);
+			intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PROPOSABLE_PROMOTION);
 			intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
 			activity_.startActivity(intent);
 		}

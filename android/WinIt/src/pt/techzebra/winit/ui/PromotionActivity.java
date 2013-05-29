@@ -8,7 +8,6 @@ import pt.techzebra.winit.platform.DownloadImageTask;
 import pt.techzebra.winit.platform.FetchPromotionInfoTask;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,12 +25,12 @@ public class PromotionActivity extends SherlockActivity {
 	
 	private PromotionView promotion_view_;
 	
-	public static class PromotionAffinity {
-	    public static final int AVAILABLE_PROMOTION = 1;
-	    public static final int OWNED_PROMOTION = 2;
-	    public static final int TRADEABLE_PROMOTION = 3;
-	}
-	
+    public static final int WON_PROMOTION = 1;
+    public static final int IN_TRADING_PROMOTION = 2;
+    public static final int TRADEABLE_PROMOTION = 3;
+    public static final int PLAYABLE_PROMOTION = 4;
+    public static final int PROPOSABLE_PROMOTION = 5;
+
 	@Override
 	protected void onCreate(Bundle saved_instance_state) {
 		super.onCreate(saved_instance_state);
@@ -71,35 +70,47 @@ public class PromotionActivity extends SherlockActivity {
 	    protected TextView name_text_;
         protected TextView description_text_;
 	    
-	    public PromotionView(SherlockActivity activity, int id) {
+        private int title_id_;
+        private int menu_id_;
+        
+        
+	    public PromotionView(SherlockActivity activity, int title_id, int promotion_id, int menu_id) {
 	        activity_ = activity;
+	        title_id_ = title_id;
+	        menu_id_ = menu_id;
 	        
 	        initializeActionBar();
 	        initializeFields();
 
-	        fetchPromotion(id);
+	        fetchPromotion(promotion_id);
         }
 	    
 	    protected void initializeActionBar() {
 	        action_bar_ = activity_.getSupportActionBar();
-	        action_bar_.setTitle(R.string.promotion);
+	        action_bar_.setTitle(title_id_);
 	        action_bar_.setDisplayHomeAsUpEnabled(true);
 	    }
+	    
+	    protected abstract int getAffinity();
 	    
 	    public static PromotionView createView(SherlockActivity activity, int promotion_affinity, int promotion_id) {
 	        PromotionView promotion_factory = null;
 	        
 	        switch (promotion_affinity) {
-	            case PromotionAffinity.AVAILABLE_PROMOTION:
-	                Log.d(TAG, "creating an available promotion");
-	                Log.d(TAG, Boolean.toString(activity != null));
-	                promotion_factory = new AvailablePromotion(activity, promotion_id);
+	            case WON_PROMOTION:
+	                promotion_factory = new WonPromotion(activity, promotion_id);
 	                break;
-	            case PromotionAffinity.OWNED_PROMOTION:
-	                promotion_factory = new OwnedPromotion(activity, promotion_id);
+	            case IN_TRADING_PROMOTION:
+	                promotion_factory = new InTradingPromotion(activity, promotion_id);
 	                break;
-	            case PromotionAffinity.TRADEABLE_PROMOTION:
+	            case TRADEABLE_PROMOTION:
 	                promotion_factory = new TradeablePromotion(activity, promotion_id);
+	                break;
+	            case PLAYABLE_PROMOTION:
+	                promotion_factory = new PlayablePromotion(activity, promotion_id);
+	                break;
+	            case PROPOSABLE_PROMOTION:
+	                promotion_factory = new ProposablePromotion(activity, promotion_id);
 	                break;
 	        }
 	        
@@ -111,61 +122,121 @@ public class PromotionActivity extends SherlockActivity {
             description_text_ = (TextView) activity_.findViewById(R.id.description_text);
 	    }
 	    
-	    public abstract void fetchPromotion(int id);
-	    
+	    public void fetchPromotion(int id) {
+	        FetchPromotionInfoTask fetch_promotion_info_task = new FetchPromotionInfoTask(activity_, getAffinity());
+	        fetch_promotion_info_task.setDelegate(this);
+	        fetch_promotion_info_task.execute(id);
+	    }
+
 	    public void populateFields() {
+	        new DownloadImageTask((ImageView) activity_.findViewById(R.id.image_view))
+            .execute(promotion_.getImageUrl());
+	        
 	        name_text_.setText(promotion_.getName());
             description_text_.setText(promotion_.getDescription());
 	    }
 	    
-	    public abstract boolean onCreateOptionsMenu(Menu menu);
+	    public boolean onCreateOptionsMenu(Menu menu) {
+	        activity_.getSupportMenuInflater().inflate(menu_id_, menu);
+            return true;
+	    }
+	    
 	    public abstract boolean onOptionsItemSelected(MenuItem item);
+	    
+	    @Override
+	    public void processFinish(Promotion result) {
+	        promotion_ = result;
+            populateFields();
+	    }
 	}
 	
-	public static class OwnedPromotion extends PromotionView {
-	    public OwnedPromotion(SherlockActivity activity, int id) {
-            super(activity, id);
-            Log.d(TAG, "OwnedPromotion constructor");
+	public static class WonPromotion extends PromotionView {
+	    public WonPromotion(SherlockActivity activity, int id) {
+            super(activity, R.string.promotions, id, R.menu.menu_won_promotion);
         }
 
 	    @Override
         public void initializeFields() {
-            
+            super.initializeFields();
         }
-
-	    @Override
-	    public void fetchPromotion(int id) {
-            new FetchPromotionInfoTask(activity_, PromotionAffinity.OWNED_PROMOTION).execute(id);
-	    }
 	    
         @Override
         public void populateFields() {
-            
-        }   
-	    
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            return false;
+            super.populateFields();
         }
 	    
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
-            return false;
+            switch (item.getItemId()) {
+                case R.id.menu_show:
+                    Utilities.showToast(activity_, "Show");
+                    break;
+            }
+            
+            return true;
         }
 
         @Override
-        public void processFinish(Promotion result) {
-            promotion_ = result;
-            populateFields();
+        protected int getAffinity() {
+            return WON_PROMOTION;
         }    
 	}
 	
-	public static class AvailablePromotion extends PromotionView {
+	public static class InTradingPromotion extends PromotionView {
+
+        public InTradingPromotion(SherlockActivity activity, int id) {
+            super(activity, R.string.promotion, id, R.menu.menu_in_trading);
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_cancel:
+                    Utilities.showToast(activity_, "Cancel");
+                    break;
+            }
+            
+            return true;
+        }
+
+        @Override
+        protected int getAffinity() {
+            return IN_TRADING_PROMOTION;
+        }
+	    
+	}
+	
+	public static class TradeablePromotion extends PromotionView {
+        public TradeablePromotion(SherlockActivity activity, int id) {
+            super(activity, R.string.promotions, id, R.menu.menu_tradeable);
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_redeem:
+                    Utilities.showToast(activity_, "Redeem");
+                    break;
+                case R.id.menu_trade:
+                    Utilities.showToast(activity_, "Trade");
+                    break;
+            }
+            
+            return true;
+        }
+
+        @Override
+        protected int getAffinity() {
+            return TRADEABLE_PROMOTION;
+        }
+	}
+	
+	public static class PlayablePromotion extends PromotionView {
         private TextView end_date_text_;
 	    private TextView win_points_text_;
 	    
-	    public AvailablePromotion(SherlockActivity activity, int id) {
-            super(activity, id);
+	    public PlayablePromotion(SherlockActivity activity, int id) {
+            super(activity, R.string.promotion, id, R.menu.menu_playable);
         }
 
 	    @Override
@@ -181,30 +252,15 @@ public class PromotionActivity extends SherlockActivity {
 	        end_date_text_ = (TextView) activity_.findViewById(R.id.end_date_text);
 	        win_points_text_ = (TextView) activity_.findViewById(R.id.win_points_text);
 	        
-	        activity_.findViewById(R.id.tradeable_promotion_details).setVisibility(View.GONE);
+	        activity_.findViewById(R.id.playable_promotion_details).setVisibility(View.VISIBLE);
         }
-	    
-	    @Override
-	    public void fetchPromotion(int id) {
-	        FetchPromotionInfoTask fetch_promotion_info_task = new FetchPromotionInfoTask(activity_, PromotionAffinity.AVAILABLE_PROMOTION);
-	        fetch_promotion_info_task.setDelegate(this);
-	        fetch_promotion_info_task.execute(id);
-	    }
 	    
 	    @Override
         public void populateFields() {
 	        super.populateFields();
 	        
-            new DownloadImageTask((ImageView) activity_.findViewById(R.id.image_view))
-            .execute(promotion_.getImageUrl());
             end_date_text_.setText(Utilities.convertUnixTimestamp(promotion_.getEndDate()));
             win_points_text_.setText(Integer.toString(promotion_.getWinPoints()));
-        }
-	    
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-	        activity_.getSupportMenuInflater().inflate(R.menu.menu_promotion, menu);
-	        return true;
         }
 	    
         @Override
@@ -221,17 +277,16 @@ public class PromotionActivity extends SherlockActivity {
         }
 
         @Override
-        public void processFinish(Promotion result) {
-            promotion_ = result;
-            populateFields();
+        protected int getAffinity() {
+            return PLAYABLE_PROMOTION;
         }
 	}
 	
-	public static class TradeablePromotion extends PromotionView {
+	public static class ProposablePromotion extends PromotionView {
 	    private TextView owner_text_;
 	    
-	    public TradeablePromotion(SherlockActivity activity, int id) {
-            super(activity, id);
+	    public ProposablePromotion(SherlockActivity activity, int id) {
+            super(activity, R.string.promotion, id, R.menu.menu_proposable);
         }
 	    
 	    @Override
@@ -246,49 +301,32 @@ public class PromotionActivity extends SherlockActivity {
 	        
 	        owner_text_ = (TextView) activity_.findViewById(R.id.owner_name_text);
 	        
-	        activity_.findViewById(R.id.unowned_promotion_details).setVisibility(View.GONE);
+	        activity_.findViewById(R.id.proposable_promotion_details).setVisibility(View.VISIBLE);
         }
-
-	    @Override
-	    public void fetchPromotion(int id) {
-	        FetchPromotionInfoTask fetch_promotion_info_task = new FetchPromotionInfoTask(activity_, PromotionAffinity.TRADEABLE_PROMOTION);
-	        fetch_promotion_info_task.setDelegate(this);
-	        fetch_promotion_info_task.execute(id);
-	    }
 	    
         @Override
         public void populateFields() {
             super.populateFields();
             
-            new DownloadImageTask((ImageView) activity_.findViewById(R.id.image_view))
-            .execute(promotion_.getImageUrl());
-            
             owner_text_.setText("Hello World");
-        }
-	    
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            activity_.getSupportMenuInflater().inflate(R.menu.menu_trading, menu);
-            return true;
         }
 	    
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             switch (item.getItemId()) {
-            case R.id.menu_propose:
-                Intent intent = new Intent(activity_, TradeablePromotionsFragmentActivity.class);
-                intent.putExtra("Promotion", promotion_);
-                activity_.startActivity(intent);
-                break;
+                case R.id.menu_propose:
+                    Intent intent = new Intent(activity_, TradeablePromotionsFragmentActivity.class);
+                    intent.putExtra("Promotion", promotion_);
+                    activity_.startActivity(intent);
+                    break;
             }
 
             return true;
         }
 
         @Override
-        public void processFinish(Promotion result) {
-            promotion_ = result;
-            populateFields();
+        protected int getAffinity() {
+            return PROPOSABLE_PROMOTION;
         }
 	}
 }
