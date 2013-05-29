@@ -184,33 +184,7 @@
 			return $ret;
 		}
 
-		public static function validadeFacebookToken($accessToken)
-		{
 
-			$url = "https://graph.facebook.com/me?fields=id&access_token=" . $accessToken;
-
-			if( false !== ( $ch = curl_init($url) ) )
-			{
-
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_BINARYTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-				curl_setopt($ch, CURLOPT_HEADER, FALSE);
-				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Host: graph.facebook.com'));
-
-				$return = curl_exec($ch);
-				curl_close($ch);
-
-				if( $return !== false )
-				{
-					if ( false !== ( $json = json_decode( $return, true ) ) && isset( $json['id'] ) )
-						return $json['id'] ;
-				}
-
-			}
-
-			return false;
-		}
 
 		public static function saltPass( $pass, $salt = null )
 		{

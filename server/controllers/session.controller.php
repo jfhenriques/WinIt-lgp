@@ -47,7 +47,7 @@
 
 				else
 				{
-					$facebookUID = User::validadeFacebookToken( $token_fb );
+					$facebookUID = FacebookPlugin::validadeUserToken( $token_fb );
 					
 					if( $facebookUID !== false && $facebookUID > 0 )
 						$user = User::findByFacebookUID( $facebookUID );

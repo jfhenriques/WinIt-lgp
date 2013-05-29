@@ -63,8 +63,8 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$user = Authenticator::getInstance()->getUser();
-			//$auth = Authenticator::getInstance(); // retorna uma class com o id do user logado
+			$user = AuthenticatorPlugin::getInstance()->getUser();
+			//$auth = AuthenticatorPlugin::getInstance(); // retorna uma class com o id do user logado
 			//$userId = $auth->getUserId();
 
 			//$user = User::findByUID($userId);
@@ -116,8 +116,8 @@
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
 
-			$user = Authenticator::getInstance()->getUser();
-			//$auth = Authenticator::getInstance(); // retorna o id do user logado
+			$user = AuthenticatorPlugin::getInstance()->getUser();
+			//$auth = AuthenticatorPlugin::getInstance(); // retorna o id do user logado
 			//$userId = $auth->getUserId();
 
 			$resp = array();
@@ -239,10 +239,10 @@
 
 				if( !$isInHouse )
 				{
-					$resp = User::validadeFacebookToken( $token_fb );
-					$facebookUID = 0;
-
-					$user->setFacebookUID( $facebookUID );
+					$facebookUID = FacebookPlugin::validadeUserToken( $token_fb );
+					
+					if( $facebookUID !== false && $facebookUID > 0 )
+						$user->setFacebookUID( $facebookUID );
 
 				}
 				else
@@ -273,9 +273,9 @@
 		{
 			$this->requireAuth();
 			
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			$wonPrizes = null;
-			//$auth = Authenticator::getInstance(); // retorna o id do user logado
+			//$auth = AuthenticatorPlugin::getInstance(); // retorna o id do user logado
 			//$userId = $auth->getUserId();
 			
 			//$user = User::findByUID($userId);
@@ -297,7 +297,7 @@
 		{
 			$this->requireAuth();
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			//$userId = $auth->getUID();
 
 			//$user = User::findByUID($userId);
@@ -335,7 +335,7 @@
 			
 			$pid = (int)valid_request_var('promotion');
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			$promo = null;
 
 			
@@ -373,7 +373,7 @@
 		{
 			$this->requireAuth();
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -393,7 +393,7 @@
 		{
 			$this->requireAuth();
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -539,7 +539,7 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			$token_gcm = valid_request_var('token_gcm');
 			$gcm = null;
 
@@ -578,7 +578,7 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			$token_gcm = valid_request_var('token_gcm');
 			$gcm = null;
 
@@ -606,7 +606,7 @@
 			
 			$this->requireAuth();
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			$u = $user->getUID();
 			
