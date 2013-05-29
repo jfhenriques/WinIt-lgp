@@ -45,6 +45,10 @@
 		{
 			echo $html;
 		}
+		public function renderText( $text )
+		{
+			echo $text;
+		}
 
 
 		public function setJSONCode($code)

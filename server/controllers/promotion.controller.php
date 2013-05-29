@@ -27,7 +27,7 @@
 		public function index()
 		{
 
-			$authUID = (int)Authenticator::getInstance()->getUID();
+			$authUID = (int)AuthenticatorPlugin::getInstance()->getUID();
 			$promos = null;
 
 			if( $authUID <= 0 || is_null( $promos = Promotion::findValidPromotions( $authUID ) ) || !is_array( $promos ) )

@@ -202,12 +202,15 @@
 		
 		static private $instance = null;
 		const NAMES_KEY = "names";
+		const PLUGINS_KEY = "plugins";
 		
 		private $cachedNames = array();
+		private $cachedPlugins = array();
 		private $cc = null;
 		
 		private $class_search_path = array( 'models' => array('name' => 'model', 'incName' => false ),
-											'controllers' => array('name' => 'controller', 'incName' => true ) );
+											'controllers' => array('name' => 'controller', 'incName' => true ),
+											'plugins' => array('name' => 'plugin', 'incName' => true ) );
 		
 		private function __clone() { }
 		private function __construct()
@@ -215,11 +218,14 @@
 			$this->cc = CommonCache::getInstance();
 
 			$this->cachedNames = $this->cc->get( self::NAMES_KEY );
-			
-			if( $this->cachedNames === false || !is_array( $this->cachedNames ) )
+			$this->cachedPlugins = $this->cc->get( self::PLUGINS_KEY );
+
+			if(    $this->cachedNames === false || !is_array( $this->cachedNames )
+				|| $this->cachedPlugins === false || !is_array( $this->cachedPlugins ) )
 			{
-				$this->cachedNames = $this->getList();
-				$this->saveMemcacheArray();
+				$this->getLists($this->cachedNames, $this->cachedPlugins);
+
+				$this->cacheArrays();
 			}
 		}
 		
@@ -230,14 +236,25 @@
 				
 			return static::$instance;
 		}
-		
-		private function saveMemcacheArray()
+
+		public function getCachedNames()
 		{
-			return $this->cc->set( self::NAMES_KEY , $this->cachedNames );
+			return $this->cachedNames;
 		}
-		private function getList()
+		public function getCachedPlugins()
+		{
+			return $this->cachedPlugins;
+		}
+		
+		private function cacheArrays()
+		{
+			$this->cc->set( self::NAMES_KEY , $this->cachedNames );
+			$this->cc->set( self::PLUGINS_KEY , $this->cachedPlugins );
+		}
+		private function getLists( &$output, &$plugins )
 		{
 			$output = array();
+			$plugins = array();
 			
 			foreach( $this->class_search_path as $k => $v )
 			{
@@ -247,6 +264,7 @@
 					continue;
 				
 				$dir = ROOT . '/' . $k . '/' ;
+				$isPlugins = ( $k === 'plugins' ) ;
 				
 				$k = strtolower( $k );
 				$name = strtolower( $v['name'] );
@@ -266,6 +284,9 @@
 								$file = $dir . $entry ;
 								
 								$output[$key] = $file;
+
+								if( $isPlugins )
+									$plugins[] = $key;
 							}	
 						}
 					}
@@ -285,7 +306,7 @@
 				if( !is_readable( $file ) || !is_file( $file ) )
 				{
 					unset( $this->cachedNames[$name] );
-					$this->saveMemcacheArray();
+					$this->cacheArrays();
 				}
 				else
 				{

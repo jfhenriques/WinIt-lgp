@@ -21,7 +21,10 @@
 	
 	include_once(ROOT .'/helpers/controller.inc.php');
 	
-	include_once(ROOT .'/helpers/authentication.inc.php');
+	include_once(ROOT .'/helpers/plugin.inc.php');
+	//include_once(ROOT .'/helpers/authentication.inc.php');
+
+	Plugin::loadPlugins();
 
 	$router = Router::getInstance();
 	$router->route();

@@ -31,13 +31,28 @@
 			
 			$mail = valid_request_var( 'email' );
 			$pass = valid_request_var( 'password' );
+			$token_fb = valid_request_var( 'token_fb' );
+			$isInHouse = is_null( $token_fb );
 
-			if( is_null( $mail ) || is_null( $pass ) )
+
+			if( $isInHouse && ( is_null( $mail ) || is_null( $pass ) ) )
 				$this->respond->setJSONCode( R_SESS_ERR_PARAM );
 			
 			else
 			{
-				$user = User::findByCredentials( $mail, $pass );
+				$user = null;
+
+				if( $isInHouse )
+					$user = User::findByCredentials( $mail, $pass );
+
+				else
+				{
+					$facebookUID = FacebookPlugin::validadeUserToken( $token_fb );
+					
+					if( $facebookUID !== false && $facebookUID > 0 )
+						$user = User::findByFacebookUID( $facebookUID );
+				}
+					
 
 				if( is_null( $user ) )
 					$this->respond->setJSONCode( R_SESS_ERR_USER_NOT_FOUND );

@@ -100,8 +100,8 @@
 
 			else
 			{
-				//$authUID = (int)Authenticator::getInstance()->getUserId();
-				$user = Authenticator::getInstance()->getUser();
+				//$authUID = (int)AuthenticatorPlugin::getInstance()->getUserId();
+				$user = AuthenticatorPlugin::getInstance()->getUser();
 				$userProm = null;
 				$promo = null;
 				$time = time();

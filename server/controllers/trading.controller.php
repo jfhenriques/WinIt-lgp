@@ -68,7 +68,7 @@
 
 		public function index()
 		{
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
@@ -93,7 +93,7 @@
 			$pcid = (int)valid_request_var( 'prizecode' );
 			$time = time();
 		
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			$prizeCodeArr = null;
 
 			$sugestions = null;
@@ -141,7 +141,7 @@
 			$suggestId = (int)valid_request_var( 'suggest' );
 			$time = time();
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			$suggestion = null;
 			$prizeMine = null;
@@ -250,7 +250,7 @@
 			$time = time();
 
 		
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			$prizeWanted = null;
 			$prizeMine = null;
@@ -331,7 +331,7 @@
 			$suggestId = (int)valid_request_var( 'suggest' );
 			$time = time();
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			$suggestion = null;
 			$prizeWanted = null;
@@ -395,7 +395,7 @@
 		
 			$pcid = (int)valid_request_var( 'prizecode' );
 		
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			$time = time();
 
 			if( is_null( $user ) || $pcid <= 0 )

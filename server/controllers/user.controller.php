@@ -63,8 +63,8 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$user = Authenticator::getInstance()->getUser();
-			//$auth = Authenticator::getInstance(); // retorna uma class com o id do user logado
+			$user = AuthenticatorPlugin::getInstance()->getUser();
+			//$auth = AuthenticatorPlugin::getInstance(); // retorna uma class com o id do user logado
 			//$userId = $auth->getUserId();
 
 			//$user = User::findByUID($userId);
@@ -99,8 +99,8 @@
 														  'district' => $district,
 														  'address' => $street,
 														  'address2' => $user->getAddress2(),
-														  'token_fb' => $user->getTokenFacebook(),
-														  'token_tw' => $user->getTokenTwitter(),
+														  //'token_fb' => $user->getTokenFacebook(),
+														  //'token_tw' => $user->getTokenTwitter(),
 														  'level' => 0,
 														  'points' => 0 ) );
 
@@ -116,8 +116,8 @@
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
 
-			$user = Authenticator::getInstance()->getUser();
-			//$auth = Authenticator::getInstance(); // retorna o id do user logado
+			$user = AuthenticatorPlugin::getInstance()->getUser();
+			//$auth = AuthenticatorPlugin::getInstance(); // retorna o id do user logado
 			//$userId = $auth->getUserId();
 
 			$resp = array();
@@ -129,17 +129,15 @@
 
 			else
 			{
-				
+				$isInHouse = $user->getFacebookUID() <= 0 ;
+
 				$name = valid_request_var('name');
 				$email = valid_request_var('email');
 				$adid = valid_request_var('adid');
 				$address2 = valid_request_var('address2');
 				$birth = valid_request_var('birth');
-				//$token_fb = valid_request_var('token_fabebook');
-				//$token_tw = valid_request_var('token_twitter');
 				$password = valid_request_var('password', false);
 				$password_old = valid_request_var('password_old', false);
-				//$token_gcm = valid_request_var('token_gcm');
 				
 
 				// Must verifiy if mail is not taken
@@ -147,11 +145,11 @@
 					$this->respond->setJSONCode( R_USER_ERR_EMAIL_EXISTS );
 
 				// If changing password, must provide old password
-				elseif( !is_null($password) && is_null( $password_old ) )
+				elseif( $isInHouse && !is_null($password) && is_null( $password_old ) )
 					$this->respond->setJSONCode( R_USER_MUST_SEND_OLD_P );
 
 				// Old password must be correct
-				elseif( !is_null($password) && User::compareWithHashedPass($password_old, $user->getPassword()) === false )
+				elseif( $isInHouse && !is_null($password) && User::compareWithHashedPass($password_old, $user->getPassword()) === false )
 					$this->respond->setJSONCode( R_USER_BAD_OLD_PASS );
 
 				// if changic address, must check if adid exists
@@ -160,8 +158,6 @@
 
 				else
 				{
-					if( !is_null($email) )
-						$user->setEmail($email);
 
 					if( !is_null($name) )
 						$user->setName($name);
@@ -175,18 +171,21 @@
 					if( !is_null($birth) )
 						$user->setBirth($birth);
 
-					// if( !is_null($token_gcm) )
-					// 	$user->setTokenGCM($token_gcm);
+					if( $isInHouse )
+					{
+						if( !is_null($email) )
+							$user->setEmail($email);
 
-					if( !is_null($password) )
-						$user->setPassword( User::saltPass( $password ) );
+						if( !is_null($password) )
+							$user->setPassword( User::saltPass( $password ) );
+					}
 
 					if( !$user->save() )
 						$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
 
 					else
 					{
-						if( !is_null($password) )
+						if( $isInHouse && !is_null($password) )
 							Session::resetUserTokens( $user->getUID() );
 						
 						$this->respond->setJSONCode( R_STATUS_OK );
@@ -215,36 +214,56 @@
 			$birth = valid_request_var('birth');
 			$password = valid_request_var('password', false);
 
-			if( is_null($name) || is_null($email) || is_null($password) || is_null($birth) )
+			$token_fb = valid_request_var('token_fb');
+			$isInHouse = is_null( $token_fb );
+
+			if( is_null($name) || is_null($birth) || ($isInHouse && (
+					   is_null( $email )
+					|| is_null( $password ) ) ) )
 				$this->respond->setJSONCode( R_USER_ERR_PARAMS );
+
+			else if( $isInHouse && !is_null( User::findByEmail( $email ) ) )
+				$this->respond->setJSONCode( R_USER_ERR_EMAIL_EXISTS );
+
+			elseif( !is_null( $adid ) && is_null( Address::findByADID($adid) ) )
+				$this->respond->setJSONCode( R_USER_ERR_INV_ADID );
 
 			else
 			{
-				if( !is_null( User::findByEmail( $email ) ) )
-					$this->respond->setJSONCode( R_USER_ERR_EMAIL_EXISTS );
+				$user = new User();
+				
+				$user->setName($name);
+				$user->setADID($adid);
+				$user->setAddress2($address2);
+				$user->setBirth($birth);
 
-				elseif( !is_null( $adid ) && is_null( Address::findByADID($adid) ) )
-					$this->respond->setJSONCode( R_USER_ERR_INV_ADID );
+				if( !$isInHouse )
+				{
+					$facebookUID = FacebookPlugin::validadeUserToken( $token_fb );
+					
+					if( $facebookUID !== false && $facebookUID > 0 )
+						$user->setFacebookUID( $facebookUID );
+
+				}
+				else
+				{
+					$user->setEmail( strtolower($email) );
+					$user->setPassword( User::saltPass($password) );
+				}
+
+				$user->setSeed( Controller::genRand('sha256', true) );
+
+				$success = $user->save();
+
+				if( !$success )
+					$this->respond->setJSONCode(  R_GLOB_ERR_SAVE_UNABLE );
 
 				else
 				{
-					$user = new User();
-					
-					$user->setName($name);
-					$user->setEmail(strtolower($email));
-					$user->setADID($adid);
-					$user->setAddress2($address2);
-					$user->setBirth($birth);
-					$user->setPassword( User::saltPass($password) );
-					$user->setSeed( Controller::genRand('sha256', true) );
-
-					$success = $user->save();
-
-					if( $success )
-						$this->respond->setJSONResponse( array( 'uid' => $user->getUID() ) );
-
-					$this->respond->setJSONCode( $success ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+					$this->respond->setJSONResponse( array( 'uid' => $user->getUID() ) );
+					$this->respond->setJSONCode( R_STATUS_OK  );
 				}
+					
 			}
 			
 			$this->respond->renderJSON( static::$status );
@@ -254,9 +273,9 @@
 		{
 			$this->requireAuth();
 			
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			$wonPrizes = null;
-			//$auth = Authenticator::getInstance(); // retorna o id do user logado
+			//$auth = AuthenticatorPlugin::getInstance(); // retorna o id do user logado
 			//$userId = $auth->getUserId();
 			
 			//$user = User::findByUID($userId);
@@ -278,7 +297,7 @@
 		{
 			$this->requireAuth();
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			//$userId = $auth->getUID();
 
 			//$user = User::findByUID($userId);
@@ -316,7 +335,7 @@
 			
 			$pid = (int)valid_request_var('promotion');
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			$promo = null;
 
 			
@@ -354,7 +373,7 @@
 		{
 			$this->requireAuth();
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -374,7 +393,7 @@
 		{
 			$this->requireAuth();
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -520,7 +539,7 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			$token_gcm = valid_request_var('token_gcm');
 			$gcm = null;
 
@@ -559,7 +578,7 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 			$token_gcm = valid_request_var('token_gcm');
 			$gcm = null;
 
@@ -583,11 +602,11 @@
 		}
 		
 		
-		public function showPoints() {
+/*		public function showPoints() {
 			
 			$this->requireAuth();
 
-			$user = Authenticator::getInstance()->getUser();
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			$u = $user->getUID();
 			
@@ -604,7 +623,7 @@
 
 			$this->respond->renderJSON( static::$status );
 		
-		}
+		}*/
 
 	}
 	

@@ -81,6 +81,9 @@
 			array( 'match' => '/api',
 				   'matches' => array(
 
+				   		array( 'match' => '/facebook', 'controller' => 'facebook', 'via' => 'get', 'action' => 'echo_back' ),
+				   		array( 'match' => '/facebook', 'controller' => 'facebook', 'via' => 'post', 'action' => 'receive_update_list' ),
+
 						array( 'match' => '/user', 'controller' => 'user', 'via' => 'put', 'action' => 'edit',
 							   'matches' => array(
 
@@ -158,6 +161,7 @@
 						),
 
 				   	),
+
 			),
 			
 			array( 'match' => '/reset_password/:reset_token', 'controller' => 'user', 'via' => 'get', 'action' => 'reset_password_confirmation' ),

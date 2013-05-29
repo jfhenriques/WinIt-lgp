@@ -1,6 +1,6 @@
 <?php
 
-	class Authenticator {
+	class AuthenticatorPlugin extends Plugin {
 	
 		static private $instance = null;
 		
@@ -10,7 +10,7 @@
 		public static function getInstance()
 		{
 			if( is_null( static::$instance ) )
-				static::$instance = new Authenticator();
+				static::$instance = new AuthenticatorPlugin();
 				
 			return static::$instance;
 		}
@@ -59,16 +59,20 @@
 				
 			return null;
 		}
+
+
+
+		protected static function __initialize()
+		{
+			Controller::registerAuthFunction(function() {
+
+				$auth = AuthenticatorPlugin::getInstance();
+				
+				return !is_null( $auth->getSession() );
+			});
+		}
 	
 	}
-	
-	
-	Controller::registerAuthFunction(function() {
-		
-		$auth = Authenticator::getInstance();
-		
-		return !is_null( $auth->getSession() );
-	});
 
 
 ?>
