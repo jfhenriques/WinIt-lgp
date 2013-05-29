@@ -5,6 +5,7 @@ import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.staggeredgridview.StaggeredAdapter;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,18 +36,11 @@ public class MyPromotionsActivity extends SherlockFragmentActivity implements On
 	private ViewPager pager_;
 	private MyPromotionsPagerAdapter adapter_;
 	
-	StaggeredGridView staggered_grid_view_won;
-	StaggeredGridView staggered_grid_view_in_trading;
-	StaggeredGridView staggered_grid_view_tradeable;
-	StaggeredAdapter adapter_tradeable_;
-	StaggeredAdapter adapter_won_;
-	StaggeredAdapter adapter_in_trading_;
-
 	Context context_;
 	
-	ArrayList<Promotion> promotions_in_trading_ = new ArrayList<Promotion>();
-	ArrayList<Promotion> promotions_won_ = new ArrayList<Promotion>();
-	ArrayList<Promotion> promotions_tradeable_ = new ArrayList<Promotion>();
+	static ArrayList<Promotion> promotions_in_trading_ = new ArrayList<Promotion>();
+	static ArrayList<Promotion> promotions_won_ = new ArrayList<Promotion>();
+	static ArrayList<Promotion> promotions_tradeable_ = new ArrayList<Promotion>();
 	
 	protected void onCreate(Bundle saved_instance_state) {  
 		super.onCreate(saved_instance_state);  
@@ -65,13 +60,8 @@ public class MyPromotionsActivity extends SherlockFragmentActivity implements On
 		action_bar_.setTitle(R.string.my_promotions);
 		action_bar_.setDisplayHomeAsUpEnabled(true);
 
-		pager_.setOffscreenPageLimit(1);
 		pager_.setAdapter(adapter_);
-		
-		adapter_tradeable_ = new StaggeredAdapter(this,R.id.list_image, promotions_tradeable_);
-		adapter_in_trading_ = new StaggeredAdapter(this,R.id.list_image, promotions_in_trading_);
-		adapter_won_ = new StaggeredAdapter(this,R.id.list_image, promotions_won_);
-		
+
 		tabs_.setViewPager(pager_);
 		
 		context_ = this;
@@ -114,7 +104,11 @@ public class MyPromotionsActivity extends SherlockFragmentActivity implements On
 
 		@Override
 		public Fragment getItem(int position) {
-			return MyPromotionsStepFragment.newInstance(position);
+		    SherlockFragment fragment = new MyPromotionsStepFragment();
+		    Bundle args = new Bundle();
+            args.putInt("step", position);
+            fragment.setArguments(args);
+            return fragment;
 		}
 
 		@Override
@@ -126,79 +120,73 @@ public class MyPromotionsActivity extends SherlockFragmentActivity implements On
 		public int getCount() {
 			return TITLES.length;
 		}
+		
+		@Override
+		public int getItemPosition(Object object) {
+		    return POSITION_NONE;
+		}
+		
+		@Override
+		public boolean isViewFromObject(View view, Object object) {
+		    if (object != null) {
+		        return ((Fragment) object).getView() == view;
+		    }
+		    
+		    return false;
+		}
 	}
 
 
-	public static class MyPromotionsStepFragment extends SherlockFragment{
+	public static class MyPromotionsStepFragment extends SherlockFragment {
+	    private Activity activity_;
+	    
 	    private int step_;
 	    
-		static MyPromotionsStepFragment newInstance(int step) {
-			MyPromotionsStepFragment f = new MyPromotionsStepFragment();
+	    private StaggeredGridView staggered_view_;
+	    private StaggeredAdapter staggered_adapter_;
 
-			Bundle args = new Bundle();
-			args.putInt("step", step);
-			f.setArguments(args);
-
-			return f;
-		}
-
+	    @Override
+	    public void onAttach(Activity activity) {
+	        super.onAttach(activity);
+	        activity_ = activity;
+	    }
+	    
 		@Override
 		public void onCreate(Bundle saved_instance_state) {
 			super.onCreate(saved_instance_state);
-			step_ = getArguments() != null ? getArguments().getInt("step") : 0;
-		}
 
+			step_ = getArguments() != null ? getArguments().getInt("step") : 0;
+			
+			ArrayList<Promotion> promotions = null;
+			switch (step_) {
+                case 0:
+                    promotions = promotions_won_;
+                    break;
+                case 1:
+                    promotions = promotions_in_trading_;
+                    break;
+                case 2:
+                    promotions = promotions_tradeable_;
+                    break;
+			}
+			staggered_adapter_ = new StaggeredAdapter(getActivity(), R.id.list_image, promotions);
+		}
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saved_instance_state) {
-			View v = null;
-			switch(step_){
-    			case 0:
-    				v = inflater.inflate(R.layout.my_promotions_fragment_1, container, false);
-    				break;
-    			case 1:
-    				v = inflater.inflate(R.layout.my_promotions_fragment_2, container, false);
-    				break;
-    			case 2:
-    				v = inflater.inflate(R.layout.my_promotions_fragment_3, container, false);
-    				break;
-			}
+			View root_view = inflater.inflate(R.layout.my_promotions_fragment, container, false);
 			
-			return v;
+			int margin = activity_.getResources().getDimensionPixelSize(R.dimen.promotions_list_margin);
+			
+			staggered_view_ = (StaggeredGridView) root_view.findViewById(R.id.staggered_view);
+			staggered_view_.setItemMargin(margin);
+			staggered_view_.setPadding(margin, 0, margin, 0);
+			staggered_view_.setSelector(R.drawable.highlight_overlay);
+			staggered_view_.setAdapter(staggered_adapter_);
+			staggered_adapter_.notifyDataSetChanged();
+			
+			return root_view;
 		}
-
-		@Override
-		public void onActivityCreated(Bundle savedInstanceState) {
-			super.onActivityCreated(savedInstanceState);
-			SherlockFragmentActivity activity = getSherlockActivity();
-
-			int margin = activity.getResources().getDimensionPixelSize(R.dimen.promotions_list_margin);
-			if(step_ == 0) {
-				((MyPromotionsActivity) activity).staggered_grid_view_won = (StaggeredGridView) activity.findViewById(R.id.listMyPromotions);
-				((MyPromotionsActivity) activity).staggered_grid_view_won.setItemMargin(margin);
-				((MyPromotionsActivity) activity).staggered_grid_view_won.setPadding(margin, 0, margin, 0);
-				((MyPromotionsActivity) activity).staggered_grid_view_won.setSelector(R.drawable.highlight_overlay);
-				((MyPromotionsActivity) activity).staggered_grid_view_won.setAdapter(((MyPromotionsActivity) activity).adapter_won_);
-				((MyPromotionsActivity) activity).adapter_won_.notifyDataSetChanged();
-			}
-			else if(step_ == 1) {
-				((MyPromotionsActivity) activity).staggered_grid_view_in_trading = (StaggeredGridView) activity.findViewById(R.id.listMyPromotions2);
-				((MyPromotionsActivity) activity).staggered_grid_view_in_trading.setItemMargin(margin);
-				((MyPromotionsActivity) activity).staggered_grid_view_in_trading.setPadding(margin, 0, margin, 0);
-				((MyPromotionsActivity) activity).staggered_grid_view_in_trading.setSelector(R.drawable.highlight_overlay);
-				((MyPromotionsActivity) activity).staggered_grid_view_in_trading.setAdapter(((MyPromotionsActivity) activity).adapter_in_trading_);
-				((MyPromotionsActivity) activity).adapter_in_trading_.notifyDataSetChanged();
-			}
-			else{
-				((MyPromotionsActivity) activity).staggered_grid_view_tradeable = (StaggeredGridView) activity.findViewById(R.id.listMyPromotions3);
-				((MyPromotionsActivity) activity).staggered_grid_view_tradeable.setItemMargin(margin);
-				((MyPromotionsActivity) activity).staggered_grid_view_tradeable.setPadding(margin, 0, margin, 0);
-				((MyPromotionsActivity) activity).staggered_grid_view_tradeable.setSelector(R.drawable.highlight_overlay);
-				((MyPromotionsActivity) activity).staggered_grid_view_tradeable.setAdapter(((MyPromotionsActivity) activity).adapter_tradeable_);
-				((MyPromotionsActivity) activity).adapter_tradeable_.notifyDataSetChanged();
-			}
-		
-		}
-		
 	}
 
 
