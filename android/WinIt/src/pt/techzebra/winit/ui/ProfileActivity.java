@@ -96,7 +96,7 @@ public class ProfileActivity extends SherlockActivity {
 			Bundle myb = new Bundle();
 			myb.putString("name", user_.getName());
 			myb.putString("email", user_.getEmail());
-			myb.putString("birthday", user_.getBirthday());
+			myb.putInt("birthday", user_.getBirthday());
 			myb.putString("address", user_.getAddress());
 			myb.putInt("cp4", user_.getCp4());
 			myb.putInt("cp3", user_.getCp3());

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
+import pt.techzebra.winit.client.NetworkUtilities.SendAddressToActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -37,7 +38,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 
-public class SignupActivity extends SherlockFragmentActivity implements AddressesDialogFragment.AddressesDialogListener {
+public class SignupActivity extends SherlockFragmentActivity implements AddressesDialogFragment.AddressesDialogListener, SendAddressToActivity {
 	private static final String TAG = "SignupActivity";
 	
 	private ActionBar action_bar_;
@@ -211,6 +212,7 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
         }
     }
 
+    @Override
     public void onGetAddressesResult(String[] addresses, ArrayList<Integer> addresses_ids) {
         addresses_ = addresses;
         addresses_ids_ = addresses_ids;

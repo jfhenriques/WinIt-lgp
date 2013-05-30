@@ -116,6 +116,10 @@ public class NetworkUtilities {
 	private static HttpClient http_client_;
 	private static HttpHost http_host_;
 
+	public interface SendAddressToActivity {
+		public void onGetAddressesResult(String[] addresses, ArrayList<Integer> addresses_ids);
+	}
+	
 	static private HttpClient sslClient(HttpClient client) throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
         X509TrustManager tm = new X509TrustManager() {
             @Override

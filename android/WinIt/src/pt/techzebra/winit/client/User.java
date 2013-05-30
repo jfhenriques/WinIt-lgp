@@ -20,13 +20,13 @@ public class User implements Serializable {
     private String address2_; // porta/bloco/andar
     private String locality_;
     private String district_;
-    private final String birthday_;
+    private final int birthday_;
     private final String email_;
     private final String level_;
     private final String points_;
 
     public User(int user_id, String name, int adid, int cp4, int cp3, String address, String address2,
-            String locality, String district, String birthday, String email,
+            String locality, String district, int birthday, String email,
             String level, String points) {
         adid_ = adid;
         cp4_ = cp4;
@@ -107,7 +107,7 @@ public class User implements Serializable {
         return address_;
     }
 
-    public String getBirthday() {
+    public int getBirthday() {
         return birthday_;
     }
 
@@ -142,7 +142,7 @@ public class User implements Serializable {
             final String address2 = user.getString("address2"); // porta/bloco/andar
             final String locality = user.getString("locality");
             final String district = user.getString("district");
-            final String birthday = user.getString("birth");
+            final int birthday = user.getInt("birth");
             final String level = user.getString("level");
             final String points = user.getString("points");
            
