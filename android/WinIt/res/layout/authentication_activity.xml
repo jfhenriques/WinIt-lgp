@@ -44,16 +44,12 @@
         android:orientation="vertical"
         android:padding="@dimen/gap" >
 
-        <Button
+        <com.facebook.widget.LoginButton
             android:id="@+id/facebook_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="sans-serif"
-            android:onClick="handleFacebookConnection"
-            android:text="@string/sign_in_with_facebook"
-            android:textAllCaps="true"
-            style="@style/FacebookButtonAppTheme" />
+             />
 
         <Button
             android:id="@+id/sign_up_button"
