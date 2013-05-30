@@ -69,13 +69,22 @@
 
 		public function deauth_user()
 		{
-			$fp = fopen('data.txt', 'a');
+			$signed_request = valid_request_var( 'signed_request' );
 
-			$h = var_export(apache_request_headers(), true);
-			$payload = file_get_contents( 'php://input' );
-			fwrite($fp, "{$h}\n");
-			fwrite($fp, $payload);
-			fclose($fp);
+			if( is_null( $signed_request ) )
+				header('HTTP/1.0 403 Forbidden', true);
+
+			else
+			{
+
+				$fp = fopen('deauth.txt', 'a');
+
+				$request = $this->parse_signed_request( $signed_request );
+				var_dump($request);
+
+				fwrite($fp, var_export( $request, true ));
+				fclose($fp);
+			}
 
 		}
 
@@ -84,6 +93,12 @@
 
 		private function parse_signed_request($signed_request)
 		{
+			function base64_url_decode($input)
+			{
+				return base64_decode(strtr($input, '-_', '+/'));
+			}
+			
+
 			list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
 
 			// decode the data
@@ -93,10 +108,7 @@
 			return $data;
 		}
 
-		private function base64_url_decode($input)
-		{
-			return base64_decode(strtr($input, '-_', '+/'));
-		}
+
 	
 	}
 ?>
