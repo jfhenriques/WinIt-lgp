@@ -48,7 +48,7 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
 
     private EditText email_edit_;
     private EditText password_edit_;
-    private LoginButton authButton_;
+    private LoginButton auth_button_;
 
     private Handler handler_;
     private boolean double_back_to_exit_pressed_once_ = false;
@@ -66,11 +66,6 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
                 NetworkUtilities.attemptFacebookLogin(session.getAccessToken(),
                         handler_, AuthenticationActivity.this);
                 Log.d(TAG, "Logged in...");
-            } else if (state.isClosed()) {
-
-                Log.i(TAG, "Logged out...");
-            } else {
-                Log.d(TAG, "ups...");
             }
         }
     };
@@ -96,7 +91,6 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
             }
         } catch (NameNotFoundException e) {
             e.printStackTrace();
-
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -118,21 +112,20 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
         password_edit_
                 .setTransformationMethod(new PasswordTransformationMethod());
 
-        authButton_ = (LoginButton) findViewById(R.id.facebook_button);
-        authButton_.setOnErrorListener(new OnErrorListener() {
+        auth_button_ = (LoginButton) findViewById(R.id.facebook_button);
+        auth_button_.setOnErrorListener(new OnErrorListener() {
             @Override
             public void onError(FacebookException error) {
                 Log.i(TAG, "Error " + error.getMessage());
             }
         });
-        authButton_.setReadPermissions(Arrays.asList("basic_info", "email",
+        auth_button_.setReadPermissions(Arrays.asList("basic_info", "email",
                 "user_birthday"));
 
         TextView slogan = (TextView) findViewById(R.id.slogan);
         slogan.setText(Html.fromHtml(getString(R.string.slogan)));
 
         handler_ = new Handler();
-
     }
 
     public static Session forceGetActiveSession(Context ctx) {
@@ -147,29 +140,27 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        ui_helper_.onSaveInstanceState(outState);
+    protected void onSaveInstanceState(Bundle out_state) {
+        super.onSaveInstanceState(out_state);
+        ui_helper_.onSaveInstanceState(out_state);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        ui_helper_.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int request_code, int result_code, Intent data) {
+        super.onActivityResult(request_code, result_code, data);
+        ui_helper_.onActivityResult(request_code, result_code, data);
     }
 
     @Override
     protected void onResume() {
-
         super.onResume();
         ui_helper_.onResume();
 
-        // Log.d(TAG, "QUEUE SIZE: " + stateQueue.size());
-
         is_paused_ = false;
 
-        if (go_to_dashboard_)
+        if (go_to_dashboard_) {
             onAuthenticationResult(true);
+        }
     }
 
     @Override
@@ -196,15 +187,15 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
             startActivity(intent);
             return;
         }
+        
         this.double_back_to_exit_pressed_once_ = true;
         Toast.makeText(this, "Please click BACK again to exit",
                 Toast.LENGTH_SHORT).show();
+        
         new Handler().postDelayed(new Runnable() {
-
             @Override
             public void run() {
                 double_back_to_exit_pressed_once_ = false;
-
             }
         }, 2000);
     }
@@ -222,7 +213,6 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
             Utilities.showToast(this, "Loading...");
             NetworkUtilities.attemptAuth(email, password, handler_, this);
         }
-
     }
 
     public void onAuthenticationResult(boolean result) {

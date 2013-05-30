@@ -136,8 +136,8 @@ public class User implements Serializable {
             final String name = user.getString("name");
             final String email = user.getString("email");
             final int adid = user.getInt("adid");
-            final int cp4 = user.getInt("cp4");
-            final int cp3 = user.getInt("cp3");
+            final int cp4 = !user.isNull("cp4") ? user.getInt("cp4") : -1;
+            final int cp3 = !user.isNull("cp3") ? user.getInt("cp3") : -1;
             final String address = user.getString("address"); // address/ street
             final String address2 = user.getString("address2"); // porta/bloco/andar
             final String locality = user.getString("locality");

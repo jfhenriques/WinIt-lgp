@@ -391,7 +391,7 @@ public class NetworkUtilities {
 		});
 	}
 
-	private static void sendAddressesToSignupActivity(final String[] addresses,
+	private static void sendAddressesToActivity(final String[] addresses,
 			final ArrayList<Integer> addresses_ids, final Handler handler,
 			final Context context) {
 		if (handler == null || context == null) {
@@ -401,7 +401,7 @@ public class NetworkUtilities {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
-				((SignupActivity) context).onGetAddressesResult(addresses,
+				((SendAddressToActivity) context).onGetAddressesResult(addresses,
 						addresses_ids);
 			}
 		});
@@ -430,20 +430,6 @@ public class NetworkUtilities {
 
 		return user;
 	}
-
-	// public static Thread attemptFetchQuizGame(final String promotionid,
-	// final String auth_token, final Handler handler,
-	// final Context context) {
-	//
-	// final Runnable runnable = new Runnable() {
-	// @Override
-	// public void run() {
-	// fetchQuizGame(promotionid, auth_token, handler, context);
-	// }
-	// };
-	//
-	// return NetworkUtilities.performOnBackgroundThread(runnable);
-	// }
 
 	public static Quiz fetchQuizGame(String promotionid, String auth_token) {
 		String uri = PROMOTION_URI + "/" + promotionid + QUIZ_URI + "?token="
@@ -643,7 +629,7 @@ public class NetworkUtilities {
 
 		JSONArray r = getResponseContentArray(response);
 		if (r == null) {
-			sendAddressesToSignupActivity(null, null, handler, context);
+			sendAddressesToActivity(null, null, handler, context);
 			return;
 		}
 
@@ -672,7 +658,7 @@ public class NetworkUtilities {
 
 		String[] addresses_array = Arrays.copyOf(addresses.toArray(),
 				addresses.size(), String[].class);
-		sendAddressesToSignupActivity(addresses_array, addresses_ids, handler,
+		sendAddressesToActivity(addresses_array, addresses_ids, handler,
 				context);
 	}
 
@@ -829,10 +815,9 @@ public class NetworkUtilities {
 		profile_edited.add(new BasicNameValuePair("password", new_password));
 		profile_edited.add(new BasicNameValuePair("password", old_password));
 		profile_edited.add(new BasicNameValuePair("birth", birthday));
-		/*
-		 * profile_edited.add(new BasicNameValuePair("adid", address_id));
-		 * profile_edited.add(new BasicNameValuePair("address2", address_2));
-		 */
+		profile_edited.add(new BasicNameValuePair("adid", address_id));
+		profile_edited.add(new BasicNameValuePair("address2", address_2));
+		 
 
 		JSONObject response = put(uri, profile_edited);
 		String r = getResponseMessage(response);
@@ -869,8 +854,7 @@ public class NetworkUtilities {
 
 	}
 
-	private static void facebookLogin(String token_fb, Handler handler, Context context)
-	{
+	private static void facebookLogin(String token_fb, Handler handler, Context context) {
 		String uri = AUTH_URI;
 
 		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -892,8 +876,6 @@ public class NetworkUtilities {
 				preferences_editor.commit();
 				
 				sendResultToAuthenticationActivity(true, handler, context);
-				
-				//sendResponseToAuthenticationActivity("ok", handler, context);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -903,21 +885,5 @@ public class NetworkUtilities {
 			sendResultToAuthenticationActivity(false, handler, context);
 		}
 	}
-
-//	private static void sendResponseToAuthenticationActivity(final String message, final Handler handler,
-//			final Context context) {
-//		
-//		if (handler == null || context == null) {
-//			return;
-//		}
-//
-//		handler.post(new Runnable() {
-//			@Override
-//			public void run() {
-//				((AuthenticationActivity) context)
-//				.getResultSentToAuthentication(message);
-//			}
-//		});
-//	}
 	
 }

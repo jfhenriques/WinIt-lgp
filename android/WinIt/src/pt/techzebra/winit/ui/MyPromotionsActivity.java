@@ -16,7 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -73,21 +72,16 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			onBackPressed();
-			break;
-		case R.id.menu_settings:
-			break;
-		case R.id.menu_log_out:
-			WinIt.clearUserData();
-			Intent i = new Intent(this, AuthenticationActivity.class);
-			Toast.makeText(this, "Logout successful!", Toast.LENGTH_SHORT).show();
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(i);
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
+    		case android.R.id.home:
+    			onBackPressed();
+    			break;
+    		case R.id.menu_settings:
+    			break;
+    		case R.id.menu_log_out:
+    			WinIt.logOut(this);
+    			break;
+    		default:
+    			return super.onOptionsItemSelected(item);
 		}
 		return true;
 	}

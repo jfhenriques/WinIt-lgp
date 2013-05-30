@@ -101,8 +101,7 @@ public class EditProfileActivity extends SherlockActivity implements
 
 	public void getResponse(String r) {
 		Utilities.showToast(this, r);
-		if(r.equals(null)){
-
+		if(r == null){
 			Utilities.showToast(this, "Modifyed with success");
 		}else{
 			Utilities.showToast(this, r);

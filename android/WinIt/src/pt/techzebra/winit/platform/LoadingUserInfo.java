@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class LoadingUserInfo extends AsyncTask<Void, Void, User> {
 	private Context context_ = null;
@@ -21,6 +22,7 @@ public class LoadingUserInfo extends AsyncTask<Void, Void, User> {
 	@Override
 	protected User doInBackground(Void... params) {
 	    String auth_token = WinIt.getAuthToken();
+	    Log.d("auth_token", auth_token);
 		User user = NetworkUtilities.fetchUserInformation(auth_token, null);	
 		return user;
 	}
