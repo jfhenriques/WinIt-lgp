@@ -69,7 +69,7 @@
 
 		public function deauth_user()
 		{
-			$fp = fopen('data.txt', 'w');
+			$fp = fopen('data.txt', 'a');
 
 			$h = var_export(apache_request_headers(), true);
 			$payload = file_get_contents( 'php://input' );

@@ -145,7 +145,7 @@
 				
 
 				// Must verifiy if mail is not taken
-				if( !is_null($email) && $email !== $user->getEmail() && !is_null( User::findByEmail( $email ) ) )
+				if( $isInHouse && !is_null($email) && $email !== $user->getEmail() && !is_null( User::findByEmail( $email ) ) )
 					$this->respond->setJSONCode( R_USER_ERR_EMAIL_EXISTS );
 
 				// If changing password, must provide old password
@@ -157,26 +157,26 @@
 					$this->respond->setJSONCode( R_USER_BAD_OLD_PASS );
 
 				// if changic address, must check if adid exists
-				elseif( !is_null( $adid ) && is_null( Address::findByADID( $adid ) ) )
+				elseif( !is_null( $adid ) && is_null( Address::findByADID( (int)$adid ) ) )
 					$this->respond->setJSONCode( R_USER_ERR_INV_ADID );
 
 				else
 				{
-
-					if( !is_null($name) )
-						$user->setName($name);
 				
 					if( !is_null($adid) )
-						$user->setADID($adid);
+						$user->setADID((int)$adid);
 
 					if( !is_null($address2) )
 						$user->setAddress2($address2);
 
-					if( !is_null($birth) )
-						$user->setBirth($birth);
-
 					if( $isInHouse )
 					{
+						if( !is_null($name) )
+							$user->setName($name);
+
+						if( !is_null($birth) )
+							$user->setBirth($birth);
+
 						if( !is_null($email) )
 							$user->setEmail($email);
 

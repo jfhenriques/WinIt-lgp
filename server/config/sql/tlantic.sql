@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 29, 2013 at 06:10 AM
+-- Generation Time: May 30, 2013 at 02:02 AM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -392,13 +392,14 @@ CREATE TABLE IF NOT EXISTS `tradingsuggestion` (
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `uid` int(11) NOT NULL AUTO_INCREMENT,
+  `active` smallint(1) NOT NULL DEFAULT '1',
   `name` varchar(200) NOT NULL,
   `email` varchar(300) NOT NULL,
   `password` varchar(100) DEFAULT NULL,
   `birth` int(11) DEFAULT NULL,
   `adid` int(11) DEFAULT NULL,
   `door` varchar(200) DEFAULT NULL,
-  `facebook_uid` int(11) DEFAULT NULL,
+  `facebook_uid` varchar(100) DEFAULT NULL,
   `token_twitter` varchar(200) DEFAULT NULL,
   `reset_token` varchar(150) DEFAULT NULL,
   `reset_token_validity` int(11) DEFAULT NULL,

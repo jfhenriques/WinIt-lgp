@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.facebook.Session;
 
 public class DashboardActivity extends SherlockActivity {
     private static final String TAG = "DashboardActivity";
@@ -27,6 +29,8 @@ public class DashboardActivity extends SherlockActivity {
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
+        
+
 
         action_bar_ = getSupportActionBar();
         action_bar_.setTitle(R.string.dashboard);
@@ -102,4 +106,6 @@ public class DashboardActivity extends SherlockActivity {
         }
         
     }
+    
+
 }

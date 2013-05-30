@@ -36,8 +36,6 @@
         <activity
             android:name="pt.techzebra.winit.ui.AuthenticationActivity"
             android:configChanges="orientation"
-            android:excludeFromRecents="true"
-            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name="pt.techzebra.winit.ui.SignupActivity"
