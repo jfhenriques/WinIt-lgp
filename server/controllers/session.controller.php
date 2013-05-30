@@ -91,7 +91,24 @@
 				}
 				else
 				{
-					if( !$isInstalled )
+					if( $isInstalled )
+					{
+						if( $user->isActive() )
+							return $user;
+
+						else
+						{
+							$user->setActive( true );
+
+							if( $user->save() )
+								return $user;
+
+							else
+								$error = R_GLOB_ERR_SAVE_UNABLE;
+
+						}
+					}
+					else
 					{
 						$user->setActive( false );
 
@@ -101,8 +118,6 @@
 						else
 							$error = R_GLOB_ERR_SAVE_UNABLE;
 					}
-					else
-						return $user;
 
 				}
 			}
