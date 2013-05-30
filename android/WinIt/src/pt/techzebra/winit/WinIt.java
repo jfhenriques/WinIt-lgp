@@ -5,7 +5,6 @@ import pt.techzebra.winit.ui.AuthenticationActivity;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.facebook.Session;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -42,9 +41,11 @@ public class WinIt extends Application {
         SharedPreferences.Editor preferences_editor = context_
                 .getSharedPreferences(Constants.USER_PREFERENCES,
                         Context.MODE_PRIVATE).edit();
-        preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, false);
-        preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN, false);
-        preferences_editor.putString(Constants.PREF_AUTH_TOKEN, "");
+        
+        auth_token_ = null;
+        preferences_editor.remove(Constants.PREF_LOGGED_IN);
+        preferences_editor.remove(Constants.PREF_FB_LOGGED_IN);
+        preferences_editor.remove(Constants.PREF_AUTH_TOKEN);
         preferences_editor.commit();
 
         Session sess = AuthenticationActivity

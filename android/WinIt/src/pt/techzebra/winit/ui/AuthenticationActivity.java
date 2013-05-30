@@ -223,8 +223,6 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
                 go_to_dashboard_ = true;
 
             else {
-                // authButton_.setActivated(false);
-
                 Intent intent = new Intent(this, DashboardActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -257,9 +255,8 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
         Utilities.showToast(this, "Yeah");
     }
 
-    public void getResultSentToAuthentication(String message) {
-        Toast.makeText(this, "AQUI", Toast.LENGTH_LONG).show();
-
-    }
+//    public void getResultSentToAuthentication(String message) {
+//        Toast.makeText(this, "AQUI", Toast.LENGTH_LONG).show();
+//    }
 
 }

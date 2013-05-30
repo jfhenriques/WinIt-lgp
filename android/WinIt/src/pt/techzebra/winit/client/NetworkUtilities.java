@@ -350,6 +350,7 @@ public class NetworkUtilities {
 			try {
 				preferences_editor.putString(Constants.PREF_AUTH_TOKEN,
 						r.getString("token"));
+				Log.d("LOGIN DERP NetworkUtilities", "auth_token: " + r.getString("token"));
 				preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
 				preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN, false);
 				preferences_editor.commit();
