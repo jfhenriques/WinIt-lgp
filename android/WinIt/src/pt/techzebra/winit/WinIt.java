@@ -1,5 +1,9 @@
 package pt.techzebra.winit;
 
+import pt.techzebra.winit.ui.AuthenticationActivity;
+
+import com.facebook.Session;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,12 +33,24 @@ public class WinIt extends Application {
 	    return auth_token_;
 	}
 	
-    public static void clearUserData() {
+    public static void clearUserData()
+    {
         SharedPreferences.Editor preferences_editor = context_.getSharedPreferences(
                 Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
         preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, false);
         preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN, false);
         preferences_editor.putString(Constants.PREF_AUTH_TOKEN, "");
         preferences_editor.commit();
+        
+        Session sess = AuthenticationActivity.forceGetActiveSession(getAppContext());
+        
+        if ( sess != null )
+        {
+        	sess.closeAndClearTokenInformation();
+        	sess.close();
+        	
+        	Session.setActiveSession(null);
+        }
+
     }
 }

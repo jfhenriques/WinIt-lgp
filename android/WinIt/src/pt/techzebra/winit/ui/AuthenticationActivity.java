@@ -3,13 +3,13 @@ package pt.techzebra.winit.ui;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.LinkedList;
 
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.platform.FontUtils;
 import pt.techzebra.winit.ui.ForgotPasswordDialogFragment.ForgotPasswordDialogListener;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -39,36 +39,25 @@ import com.facebook.widget.LoginButton;
 import com.facebook.widget.LoginButton.OnErrorListener;
 
 public class AuthenticationActivity extends SherlockFragmentActivity implements ForgotPasswordDialogListener {
-	
-//	private static class PendingStateChange
-//	{
-//		Session session = null;
-//		SessionState state = null;
-//		Exception exception = null;
-//		
-//		public PendingStateChange(Session session, SessionState state, Exception exception)
-//		{
-//			this.session = session;
-//			this.state = state;
-//			this.exception = exception;
-//		}
-//	}
-//	
+
 	
 	
 	
 	private static final String TAG = "AuthenticationActivity";
 	
+	
 	private boolean isPaused = false;
+	private boolean goToDashBoard = false;
+	
 	private EditText email_edit_;
 	private EditText password_edit_;
+	private LoginButton authButton_;
 
 	private Handler handler_;
 	private boolean doubleBackToExitPressedOnce = false;
 	
 	private UiLifecycleHelper uiHelper;
-	
-//	private static LinkedList<PendingStateChange> stateQueue = new LinkedList<PendingStateChange>();
+
 	
 
 	private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -77,27 +66,47 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements 
 		public void call(Session session, SessionState state, Exception exception)
 		{
 			Log.i(TAG, "PAUSE: " + isPaused + ", Sess call: " + session + ", state: " + state + ", ex: " + exception);
-			onSessionStateChange(session, state, exception);
+			
+		    if (state.isOpened())
+		    {
+		    	
+				NetworkUtilities.attemptFacebookLogin(session.getAccessToken(), handler_, AuthenticationActivity.this);
+				Log.d(TAG, "Logged in...");
+		    }
+		    else if (state.isClosed())
+		    {
+
+		        Log.i(TAG, "Logged out...");
+		    }
+		    else
+		    {
+
+		    	Log.d(TAG, "ups...");
+		    }
 		}
 	};
 
 	@Override
-	protected void onCreate(Bundle saved_instance_state) {
+	protected void onCreate(Bundle saved_instance_state)
+	{
 		Log.i(TAG, "onCreate(" + saved_instance_state + ")");
 		super.onCreate(saved_instance_state);
 		
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(saved_instance_state);
 		
+		goToDashBoard = false;
+		
         try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "pt.techzebra.winit", 
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
+            PackageInfo info = getPackageManager().getPackageInfo( "pt.techzebra.winit", 
+            														PackageManager.GET_SIGNATURES);
+            
+            for (Signature signature : info.signatures)
+            {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
-                	Log.d(TAG, Base64.encodeToString(md.digest(), Base64.DEFAULT));
-                }
+               	Log.d(TAG, Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
         } catch (NameNotFoundException e) {
         	e.printStackTrace();
 
@@ -119,60 +128,55 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements 
 		password_edit_ = (EditText) findViewById(R.id.password_edit);
 
 		password_edit_.setTypeface(Typeface.DEFAULT);
-		password_edit_
-		.setTransformationMethod(new PasswordTransformationMethod());
+		password_edit_.setTransformationMethod(new PasswordTransformationMethod());
 
-		LoginButton authButton = (LoginButton) findViewById(R.id.facebook_button);
-		authButton.setOnErrorListener(new OnErrorListener() {
+		authButton_ = (LoginButton) findViewById(R.id.facebook_button);
+		authButton_.setOnErrorListener(new OnErrorListener() {
 			@Override
 			public void onError(FacebookException error) {
 				Log.i(TAG, "Error " + error.getMessage());
 			}
 		});
+		authButton_.setReadPermissions(Arrays.asList("basic_info","email","user_birthday"));
 
 		TextView slogan = (TextView) findViewById(R.id.slogan);
 		slogan.setText(Html.fromHtml(getString(R.string.slogan)));
-		
-		authButton.setReadPermissions(Arrays.asList("basic_info","email","user_birthday"));
-		//authButton.setSessionStatusCallback(callback);
 
 		handler_ = new Handler();
 
 	}
 	
-
 	
-	private void onSessionStateChange(Session session, SessionState state, Exception exception)
+	
+	public static Session forceGetActiveSession(Context ctx)
 	{
-		
-//		if( isPaused )
-//		{
-//			Log.i(TAG, "App is paused, cannot process state change. Queued!");
-//			stateQueue.add( new PendingStateChange(session, state, exception) );
+		Session session = Session.getActiveSession();
+//		if (session != null) {
+//		   Session.getActiveSession().closeAndClearTokenInformation();
+//		   Session.getActiveSession().close();
+//		   Session.setActiveSession(null);
+//		} else {
+//		   // construct a new session (there are different ways to do this, this is how I do it because I need to pass the FACEBOOK_API_KEY programmatically).
+//		   session = new Session.Builder(getApplicationContext()).build();
+//		   if (session != null) {//to be safe
+//		     //beware with the case of Session vs sesssion.
+//		     Session.setActiveSession(session); 
+//		     session.closeAndClearTokenInformation();
+//		     session.close();
+//		     Session.setActiveSession(null);
+//		   }
 //		}
-//		else
-//		{
-			Log.i(TAG,"Access Token"+ session.getAccessToken());
-			Log.i(TAG, "What: " + session.getState());
-			Log.d(TAG, "session desc: " + session);
+		if (session == null)
+		{
+			session = new Session.Builder(ctx.getApplicationContext()).build();
+			Session.setActiveSession(session);
+		}
 		
-			
-		    if (state.isOpened())
-		    {
-				NetworkUtilities.attemptFacebookLogin(session.getAccessToken(), handler_, AuthenticationActivity.this);
-				Log.d(TAG, "okkkkk");
-		    }
-		    else if (state.isClosed())
-		    {
-		        Log.i(TAG, "Logged out...");
-		    }
-		    else
-				Log.d(TAG, "merdinhas");
-//		}
-	   
+		return session;
 	}
 	
-
+	
+	
 
     @Override
     protected void onSaveInstanceState(Bundle outState)
@@ -191,33 +195,23 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements 
     @Override
     protected void onResume()
     {
-    	Log.d(TAG, "onResume() before");
-    	
+   
         super.onResume();
         uiHelper.onResume();
         
-        Log.d(TAG, "onResume() after");
 //        Log.d(TAG, "QUEUE SIZE: " + stateQueue.size());
         
         isPaused = false;
         
-//        PendingStateChange pending = null;
-//        while( null != ( pending = stateQueue.poll() ) )
-//        {
-//        	Log.d(TAG, "Processing pending state");
-//        	onSessionStateChange(Session.getActiveSession(), Session.getActiveSession().getState(), null);
-//        }
+        if( goToDashBoard )
+        	onAuthenticationResult( true );
     }
     
     @Override
     public void onPause()
     {
-    	Log.d(TAG, "onPause() before");
-    	
         super.onPause();
         uiHelper.onPause();
-        
-        Log.d(TAG, "onPause() after");
         
         isPaused = true;
     }
@@ -229,14 +223,7 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements 
     }
 
 
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
 	
@@ -265,7 +252,8 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements 
 		}, 2000);
 	}
 
-	public void handleLogin(View view) {
+	public void handleLogin(View view)
+	{
 		String email = email_edit_.getText().toString();
 		String password = password_edit_.getText().toString();
 
@@ -281,14 +269,29 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements 
 
 	}
 
-	public void onAuthenticationResult(boolean result) {
-		if (result == true) {
-			Intent intent = new Intent(this, DashboardActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-			finish();
-		} else {
+	public void onAuthenticationResult(boolean result)
+	{
+		goToDashBoard = false;
+			
+		if ( result )
+		{
+			if( isPaused )
+				goToDashBoard = true;
+			
+			else
+			{
+				//authButton_.setActivated(false);
+			
+				Intent intent = new Intent(this, DashboardActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+				finish();
+				
+			}
+		}
+		else
+		{
 			Log.d(TAG, "Error");
 			Utilities.showToast(this,
 					"Please check your email and password and try again.");

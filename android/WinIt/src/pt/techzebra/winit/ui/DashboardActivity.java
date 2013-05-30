@@ -1,5 +1,6 @@
 package pt.techzebra.winit.ui;
 
+
 import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
@@ -38,13 +39,47 @@ public class DashboardActivity extends SherlockActivity {
         preferences_ = getSharedPreferences(Constants.USER_PREFERENCES,
                 Context.MODE_PRIVATE);
 
-        boolean logged_in = preferences_.getBoolean(Constants.PREF_LOGGED_IN,
-                false);
-        if (!logged_in) {
-            Intent intent = new Intent(this, AuthenticationActivity.class);
-            startActivity(intent);
-            finish();
-            return;
+        boolean logged_in = false;
+        
+        //boolean logged_in_fb = preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false);
+        
+        Log.d(TAG, Boolean.toString(logged_in));
+        
+        Session sess = AuthenticationActivity.forceGetActiveSession(this);
+        if( sess != null )
+        {	
+        	if( sess.isOpened() )
+        	{
+	        	logged_in = true;
+	        	
+	        	SharedPreferences.Editor editor = preferences_.edit();
+	        	
+	        	editor.putBoolean(Constants.PREF_LOGGED_IN, true);
+	        	editor.putBoolean(Constants.PREF_FB_LOGGED_IN, true);
+	        	
+	        	editor.commit();
+        	}
+        	else
+        	{
+            	sess.closeAndClearTokenInformation();
+            	sess.close();
+            	Session.setActiveSession(null);
+        	}
+        }
+        
+        if( !logged_in )
+        {
+        	logged_in = preferences_.getBoolean(Constants.PREF_LOGGED_IN, false);
+        
+	        if ( !logged_in )
+	        {
+	            Intent intent = new Intent(this, AuthenticationActivity.class);
+	            startActivity(intent);
+	            finish();
+	            
+	            return;
+	        }
+	        
         }
 
         setContentView(R.layout.dashboard_activity);
@@ -74,6 +109,7 @@ public class DashboardActivity extends SherlockActivity {
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
+                finish();
                 break;
             default:
                 return super.onOptionsItemSelected(item);

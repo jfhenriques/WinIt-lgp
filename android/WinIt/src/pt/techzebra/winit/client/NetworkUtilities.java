@@ -41,6 +41,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.facebook.Session;
+
 import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.games.quiz.QuizActivity;
@@ -345,12 +347,14 @@ public class NetworkUtilities {
 				preferences_editor.putString(Constants.PREF_AUTH_TOKEN,
 						r.getString("token"));
 				preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
+				preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN, false);
 				preferences_editor.commit();
 				sendResultToAuthenticationActivity(true, handler, context);
 
 				return true;
 			} catch (JSONException e) {
 				e.printStackTrace();
+				sendResultToAuthenticationActivity(false, handler, context);
 			}
 		}
 
@@ -847,7 +851,8 @@ public class NetworkUtilities {
 
 	}
 	
-	public static Thread attemptFacebookLogin(final String token_fb, final Handler handler, final Context context) {
+	public static Thread attemptFacebookLogin(final String token_fb, final Handler handler, final Context context)
+	{
 
 		final Runnable runnable = new Runnable() {
 
@@ -860,7 +865,8 @@ public class NetworkUtilities {
 
 	}
 
-	private static void facebookLogin(String token_fb, Handler handler, Context context){
+	private static void facebookLogin(String token_fb, Handler handler, Context context)
+	{
 		String uri = AUTH_URI;
 
 		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -877,32 +883,37 @@ public class NetworkUtilities {
 			try {
 				preferences_editor.putString(Constants.PREF_AUTH_TOKEN,
 						r.getString("token"));
+				preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
 				preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN, true);
 				preferences_editor.commit();
-				sendResponseToAuthenticationActivity("ok", handler, context);
+				
+				sendResultToAuthenticationActivity(true, handler, context);
+				
+				//sendResponseToAuthenticationActivity("ok", handler, context);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		} else {
 			Log.i(TAG, "Error to get response: "
 					+ getResponseMessage(json_response));
-			sendResponseToAuthenticationActivity("error", handler, context);
+			sendResultToAuthenticationActivity(false, handler, context);
 		}
 	}
 
-	private static void sendResponseToAuthenticationActivity(final String message, final Handler handler,
-			final Context context) {
-		if (handler == null || context == null) {
-			return;
-		}
-
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				((AuthenticationActivity) context)
-				.getResultSentToAuthentication(message);
-			}
-		});
-	}
+//	private static void sendResponseToAuthenticationActivity(final String message, final Handler handler,
+//			final Context context) {
+//		
+//		if (handler == null || context == null) {
+//			return;
+//		}
+//
+//		handler.post(new Runnable() {
+//			@Override
+//			public void run() {
+//				((AuthenticationActivity) context)
+//				.getResultSentToAuthentication(message);
+//			}
+//		});
+//	}
 	
 }
