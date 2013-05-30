@@ -846,4 +846,63 @@ public class NetworkUtilities {
 		});
 
 	}
+	
+	public static Thread attemptFacebookLogin(final String token_fb, final Handler handler, final Context context) {
+
+		final Runnable runnable = new Runnable() {
+
+			@Override
+			public void run() {
+				facebookLogin(token_fb, handler, context);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+
+	}
+
+	private static void facebookLogin(String token_fb, Handler handler, Context context){
+		String uri = AUTH_URI;
+
+		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("token_fb", token_fb));
+
+		JSONObject json_response = post(uri, params);
+		JSONObject r = getResponseContent(json_response);
+		Log.i(TAG, json_response.toString());
+		if (validResponse(json_response)) {
+			SharedPreferences.Editor preferences_editor = WinIt
+					.getAppContext()
+					.getSharedPreferences(Constants.USER_PREFERENCES,
+							Context.MODE_PRIVATE).edit();
+			try {
+				preferences_editor.putString(Constants.PREF_AUTH_TOKEN,
+						r.getString("token"));
+				preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN, true);
+				preferences_editor.commit();
+				sendResponseToAuthenticationActivity("ok", handler, context);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} else {
+			Log.i(TAG, "Error to get response: "
+					+ getResponseMessage(json_response));
+			sendResponseToAuthenticationActivity("error", handler, context);
+		}
+	}
+
+	private static void sendResponseToAuthenticationActivity(final String message, final Handler handler,
+			final Context context) {
+		if (handler == null || context == null) {
+			return;
+		}
+
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				((AuthenticationActivity) context)
+				.getResultSentToAuthentication(message);
+			}
+		});
+	}
+	
 }

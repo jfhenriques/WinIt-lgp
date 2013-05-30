@@ -33,6 +33,7 @@ public class WinIt extends Application {
         SharedPreferences.Editor preferences_editor = context_.getSharedPreferences(
                 Constants.USER_PREFERENCES, Context.MODE_PRIVATE).edit();
         preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, false);
+        preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN, false);
         preferences_editor.putString(Constants.PREF_AUTH_TOKEN, "");
         preferences_editor.commit();
     }
