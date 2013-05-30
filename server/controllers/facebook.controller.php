@@ -70,22 +70,27 @@
 		public function deauth_user()
 		{
 			$signed_request = valid_request_var( 'signed_request' );
+			$request = null;
+			$user_id = null;
+			$user = null;
 
-			if( is_null( $signed_request ) )
-				header('HTTP/1.0 403 Forbidden', true);
+			$showError = true;
 
-			else
+			if(    !is_null( $signed_request )
+				&& is_array( $request = $this->parse_signed_request( $signed_request ) )
+				&& !is_null( $user_id = valid_var( 'user_id', $request ) )
+				&& !is_null( $user = User::findByFacebookUID( $user_id ) ) )
 			{
-
-				$fp = fopen('deauth.txt', 'a');
-
-				$request = $this->parse_signed_request( $signed_request );
-				var_dump($request);
-
-				fwrite($fp, var_export( $request, true ));
-				fclose($fp);
+				if( $user->isActive() )
+				{
+					$user->setActive( false );
+					$showError = !$user->save();
+				}
 			}
+				
 
+			if( $showError )
+				header('HTTP/1.0 403 Forbidden', true);
 		}
 
 

@@ -165,10 +165,10 @@
 				
 				$res_token = $this->getResetToken();
 				$res_token_val = $this->getResetTokenValidity();
-				$active = $this->isActive();
+				$active = $this->isActive() ? 1 : 0 ;
 
 				$sth->bindParam(':uid', $uid, PDO::PARAM_INT);
-				$sth->bindParam(':active', $active ? 1 : 0 , PDO::PARAM_INT);
+				$sth->bindParam(':active', $active , PDO::PARAM_INT);
 				$sth->bindParam(':res_token', $res_token, PDO::PARAM_STR);
 				$sth->bindParam(':res_token_val', $res_token_val, PDO::PARAM_INT);
 			}
