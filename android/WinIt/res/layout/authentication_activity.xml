@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/pt.techzebra.winit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/peter_river"
@@ -49,7 +50,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-             />
+            android:text="@string/sign_in_with_facebook"
+            style="@style/FacebookButtonAppTheme"
+            android:fontFamily="sans-serif-light"
+            android:textAllCaps="true"
+            app:login_text="@string/sign_in_with_facebook" />
 
         <Button
             android:id="@+id/sign_up_button"
