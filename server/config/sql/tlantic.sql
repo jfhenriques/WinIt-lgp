@@ -34,6 +34,7 @@ BEGIN
     p.active AS active,
     p.user_limit AS user_limit,
     p.grand_limit AS grand_limit,
+    aup.upid AS active_upid,
     IFNULL(gt.g_tot, 0) AS g_tot,
     IFNULL(up.times, 0) AS u_tot
   FROM promotion AS p
@@ -51,6 +52,17 @@ BEGIN
       ( p.end_date = 0 OR p.end_date >= @now )
     GROUP BY p.pid
   ) AS up ON (up.pid = p.pid)
+  LEFT JOIN (
+    SELECT
+      pid,
+      uid,
+      upid
+    FROM userpromotion
+    WHERE
+      uid = uid_in AND
+      ( end_date = NULL OR end_date = 0 )
+    LIMIT 1
+  ) AS aup ON (aup.pid = p.pid AND aup.uid = up.uid)
   LEFT JOIN (
     SELECT
       pid,

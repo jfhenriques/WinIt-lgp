@@ -7,6 +7,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.User;
@@ -14,7 +15,9 @@ import pt.techzebra.winit.platform.DownloadImageTask;
 import pt.techzebra.winit.platform.LoadMyPromotionsInfo;
 import pt.techzebra.winit.platform.MD5Util;
 import pt.techzebra.winit.platform.RoundedImageView;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,8 +30,8 @@ public class ProfileActivity extends SherlockActivity {
 	public static final String KEY_USER_BUNDLE = "user";
 	
 	private ActionBar action_bar_;
-
-	// Activity variables
+	private SharedPreferences preferences_ = null;
+	
 	RoundedImageView profile_image_;
 	TextView name_text_;
 	TextView email_text_;
@@ -47,9 +50,13 @@ public class ProfileActivity extends SherlockActivity {
 		level_text_.setText("Level " + u.getLevel());
 		points_text_.setText(u.getPoints() + "/500");
 
-		String hash = MD5Util.md5Hex(u.getEmail().toLowerCase(Locale.getDefault()));
-		String gravatar_url = "https://secure.gravatar.com/avatar/" + hash + "?s=320&d=identicon";
-		new DownloadImageTask(profile_image_).execute(gravatar_url);
+		if(preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false)) {
+			new DownloadImageTask(profile_image_).execute("https://graph.facebook.com/"+ u.getUserFBID() + "/picture?type=large");
+		} else {
+			String hash = MD5Util.md5Hex(u.getEmail().toLowerCase(Locale.getDefault()));
+			String gravatar_url = "https://secure.gravatar.com/avatar/" + hash + "?s=320&d=identicon";
+			new DownloadImageTask(profile_image_).execute(gravatar_url);
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -61,7 +68,8 @@ public class ProfileActivity extends SherlockActivity {
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.profile);
 		action_bar_.setDisplayHomeAsUpEnabled(true);
-
+		preferences_ = getSharedPreferences(Constants.USER_PREFERENCES,
+				Context.MODE_PRIVATE);
 		profile_image_ = (RoundedImageView) findViewById(R.id.profile_image);
 		profile_image_.setBackgroundDrawable(getResources().getDrawable(
 				R.drawable.profile_picture));
@@ -127,6 +135,4 @@ public class ProfileActivity extends SherlockActivity {
 			startActivity(intent);
 		}
 	}
-
-
 }

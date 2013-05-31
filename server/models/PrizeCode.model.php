@@ -6,10 +6,13 @@
 
 		const TABLE_NAME = "prizecode";
 
-		const KEY_PRIZECODE_O_RE = "sql.tradableprizes.o.re";
-		const KEY_PRIZECODE_O_NR = "sql.tradableprizes.o.nr";
-		const KEY_PRIZECODE_NO_RE = "sql.tradableprizes.no.re";
-		const KEY_PRIZECODE_NO_NR = "sql.tradableprizes.no.nr";
+
+		const KEY_PRIZECODE = "sql.tradableprizes.";
+
+		// const KEY_PRIZECODE_O_RE = "sql.tradableprizes.o.re";
+		// const KEY_PRIZECODE_O_NR = "sql.tradableprizes.o.nr";
+		// const KEY_PRIZECODE_NO_RE = "sql.tradableprizes.no.re";
+		// const KEY_PRIZECODE_NO_NR = "sql.tradableprizes.no.nr";
 
 		
 
@@ -196,7 +199,7 @@
 
 		public static function findOwnUnused($uid, $time = null, $restrict = null)
 		{
-			return self::_findTradable($uid, true, false, $time, true, $restrict);
+			return self::_findTradable($uid, true, false, $time, null, $restrict);
 		}
 
 		public static function findOwnTrading($uid, $time = null, $restrict = null)
@@ -217,23 +220,41 @@
 		}
 
 
-		private static function _findTradable($uid, $owned, $inTrading, $time, $forceTransferable = true, $restrict = null)
+		private static function _findTradable($uid, $owned, $inTrading, $time, $forceTransferable = null, $restrict = null)
 		{
 			$prizes = array();
 			$time = is_null( $time ) ? time() : $time ;
 
-			$params = array( $forceTransferable ? 1 : 0 , $time, $inTrading ? 1 : 0 , $uid );
+			$params = array();
 
-			if( !is_null($restrict) )
+			if( !is_null( $forceTransferable ) )
+				$params[] = $forceTransferable ? 1 : 0 ;
+
+			$params = array_merge( $params, array( $time, $inTrading ? 1 : 0 , $uid ) );
+
+			if( !is_null( $restrict ) )
 				$params[] = $restrict;
 
-			$cc = CommonCache::getInstance();
-			$key = null;
+
+			$base = 1000;
 
 			if( is_null( $restrict ) )
-				$key = ( $owned ? self::KEY_PRIZECODE_O_RE : self::KEY_PRIZECODE_NO_RE );
-			else
-				$key = ( $owned ? self::KEY_PRIZECODE_O_NR : self::KEY_PRIZECODE_NO_NR );
+				$base += 1;
+
+			if( $owned )
+				$base += 10;
+
+			if( is_null( $forceTransferable ) )
+				$base += 100;
+
+			$cc = CommonCache::getInstance();
+			$key = self::KEY_PRIZECODE . $base;
+
+
+			// if( is_null( $restrict ) )
+			// 	$key = ( $owned ? self::KEY_PRIZECODE_O_RE : self::KEY_PRIZECODE_NO_RE );
+			// else
+			// 	$key = ( $owned ? self::KEY_PRIZECODE_O_NR : self::KEY_PRIZECODE_NO_NR );
 
 			$sql = $cc->get( $key );
 
@@ -244,9 +265,9 @@
 						' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid, p.util_date AS p_util_date, ' .
 						' p.name AS p_name, p.image AS p_image, pc.transaction AS transaction ' .
 						' FROM ' . self::TABLE_NAME .' AS pc ' .
-						' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid)' .
+						' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid) ' .
 						' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid)' .
-						' WHERE p.transferable = ? AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
+						' WHERE ' . ( is_null( $forceTransferable ) ? '' : 'p.transferable = ? AND ' ) . ' p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
 						' AND pc.util_date = 0 AND pc.in_trading = ? AND pc.cur_uid ' . ( $owned ? '=' : '<>' ) . ' ? ' . ( is_null( $restrict ) ? '' : ' AND pc.pcid = ? ' ) . ';' ;
 
 				$cc->set( $key, $sql );

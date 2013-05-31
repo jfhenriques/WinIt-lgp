@@ -67,20 +67,22 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = (int)AuthenticatorPlugin::getInstance()->getUID();
+			$user = null;
 			//$auth = AuthenticatorPlugin::getInstance(); // retorna uma class com o id do user logado
 			//$userId = $auth->getUserId();
 
 			//$user = User::findByUID($userId);
 			
-			if( is_null( $user ) )
+			if( $uid <= 0 || is_null( $user = User::findByUIDWithPoints( $uid ) ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
 			else
 			{
 				$cp4 = $cp3 = $street = $locality = $district = null ;
 
-				$address = $user->getADID() ? Address::findByADID( $user->getADID() ) : null ;
+				$address = ( $user->getADID() > 0 ) ? Address::findByADID( $user->getADID() ) : null ;
+
 				if( !is_null( $address ) )
 				{
 					$cp4 = $address->getCP4();
@@ -93,20 +95,20 @@
 				}
 
 				$this->respond->setJSONResponse( array( 'uid' => $user->getUID(),
-														  'name' => $user->getName(),
-														  'email' => $user->getEmail(),
-														  'adid' => $user->getADID(),
-														  'birth' => $user->getBirth(),
-														  'cp4' => $cp4,
-														  'cp3' => $cp3,
-														  'locality' => $locality,
-														  'district' => $district,
-														  'address' => $street,
-														  'address2' => $user->getAddress2(),
-														  //'token_fb' => $user->getTokenFacebook(),
-														  //'token_tw' => $user->getTokenTwitter(),
-														  'level' => 0,
-														  'points' => 0 ) );
+														'name' => $user->getName(),
+														'email' => $user->getEmail(),
+														'adid' => $user->getADID(),
+														'birth' => $user->getBirth(),
+														'cp4' => $cp4,
+														'cp3' => $cp3,
+														'locality' => $locality,
+														'district' => $district,
+														'address' => $street,
+														'address2' => $user->getAddress2(),
+														'facebook_uid' => $user->getFacebookUID(),
+														//'token_tw' => $user->getTokenTwitter(),
+														'level' => 1,
+														'points' => $user->getTotalPoints() ) );
 
 				$this->respond->setJSONCode( R_STATUS_OK );
 				

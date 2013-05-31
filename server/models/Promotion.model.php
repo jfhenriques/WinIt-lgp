@@ -212,6 +212,16 @@
 			return $pid > 0 ? ItemPromotion::findByPID( $pid ) : array() ;
 		}
 
+		/* --- ONLY AVAILABLE WITH User::findByUIDWithPoints( UID ) --- */
+
+			public function getActiveUPID()
+			{
+				return (int)$this->getData('active_upid');
+			}
+
+		/* --- */
+
+
 		
 		public static function findByPID($pid)
 		{
