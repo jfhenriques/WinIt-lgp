@@ -68,6 +68,11 @@
 		{
 			return (int)( 1 + (25 * log10( 1 + ( (double)$points ) / 2000 ) ) );
 		}
+
+		private static function calculatePointsByLevel($level)
+		{
+			return - (int)( 1824.02 * ( 1.09648 - exp( 0.0921034 * (double)$level) ) );
+		}
 		
 		public function index()
 		{
@@ -102,6 +107,7 @@
 
 				$points = $user->getTotalPoints();
 				$level = UserController::calculateLevel( $points ) ;
+				$next_level_points = UserController::calculatePointsByLevel( 1 + $level ) ;
 
 				$this->respond->setJSONResponse( array( 'uid' => $user->getUID(),
 														'name' => $user->getName(),
@@ -116,6 +122,7 @@
 														'address2' => $user->getAddress2(),
 														'facebook_uid' => $user->getFacebookUID(),
 														'level' => $level,
+														'next_level_points' => $next_level_points,
 														'points' => $points ) );
 
 				$this->respond->setJSONCode( R_STATUS_OK );
