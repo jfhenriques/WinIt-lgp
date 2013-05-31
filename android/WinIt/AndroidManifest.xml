@@ -104,7 +104,8 @@
         <activity
             android:name="pt.techzebra.winit.games.quiz.QuizResultActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:uiOptions="splitActionBarWhenNarrow" />
         <activity
             android:name="pt.techzebra.winit.ui.TradingActivity"
             android:configChanges="orientation"

@@ -23,10 +23,9 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 
 	private PromotionsShowcase promotions_showcase_;
 
-	public static class PromotionsShowcaseMode {
-		public static final int SINGLE_PLAYER_SHOWCASE = 1;
-		public static final int TRADING_SHOWCASE = 2;
-	}
+	public static final int SINGLE_PLAYER_SHOWCASE = 1;
+    public static final int COOPERATIVE_SHOWCASE = 2;
+    public static final int COMPETITIVE_SHOWCASE = 3;
 
 	@Override
 	protected void onCreate(Bundle saved_instance_state) {
@@ -87,12 +86,15 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 			PromotionsShowcase promotions_showcase = null;
 
 			switch (showcase_mode) {
-			case PromotionsShowcaseMode.SINGLE_PLAYER_SHOWCASE:
-				promotions_showcase = new SinglePlayerPromotionsShowcase(activity);
-				break;
-			case PromotionsShowcaseMode.TRADING_SHOWCASE:
-				promotions_showcase = new TradingPromotionsShowcase(activity);
-				break;
+    			case SINGLE_PLAYER_SHOWCASE:
+    				promotions_showcase = new SinglePlayerPromotionsShowcase(activity);
+    				break;
+    			case COOPERATIVE_SHOWCASE:
+    			    // TODO
+    			    break;
+    			case COMPETITIVE_SHOWCASE:
+    			    // TODO
+    			    break;
 			}
 
 			return promotions_showcase;
@@ -142,7 +144,7 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 
 		@Override
 		public void fetchPromotions() {
-			FetchPromotionsTask fetch_promotions_task = new FetchPromotionsTask(activity_, FetchPromotionsTask.AVAILABLE_PROMOTIONS);
+			FetchPromotionsTask fetch_promotions_task = new FetchPromotionsTask(activity_, FetchPromotionsTask.PLAYABLE_PROMOTIONS);
 			fetch_promotions_task.setDelegate(this);
 			fetch_promotions_task.execute();  
 		}
@@ -164,45 +166,55 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 			adapter_.notifyDataSetChanged();
 		}
 	}
+	
+	/*
+	 * TODO
+	 */
+	public static class CooperativePromotionsShowcase extends PromotionsShowcase {
 
-	public static class TradingPromotionsShowcase extends PromotionsShowcase {
-		public TradingPromotionsShowcase(SherlockActivity activity) {
-			super(activity);
-		}
+        public CooperativePromotionsShowcase(SherlockActivity activity) {
+            super(activity);
+        }
 
-		@Override
-		protected void initializeActionBar() {
-			super.initializeActionBar();
-			action_bar_.setBackgroundDrawable(activity_.getResources().getDrawable(R.drawable.action_bar_bg_trading));
-		}
-		
-		@Override
-		public void initializeFields() {
-			super.initializeFields();
-		}
+        @Override
+        public void processFinish(ArrayList<Promotion> result) {
+            
+        }
 
-		@Override
-		public void fetchPromotions() {
-			FetchPromotionsTask fetch_promotions_task = new FetchPromotionsTask(activity_, FetchPromotionsTask.OTHER_USERS_PROMOTIONS);
-			fetch_promotions_task.setDelegate(this);
-			fetch_promotions_task.execute();            
-		}
+        @Override
+        public void fetchPromotions() {
+            
+        }
 
-		@Override
-		public void onItemClick(StaggeredGridView parent, View view,
-				int position, long id) {
-			Promotion promotion = adapter_.getItem(position);
-			Intent intent = new Intent(activity_, PromotionActivity.class);
-			intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PROPOSABLE_PROMOTION);
-			intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
-			intent.putExtra("pcid", promotion.getPcid());
-			activity_.startActivity(intent);
-		}
-
-		@Override
-		public void processFinish(ArrayList<Promotion> result) {
-			promotions_.addAll(result);
-			adapter_.notifyDataSetChanged();
-		}
+        @Override
+        public void onItemClick(StaggeredGridView parent, View view,
+                int position, long id) {
+            
+        }
+	
 	}
+	
+	/*
+	 * TODO
+	 */
+	public static class CompetitivePromotionsShowcase extends PromotionsShowcase {
+
+        public CompetitivePromotionsShowcase(SherlockActivity activity) {
+            super(activity);
+        }
+
+        @Override
+        public void processFinish(ArrayList<Promotion> result) {            
+        }
+
+        @Override
+        public void fetchPromotions() {
+        }
+
+        @Override
+        public void onItemClick(StaggeredGridView parent, View view,
+                int position, long id) {
+            
+        }
+    }
 }

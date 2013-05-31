@@ -23,9 +23,8 @@ public class FetchPromotionsTask extends AsyncTask<Void, Void, ArrayList<Promoti
 		void processFinish(ArrayList<Promotion> result); 
 	}
 
-	public static final int AVAILABLE_PROMOTIONS = 1;
-	public static final int OTHER_USERS_PROMOTIONS = 2;
-	public static final int OWNED_PROMOTIONS = 3;
+	public static final int PLAYABLE_PROMOTIONS = 1;
+	public static final int PROPOSABLE_PROMOTIONS = 2;
 
 	private ArrayList<Promotion> promotions_ = null;
 	private ProgressDialog progress_dialog_;
@@ -48,14 +47,11 @@ public class FetchPromotionsTask extends AsyncTask<Void, Void, ArrayList<Promoti
 		String auth_token = WinIt.getAuthToken();
 
 		switch (option_) {
-		case AVAILABLE_PROMOTIONS:
+		case PLAYABLE_PROMOTIONS:
 			promotions_ = NetworkUtilities.fetchAvailablePromotions(auth_token);
 			break;
-		case OTHER_USERS_PROMOTIONS:
-			promotions_ = NetworkUtilities.fetchOtherUsersTradings(auth_token);
-			break;
-		case OWNED_PROMOTIONS:
-			
+		case PROPOSABLE_PROMOTIONS:
+			promotions_ = NetworkUtilities.fetchProposableTradings(auth_token);
 			break;
 		}
 		return promotions_;

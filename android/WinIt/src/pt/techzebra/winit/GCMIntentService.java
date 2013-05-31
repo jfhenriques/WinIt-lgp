@@ -66,10 +66,8 @@ public class GCMIntentService extends GCMBaseIntentService {
         NotificationCompat.Builder mBuilder =
             new NotificationCompat.Builder(arg0)
             .setSmallIcon(R.drawable.ic_trading)
-            .setContentTitle("New Trading Proposal")
-            .setStyle(new NotificationCompat.BigTextStyle()
-                       .bigText(msg.getStringExtra("message")))
-            .setContentText(msg.getStringExtra("message"));
+            .setContentTitle("WinIt")
+            .setContentText("New trading proposal");
        mBuilder.setContentIntent(contentIntent);
        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 	}

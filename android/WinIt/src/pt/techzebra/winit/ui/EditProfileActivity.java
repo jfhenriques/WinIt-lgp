@@ -2,6 +2,9 @@ package pt.techzebra.winit.ui;
 
 import java.util.ArrayList;
 
+import org.w3c.dom.Text;
+
+import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.WinIt;
@@ -9,8 +12,10 @@ import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.NetworkUtilities.SendAddressToActivity;
 import pt.techzebra.winit.client.User;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -25,7 +30,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 public class EditProfileActivity extends SherlockActivity implements
-		SendAddressToActivity {
+SendAddressToActivity {
 
 	private static final String TAG = "EditProfileActivity";
 
@@ -33,9 +38,10 @@ public class EditProfileActivity extends SherlockActivity implements
 
 	private ActionBar action_bar_;
 
+	private SharedPreferences preferences_ = null;
 	EditText name_edit_text_;
 	EditText email_edit_text_;
-	EditText password_edit__;
+	EditText password_edit_;
 	EditText old_password_edit_;
 	EditText birthday_edit_text_;
 	EditText cp4_edit_text_;
@@ -47,7 +53,7 @@ public class EditProfileActivity extends SherlockActivity implements
 	ArrayList<Integer> addresses_ids_ = null;
 
 	private User user_;
-	
+
 	String address_;
 	int address_id_ = -1;
 
@@ -58,36 +64,61 @@ public class EditProfileActivity extends SherlockActivity implements
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.edit);
 		action_bar_.setDisplayHomeAsUpEnabled(true);
-		
+
 		name_edit_text_ = (EditText) findViewById(R.id.name_edit_text);
 		email_edit_text_ = (EditText) findViewById(R.id.email_edit_text);
-		password_edit__ = (EditText) findViewById(R.id.pass_edit_text);
+		password_edit_ = (EditText) findViewById(R.id.pass_edit_text);
 		old_password_edit_ = (EditText) findViewById(R.id.pass_old_edit_text);
 		birthday_edit_text_ = (EditText) findViewById(R.id.birth_edit_text);
 		cp4_edit_text_ = (EditText) findViewById(R.id.pc4_edit);
 		cp3_edit_text_ = (EditText) findViewById(R.id.pc3_edit);
 		address1_text_ = (TextView) findViewById(R.id.address1_text);
-		address2_edit_ = (EditText) findViewById(R.id.address2_edit); 
-		
-		user_ = (User) getIntent().getSerializableExtra(ProfileActivity.KEY_USER_BUNDLE);
+		address2_edit_ = (EditText) findViewById(R.id.address2_edit);
+
+		preferences_ = getSharedPreferences(Constants.USER_PREFERENCES,
+				Context.MODE_PRIVATE);
+
+		if (preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false)) {
+			TextView name_edit = (TextView) findViewById(R.id.name_edit);
+			name_edit.setVisibility(View.GONE);
+			name_edit_text_.setVisibility(View.GONE);
+			TextView email_edit = (TextView) findViewById(R.id.email_edit);
+			email_edit.setVisibility(View.GONE);
+			email_edit_text_.setVisibility(View.GONE);
+			TextView pass_edit = (TextView) findViewById(R.id.pass_edit);
+			pass_edit.setVisibility(View.GONE);
+			password_edit_.setVisibility(View.GONE);
+			TextView pass_old_edit = (TextView) findViewById(R.id.pass_old_edit);
+			pass_old_edit.setVisibility(View.GONE);
+			old_password_edit_.setVisibility(View.GONE);
+			TextView birth_edit = (TextView) findViewById(R.id.birth_edit);
+			birth_edit.setVisibility(View.GONE);
+			birthday_edit_text_.setVisibility(View.GONE);
+		}
+
+		user_ = (User) getIntent().getSerializableExtra(
+				ProfileActivity.KEY_USER_BUNDLE);
 		address_ = user_.getAddress();
 		address_id_ = user_.getAddressId();
-		
+
 		name_edit_text_.setText(user_.getName());
 		email_edit_text_.setText(user_.getEmail());
-		birthday_edit_text_.setText(Utilities.convertUnixTimestamp(user_.getBirthday()));
-		cp4_edit_text_.setText(String.valueOf(user_.getCp4()));
-		cp3_edit_text_.setText(String.valueOf(user_.getCp3()));
-		address1_text_.setText(address_);
-		if (user_.getAddress2() != null) {
-		    address2_edit_.setText(user_.getAddress2());
+		birthday_edit_text_.setText(Utilities.convertUnixTimestamp(user_
+				.getBirthday()));
+		if (!preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false)) {
+			cp4_edit_text_.setText(String.valueOf(user_.getCp4()));
+			cp3_edit_text_.setText(String.valueOf(user_.getCp3()));
+			address1_text_.setText(address_);
+			if (user_.getAddress2() != null) {
+				address2_edit_.setText(user_.getAddress2());
+			}
 		}
 	}
 
 	private void saveChanges() {
 		String name = name_edit_text_.getText().toString();
 		String email = email_edit_text_.getText().toString();
-		String new_password = password_edit__.getText().toString();
+		String new_password = password_edit_.getText().toString();
 		String old_password = old_password_edit_.getText().toString();
 		String birthday = birthday_edit_text_.getText().toString();
 		String address2 = address2_edit_.getText().toString();
@@ -104,15 +135,15 @@ public class EditProfileActivity extends SherlockActivity implements
 				String.valueOf(address_id_), address2, handler_, this);
 	}
 
-    public void getResponse(String r) {
-        if (r.equals("null")) {
-            Utilities.showToast(this, "Modified with success");
-            finish();
-        } else {
-            Utilities.showToast(this, r);
-        }
-        
-    }
+	public void getResponse(String r) {
+		if (r.equals("null")) {
+			Utilities.showToast(this, "Modified with success");
+			finish();
+		} else {
+			Utilities.showToast(this, r);
+		}
+
+	}
 
 	public void handlePostalCode(View view) {
 		String pc4 = cp4_edit_text_.getText().toString();
@@ -154,26 +185,26 @@ public class EditProfileActivity extends SherlockActivity implements
 		adb.setTitle("Which one?");
 		adb.show();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    getSupportMenuInflater().inflate(R.menu.menu_edit_profile, menu);
-	    return true;
+		getSupportMenuInflater().inflate(R.menu.menu_edit_profile, menu);
+		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	        case android.R.id.home:
-	            onBackPressed();
-	            break;
-	        case R.id.menu_submit:
-	            saveChanges();
-	            break;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	    
-	    return true;
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			break;
+		case R.id.menu_submit:
+			saveChanges();
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+
+		return true;
 	}
 }
