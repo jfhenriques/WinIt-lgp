@@ -8,6 +8,9 @@
 		const TABLE_NAME = 'user' ;
 
 
+		const KEY_USER_POINTS = "sql.userwithpoints";
+
+
 		//public function __construct() {}
 
 		
@@ -136,6 +139,17 @@
 
 
 
+		/* --- ONLY AVAILABLE WITH User::findByUIDWithPoints( UID ) --- */
+
+			public function getTotalPoints()
+			{
+				return (int)$this->getData('points');
+			}
+
+		/* --- */
+
+
+
 
 
 		public function save()
@@ -149,7 +163,7 @@
 
 			if( $isInsert )
 			{
-				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, door, facebook_uid, birth, ui_seed) ' .
+				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (name, email, password, adid, address2, facebook_uid, birth, ui_seed) ' .
 										' VALUES(:name, :email, :password, :adid, :address2, :facebook_uid, :birth, :seed)');
 				
 				$seed = $this->getSeed();
@@ -160,7 +174,7 @@
 			}
 			else
 			{
-				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,  adid = :adid, door = :address2, ' .
+				$sth = $dbh->prepare('UPDATE ' . self::TABLE_NAME . ' SET name = :name , email = :email, password = :password,  adid = :adid, address2 = :address2, ' .
 												' birth = :birth, active = :active, reset_token = :res_token , reset_token_validity = :res_token_val WHERE uid = :uid ;' );
 				
 				$res_token = $this->getResetToken();
@@ -208,7 +222,7 @@
 
 		public static function findByResetToken( $token )
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE active = 1 AND facebook_uid <> NULL AND reset_token = ? LIMIT 1;',
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE active = 1 AND facebook_uid = NULL AND reset_token = ? LIMIT 1;',
 									  array( $token ) );
 
 							
@@ -228,6 +242,27 @@
 		{
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE active = 1 AND uid = ? LIMIT 1;',
 									  array( $id ) );
+
+			return static::fillModel( $result, new User() );
+		}
+
+		public static function findByUIDWithPoints($id)
+		{
+			$cc = CommonCache::getInstance();
+			$sql = $cc->get( self::KEY_USER_POINTS );
+
+			if( $sql === false )
+			{
+				$sql =  'SELECT u.uid AS uid, u.active AS active, u.name AS name, u.email AS email, ' .
+						' u.password AS password, u.birth AS birth, u.adid AS adid, u.address2 AS address2, ' .
+						' u.facebook_uid AS facebook_uid, u.reset_token AS reset_token, u.ui_seed AS ui_seed, ' .
+						' u.reset_token_validity AS reset_token_validity, IFNULL(SUM(xp_points), 0) AS points FROM '. self::TABLE_NAME .
+						' AS u LEFT JOIN xppoints AS xp ON (xp.uid = u.uid) WHERE u.active = 1 AND u.uid = ? LIMIT 1; ' ;
+
+				$cc->set( self::KEY_USER_POINTS, $sql );
+			}
+
+			$result = static::query( $sql, array( $id ) );
 
 			return static::fillModel( $result, new User() );
 		}

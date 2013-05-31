@@ -53,7 +53,8 @@
 			{
 				$params = self::_buil_query( array( 'fields' => 'id,installed,birthday,email,name',
 													'access_token' => $accessToken,
-													'appsecret_proof' => FacebookPlugin::getAppSecretProof($accessToken) ) );
+													//'appsecret_proof' => FacebookPlugin::getAppSecretProof($accessToken)
+													) );
 
 
 				$url = "https://graph.facebook.com/me?{$params}";
@@ -61,7 +62,7 @@
 				curl_setopt($ch, CURLOPT_URL, $url);
 				curl_setopt_array( $ch, static::$opts );
 
-				$return = curl_exec($ch);
+				$return = @curl_exec($ch);
 				curl_close($ch);
 
 				if( $return !== false )
@@ -80,31 +81,27 @@
 		public static function getUsersInfo(array $uidsList)
 		{
 
-			if( false !== ( $ch = curl_init() ) )
+			if( false !== ( $ch = curl_init() ) && count($uidsList) > 0 )
 			{
-				$uidList = implode(",", $uidsList);
+				$_uidList = implode(",", $uidsList);
 
-				$sql = "SELECT uid,name,birthday,email,installed FROM user WHERE uid IN({$uidList}) ;";
+				$sql = "SELECT uid,name,birthday_date,email FROM user WHERE uid IN({$_uidList}) ;";
 
 				$params = self::_buil_query( array( 'q' => $sql,
 													'access_token' => self::WINIT_ACCESS_CODE,
-													'appsecret_proof' => FacebookPlugin::getAppSecretProof(self::WINIT_ACCESS_CODE) ) );
+													//'appsecret_proof' => FacebookPlugin::getAppSecretProof(self::WINIT_ACCESS_CODE)
+													) );
 
 				$url = "https://graph.facebook.com/fql?{$params}" ;
 
 				curl_setopt($ch, CURLOPT_URL, $url);
 				curl_setopt_array( $ch, static::$opts );
 
-				$return = curl_exec($ch);
-				//var_dump($return);
+				$return = @curl_exec($ch);
+
 				curl_close($ch);
 
-				if( $return !== false )
-				{
-					//TODO: php:/input
-
-				}
-
+				return $return;
 			}
 
 			return false;

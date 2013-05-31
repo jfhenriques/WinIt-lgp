@@ -1,211 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollview1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/clouds" >
-    
-	<RelativeLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical"
-	    android:padding="@dimen/gap" >
+    android:padding="@dimen/gap"
+    android:background="@color/clouds">
 	
-	    <LinearLayout
-	        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/name"
+            android:textAllCaps="true"
+            style="@style/BlueSectionHeader" />
+
+        <EditText
+            android:id="@+id/name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gap"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email"
+            android:textAllCaps="true"
+            style="@style/BlueSectionHeader" />
+
+        <EditText
+            android:id="@+id/email_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gap"
+            android:ems="10"
+            android:inputType="textEmailAddress" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/password"
+            android:textAllCaps="true"
+            style="@style/BlueSectionHeader" />
+
+        <EditText
+            android:id="@+id/pass_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gap"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/password_old"
+            android:textAllCaps="true"
+            style="@style/BlueSectionHeader" />
+
+        <EditText
+            android:id="@+id/pass_old_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gap"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/birthday"
+            android:textAllCaps="true"
+            style="@style/BlueSectionHeader" />
+
+        <EditText
+            android:id="@+id/birth_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gap"
+            android:ems="10"
+            android:inputType="date" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/address"
+            android:textAllCaps="true"
+            style="@style/BlueSectionHeader" />
+
+        <TextView
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginTop="10dp"
-	        android:orientation="vertical" >
-	
-	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:paddingLeft="@dimen/gap"
-	            android:text="@string/name"
-	            android:textAllCaps="true"
-	            android:textColor="@color/gray"
-	            android:textSize="16sp"
-	            android:textStyle="bold" />
-	
-	        <EditText
-	            android:id="@+id/name_edit_text"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="@dimen/gap"
-	            android:ems="10"
-	            android:inputType="textPersonName" />
-	
-	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:paddingLeft="@dimen/gap"
-	            android:text="@string/email"
-	            android:textAllCaps="true"
-	            android:textColor="@color/gray"
-	            android:textSize="16sp"
-	            android:textStyle="bold" />
-	
-	        <EditText
-	            android:id="@+id/email_edit_text"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="@dimen/gap"
-	            android:ems="10"
-	            android:inputType="textEmailAddress" />
-	
-	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:paddingLeft="@dimen/gap"
-	            android:text="@string/password"
-	            android:textAllCaps="true"
-	            android:textColor="@color/gray"
-	            android:textSize="16sp"
-	            android:textStyle="bold" />
-	
-	        <EditText
-	            android:id="@+id/pass_edit_text"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="@dimen/gap"
-	            android:ems="10"
-	            android:inputType="textPassword" />
-	
-	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:paddingLeft="@dimen/gap"
-	            android:text="@string/password_old"
-	            android:textAllCaps="true"
-	            android:textColor="@color/gray"
-	            android:textSize="16sp"
-	            android:textStyle="bold" />
-	
-	        <EditText
-	            android:id="@+id/pass_old_edit_text"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="@dimen/gap"
-	            android:ems="10"
-	            android:inputType="textPassword" />
-	
-	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:paddingLeft="@dimen/gap"
-	            android:text="@string/birthday"
-	            android:textAllCaps="true"
-	            android:textColor="@color/gray"
-	            android:textSize="16sp"
-	            android:textStyle="bold" />
-	
-	        <EditText
-	            android:id="@+id/birth_edit_text"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="@dimen/gap"
-	            android:ems="10"
-	            android:inputType="date" />
-	
-	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:paddingLeft="@dimen/gap"
-	            android:text="@string/address"
-	            android:textAllCaps="true"
-	            android:textColor="@color/gray"
-	            android:textSize="16sp"
-	            android:textStyle="bold" />
-	
-	        <LinearLayout
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content" >
-	
-	            <EditText
-	                android:id="@+id/pc4_edit"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:ems="4"
-	                android:inputType="number" />
-	
-	            <TextView
-	                android:id="@+id/textView2"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:text="-" />
-	
-	            <EditText
-	                android:id="@+id/pc3_edit"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:ems="3"
-	                android:inputType="number" />
-	
-	            <ImageButton
-	                android:id="@+id/imageButton1"
-	                android:contentDescription="Search"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:onClick="handlePostalCode"
-	                android:src="@drawable/abs__ic_search_api_holo_light" />
-	        </LinearLayout>
-	
-	        
-	         <TextView
+	        android:text="Postal Code"
+	        android:textColor="@color/dark_gray"
+	        android:textStyle="italic" />
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/pc4_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:fontFamily="sans-serif-light"
-                android:text="Address (Street)"
-                android:textColor="@color/dark_gray"
-                android:textStyle="italic" />
+                android:ems="4"
+                android:inputType="number" />
 
             <TextView
-                android:id="@+id/location_text"
-                android:layout_width="match_parent"
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
                 android:text="-" />
-	        
-	        <TextView
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:paddingLeft="@dimen/gap"
-	            android:layout_marginTop="10dp"
-	            android:text="Address Number"
-	            android:textAllCaps="true"
-	            android:textColor="@color/gray"
-	            android:textStyle="bold"
-	            android:textSize="16sp" />
-	
-	        <EditText
-	            android:id="@+id/house_number_edit"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="70dp"
-	            android:ems="8"
-	            android:inputType="number" />
-	        
-	    </LinearLayout>
-	
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentBottom="true"
-	        android:layout_marginBottom="@dimen/gap3"
-	        android:orientation="vertical" >
-	
-	        <Button
-	            android:id="@+id/Save_button"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:text="@string/submit"
-	            android:textAllCaps="true"
-	            android:textColor="@color/white"
-	            android:textStyle="bold"
-	            android:onClick="handleSubmitEditProfile"/>
-	    </LinearLayout>
-	
-	</RelativeLayout>
+
+            <EditText
+                android:id="@+id/pc3_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="3"
+                android:inputType="number" />
+
+            <ImageButton
+                android:id="@+id/imageButton1"
+                android:contentDescription="Search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="handlePostalCode"
+                android:src="@drawable/abs__ic_search_api_holo_light" />
+        </LinearLayout>
+
+        
+         <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="5dp"
+               android:text="Address (Street)"
+               android:textColor="@color/dark_gray"
+               android:textStyle="italic" />
+
+           <TextView
+               android:id="@+id/address1_text"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:textSize="18sp"
+               android:text="-" />
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Address 2 (House/Building number)"
+            android:textColor="@color/dark_gray"
+            android:textStyle="italic" />
+
+        <EditText
+            android:id="@+id/address2_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPostalAddress"
+            android:ems="10" />
+        
+    </LinearLayout>
 </ScrollView>

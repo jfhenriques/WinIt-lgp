@@ -1,115 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/signup_step_1_scroll_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/clouds"
-    android:padding="@dimen/gap" >
-
-    <ScrollView
-        android:id="@+id/signup_step_1_scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/gap"
-        android:layout_marginBottom="@dimen/gap" >
-
-        <LinearLayout
-            android:id="@+id/linearLayout1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/step1_text"
-                style="@style/SignupStep"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/step1"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="26sp"
-                android:textStyle="bold" />
-
-            <TextView
-                style="@style/BlueSectionHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/name"
-                android:textAllCaps="true" />
-
-            <EditText
-                android:id="@+id/name_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/gap"
-                android:ems="10"
-                android:inputType="textPersonName" />
-
-            <TextView
-                style="@style/BlueSectionHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/email"
-                android:textAllCaps="true" />
-
-            <EditText
-                android:id="@+id/email_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/gap"
-                android:ems="10"
-                android:inputType="textEmailAddress" />
-
-            <TextView
-                style="@style/BlueSectionHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/password"
-                android:textAllCaps="true" />
-
-            <EditText
-                android:id="@+id/password_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/gap"
-                android:ems="10"
-                android:inputType="textPassword" />
-
-            <TextView
-                style="@style/BlueSectionHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/birthday"
-                android:textAllCaps="true" />
-
-            <EditText
-                android:id="@+id/birthday_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="date" />
-        </LinearLayout>
-    </ScrollView>
+    android:layout_height="wrap_content"
+    android:padding="@dimen/gap"
+    android:background="@color/clouds" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
 
-        <View
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/active_fragment_dot" />
+        <TextView
+            android:id="@+id/step1_text"
+            style="@style/SignupStep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/step1"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
-        <View
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/inactive_fragment_dot" />
+        <TextView
+            style="@style/BlueSectionHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/name"
+            android:textAllCaps="true" />
+
+        <EditText
+            android:id="@+id/name_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gap"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <TextView
+            style="@style/BlueSectionHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email"
+            android:textAllCaps="true" />
+
+        <EditText
+            android:id="@+id/email_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gap"
+            android:ems="10"
+            android:inputType="textEmailAddress" />
+
+        <TextView
+            style="@style/BlueSectionHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/password"
+            android:textAllCaps="true" />
+
+        <EditText
+            android:id="@+id/password_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gap"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <TextView
+            style="@style/BlueSectionHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/birthday"
+            android:textAllCaps="true" />
+
+        <EditText
+            android:id="@+id/birthday_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date" />
     </LinearLayout>
-
-</RelativeLayout>
+    </ScrollView>

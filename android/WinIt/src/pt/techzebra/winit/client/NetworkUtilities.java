@@ -41,8 +41,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.facebook.Session;
-
 import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.games.quiz.QuizActivity;
@@ -96,8 +94,10 @@ public class NetworkUtilities {
 
 	public static final String AUTH_URI = BASE_URL + "/session.json";
 	public static final String USER_URI = BASE_URL + "/user.json";
+	public static final String GCM_URI = BASE_URL + "/user/gcm.json";
 	public static final String PROMOTION_URI = BASE_URL + "/promotion";
 	public static final String TRADING_URI = BASE_URL + "/trading.json";
+	public static final String EDIT_TRADING_URI = BASE_URL + "/trading";
 
 	public static final String MY_PROMOTIONS_URI = BASE_URL
 			+ "/user/promotions/won.json";
@@ -108,6 +108,8 @@ public class NetworkUtilities {
 	public static final String ADDRESSES_URI = BASE_URL + "/address";
 	public static final String MY_BADGES_URI = BASE_URL + "/user/badges.json";
 	public static final String QUIZ_URI = "/quizgame.json";
+	public static final String RECOVER_URI = BASE_URL
+			+ "/user/reset_password.json";
 
 	private static final String PARAM_ADDRESS_ID = "adid";
 
@@ -117,53 +119,59 @@ public class NetworkUtilities {
 	private static HttpHost http_host_;
 
 	public interface SendAddressToActivity {
-		public void onGetAddressesResult(String[] addresses, ArrayList<Integer> addresses_ids);
+		public void onGetAddressesResult(String[] addresses,
+				ArrayList<Integer> addresses_ids);
 	}
-	
-	static private HttpClient sslClient(HttpClient client) throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
-        X509TrustManager tm = new X509TrustManager() {
-            @Override
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
 
-            @Override
-            public void checkClientTrusted(
-                    java.security.cert.X509Certificate[] chain, String authType)
-                    throws CertificateException {
-            }
+	static private HttpClient sslClient(HttpClient client)
+			throws KeyManagementException, UnrecoverableKeyException,
+			NoSuchAlgorithmException, KeyStoreException {
+		X509TrustManager tm = new X509TrustManager() {
+			@Override
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
 
-            @Override
-            public void checkServerTrusted(
-                    java.security.cert.X509Certificate[] chain, String authType)
-                    throws CertificateException {
-            }
-        };
-        
-        SSLContext ssl_context = SSLContext.getInstance("TLS");
-        ssl_context.init(null, new TrustManager[]{ tm }, null);
+			@Override
+			public void checkClientTrusted(
+					java.security.cert.X509Certificate[] chain, String authType)
+							throws CertificateException {
+			}
 
-        SSLSocketFactory ssl_socket_factory = new CustomSSLSocketFactory(ssl_context);
+			@Override
+			public void checkServerTrusted(
+					java.security.cert.X509Certificate[] chain, String authType)
+							throws CertificateException {
+			}
+		};
 
-        ssl_socket_factory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        ClientConnectionManager connection_manager = client.getConnectionManager();
-        SchemeRegistry scheme_registry = connection_manager.getSchemeRegistry();
-        scheme_registry.register(new Scheme("https", ssl_socket_factory, 443));
-        
-        return new DefaultHttpClient(connection_manager, client.getParams());
+		SSLContext ssl_context = SSLContext.getInstance("TLS");
+		ssl_context.init(null, new TrustManager[] { tm }, null);
+
+		SSLSocketFactory ssl_socket_factory = new CustomSSLSocketFactory(
+				ssl_context);
+
+		ssl_socket_factory
+		.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		ClientConnectionManager connection_manager = client
+				.getConnectionManager();
+		SchemeRegistry scheme_registry = connection_manager.getSchemeRegistry();
+		scheme_registry.register(new Scheme("https", ssl_socket_factory, 443));
+
+		return new DefaultHttpClient(connection_manager, client.getParams());
 	}
-	
+
 	/**
 	 * Configures the HttpClient to connect to the URL provided.
 	 */
 	public static void maybeCreateHttpClient() {
 		if (http_client_ == null) {
-		    http_client_ = new DefaultHttpClient();
-		    try {
-                http_client_ = sslClient(http_client_);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+			http_client_ = new DefaultHttpClient();
+			try {
+				http_client_ = sslClient(http_client_);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -350,8 +358,11 @@ public class NetworkUtilities {
 			try {
 				preferences_editor.putString(Constants.PREF_AUTH_TOKEN,
 						r.getString("token"));
+				Log.d("LOGIN DERP NetworkUtilities",
+						"auth_token: " + r.getString("token"));
 				preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
-				preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN, false);
+				preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN,
+						false);
 				preferences_editor.commit();
 				sendResultToAuthenticationActivity(true, handler, context);
 
@@ -386,7 +397,7 @@ public class NetworkUtilities {
 			@Override
 			public void run() {
 				((AuthenticationActivity) context)
-						.onAuthenticationResult(result);
+				.onAuthenticationResult(result);
 			}
 		});
 	}
@@ -401,8 +412,8 @@ public class NetworkUtilities {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
-				((SendAddressToActivity) context).onGetAddressesResult(addresses,
-						addresses_ids);
+				((SendAddressToActivity) context).onGetAddressesResult(
+						addresses, addresses_ids);
 			}
 		});
 	}
@@ -540,7 +551,6 @@ public class NetworkUtilities {
 		};
 
 		return NetworkUtilities.performOnBackgroundThread(runnable);
-
 	}
 
 	public static void submitAnswersAction(String promotion_id,
@@ -556,7 +566,7 @@ public class NetworkUtilities {
 		for (int j = 0; j < arrayList.size(); j++) {
 			params.add(new BasicNameValuePair(String.format("answer[%d]",
 					arrayList.get(j).getId()), String.format("%d", arrayList
-					.get(j).getAnswered())));
+							.get(j).getAnswered())));
 		}
 
 		JSONObject json_response = post(uri, params);
@@ -569,7 +579,6 @@ public class NetworkUtilities {
 			Log.i(TAG, "Error to get response: "
 					+ getResponseMessage(json_response));
 		}
-
 	}
 
 	public static String getUserPromotionId(final String promotion_id,
@@ -603,7 +612,7 @@ public class NetworkUtilities {
 			@Override
 			public void run() {
 				((QuizActivity) context)
-						.getResultSubmitedAnswers(responseContent);
+				.getResultSubmitedAnswers(responseContent);
 			}
 		});
 	}
@@ -726,7 +735,7 @@ public class NetworkUtilities {
 		JSONArray r = getResponseContentArray(response);
 		for (int i = 0; i < r.length(); i++) {
 			try {
-				promos.add(Promotion.valueOfTrading(r.getJSONObject(i)));
+				promos.add(Promotion.valueOf(r.getJSONObject(i)));
 			} catch (JSONException e) {
 				e.printStackTrace();
 				return promos;
@@ -743,7 +752,7 @@ public class NetworkUtilities {
 		JSONArray r = getResponseContentArray(response);
 		for (int i = 0; i < r.length(); i++) {
 			try {
-				promos.add(Promotion.valueOf(r.getJSONObject(i)));
+				promos.add(Promotion.valueOfTrading(r.getJSONObject(i)));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -760,7 +769,7 @@ public class NetworkUtilities {
 		JSONArray r = getResponseContentArray(response);
 		for (int i = 0; i < r.length(); i++) {
 			try {
-				promos.add(Promotion.valueOf(r.getJSONObject(i)));
+				promos.add(Promotion.valueOfTrading(r.getJSONObject(i)));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -817,7 +826,6 @@ public class NetworkUtilities {
 		profile_edited.add(new BasicNameValuePair("birth", birthday));
 		profile_edited.add(new BasicNameValuePair("adid", address_id));
 		profile_edited.add(new BasicNameValuePair("address2", address_2));
-		 
 
 		JSONObject response = put(uri, profile_edited);
 		String r = getResponseMessage(response);
@@ -839,9 +847,9 @@ public class NetworkUtilities {
 		});
 
 	}
-	
-	public static Thread attemptFacebookLogin(final String token_fb, final Handler handler, final Context context)
-	{
+
+	public static Thread attemptFacebookLogin(final String token_fb,
+			final Handler handler, final Context context) {
 
 		final Runnable runnable = new Runnable() {
 
@@ -854,7 +862,8 @@ public class NetworkUtilities {
 
 	}
 
-	private static void facebookLogin(String token_fb, Handler handler, Context context) {
+	private static void facebookLogin(String token_fb, Handler handler,
+			Context context) {
 		String uri = AUTH_URI;
 
 		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -872,9 +881,10 @@ public class NetworkUtilities {
 				preferences_editor.putString(Constants.PREF_AUTH_TOKEN,
 						r.getString("token"));
 				preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
-				preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN, true);
+				preferences_editor
+				.putBoolean(Constants.PREF_FB_LOGGED_IN, true);
 				preferences_editor.commit();
-				
+
 				sendResultToAuthenticationActivity(true, handler, context);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -885,5 +895,136 @@ public class NetworkUtilities {
 			sendResultToAuthenticationActivity(false, handler, context);
 		}
 	}
+
+	public static Thread attemptForgotPassword(final String email) {
+
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				sendEmailForgotPassword(email);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+
+	}
 	
+	protected static void sendEmailForgotPassword(String email) {
+		String uri = RECOVER_URI + "?email=" + email;
+		post(uri,  new ArrayList<NameValuePair>());
+	}
+
+	public static Thread attemptPutPromotionForTrading(final int pricecodeid) {
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				putPromotionForTrading(pricecodeid);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+	}
+
+	protected static void putPromotionForTrading(int pricecodeid) {
+		String uri = EDIT_TRADING_URI + "/"+ pricecodeid + ".json?token=" + WinIt.getAuthToken();
+		put(uri, new ArrayList<NameValuePair>());
+	}
+
+	public static Thread attemptDeletePromotionInTrading(final int pricecodeid) {
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				deletePromotionInTrading(pricecodeid);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+	}
+	
+	protected static void deletePromotionInTrading(int pricecodeid) {
+		String uri = EDIT_TRADING_URI + "/"+ pricecodeid + ".json?token=" + WinIt.getAuthToken();
+		delete(uri);
+	}
+
+	public static Thread attemptRegisterGCMToken(final String auth_token, final String gcm_token)
+	{
+
+		final Runnable runnable = new Runnable() {
+
+			@Override
+			public void run() {
+				registerGCMToken(auth_token, gcm_token);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+	}
+	
+	private static void registerGCMToken(String auth_token, String gcm_token) {
+		String uri = GCM_URI;
+
+		ArrayList<NameValuePair> gcm_token_register = new ArrayList<NameValuePair>();
+		gcm_token_register.add(new BasicNameValuePair("token", auth_token));
+		gcm_token_register.add(new BasicNameValuePair("token_gcm", gcm_token));
+		JSONObject response = post(uri, gcm_token_register);
+		//String r = getResponseMessage(response);
+
+	}
+
+	public static Thread attemptUnRegisterGCMToken(final String auth_token, final String gcm_token)
+	{
+
+		final Runnable runnable = new Runnable() {
+
+			@Override
+			public void run() {
+				unRegisterGCMToken(auth_token, gcm_token);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+
+	}
+
+	private static void unRegisterGCMToken(String auth_token, String gcm_token) {
+		String uri = GCM_URI + "?token=" + auth_token + "&token_gcm=" + gcm_token;
+		delete(uri);
+		//String r = getResponseMessage(response);
+
+	}
+
+	public static Thread attemptSendProposal(final String auth_token, final String wanted_pcid, final String sugest_pcid)
+	{
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				sendProposal(auth_token, wanted_pcid, sugest_pcid);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+	}
+
+	private static void sendProposal(String auth_token, String wanted_pcid,
+			String sugest_pcid) {
+		String uri = BASE_URL + "/trading/" + wanted_pcid + "/suggest/" + sugest_pcid + ".json";
+		ArrayList<NameValuePair> send_proposal_info = new ArrayList<NameValuePair>();
+		send_proposal_info.add(new BasicNameValuePair("token", auth_token));
+		Log.i("Debug", uri);
+		JSONObject response = post(uri, send_proposal_info);
+		Log.i("Debug", response.toString());
+	}
+
+	public static Thread attemptFetchTradeProposals(final String auth_token, final String pcid)
+	{
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				fetchTradeProposals(auth_token, pcid);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+	}
+
+	private static void fetchTradeProposals(String auth_token, String pcid) {
+		String uri = BASE_URL + "/trading/" + pcid + ".json?token=" + auth_token;
+		JSONObject response = get(uri);
+		Log.i("Fetch Trade Proposals", response.toString());
+		
+		return;
+	}
 }

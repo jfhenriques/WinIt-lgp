@@ -7,6 +7,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.User;
@@ -14,7 +15,9 @@ import pt.techzebra.winit.platform.DownloadImageTask;
 import pt.techzebra.winit.platform.LoadMyPromotionsInfo;
 import pt.techzebra.winit.platform.MD5Util;
 import pt.techzebra.winit.platform.RoundedImageView;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,9 +27,11 @@ import android.widget.Toast;
 public class ProfileActivity extends SherlockActivity {
 	private static final String TAG = "ProfileActivity";
 
+	public static final String KEY_USER_BUNDLE = "user";
+	
 	private ActionBar action_bar_;
-
-	// Activity variables
+	private SharedPreferences preferences_ = null;
+	
 	RoundedImageView profile_image_;
 	TextView name_text_;
 	TextView email_text_;
@@ -45,9 +50,13 @@ public class ProfileActivity extends SherlockActivity {
 		level_text_.setText("Level " + u.getLevel());
 		points_text_.setText(u.getPoints() + "/500");
 
-		String hash = MD5Util.md5Hex(u.getEmail().toLowerCase(Locale.getDefault()));
-		String gravatar_url = "https://secure.gravatar.com/avatar/" + hash + "?s=320&d=identicon";
-		new DownloadImageTask(profile_image_).execute(gravatar_url);
+		if(preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false)) {
+			new DownloadImageTask(profile_image_).execute("https://graph.facebook.com/"+ u.getUserFBID() + "/picture?type=large");
+		} else {
+			String hash = MD5Util.md5Hex(u.getEmail().toLowerCase(Locale.getDefault()));
+			String gravatar_url = "https://secure.gravatar.com/avatar/" + hash + "?s=320&d=identicon";
+			new DownloadImageTask(profile_image_).execute(gravatar_url);
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -59,7 +68,8 @@ public class ProfileActivity extends SherlockActivity {
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.profile);
 		action_bar_.setDisplayHomeAsUpEnabled(true);
-
+		preferences_ = getSharedPreferences(Constants.USER_PREFERENCES,
+				Context.MODE_PRIVATE);
 		profile_image_ = (RoundedImageView) findViewById(R.id.profile_image);
 		profile_image_.setBackgroundDrawable(getResources().getDrawable(
 				R.drawable.profile_picture));
@@ -88,30 +98,19 @@ public class ProfileActivity extends SherlockActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			onBackPressed();
-			break;
-		case R.id.menu_edit_profile:
-			Intent in = new Intent(this, EditProfileActivity.class);
-			Bundle myb = new Bundle();
-			myb.putString("name", user_.getName());
-			myb.putString("email", user_.getEmail());
-			myb.putInt("birthday", user_.getBirthday());
-			myb.putString("address", user_.getAddress());
-			myb.putInt("cp4", user_.getCp4());
-			myb.putInt("cp3", user_.getCp3());
-			myb.putInt("id", user_.getUserId());
-			myb.putString("token", auth_token);
-			in.putExtras(myb);
-			startActivity(in);
-			break;
-		case R.id.menu_settings:
-			break;
-		case R.id.menu_log_out:
-			WinIt.logOut(this);
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
+    		case android.R.id.home:
+    			onBackPressed();
+    			break;
+    		case R.id.menu_edit_profile:
+    			Intent intent = new Intent(this, EditProfileActivity.class);
+    			intent.putExtra(KEY_USER_BUNDLE, user_);
+    			startActivity(intent);
+    			break;
+    		case R.id.menu_log_out:
+    			WinIt.logOut(this);
+    			break;
+    		default:
+    			return super.onOptionsItemSelected(item);
 		}
 
 		return true;
@@ -121,16 +120,12 @@ public class ProfileActivity extends SherlockActivity {
 		Class<?> cls = null;
 		switch (view.getId()) {
 		case R.id.promotions_button:
-			//cls = MyPromotionsActivity.class;
-//			cls = null;
-//			Toast.makeText(this, "Comming soon!", Toast.LENGTH_SHORT).show();
 			new LoadMyPromotionsInfo(this).execute();
 			break;
 		case R.id.badges_button:
 			cls = BadgesActivity.class;
 			break;
 		case R.id.tags_button:
-			//cls = TagsActivity.class;
 			cls = null;
 			Toast.makeText(this, "Comming soon!", Toast.LENGTH_SHORT).show();
 			break;
@@ -140,6 +135,4 @@ public class ProfileActivity extends SherlockActivity {
 			startActivity(intent);
 		}
 	}
-
-
 }

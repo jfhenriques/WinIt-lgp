@@ -34,7 +34,7 @@
 				
 				R_TRAD_ERR_NO_MATCH_USER		=> 'Erro de utilizador não coincide',
 
-				R_TRAD_ERR_PROMO_SELECT			=> 'Erro a encontrar a promoção selecionada ou de sugestão',
+				R_TRAD_ERR_PROMO_SELECT			=> 'Erro ao encontrar a promoção selecionada ou de sugestão',
 				R_TRAD_ERR_PROMO_SAME			=> 'A promoção selecionada e de sugestão não podem ser as mesmas',
 				R_TRAD_ERR_USER_SAME			=> 'Não pode trocar promoções consigo próprio',
 				R_TRAD_ERR_NOT_OWNER			=> 'A promoção não pertence ao utilizador',

@@ -9,13 +9,12 @@ import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.Promotion;
+import pt.techzebra.winit.client.Question;
 import pt.techzebra.winit.client.Quiz;
 import pt.techzebra.winit.platform.FetchQuizTask;
-import pt.techzebra.winit.platform.ObservableScrollView;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -28,10 +27,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewTreeObserver;
-import android.widget.Button;
-import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -40,7 +35,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -86,13 +80,11 @@ public class QuizActivity extends SherlockFragmentActivity implements
 		FetchQuizTask fetch_quiz_task = new FetchQuizTask(this);
 		fetch_quiz_task.setDelegate(this);
 		fetch_quiz_task.execute(promotion_id_);
-
-		new UserPromotionID().execute(promotion_id_, authen_token_);
+		if(promotion.getActiveUPID() == -1)
+			new UserPromotionID().execute(promotion_id_, authen_token_);
+		else
+			user_promotion_id_ = Integer.toString(promotion.getActiveUPID());
 		
-	}
-
-	public void initializeAndPopulateView() {
-
 	}
 
 	@Override
@@ -119,13 +111,15 @@ public class QuizActivity extends SherlockFragmentActivity implements
 	}
 
 	private void submitAnswers() {
-		for (int i = 0; i < quiz_.getQuestions().size(); ++i) {
-			if (quiz_.getQuestions().get(i).getAnswered() == -1) {
-				Toast.makeText(this, "Responda a todas as questões",
-						Toast.LENGTH_SHORT).show();
-				return;
-			}
-		}
+	    ArrayList<Question> questions = quiz_.getQuestions();
+	    for (Question question : questions) {
+	        if (question.getAnswered() == -1) {
+	            Toast.makeText(this, "Responda a todas as questões",
+                        Toast.LENGTH_SHORT).show();
+                return;
+	        }
+	    }
+		
 		NetworkUtilities.submitAnswersQuizGame(promotion_id_, authen_token_,
 				user_promotion_id_ , quiz_.getQuestions(), handler_, this);
 	}
@@ -215,59 +209,27 @@ public class QuizActivity extends SherlockFragmentActivity implements
 		}
 	}
  
-	public void getResultSubmitedAnswers(JSONObject responseContent) {
+	public void getResultSubmitedAnswers(JSONObject response) {
 		try {
+			boolean result = response.getBoolean("won");
+			int num_correct_answers = response.getInt("correct");
+			int points = 0;
 			
-			String won = responseContent.getString("won");
-			String prizecode = responseContent.getString("prizecode");
-			String points = null;
-			String correct = responseContent.getString("correct");
-			LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
-					.getSystemService(LAYOUT_INFLATER_SERVICE);
-			final View popupView = layoutInflater.inflate(
-					R.layout.popup_endquiz, null);
-			final PopupWindow popup_window = new PopupWindow(popupView,
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-
-			points_text_ = (TextView) popupView
-					.findViewById(R.id.points_quiz_text);
-			correct_answers_text_ = (TextView) popupView
-					.findViewById(R.id.correct_answers_text);
-
-			you_win_text_ = (TextView) popupView.findViewById(R.id.you_win_);
-
-			if(won.equals("false"))
-				you_win_text_.setText("You LOSE :(");
-		
-			
-			points_text_.setText(points);
-			correct_answers_text_.setText(correct);
-
-			Button dismiss_button = (Button) popupView
-					.findViewById(R.id.dismiss_button);
-			dismiss_button.setOnClickListener(new Button.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					popup_window.dismiss();
-					finish();
-				}
-			});
-
-			popupView.post(new Runnable() {
-
-				@Override
-				public void run() {
-					popup_window
-							.showAtLocation(popupView, Gravity.CENTER, 0, 0);
-				}
-			});
-			// popup_window.showAsDropDown(btnOpenPopup, 50, -30);
-
+			Bundle extras = new Bundle();
+	        extras.putBoolean(QuizResultActivity.KEY_QUIZ_RESULT, result);
+	        extras.putInt(QuizResultActivity.KEY_QUIZ_NUM_CORRECT_ANSWERS, num_correct_answers);
+	        extras.putInt(QuizResultActivity.KEY_QUIZ_POINTS, points);
+	        
+	        Intent intent = new Intent(this, QuizResultActivity.class);
+	        intent.putExtras(extras);
+	        
+	        startActivity(intent);
+	        finish();
 		} catch (JSONException e) {
 			Log.i(TAG,
 					"Error to get response: "
 							+ NetworkUtilities
-									.getResponseContent(responseContent));
+									.getResponseContent(response));
 		}
 	}
 

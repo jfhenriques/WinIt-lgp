@@ -1,8 +1,10 @@
 package pt.techzebra.winit.ui;
 
 import pt.techzebra.winit.Constants;
+import pt.techzebra.winit.GCMUtils;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
+import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.platform.LoadingUserInfo;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +20,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.facebook.Session;
+import com.google.android.gcm.GCMRegistrar;
 
 public class DashboardActivity extends SherlockActivity {
     private static final String TAG = "DashboardActivity";
@@ -72,7 +75,6 @@ public class DashboardActivity extends SherlockActivity {
             }
 
         }
-
         setContentView(R.layout.dashboard_activity);
     }
 
@@ -89,9 +91,6 @@ public class DashboardActivity extends SherlockActivity {
         case R.id.menu_profile:
             LoadingUserInfo lui = new LoadingUserInfo(this);
             lui.execute();
-            break;
-        case R.id.menu_settings:
-            Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
             break;
         case R.id.menu_log_out:
             WinIt.logOut(this);
@@ -124,8 +123,6 @@ public class DashboardActivity extends SherlockActivity {
             intent.putExtra(PromotionsActivity.KEY_SHOWCASE_MODE,
                     PromotionsActivity.PromotionsShowcaseMode.TRADING_SHOWCASE);
             startActivity(intent);
-            // TODO added transition animations, wainting feedback
-            // Utilities.addActivityAnimations(this);
             break;
         }
 

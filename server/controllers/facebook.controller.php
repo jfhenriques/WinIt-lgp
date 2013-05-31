@@ -52,16 +52,86 @@
 			$signature = valid_var( 'HTTP_X_HUB_SIGNATURE', $_SERVER );
 			$payload = null;
 
-			if( !is_null( $signature ) )
+			if( is_null( $signature ) )
+				error_log( "FacebookController->receive_update_list(): Null Signature received" );
+
+			else
 			{
 				$payload = file_get_contents( 'php://input' );
 
-				if( !empty( $payload ) && FacebookPlugin::verifyPayload( $signature, $payload ) )
-				{
+				if(    empty( $payload )
+					|| FacebookPlugin::verifyPayload( $signature, $payload ) )
+					error_log( "FacebookController->receive_update_list(): Error in received payload ['$signature', '$payload']" );
 
+				else
+				{
+					$jsonArr = null;
+
+					if(    !is_array( $jsonArr = @json_decode($payload, true) )
+						|| valid_var( 'object', $jsonArr ) !== 'user'
+						|| !isset( $jsonArr['entry'] )
+						|| !is_array( $jsonArr['entry'] ) )
+						error_log( "FacebookController->receive_update_list(): Error in received data structure" );
+
+					else
+					{
+						$list = array();
+
+						foreach ($jsonArr['entry'] AS $e)
+						{
+							if( is_array( $e ) && isset( $e['uid'] ) && !empty( $e['uid'] ) )
+								$list[] = $e['uid'];
+						}
+
+						if(    count( $list ) <= 0
+							|| !is_array( $info = FacebookPlugin::getUsersInfo( $list ) )
+							|| !count( $info ) <= 0 )
+							error_log( "FacebookController->receive_update_list(): No users found" );
+
+						else
+						{
+
+							foreach( $info AS $line )
+							{
+								$uid = valid_var( 'uid', $line );
+								$name = valid_var( 'name', $line );
+								$email = valid_var( 'email', $line );
+								$birthday = valid_var( 'birthday', $line );
+
+								$user = null;
+
+								try
+								{
+									if(    !is_null( $uid )
+										&& !is_null( $user = User::findByFacebookUID( $uid ) ) )
+									{
+
+										if( !is_null( $email ) )
+											$user->setEmail( $email );
+
+										if( !is_null( $name ) )
+											$user->setName( $name );
+
+										if( !is_null( $birthday ) )
+											$user->setBirth( DateTime::createFromFormat('n/j/Y', $birthday)->getTimestamp() );
+
+										$user->save();
+
+									}
+
+								} catch (PDOException $e) {
+									error_log($e);
+								}
+
+							}
+
+						}
+
+					}
 
 
 				}
+					
 			}
 
 		}
