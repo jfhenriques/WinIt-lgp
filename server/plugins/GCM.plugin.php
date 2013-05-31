@@ -17,8 +17,8 @@
 
 		private static $opts = array( CURLOPT_URL			 => GCM_API_URL,
 									  CURLOPT_HEADER		 => false,
-									  CURLOPT_SSL_VERIFYHOST => true,
-									  CURLOPT_SSL_VERIFYPEER => true,
+									  CURLOPT_SSL_VERIFYHOST => 2,
+									  CURLOPT_SSL_VERIFYPEER => 1,
 									  CURLOPT_POST			 => true,
 									  CURLOPT_CAINFO		 => GCM_CA_BUNDLE,
 									  CURLOPT_HTTPHEADER	 => array( 'Host: android.googleapis.com',
