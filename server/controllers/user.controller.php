@@ -299,7 +299,7 @@
 			$user = AuthenticatorPlugin::getInstance()->getUser();
 			//$userId = $auth->getUID();
 
-			//$user = User::findByUID($userId);
+			// $user = User::findByUID($userId);
 
 			
 			if( is_null( $user ) )
@@ -308,9 +308,8 @@
 			else
 			{
 				$resp = Badge::findByUID( $user->getUID() );
-				
 				$response = array();
-
+					
 				foreach ( $resp as $b)
 				{
 					$response[] = array('bid' => $b->getBID(),
@@ -318,6 +317,7 @@
 										'description' => $b->getDescription(),
 										'image' => Controller::formatURL( $b->getImageSRC() ),
 										'aquis_date' => $b->getAquisDate() );
+										
 				}
 
 				$this->respond->setJSONResponse( $response );
@@ -604,13 +604,14 @@
 		}
 		
 		
-/*		public function showPoints() {
+		public function showPoints() {
 			
 			$this->requireAuth();
 
 			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			$u = $user->getUID();
+			var_dump($u);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -625,7 +626,7 @@
 
 			$this->respond->renderJSON( static::$status );
 		
-		}*/
+		}
 
 	}
 	

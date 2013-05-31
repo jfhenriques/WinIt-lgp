@@ -35,7 +35,6 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 	
 	Context context_;
 	
-	static ArrayList<Promotion> promotions_in_trading_ = new ArrayList<Promotion>();
 	static ArrayList<Promotion> promotions_won_ = new ArrayList<Promotion>();
 	static ArrayList<Promotion> promotions_tradeable_ = new ArrayList<Promotion>();
 	
@@ -51,7 +50,6 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 		ArrayList<ArrayList<Promotion>> tmp = new ArrayList<ArrayList<Promotion>>();
 		tmp = (ArrayList<ArrayList<Promotion>>) getIntent().getSerializableExtra("Promotions");
 		
-		promotions_in_trading_ = tmp.get(0);
 		promotions_won_ = tmp.get(1);
 		promotions_tradeable_ = tmp.get(2);
 		
@@ -87,7 +85,7 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 	}
 
 	private static class MyPromotionsPagerAdapter extends FragmentStatePagerAdapter {
-	    private final String[] TITLES = {"Won", "In Trading", "Tradeable"};
+	    private final String[] TITLES = {"Won", "Tradeable"};
 	    
 		public MyPromotionsPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -156,10 +154,6 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
                     affinity_ = PromotionActivity.WON_PROMOTION;
                     break;
                 case 1:
-                    promotions = promotions_in_trading_;
-                    affinity_ = PromotionActivity.IN_TRADING_PROMOTION;
-                    break;
-                case 2:
                     promotions = promotions_tradeable_;
                     affinity_ = PromotionActivity.TRADEABLE_PROMOTION;
                     break;
