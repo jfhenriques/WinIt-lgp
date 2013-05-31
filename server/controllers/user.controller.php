@@ -20,6 +20,8 @@
 
 	DEFINE( 'R_USER_RESET_FACE_USER'	, 0x60 );
 
+	DEFINE( 'R_USER_NO_SENT_SUGGESTIONS', 0x70 );
+
 
 
 	DEFINE( 'MAIL_SUBJECT_RESET_PASS' , 'Tlantic PromGame Mobile - Password Reset' );
@@ -51,6 +53,8 @@
 				R_USER_GCM_NOT_FOUND	=> 'O Token GCM não foi encontrado',
 
 				R_USER_RESET_FACE_USER	=> 'Não é possível fazer reset à password de um user registado pelo facebook',
+
+				R_USER_NO_SENT_SUGGESTIONS	=> 'Sem propostas de promoções feitas',
 			);
 
 		
@@ -611,7 +615,7 @@
 		}
 		
 		
-		public function showPoints() {
+/*		public function showPoints() {
 			
 			$this->requireAuth();
 
@@ -633,6 +637,48 @@
 
 			$this->respond->renderJSON( static::$status );
 		
+		}*/
+
+
+		public function sent_trading_suggestions()
+		{
+			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
+
+			$user = AuthenticatorPlugin::getInstance()->getUser();
+			$sugestions = array();
+			
+			if( is_null( $user ) )
+				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
+
+			else if(    !is_array( $sugestions = TradingSuggestion::findSentPrizeSuggestions( $user->getUID(), 0 ) )
+					 || count( $sugestions) <= 0 )
+				$this->respond->setJSONCode( R_USER_NO_SENT_SUGGESTIONS );
+
+			else
+			{
+				$ret = array();
+
+				foreach($sugestions as $s)
+				{
+					$ret[] = array('pcid_my' => $s->getPCIDOrig(),
+								   'pid_my' => $s->getPID(),
+								   'max_util_date_my' => $s->getMaxUtilizationDate(),
+								   'name_my' => $s->getPromotionName(),
+								   'image_my' => Controller::formatURL( $s->getPromotionImageSRC() ),
+								   'pcid_want' => $s->getPCIDDest(),
+								   'pid_want' => $s->getPIDDest(),
+								   'max_util_date_want' => $s->getMaxUtilizationDateDest(),
+								   'name_want' => $s->getPromotionNameDest(),
+								   'image_want' => Controller::formatURL( $s->getPromotionImageSRCDest() )
+								);
+
+				}
+
+				$this->respond->setJSONResponse( $ret );
+				$this->respond->setJSONCode( R_STATUS_OK );
+			}
+
+			$this->respond->renderJSON( static::$status );
 		}
 
 	}
