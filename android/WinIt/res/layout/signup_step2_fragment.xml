@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/signup_step_2_scroll_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:padding="@dimen/gap"
     android:background="@color/clouds" >
 
@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:text="@string/step2"
             android:textAllCaps="true"
-            android:textColor="@color/white"
+            android:textColor="@color/belize_hole"
             android:textSize="26sp"
             android:textStyle="bold" />
 

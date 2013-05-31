@@ -1,29 +1,20 @@
 package pt.techzebra.winit.ui;
 
-
 import java.util.ArrayList;
 
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.platform.FetchPromotionsTask;
 import pt.techzebra.winit.staggeredgridview.StaggeredAdapter;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.origamilabs.library.views.StaggeredGridView;
 import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
-import com.viewpagerindicator.PageIndicator;
 
 public class PromotionsActivity extends SherlockActivity implements OnItemClickListener {
 	private static final String TAG = "PromotionsActivity";
