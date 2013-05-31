@@ -46,6 +46,8 @@ import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.games.quiz.QuizActivity;
 import pt.techzebra.winit.ui.AuthenticationActivity;
 import pt.techzebra.winit.ui.EditProfileActivity;
+import pt.techzebra.winit.ui.PromotionActivity;
+import pt.techzebra.winit.ui.PromotionsActivity;
 import pt.techzebra.winit.ui.SignupActivity;
 
 import android.content.Context;
@@ -573,6 +575,7 @@ public class NetworkUtilities {
 
 		Log.i(TAG, json_response.toString());
 		if (validResponse(json_response)) {
+			PromotionActivity.a_upid = -1;
 			sendResponseToQuizGameActivity(getResponseContent(json_response),
 					handler, context);
 		} else {
@@ -687,6 +690,7 @@ public class NetworkUtilities {
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
 		String uri = PROMOTION_URI + ".json?token=" + token;
 		JSONObject response = get(uri);
+		Log.i("AQUI", response.toString());
 		JSONArray r = getResponseContentArray(response);
 
 		if (r == null) {
