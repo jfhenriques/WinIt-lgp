@@ -1,10 +1,14 @@
 package pt.techzebra.winit.ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.client.Promotion;
+import pt.techzebra.winit.client.Proposal;
 import pt.techzebra.winit.platform.FetchPromotionsTask;
 import pt.techzebra.winit.staggeredgridview.StaggeredAdapter;
 
@@ -19,6 +23,11 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -34,7 +43,7 @@ public class TradingActivity extends SherlockFragmentActivity {
     
     public static final String KEY_EXTRA_PROMOTIONS = "promotions";
     
-    private Context context_;
+    private Activity activity_;
     
     private ActionBar action_bar_;
     
@@ -71,9 +80,8 @@ public class TradingActivity extends SherlockFragmentActivity {
         
         tabs_.setViewPager(pager_);
         
-        context_ = this;
+        activity_ = this;
     }
-    
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -220,7 +228,83 @@ public class TradingActivity extends SherlockFragmentActivity {
     }
     
     public static class ReceivedProposals extends SherlockFragment {
-        // TODO
+        ListView list_view_;
+        
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle saved_instance_state) {
+            View view_root = inflater.inflate(R.layout.proposals_fragment, container, false);
+            
+            list_view_ = (ListView) view_root.findViewById(R.id.list);
+            
+            return view_root;
+        }
+        
+//        private class ProposalsAdapter extends BaseAdapter {
+//            private ArrayList<HashMap<String, String>> proposals_;
+//            
+//            public ProposalsAdapter(ArrayList<HashMap<String, String>> proposals) {
+//                proposals_ = proposals;
+//            }
+//            
+//            public void setProposals(ArrayList<HashMap<String, String>> proposals) {
+//                proposals_ = proposals;
+//                notifyDataSetChanged();
+//            }
+//            
+//            @Override
+//            public int getCount() {
+//                return proposals_.size();
+//            }
+//            
+//            @Override
+//            public Object getItem(int position) {
+//                return proposals_.get(position);
+//            }
+//            
+//            @Override
+//            public long getItemId(int position) {
+//                return Long.valueOf(proposals_.get(position).get("my_id"));
+//            }
+//            
+//            @Override
+//            public View getView(int position, View convert_view, ViewGroup parent) {
+//                ViewHolder holder;
+//                
+//                View view = convert_view;
+//                
+//                if (convert_view == null) {
+//                    LayoutInflater inflater = LayoutInflater.from(getActivity());
+//                    
+//                    view = inflater.inflate(R.layout.proposal_list_row, null);
+//                    holder = new ViewHolder();
+//                    holder.my_image = (ImageView) view.findViewById(R.id.my_image);
+//                    holder.my_name = (TextView) view.findViewById(R.id.my_name);
+//                    holder.want_image = (ImageView) view.findViewById(R.id.want_image);
+//                    holder.want_name = (TextView) view.findViewById(R.id.want_name);
+//                    
+//                    view.setTag(holder);
+//                } else {
+//                    holder = (ViewHolder) view.getTag();
+//                }
+//                
+//                holder.my_name.setText(proposals_.get(position).get("my_name"));
+//                holder.my_image = proposals_.get(position).get("my_name");
+//                holder.want_name.setText(proposals_.get(position).get("my_name"));
+//                holder.want_image = proposals_.get(position).get("my_name");
+//                
+//                return view;
+//            }
+//            
+//            public class ViewHolder {
+//                TextView my_name;
+//                ImageView my_image;
+//                TextView want_name;
+//                ImageView want_image;
+//            }
+//
+//            
+//        }
     }
     
     public static class SentProposals extends SherlockFragment {
