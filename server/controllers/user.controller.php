@@ -61,7 +61,13 @@
 		{
 		}
 
-		
+
+
+
+		private static function calculateLevel($points)
+		{
+			return (int)( 1 + (25 * log10( 1 + ( (double)$points ) / 2000 ) ) );
+		}
 		
 		public function index()
 		{
@@ -94,6 +100,9 @@
 					$district = $address->getDistrict();
 				}
 
+				$points = $user->getTotalPoints();
+				$level = UserController::calculateLevel( $points ) ;
+
 				$this->respond->setJSONResponse( array( 'uid' => $user->getUID(),
 														'name' => $user->getName(),
 														'email' => $user->getEmail(),
@@ -106,9 +115,8 @@
 														'address' => $street,
 														'address2' => $user->getAddress2(),
 														'facebook_uid' => $user->getFacebookUID(),
-														//'token_tw' => $user->getTokenTwitter(),
-														'level' => 1,
-														'points' => $user->getTotalPoints() ) );
+														'level' => $level,
+														'points' => $points ) );
 
 				$this->respond->setJSONCode( R_STATUS_OK );
 				

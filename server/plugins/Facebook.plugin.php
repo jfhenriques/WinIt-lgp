@@ -61,7 +61,7 @@
 				curl_setopt($ch, CURLOPT_URL, $url);
 				curl_setopt_array( $ch, static::$opts );
 
-				$return = curl_exec($ch);
+				$return = @curl_exec($ch);
 				curl_close($ch);
 
 				if( $return !== false )
@@ -95,8 +95,8 @@
 				curl_setopt($ch, CURLOPT_URL, $url);
 				curl_setopt_array( $ch, static::$opts );
 
-				$return = curl_exec($ch);
-				//var_dump($return);
+				$return = @curl_exec($ch);
+
 				curl_close($ch);
 
 				if( $return !== false )
