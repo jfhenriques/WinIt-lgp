@@ -82,7 +82,7 @@
 				$cp4 = $cp3 = $street = $locality = $district = null ;
 
 				$address = ( $user->getADID() > 0 ) ? Address::findByADID( $user->getADID() ) : null ;
-				
+
 				if( !is_null( $address ) )
 				{
 					$cp4 = $address->getCP4();
@@ -95,21 +95,20 @@
 				}
 
 				$this->respond->setJSONResponse( array( 'uid' => $user->getUID(),
-														  'name' => $user->getName(),
-														  'email' => $user->getEmail(),
-														  'adid' => $user->getADID(),
-														  'birth' => $user->getBirth(),
-														  'cp4' => $cp4,
-														  'cp3' => $cp3,
-														  'locality' => $locality,
-														  'district' => $district,
-														  'address' => $street,
-														  'address2' => $user->getAddress2(),
-														  'facebook_uid' => $user->getFacebookUID(),
-														  //'token_fb' => $user->getTokenFacebook(),
-														  //'token_tw' => $user->getTokenTwitter(),
-														  'level' => 1,
-														  'points' => $user->getTotalPoints() ) );
+														'name' => $user->getName(),
+														'email' => $user->getEmail(),
+														'adid' => $user->getADID(),
+														'birth' => $user->getBirth(),
+														'cp4' => $cp4,
+														'cp3' => $cp3,
+														'locality' => $locality,
+														'district' => $district,
+														'address' => $street,
+														'address2' => $user->getAddress2(),
+														'facebook_uid' => $user->getFacebookUID(),
+														//'token_tw' => $user->getTokenTwitter(),
+														'level' => 1,
+														'points' => $user->getTotalPoints() ) );
 
 				$this->respond->setJSONCode( R_STATUS_OK );
 				

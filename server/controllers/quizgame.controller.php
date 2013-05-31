@@ -208,10 +208,10 @@
 									$ratio = ( $rightAnswers / $totalQuestions );
 									
 									$userPoints = UserPoints::instantiate( $user, $promo, $ratio, $time );
-									$hasError = $userPoints->save();
-
-									$pointsWon = $userPoints->getXPPoints();
 									
+									$pointsWon = $userPoints->getXPPoints();
+									if( $pointsWon > 0)
+										$hasError = $userPoints->save();
 								}
 							}
 							else
