@@ -12,6 +12,7 @@
         android:orientation="vertical" >
 
         <TextView
+            android:id="@+id/name_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/name"
@@ -27,6 +28,7 @@
             android:inputType="textPersonName" />
 
         <TextView
+            android:id="@+id/email_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/email"
@@ -42,6 +44,7 @@
             android:inputType="textEmailAddress" />
 
         <TextView
+            android:id="@+id/pass_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/password"
@@ -57,6 +60,7 @@
             android:inputType="textPassword" />
 
         <TextView
+            android:id="@+id/pass_old_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/password_old"
@@ -72,6 +76,7 @@
             android:inputType="textPassword" />
 
         <TextView
+            android:id="@+id/birth_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/birthday"

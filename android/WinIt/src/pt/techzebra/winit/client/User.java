@@ -25,10 +25,11 @@ public class User implements Serializable {
     private final String level_;
     private final String points_;
     private final String user_fb_id_;
+    private int next_level_points_;
 
     public User(int user_id, String name, int adid, int cp4, int cp3, String address, String address2,
             String locality, String district, int birthday, String email,
-            String level, String points, String user_fb_id) {
+            String level, String points, String user_fb_id, int next_level_points) {
         adid_ = adid;
         cp4_ = cp4;
         cp3_ = cp3;
@@ -43,6 +44,7 @@ public class User implements Serializable {
         level_ = level;
         points_ = points;
         user_fb_id_ = user_fb_id;
+        next_level_points_ = next_level_points;
     }
 
     public int getUserId() {
@@ -128,6 +130,16 @@ public class User implements Serializable {
     public String getUserFBID() {
 		return user_fb_id_;
 	}
+    
+    
+
+	public int getNextLevelPoints() {
+		return next_level_points_;
+	}
+
+	public void setNextLevelPoints(int next_level_points_) {
+		this.next_level_points_ = next_level_points_;
+	}
 
 	/**
      * Creates and returns an instance of the user from the provided JSON data.
@@ -152,8 +164,9 @@ public class User implements Serializable {
             final String level = user.getString("level");
             final String points = user.getString("points");
             final String fb_id = !user.isNull("facebook_uid") ? user.getString("facebook_uid") : "";
+            final int next_level_points = user.getInt("next_level_points");
            
-            return new User(user_id, name, adid, cp4, cp3, address, address2, locality, district, birthday, email, level, points, fb_id);
+            return new User(user_id, name, adid, cp4, cp3, address, address2, locality, district, birthday, email, level, points, fb_id, next_level_points);
         } catch (final Exception e) {
             Log.i("User", "Error parsing JSON user object" + e.toString());
         }

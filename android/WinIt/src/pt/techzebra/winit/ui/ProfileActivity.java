@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,15 +29,16 @@ public class ProfileActivity extends SherlockActivity {
 	private static final String TAG = "ProfileActivity";
 
 	public static final String KEY_USER_BUNDLE = "user";
-	
+
 	private ActionBar action_bar_;
 	private SharedPreferences preferences_ = null;
-	
+
 	RoundedImageView profile_image_;
 	TextView name_text_;
 	TextView email_text_;
 	TextView level_text_;
 	TextView points_text_;
+	ProgressBar progress_bar_;
 
 	User user_ = null;
 	String auth_token;
@@ -48,15 +50,25 @@ public class ProfileActivity extends SherlockActivity {
 		name_text_.setText(u.getName());
 		email_text_.setText(u.getEmail());
 		level_text_.setText("Level " + u.getLevel());
-		points_text_.setText(u.getPoints() + "/500");
+		points_text_.setText(u.getPoints() + "/" + u.getNextLevelPoints());
+		progress_bar_.setMax(u.getNextLevelPoints());
+ 		progress_bar_.setProgress(Integer.parseInt(u.getPoints()));
 
-		if(preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false)) {
-			new DownloadImageTask(profile_image_).execute("https://graph.facebook.com/"+ u.getUserFBID() + "/picture?type=large");
+		if (preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false)) {
+			new DownloadImageTask(profile_image_)
+					.execute("https://graph.facebook.com/" + u.getUserFBID()
+							+ "/picture?type=large");
 		} else {
-			String hash = MD5Util.md5Hex(u.getEmail().toLowerCase(Locale.getDefault()));
-			String gravatar_url = "https://secure.gravatar.com/avatar/" + hash + "?s=320&d=identicon";
+			String hash = MD5Util.md5Hex(u.getEmail().toLowerCase(
+					Locale.getDefault()));
+			String gravatar_url = "https://secure.gravatar.com/avatar/" + hash
+					+ "?s=320&d=identicon";
 			new DownloadImageTask(profile_image_).execute(gravatar_url);
 		}
+	}
+
+	private static int calculateLevel(int points) {
+		return (int) (-1824.02 * (1.09648-Math.exp(0.0921034 * points)));		
 	}
 
 	@SuppressWarnings("deprecation")
@@ -68,7 +80,7 @@ public class ProfileActivity extends SherlockActivity {
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.profile);
 		action_bar_.setDisplayHomeAsUpEnabled(true);
-		preferences_ = getSharedPreferences(Constants.USER_PREFERENCES,
+		getSharedPreferences(Constants.USER_PREFERENCES,
 				Context.MODE_PRIVATE);
 		profile_image_ = (RoundedImageView) findViewById(R.id.profile_image);
 		profile_image_.setBackgroundDrawable(getResources().getDrawable(
@@ -78,6 +90,8 @@ public class ProfileActivity extends SherlockActivity {
 		email_text_ = (TextView) findViewById(R.id.email_text);
 		level_text_ = (TextView) findViewById(R.id.level_text);
 		points_text_ = (TextView) findViewById(R.id.points_text);
+
+		progress_bar_ = (ProgressBar) findViewById(R.id.experience_bar);
 
 		auth_token = WinIt.getAuthToken();
 		Log.d(TAG, "auth token");
@@ -98,19 +112,19 @@ public class ProfileActivity extends SherlockActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-    		case android.R.id.home:
-    			onBackPressed();
-    			break;
-    		case R.id.menu_edit_profile:
-    			Intent intent = new Intent(this, EditProfileActivity.class);
-    			intent.putExtra(KEY_USER_BUNDLE, user_);
-    			startActivity(intent);
-    			break;
-    		case R.id.menu_log_out:
-    			WinIt.logOut(this);
-    			break;
-    		default:
-    			return super.onOptionsItemSelected(item);
+		case android.R.id.home:
+			onBackPressed();
+			break;
+		case R.id.menu_edit_profile:
+			Intent intent = new Intent(this, EditProfileActivity.class);
+			intent.putExtra(KEY_USER_BUNDLE, user_);
+			startActivity(intent);
+			break;
+		case R.id.menu_log_out:
+			WinIt.logOut(this);
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 
 		return true;
@@ -130,7 +144,7 @@ public class ProfileActivity extends SherlockActivity {
 			Toast.makeText(this, "Comming soon!", Toast.LENGTH_SHORT).show();
 			break;
 		}
-		if(cls != null){
+		if (cls != null) {
 			Intent intent = new Intent(this, cls);
 			startActivity(intent);
 		}

@@ -57,7 +57,7 @@ public class QuizActivity extends SherlockFragmentActivity implements
 	TextView points_text_;
 	TextView correct_answers_text_;
 	TextView you_win_text_;
-
+	Promotion promotion;
 	Handler handler_ = new Handler();
 
 	@Override
@@ -73,7 +73,7 @@ public class QuizActivity extends SherlockFragmentActivity implements
 				R.drawable.action_bar_bg_single_player));
 
 		authen_token_ = WinIt.getAuthToken();
-		Promotion promotion = (Promotion) getIntent().getSerializableExtra(
+		promotion = (Promotion) getIntent().getSerializableExtra(
 				"Promotion");
 		promotion_id_ = String.valueOf(promotion.getPromotionID());
 		Log.i(TAG, "Question: " + promotion_id_);
@@ -230,7 +230,7 @@ public class QuizActivity extends SherlockFragmentActivity implements
 	        extras.putBoolean(QuizResultActivity.KEY_QUIZ_RESULT, result);
 	        extras.putInt(QuizResultActivity.KEY_QUIZ_NUM_CORRECT_ANSWERS, num_correct_answers);
 	        extras.putInt(QuizResultActivity.KEY_QUIZ_POINTS, points);
-	        
+	        extras.putSerializable("Promotion", promotion);
 	        Intent intent = new Intent(this, QuizResultActivity.class);
 	        intent.putExtras(extras);
 	        
