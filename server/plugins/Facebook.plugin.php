@@ -99,11 +99,7 @@
 
 				curl_close($ch);
 
-				if( $return !== false )
-				{
-					//TODO: php:/input
-
-				}
+				return $return;
 
 			}
 

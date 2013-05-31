@@ -42,13 +42,10 @@
 				curl_setopt_array( $ch, static::$opts );
 				curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode( $fields ) );
 
-
 				$return = @curl_exec($ch);
 				curl_close($ch);
 
-				if( $return !== false )
-					return true;
-
+				return ( $return !== false );
 			}
 
 			return false;
