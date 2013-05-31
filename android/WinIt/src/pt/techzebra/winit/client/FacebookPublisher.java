@@ -25,37 +25,18 @@ import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
 
-public class FacebookHandler {
+public class FacebookPublisher {
 	
-	private Session session_;
-	private Activity activity_;
 	private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
 	private static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
-	private boolean pendingPublishReauthorization = false;
-
-	public FacebookHandler(Activity activity, Session.StatusCallback callback){
-		activity_ = activity;
-		session_ = Session.openActiveSessionFromCache(activity_);
-		if(session_ != null){
-			session_.closeAndClearTokenInformation();
-		}
-		session_ = Session.openActiveSession(activity, true, callback);
-	}
+	private static boolean pendingPublishReauthorization = false;
+	private static Activity activity_;
 	
-	
-	
-	public Session getSession() {
-		return session_;
-	}
-
-
-
-	public String generateHashKey(){
-		//TODO apenas necessário se quiserem gerar uma keyhash para o vosso projecto. A que está a ser usada na configuração do Facebook App é a minham, podem adicionar lá a vossa
+	public String generateHashKey(Activity a_){
 		PackageInfo info = null;
 		String hash = null;
 		try {
-			info = activity_.getPackageManager().getPackageInfo("pt.techzebra.winit",  PackageManager.GET_SIGNATURES);
+			info = a_.getPackageManager().getPackageInfo("pt.techzebra.winit",  PackageManager.GET_SIGNATURES);
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -75,32 +56,25 @@ public class FacebookHandler {
 	}
 
 
-	public void publishStory(String name, String caption, String description, String link, String picture, String privacy) {
+	public static boolean publishStory(String name, String caption, String description, String link, String picture, Activity activity) {
 		Session session = Session.getActiveSession();
-
 		if (session != null){
-
+			activity_ = activity;
 			// Check for publish permissions    
 			List<String> permissions = session.getPermissions();
 			if (!isSubsetOf(PERMISSIONS, permissions)) {
 				pendingPublishReauthorization = true;
 				Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(activity_, PERMISSIONS);
 				session.requestNewPublishPermissions(newPermissionsRequest);
-				return;
+				return false;
 			}
 
 			Bundle postParams = new Bundle();
-			/*postParams.putString("name", "Facebook SDK for Android");
-	        postParams.putString("caption", "Build great social apps and get more installs.");
-	        postParams.putString("description", "The Facebook SDK for Android makes it easier and faster to develop Facebook integrated Android apps.");
-	        postParams.putString("link", "https://developers.facebook.com/android");
-	        postParams.putString("picture", "https://raw.github.com/fbsamples/ios-3.x-howtos/master/Images/iossdk_logo.png");*/
 			postParams.putString("name", name);
 			postParams.putString("caption", caption);
 			postParams.putString("description", description);
 			postParams.putString("link", link);
 			postParams.putString("picture", picture);
-			postParams.putString("privacy", privacy);
 
 			Request.Callback callback= new Request.Callback() {
 				public void onCompleted(Response response) {
@@ -126,11 +100,12 @@ public class FacebookHandler {
 
 			RequestAsyncTask task = new RequestAsyncTask(request);
 			task.execute();
+			return true;
 		}
-
+		return false;
 	}
 
-	private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
+	private static boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
 		for (String string : subset) {
 			if (!superset.contains(string)) {
 				return false;
