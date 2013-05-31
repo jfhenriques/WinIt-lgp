@@ -541,7 +541,6 @@ public class NetworkUtilities {
 		};
 
 		return NetworkUtilities.performOnBackgroundThread(runnable);
-
 	}
 
 	public static void submitAnswersAction(String promotion_id,
@@ -570,7 +569,6 @@ public class NetworkUtilities {
 			Log.i(TAG, "Error to get response: "
 					+ getResponseMessage(json_response));
 		}
-
 	}
 
 	public static String getUserPromotionId(final String promotion_id,

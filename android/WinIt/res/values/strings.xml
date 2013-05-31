@@ -65,4 +65,7 @@
     <string name="show">Show</string>
     <string name="app_id">104075696465886</string>
 
+    <string name="you_won">You won!</string>
+    <string name="you_lost">You lost!</string>
+    
 </resources>

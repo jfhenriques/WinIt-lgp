@@ -40,7 +40,8 @@
         <activity
             android:name="pt.techzebra.winit.ui.SignupActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:uiOptions="splitActionBarWhenNarrow" />
         <activity
             android:name="pt.techzebra.winit.ui.PromotionsActivity"
             android:configChanges="orientation"
@@ -69,12 +70,18 @@
         <activity
             android:name="pt.techzebra.winit.ui.EditProfileActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:uiOptions="splitActionBarWhenNarrow" />
         <activity
             android:name="pt.techzebra.winit.games.quiz.QuizActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.VPI" />
+        
+        <activity
+            android:name="pt.techzebra.winit.games.quiz.QuizResultActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name="pt.techzebra.winit.ui.TradingActivity"
             android:configChanges="orientation"

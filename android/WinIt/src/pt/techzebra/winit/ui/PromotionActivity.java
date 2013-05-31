@@ -259,7 +259,14 @@ public class PromotionActivity extends SherlockActivity {
         public void populateFields() {
 	        super.populateFields();
 	        
-            end_date_text_.setText(Utilities.convertUnixTimestamp(promotion_.getEndDate()));
+	        long end_date = promotion_.getEndDate();
+	        if (end_date == 0) {
+	            end_date_text_.setVisibility(View.GONE);
+	            activity_.findViewById(R.id.end_date_label).setVisibility(View.GONE);
+	        } else {
+	            end_date_text_.setText(Utilities.convertUnixTimestamp(end_date));
+	        }
+            
             win_points_text_.setText(Integer.toString(promotion_.getWinPoints()));
         }
 	    

@@ -24,6 +24,8 @@ import android.widget.Toast;
 public class ProfileActivity extends SherlockActivity {
 	private static final String TAG = "ProfileActivity";
 
+	public static final String KEY_USER_BUNDLE = "user";
+	
 	private ActionBar action_bar_;
 
 	// Activity variables
@@ -92,20 +94,9 @@ public class ProfileActivity extends SherlockActivity {
     			onBackPressed();
     			break;
     		case R.id.menu_edit_profile:
-    			Intent in = new Intent(this, EditProfileActivity.class);
-    			Bundle myb = new Bundle();
-    			myb.putString("name", user_.getName());
-    			myb.putString("email", user_.getEmail());
-    			myb.putInt("birthday", user_.getBirthday());
-    			myb.putString("address", user_.getAddress());
-    			myb.putInt("cp4", user_.getCp4());
-    			myb.putInt("cp3", user_.getCp3());
-    			myb.putInt("id", user_.getUserId());
-    			myb.putString("token", auth_token);
-    			in.putExtras(myb);
-    			startActivity(in);
-    			break;
-    		case R.id.menu_settings:
+    			Intent intent = new Intent(this, EditProfileActivity.class);
+    			intent.putExtra(KEY_USER_BUNDLE, user_);
+    			startActivity(intent);
     			break;
     		case R.id.menu_log_out:
     			WinIt.logOut(this);
