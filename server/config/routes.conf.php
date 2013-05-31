@@ -105,6 +105,8 @@
 									array( 'match' => '/promotions',
 										   'matches' => array(
 
+										   		array( 'match' => '/suggested', 'controller' => 'user', 'via' => 'get', 'action' => 'sent_trading_suggestions'),
+
 											   	array( 'match' => '/trading', 'controller' => 'user', 'via' => 'get', 'action' => 'list_prizes_trading' ),
 										   		array( 'match' => '/tradable', 'controller' => 'user', 'via' => 'get', 'action' => 'list_prizes_tradable' ),
 

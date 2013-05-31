@@ -162,6 +162,12 @@ public class Promotion implements Serializable {
 	public int getActiveUPID() {
 		return active_upid_;
 	}
+	
+	
+
+	public void setActiveUPID(int active_upid_) {
+		this.active_upid_ = active_upid_;
+	}
 
 	/**
      * Creates and returns an instance of the promotion from the provided JSON data.

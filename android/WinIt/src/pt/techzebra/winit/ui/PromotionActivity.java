@@ -24,7 +24,8 @@ public class PromotionActivity extends SherlockActivity {
     
     public static String KEY_PROMOTION_AFFINITY = "promotion_affinity";
     public static String KEY_PROMOTION_ID = "promotion_id";
-	
+    public static String KEY_ACTIVE_UPID = "active_upid";
+    
 	private PromotionView promotion_view_;
 	
     public static final int WON_PROMOTION = 1;
@@ -32,6 +33,8 @@ public class PromotionActivity extends SherlockActivity {
     public static final int TRADEABLE_PROMOTION = 3;
     public static final int PLAYABLE_PROMOTION = 4;
     public static final int PROPOSABLE_PROMOTION = 5;
+    
+    public static int a_upid = -1;
     
    	@Override
 	protected void onCreate(Bundle saved_instance_state) {
@@ -42,9 +45,12 @@ public class PromotionActivity extends SherlockActivity {
 		int affinity = extras.getInt(KEY_PROMOTION_AFFINITY);
 		int id = extras.getInt(KEY_PROMOTION_ID);
 		int pcid = extras.getInt("pcid");
+		a_upid = extras.getInt(KEY_ACTIVE_UPID);
 		Log.i(TAG, "pcid: " + String.valueOf(pcid));
 		promotion_view_ = PromotionView.createView(this, affinity, id, pcid);
 	}
+   	
+
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -284,6 +290,7 @@ public class PromotionActivity extends SherlockActivity {
             switch (item.getItemId()) {
                 case R.id.menu_play:
                     Intent intent = new Intent(activity_, QuizActivity.class);
+                    promotion_.setActiveUPID(a_upid);
                     intent.putExtra("Promotion", promotion_);
                     activity_.startActivity(intent);
                     break;
