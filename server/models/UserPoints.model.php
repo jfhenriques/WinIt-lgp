@@ -44,7 +44,7 @@
 
 			if( !is_null( $user ) && !is_null( $promotion ) && !is_null( $ratio ) )
 			{
-				$this->isInsert = true;
+				$userPoints->isInsert = true;
 
 				$userPoints->data['uid'] = $user->getUID();
 				$userPoints->data['pid'] = $promotion->getPID();
