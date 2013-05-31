@@ -85,7 +85,7 @@
 						' FROM ' . self::TABLE_NAME . ' AS b '.
 						' INNER JOIN ' . UserBadges::TABLE_NAME . ' AS ub ON (ub.bid = b.bid) '.
 						' INNER JOIN ' . User::TABLE_NAME . ' AS u ON (u.uid = ub.uid) '.
-						' WHERE u.uid = ? LIMIT 1;';
+						' WHERE u.uid = ?;';
 
 				$cc->set( self::KEY_USERBADGES, $sql );
 			}
@@ -100,7 +100,6 @@
 						$badges[] = $res ;
 				}
 			}
-
 			return $badges;	
 		}
 	}
