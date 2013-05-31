@@ -22,7 +22,7 @@ public class LoadingUserInfo extends AsyncTask<Void, Void, User> {
 	@Override
 	protected User doInBackground(Void... params) {
 	    String auth_token = WinIt.getAuthToken();
-	    Log.d("auth_token", auth_token);
+	    Log.d("LOGIN DERP LoadingUserInfo", "auth_token: " + auth_token);
 		User user = NetworkUtilities.fetchUserInformation(auth_token, null);	
 		return user;
 	}
