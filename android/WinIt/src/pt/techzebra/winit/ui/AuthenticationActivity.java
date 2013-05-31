@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import pt.techzebra.winit.GCMUtils;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
@@ -37,6 +38,7 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.widget.LoginButton;
 import com.facebook.widget.LoginButton.OnErrorListener;
+import com.google.android.gcm.GCMRegistrar;
 
 public class AuthenticationActivity extends SherlockFragmentActivity implements
         ForgotPasswordDialogListener {
@@ -221,8 +223,16 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
         if (result) {
             if (is_paused_)
                 go_to_dashboard_ = true;
-
+            
             else {
+            	GCMRegistrar.checkDevice(AuthenticationActivity.this);
+                GCMRegistrar.checkManifest(AuthenticationActivity.this);
+                String regId = GCMRegistrar.getRegistrationId(AuthenticationActivity.this);
+                if(regId.equals("")){
+                	 GCMRegistrar.register(AuthenticationActivity.this, GCMUtils.SENDER_ID);
+                }else{
+                	Log.i(TAG, "Already registered");
+                }
                 Intent intent = new Intent(this, DashboardActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

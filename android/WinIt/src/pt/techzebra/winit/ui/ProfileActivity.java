@@ -6,10 +6,6 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.model.GraphUser;
 
 import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
@@ -31,9 +27,11 @@ import android.widget.Toast;
 public class ProfileActivity extends SherlockActivity {
 	private static final String TAG = "ProfileActivity";
 
+	public static final String KEY_USER_BUNDLE = "user";
+	
 	private ActionBar action_bar_;
 	private SharedPreferences preferences_ = null;
-	// Activity variables
+	
 	RoundedImageView profile_image_;
 	TextView name_text_;
 	TextView email_text_;
@@ -52,10 +50,9 @@ public class ProfileActivity extends SherlockActivity {
 		level_text_.setText("Level " + u.getLevel());
 		points_text_.setText(u.getPoints() + "/500");
 
-		if(preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false)){
+		if(preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false)) {
 			new DownloadImageTask(profile_image_).execute("https://graph.facebook.com/"+ u.getUserFBID() + "/picture?type=large");
-		}
-		else{
+		} else {
 			String hash = MD5Util.md5Hex(u.getEmail().toLowerCase(Locale.getDefault()));
 			String gravatar_url = "https://secure.gravatar.com/avatar/" + hash + "?s=320&d=identicon";
 			new DownloadImageTask(profile_image_).execute(gravatar_url);
@@ -101,30 +98,19 @@ public class ProfileActivity extends SherlockActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			onBackPressed();
-			break;
-		case R.id.menu_edit_profile:
-			Intent in = new Intent(this, EditProfileActivity.class);
-			Bundle myb = new Bundle();
-			myb.putString("name", user_.getName());
-			myb.putString("email", user_.getEmail());
-			myb.putInt("birthday", user_.getBirthday());
-			myb.putString("address", user_.getAddress());
-			myb.putInt("cp4", user_.getCp4());
-			myb.putInt("cp3", user_.getCp3());
-			myb.putInt("id", user_.getUserId());
-			myb.putString("token", auth_token);
-			in.putExtras(myb);
-			startActivity(in);
-			break;
-		case R.id.menu_settings:
-			break;
-		case R.id.menu_log_out:
-			WinIt.logOut(this);
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
+    		case android.R.id.home:
+    			onBackPressed();
+    			break;
+    		case R.id.menu_edit_profile:
+    			Intent intent = new Intent(this, EditProfileActivity.class);
+    			intent.putExtra(KEY_USER_BUNDLE, user_);
+    			startActivity(intent);
+    			break;
+    		case R.id.menu_log_out:
+    			WinIt.logOut(this);
+    			break;
+    		default:
+    			return super.onOptionsItemSelected(item);
 		}
 
 		return true;
@@ -149,6 +135,4 @@ public class ProfileActivity extends SherlockActivity {
 			startActivity(intent);
 		}
 	}
-
-
 }

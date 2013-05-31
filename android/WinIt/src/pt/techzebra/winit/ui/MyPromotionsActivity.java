@@ -77,8 +77,6 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
     		case android.R.id.home:
     			onBackPressed();
     			break;
-    		case R.id.menu_settings:
-    			break;
     		case R.id.menu_log_out:
     			WinIt.logOut(this);
     			break;

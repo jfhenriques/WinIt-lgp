@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals
+        name="numberOfQuestionsCorrectlyAnswered">
+        <item
+            quantity="one">You answered one question correctly.</item>
+        <item
+            quantity="other">You answered %d questions correctly.</item>
+    </plurals>    
+</resources>

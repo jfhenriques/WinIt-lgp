@@ -113,7 +113,7 @@ public class PromotionActivity extends SherlockActivity {
 	                promotion_factory = new PlayablePromotion(activity, promotion_id);
 	                break;
 	            case PROPOSABLE_PROMOTION:
-	                promotion_factory = new ProposablePromotion(activity, promotion_id);
+	                promotion_factory = new ProposablePromotion(activity, promotion_id, pcid);
 	                break;
 	        }
 	        return promotion_factory;
@@ -268,7 +268,14 @@ public class PromotionActivity extends SherlockActivity {
         public void populateFields() {
 	        super.populateFields();
 	        
-            end_date_text_.setText(Utilities.convertUnixTimestamp(promotion_.getEndDate()));
+	        long end_date = promotion_.getEndDate();
+	        if (end_date == 0) {
+	            end_date_text_.setVisibility(View.GONE);
+	            activity_.findViewById(R.id.end_date_label).setVisibility(View.GONE);
+	        } else {
+	            end_date_text_.setText(Utilities.convertUnixTimestamp(end_date));
+	        }
+            
             win_points_text_.setText(Integer.toString(promotion_.getWinPoints()));
         }
 	    
@@ -293,9 +300,10 @@ public class PromotionActivity extends SherlockActivity {
 	
 	public static class ProposablePromotion extends PromotionView {
 	    private TextView owner_text_;
-	    
-	    public ProposablePromotion(SherlockActivity activity, int id) {
+		private int pcid_;
+	    public ProposablePromotion(SherlockActivity activity, int id, int pcid) {
             super(activity, R.string.promotion, id, R.menu.menu_proposable);
+            pcid_ = pcid;
         }
 	    
 	    @Override
@@ -325,6 +333,7 @@ public class PromotionActivity extends SherlockActivity {
             switch (item.getItemId()) {
                 case R.id.menu_propose:
                     Intent intent = new Intent(activity_, TradeablePromotionsFragmentActivity.class);
+                    promotion_.setPcid(pcid_);
                     intent.putExtra("Promotion", promotion_);
                     activity_.startActivity(intent);
                     break;
