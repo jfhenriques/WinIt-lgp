@@ -962,7 +962,8 @@ public class NetworkUtilities {
 		ArrayList<NameValuePair> gcm_token_register = new ArrayList<NameValuePair>();
 		gcm_token_register.add(new BasicNameValuePair("token", auth_token));
 		gcm_token_register.add(new BasicNameValuePair("token_gcm", gcm_token));
-		post(uri, gcm_token_register);
+		JSONObject response = post(uri, gcm_token_register);
+		Log.i("PUTA QUE PARIU", response.toString());
 		//String r = getResponseMessage(response);
 
 	}
@@ -1005,7 +1006,8 @@ public class NetworkUtilities {
 		ArrayList<NameValuePair> send_proposal_info = new ArrayList<NameValuePair>();
 		send_proposal_info.add(new BasicNameValuePair("token", auth_token));
 		Log.i("Debug", uri);
-		post(uri, send_proposal_info);
+		JSONObject response = post(uri, send_proposal_info);
+		Log.i("Debug", response.toString());
 	}
 
 }

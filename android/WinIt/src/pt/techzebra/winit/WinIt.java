@@ -4,6 +4,8 @@ import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.ui.AuthenticationActivity;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.facebook.Session;
 import com.google.android.gcm.GCMRegistrar;
 
@@ -46,7 +48,7 @@ public class WinIt extends Application {
 
 		auth_token_ = preferences
 				.getString(Constants.PREF_AUTH_TOKEN, null);
-		
+
 		SharedPreferences.Editor preferences_editor = context_
 				.getSharedPreferences(Constants.USER_PREFERENCES,
 						Context.MODE_PRIVATE).edit();
@@ -77,6 +79,12 @@ public class WinIt extends Application {
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(intent);
-		((SherlockActivity) context).finish();
+		
+		if(context instanceof SherlockFragmentActivity)
+			((SherlockFragmentActivity) context).finish();
+		
+		else
+			((SherlockActivity) context).finish();
+	
 	}
 }

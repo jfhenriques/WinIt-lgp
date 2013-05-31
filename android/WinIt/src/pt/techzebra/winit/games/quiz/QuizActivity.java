@@ -80,8 +80,10 @@ public class QuizActivity extends SherlockFragmentActivity implements
 		FetchQuizTask fetch_quiz_task = new FetchQuizTask(this);
 		fetch_quiz_task.setDelegate(this);
 		fetch_quiz_task.execute(promotion_id_);
-
-		new UserPromotionID().execute(promotion_id_, authen_token_);
+		if(promotion.getActiveUPID() == -1)
+			new UserPromotionID().execute(promotion_id_, authen_token_);
+		else
+			user_promotion_id_ = Integer.toString(promotion.getActiveUPID());
 		
 	}
 
