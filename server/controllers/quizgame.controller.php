@@ -180,6 +180,7 @@
 							$won = ( !$isQuiz || $rightAnswers === $totalQuestions ) ;
 							$prizecode = null;
 							$userProm->setEndDate( $time );
+							$pointsWon = 0;
 
 							if( $won )
 								$userProm->setState( UserPromotion::STATE_WON );
@@ -204,18 +205,24 @@
 								{ // buscar points da promoção
 									// perguntas_certas/total_perguntas*pontos da promoção
 								
-									$pontos_finais = $rightAnswers/$totalQuestions;
+									$ratio = ( $rightAnswers / $totalQuestions );
 									
-									$points = UserPoints::instantiate($user, $promo, $pontos_finais, $time);
-									$hasError = $points->save();
-								
+									$userPoints = UserPoints::instantiate( $user, $promo, $ratio, $time );
+									$hasError = $userPoints->save();
+
+									$pointsWon = $userPoints->getXPPoints();
+									
 								}
 							}
 							else
 								$hasError = true;
 
 							if( !$hasError )
-								$resp = array('won' => $won, 'correct' => $rightAnswers, 'prizecode' => $prizecode);
+								$resp = array( 'won' => $won,
+											   'total_answers' => $totalQuestions,
+											   'correct' => $rightAnswers,
+											   'points' => $pointsWon,
+											   /*'prizecode' => $prizecode */ );
 							else
 								$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
 						}

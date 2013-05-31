@@ -17,12 +17,12 @@
 
 		public function getDataAquis()
 		{
-			return (int)$this->getData('data_aquis');
+			return (int)$this->getData('aquis_date');
 		}		
 
 		public function getXPPoints()
 		{
-			return $this->getData('xp_points');
+			return (int)$this->getData('xp_points');
 		}		
 		
 		public function getPID()
@@ -35,33 +35,26 @@
 			return $this->getData('uid');
 		}	
 		
-		public function setDataAquis($data_aquis)
-		{
-			$this->data['data_aquis'] = $data_aquis;
-		}
-		
-		public function setXPPoints($xp_points)
-		{
-			$this->data['xp_points'] = $points;
-		}
+
+
 
 		public static function instantiate(User $user, Promotion $promotion, $ratio, $time = null)
 		{
-			$points = new UserPoints();
+			$userPoints = new UserPoints();
 
-			if( !is_null( $user ) && !is_null( $promotion ) && !is_null( $ratio ))
+			if( !is_null( $user ) && !is_null( $promotion ) && !is_null( $ratio ) )
 			{
 				$this->isInsert = true;
 
-				$points->data['uid'] = $user->getUID();
-				$points->data['pid'] = $promotion->getPID();
+				$userPoints->data['uid'] = $user->getUID();
+				$userPoints->data['pid'] = $promotion->getPID();
 
-				$points->data['aquis_date'] = is_null( $time ) ? time() : $time ;
-				
-				$points = (int)($ratio*$promotion->getWinPoints());
+				$userPoints->data['aquis_date'] = is_null( $time ) ? time() : $time ;
+
+				$userPoints->data['xp_points'] = (int)( $ratio * $promotion->getWinPoints() ) ;
 			}
 
-			return $points;
+			return $userPoints;
 		}
 		
 		public function save()
