@@ -36,8 +36,6 @@ public class LoadMyPromotionsInfo extends AsyncTask<Void,Void,ArrayList<ArrayLis
 	@Override
 	protected ArrayList<ArrayList<Promotion>> doInBackground(Void... params) {
 		ArrayList<Promotion> temp = new ArrayList<Promotion>();
-		temp = NetworkUtilities.fetchMyPromotionsInTrading(auth_token);
-		promotions.add(temp);
 		temp = NetworkUtilities.fetchMyPromotions(auth_token);
 		promotions.add(temp);
 		temp = NetworkUtilities.fetchMyPromotionsTradeable(auth_token);

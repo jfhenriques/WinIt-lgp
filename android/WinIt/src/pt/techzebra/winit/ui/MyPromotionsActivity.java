@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +39,7 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 	
 	protected void onCreate(Bundle saved_instance_state) {  
 		super.onCreate(saved_instance_state);  
-		setContentView(R.layout.my_promotions_activity);
+		setContentView(R.layout.promotions_list_activity);
 		
 		action_bar_ = getSupportActionBar();
 		tabs_ = (PagerSlidingTabStrip) findViewById(R.id.tabs);
@@ -50,8 +49,8 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 		ArrayList<ArrayList<Promotion>> tmp = new ArrayList<ArrayList<Promotion>>();
 		tmp = (ArrayList<ArrayList<Promotion>>) getIntent().getSerializableExtra("Promotions");
 		
-		promotions_won_ = tmp.get(1);
-		promotions_tradeable_ = tmp.get(2);
+		promotions_won_ = tmp.get(0);
+		promotions_tradeable_ = tmp.get(1);
 		
 		action_bar_.setTitle(R.string.my_promotions);
 		action_bar_.setDisplayHomeAsUpEnabled(true);
@@ -61,11 +60,11 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 		tabs_.setViewPager(pager_);
 		
 		context_ = this;
-
 	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu_my_promotions, menu);
+		getSupportMenuInflater().inflate(R.menu.menu_logout, menu);
 		return true;
 	}
 

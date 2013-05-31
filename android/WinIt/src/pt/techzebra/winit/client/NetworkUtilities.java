@@ -704,7 +704,7 @@ public class NetworkUtilities {
 		return promos;
 	}
 
-	public static ArrayList<Promotion> fetchOtherUsersTradings(String token) {
+	public static ArrayList<Promotion> fetchProposableTradings(String token) {
 
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
 		String uri = TRADING_URI + "?token=" + token;
