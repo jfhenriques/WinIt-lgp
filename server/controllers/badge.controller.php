@@ -59,7 +59,7 @@
 			else
 			{
 				$this->respond->setJSONResponse( 
-							array(  'pid' => $badge->getBID(),
+							array(  'bid' => $badge->getBID(),
 									'name' => $badge->getName(),
 									'description' => $badge->getDescription(),
 									'image' => Controller::formatURL( $badge->getImageSRC() ) ));

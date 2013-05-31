@@ -61,7 +61,13 @@
 		{
 		}
 
-		
+
+
+
+		private static function calculateLevel($points)
+		{
+			return (int)( 1 + (25 * log10( 1 + ( (double)$points ) / 2000 ) ) );
+		}
 		
 		public function index()
 		{
@@ -94,6 +100,9 @@
 					$district = $address->getDistrict();
 				}
 
+				$points = $user->getTotalPoints();
+				$level = UserController::calculateLevel( $points ) ;
+
 				$this->respond->setJSONResponse( array( 'uid' => $user->getUID(),
 														'name' => $user->getName(),
 														'email' => $user->getEmail(),
@@ -106,9 +115,8 @@
 														'address' => $street,
 														'address2' => $user->getAddress2(),
 														'facebook_uid' => $user->getFacebookUID(),
-														//'token_tw' => $user->getTokenTwitter(),
-														'level' => 1,
-														'points' => $user->getTotalPoints() ) );
+														'level' => $level,
+														'points' => $points ) );
 
 				$this->respond->setJSONCode( R_STATUS_OK );
 				
@@ -291,7 +299,7 @@
 			$user = AuthenticatorPlugin::getInstance()->getUser();
 			//$userId = $auth->getUID();
 
-			//$user = User::findByUID($userId);
+			// $user = User::findByUID($userId);
 
 			
 			if( is_null( $user ) )
@@ -300,9 +308,8 @@
 			else
 			{
 				$resp = Badge::findByUID( $user->getUID() );
-				
 				$response = array();
-
+					
 				foreach ( $resp as $b)
 				{
 					$response[] = array('bid' => $b->getBID(),
@@ -310,6 +317,7 @@
 										'description' => $b->getDescription(),
 										'image' => Controller::formatURL( $b->getImageSRC() ),
 										'aquis_date' => $b->getAquisDate() );
+										
 				}
 
 				$this->respond->setJSONResponse( $response );
@@ -596,13 +604,14 @@
 		}
 		
 		
-/*		public function showPoints() {
+		public function showPoints() {
 			
 			$this->requireAuth();
 
 			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 			$u = $user->getUID();
+			var_dump($u);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -617,7 +626,7 @@
 
 			$this->respond->renderJSON( static::$status );
 		
-		}*/
+		}
 
 	}
 	

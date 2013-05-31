@@ -81,6 +81,8 @@
 			array( 'match' => '/api',
 				   'matches' => array(
 
+				   		array( 'match' => '/test', 'controller' => 'test', 'via' => 'get', 'action' => 'test' ),
+
 				   		array( 'match' => '/facebook', 'controller' => 'facebook', 'via' => 'get', 'action' => 'echo_back' ),
 				   		array( 'match' => '/facebook', 'controller' => 'facebook', 'via' => 'post', 'action' => 'receive_update_list' ),
 				   		//array( 'match' => '/facebook/deauth', 'controller' => 'facebook', 'via' => 'get', 'action' => 'echo_back' ),

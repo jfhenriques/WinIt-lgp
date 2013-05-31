@@ -50,7 +50,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 	HashMap<String, String> map_ = new HashMap<String, String>();
 	private BinderData binding_data_;
 	private Promotion promotion_wanted;
-	private String promotion_to_trade_id;
+	private String promotion_to_trade_pcid;
 	View layout_ = null;
 	ListView list_ = null;
 	
@@ -71,6 +71,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 		new LoadingMyPromotionsInTrading(this).execute();
 		binding_data_ = new BinderData(this, R.id.list_image, promotions_);
 		list_.setAdapter(binding_data_);
+		
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
 				SherlockDialogFragment dialog = new ProposePromotionDialogFragment();
-				promotion_to_trade_id = binding_data_.objects.get(position).get("pcid");
+				promotion_to_trade_pcid = binding_data_.objects.get(position).get("pcid");
 				dialog.show(getSupportFragmentManager(), "ProposePromotionDialogFragment");
 			}
 		});
@@ -236,12 +237,12 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 
 	@Override
 	public void onDialogPositiveClick(DialogFragment dialog) {
-		NetworkUtilities.attemptSendProposal(WinIt.getAuthToken(), Integer.toString(promotion_wanted.getPcid()), promotion_to_trade_id);
+		NetworkUtilities.attemptSendProposal(WinIt.getAuthToken(), Integer.toString(promotion_wanted.getPcid()), promotion_to_trade_pcid);
 	}
 
 	@Override
 	public void onDialogNegativeClick(DialogFragment dialog) {
-
+		
 	}
 
 	@Override
