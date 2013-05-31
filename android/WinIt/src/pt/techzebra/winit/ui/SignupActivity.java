@@ -7,13 +7,8 @@ import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.NetworkUtilities.SendAddressToActivity;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.sip.SipRegistrationListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -30,12 +25,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.viewpagerindicator.PageIndicator;
 
 
 public class SignupActivity extends SherlockFragmentActivity implements AddressesDialogFragment.AddressesDialogListener, SendAddressToActivity {
@@ -50,6 +45,7 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
 
 	private SignupPagerAdapter signup_pager_adapter_;
 	private ViewPager signup_view_pager_;
+	private PageIndicator page_indicator_;
     
 	private EditText name_edit_;
     private EditText email_edit_;
@@ -74,12 +70,18 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
 		setContentView(R.layout.signup_activity);
 
 		action_bar_ = getSupportActionBar();
-		action_bar_.setTitle("Join PromGameMobile");
+		action_bar_.setTitle("Sign up");
+		action_bar_.setDisplayHomeAsUpEnabled(true);
 		
 		signup_pager_adapter_ = new SignupPagerAdapter(getSupportFragmentManager());
 		
 		signup_view_pager_ = (ViewPager) findViewById(R.id.pager);
 		signup_view_pager_.setAdapter(signup_pager_adapter_);
+		
+		page_indicator_ = (PageIndicator) findViewById(R.id.indicator);
+		page_indicator_.setViewPager(signup_view_pager_);
+		
+		signup_view_pager_.invalidate();
 	}
 	
 	@Override
@@ -91,7 +93,6 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
 	}
 
 	private static class SignupPagerAdapter extends FragmentPagerAdapter {
-
         public SignupPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -191,6 +192,9 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
             case R.id.menu_signup:
                 handleSubmit();
                 break;
