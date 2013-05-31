@@ -12,6 +12,7 @@ import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.client.Question;
 import pt.techzebra.winit.client.Quiz;
 import pt.techzebra.winit.platform.FetchQuizTask;
+import pt.techzebra.winit.ui.PromotionActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -80,10 +81,20 @@ public class QuizActivity extends SherlockFragmentActivity implements
 		FetchQuizTask fetch_quiz_task = new FetchQuizTask(this);
 		fetch_quiz_task.setDelegate(this);
 		fetch_quiz_task.execute(promotion_id_);
+		
+		Log.i(TAG, "PRE ACTIVE_UPID: " + promotion.getActiveUPID());
+		
 		if(promotion.getActiveUPID() == -1)
+		{
+			Log.i(TAG, "ACTIVE_UPID: NO");
 			new UserPromotionID().execute(promotion_id_, authen_token_);
+		}
 		else
+		{
+			Log.i(TAG, "ACTIVE_UPID: YES, " + promotion.getActiveUPID());
 			user_promotion_id_ = Integer.toString(promotion.getActiveUPID());
+		}
+			
 		
 	}
 
@@ -224,6 +235,7 @@ public class QuizActivity extends SherlockFragmentActivity implements
 	        intent.putExtras(extras);
 	        
 	        startActivity(intent);
+	        
 	        finish();
 		} catch (JSONException e) {
 			Log.i(TAG,
@@ -256,6 +268,7 @@ public class QuizActivity extends SherlockFragmentActivity implements
 		protected String doInBackground(String... params) {
 			user_promotion_id_ = NetworkUtilities.getUserPromotionId(params[0], params[1]);
 			Log.i(TAG, String.valueOf(user_promotion_id_));
+			PromotionActivity.a_upid = Integer.parseInt(user_promotion_id_);
 			return user_promotion_id_;
 		}
 		
