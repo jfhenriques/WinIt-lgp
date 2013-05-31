@@ -188,6 +188,8 @@
 
 					try {
 
+						$sendUID = $prizeSuggest[0]->getOwnerUID();
+
 						$prizeMine[0]->setOwnerUID( $prizeSuggest[0]->getOwnerUID() );
 						$prizeMine[0]->setTrading(false);
 
@@ -201,7 +203,18 @@
 						if( $success )
 						{
 							$dbh->commit();
+
 							$this->respond->setJSONCode( R_STATUS_OK );
+
+							GCMPlugin::sendAccept(
+											$sendUID,
+											$prizeSuggest[0]->getPCID(),
+											$prizeSuggest[0]->getPID(),
+											$prizeSuggest[0]->getPromotionName(),
+											$prizeSuggest[0]->getPromotionImageSRC(),
+											$time );
+
+							
 						}
 
 						else
@@ -221,7 +234,22 @@
 				else
 				{
 					$suggestion->setState( self::STATE_REJECTED );
-					$this->respond->setJSONCode( $suggestion->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+
+					if( !$suggestion->save() )
+						$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
+
+					else
+					{
+						$this->respond->setJSONCode( R_STATUS_OK );
+
+						GCMPlugin::sendReject(
+										$prizeSuggest[0]->getOwnerUID(),
+										$prizeSuggest[0]->getPCID(),
+										$prizeSuggest[0]->getPID(),
+										$prizeSuggest[0]->getPromotionName(),
+										$prizeSuggest[0]->getPromotionImageSRC(),
+										$time );
+					}
 				}
 
 			}
@@ -273,6 +301,8 @@
 			else
 			{
 
+				$success = false;
+
 				if( !is_null( $suggestion = TradingSuggestion::findByTransaction(
 																		$prizeWanted[0]->getPCID(),
 																		$prizeWanted[0]->getTransactionID(),
@@ -301,7 +331,7 @@
 							$suggestion->setState( self::STATE_UNREVIEWED );
 							$suggestion->setEndDate( 0 );
 
-							$this->respond->setJSONCode( $suggestion->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+							$this->respond->setJSONCode( ( $success = $suggestion->save() ) ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 
 							break;
 					}
@@ -314,7 +344,24 @@
 					$traddSuggest = TradingSuggestion::instantiate($prizeMine[0], $prizeWanted[0]);
 					$traddSuggest->setDate( $time );
 
-					$this->respond->setJSONCode( $traddSuggest->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+					$this->respond->setJSONCode( ( $success = $traddSuggest->save() ) ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+
+				}
+
+				if( $success )
+				{
+
+					GCMPlugin::sendNewSuggestion(
+									$prizeWanted[0]->getOwnerUID(),
+									$prizeMine[0]->getPCID(),
+									$prizeMine[0]->getPID(),
+									$prizeMine[0]->getPromotionName(),
+									$prizeMine[0]->getPromotionImageSRC(),
+									$prizeWanted[0]->getPCID(),
+									$prizeWanted[0]->getPID(),
+									$prizeWanted[0]->getPromotionName(),
+									$prizeWanted[0]->getPromotionImageSRC(),
+									$time );
 
 				}
 

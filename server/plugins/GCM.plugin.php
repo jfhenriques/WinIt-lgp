@@ -15,6 +15,12 @@
 		const API_KEY = 'AIzaSyCB0FuuCiPYK-aLZ2gdohLTQ8nhhLv5ToM';
 
 
+		const STATE_UNKNOWN		= 0;
+		const STATE_ACCEPT		= 1;
+		const STATE_REJECT		= 2;
+		const STATE_NEW_SUGGEST	= 3;
+
+
 		private static $opts = array( CURLOPT_URL			 => GCM_API_URL,
 									  CURLOPT_HEADER		 => false,
 									  CURLOPT_SSL_VERIFYHOST => 2,
@@ -50,9 +56,79 @@
 
 			return false;
 		}
-		
 
-		
+
+		public static function sendUser($uid, array $values)
+		{
+			if( !is_null( $user ) && !is_null( $values) )
+			{
+				$gcms = null;
+
+				if(    is_array( $gcms = UserGCM::findByUID( $uid ) )
+					&& count( $gcms ) > 0 )
+				{
+					$codes = array();
+
+					foreach( $gcms AS $g )
+					{
+						$token = null;
+
+						if(    !is_null( $g )
+							&& !is_null( $token = $g->getTokenGCM() )
+							&& strlen( $token ) > 0 )
+							$codes[] = $token;
+					}
+
+					if( count( $codes ) > 0 )
+						return GCMPlugin::send( $codes, $values );
+
+				}
+
+			}
+
+			return false;
+		}
+
+
+		private static function sendAcceptReject( $uid, $type, $pcid, $pid, $name, $image, $time = null )
+		{
+			$arr = array( 'type' => $type,
+						  'time' => is_null( $time ) ? time() : $time ,
+						  'uid' => $uid,
+						  'pcid' => $pcid,
+						  'pid' => $pid,
+						  'name' => $name,
+						  'image' => $image );
+
+			return GCMPlugin::sendUser( $uid, $arr );
+		}
+
+
+		public static function sendAccept( $uid, $pcid, $pid, $name, $image, $time = null )
+		{
+			return GCMPlugin::sendAcceptReject( $uid, self::STATE_ACCEPT, $pcid, $pid, $name, $image, $time );
+		}
+		public static function sendReject( $uid, $pcid, $pid, $name, $image, $time = null )
+		{
+			return GCMPlugin::sendAcceptReject( $uid, self::STATE_REJECT, $pcid, $pid, $name, $image, $time );
+		}
+
+		public static function sendNewSuggestion( $uid, $pcid_my, $pid_my, $name_my, $image_my, $pcid_w, $pid_w, $name_w, $image_w, $time = null )
+		{
+			$arr = array( 'type' =>self::STATE_NEW_SUGGEST ,
+						  'time' => is_null( $time ) ? time() : $time ,
+						  'uid' => $uid,
+						  'pcid_my' => $pcid_my,
+						  'pid_my' => $pid_my,
+						  'name_my' => $name_my,
+						  'image_my' => $image_my,
+						  'pcid_w' => $pcid_w,
+						  'pid_w' => $pid_w,
+						  'name_w' => $name_w,
+						  'image_w' => $image_w );
+
+			return GCMPlugin::sendUser( $uid, $arr );
+		}
 	
 	}
 

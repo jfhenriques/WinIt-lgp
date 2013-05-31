@@ -660,7 +660,9 @@
 
 				foreach($sugestions as $s)
 				{
-					$ret[] = array('pcid_my' => $s->getPCIDOrig(),
+					$ret[] = array('state' => $s->getState(),
+								   'date' => $s->getDate(),
+								   'pcid_my' => $s->getPCIDOrig(),
 								   'pid_my' => $s->getPID(),
 								   'max_util_date_my' => $s->getMaxUtilizationDate(),
 								   'name_my' => $s->getPromotionName(),
