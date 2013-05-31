@@ -96,6 +96,7 @@ public class NetworkUtilities {
 
 	public static final String AUTH_URI = BASE_URL + "/session.json";
 	public static final String USER_URI = BASE_URL + "/user.json";
+	public static final String GCM_URI = BASE_URL + "/user/gcm.json";
 	public static final String PROMOTION_URI = BASE_URL + "/promotion";
 	public static final String TRADING_URI = BASE_URL + "/trading.json";
 
@@ -887,4 +888,69 @@ public class NetworkUtilities {
 		}
 	}
 	
+	public static Thread attemptRegisterGCMToken(final String auth_token, final String gcm_token)
+	{
+
+		final Runnable runnable = new Runnable() {
+
+			@Override
+			public void run() {
+				registerGCMToken(auth_token, gcm_token);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+
+	}
+	
+	private static void registerGCMToken(String auth_token, String gcm_token) {
+		String uri = GCM_URI;
+
+		ArrayList<NameValuePair> gcm_token_register = new ArrayList<NameValuePair>();
+		gcm_token_register.add(new BasicNameValuePair("token", auth_token));
+		gcm_token_register.add(new BasicNameValuePair("token_gcm", gcm_token));
+		post(uri, gcm_token_register);
+		//String r = getResponseMessage(response);
+
+	}
+	
+	public static Thread attemptUnRegisterGCMToken(final String auth_token, final String gcm_token)
+	{
+
+		final Runnable runnable = new Runnable() {
+
+			@Override
+			public void run() {
+				unRegisterGCMToken(auth_token, gcm_token);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+
+	}
+		
+	private static void unRegisterGCMToken(String auth_token, String gcm_token) {
+		String uri = GCM_URI + "?token=" + auth_token + "&token_gcm=" + gcm_token;
+		delete(uri);
+		//String r = getResponseMessage(response);
+
+	}
+	
+	public static Thread attemptSendProposal(final String auth_token, final String wanted_pcid, final String sugest_pcid)
+	{
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				sendProposal(auth_token, wanted_pcid, sugest_pcid);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+	}
+	
+	private static void sendProposal(String auth_token, String wanted_pcid,
+			String sugest_pcid) {
+		String uri = BASE_URL + "/trading/" + wanted_pcid + "/suggest/" + sugest_pcid + ".json";
+		ArrayList<NameValuePair> send_proposal_info = new ArrayList<NameValuePair>();
+		send_proposal_info.add(new BasicNameValuePair("token", auth_token));
+		Log.i("Debug", uri);
+		post(uri, send_proposal_info);
+	}
 }

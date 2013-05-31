@@ -45,8 +45,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 	HashMap<String, String> map_ = new HashMap<String, String>();
 	private BinderData binding_data_;
 	private Promotion promotion_wanted;
-	private ImageView promotion_to_trade_image_;
-	private Context context_= null;
+	private String promotion_to_trade;
 	View layout_ = null;
 	ListView list_ = null;
 
@@ -60,7 +59,6 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 		action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_trading));
 		action_bar_.setDisplayHomeAsUpEnabled(true);
 
-		context_ = TradeablePromotionsFragmentActivity.this;
 		promotion_wanted = (Promotion) getIntent().getSerializableExtra("Promotion");
 		list_ = (ListView) findViewById(R.id.list);
 		new LoadingMyPromotionsInTrading(this).execute();
@@ -76,6 +74,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
 				SherlockDialogFragment dialog = new ProposePromotionDialogFragment();
+				promotion_to_trade = binding_data_.objects.get(position).get("id");
 				dialog.show(getSupportFragmentManager(), "ProposePromotionDialogFragment");
 			}
 		});
@@ -229,7 +228,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 
 	@Override
 	public void onDialogPositiveClick(DialogFragment dialog) {
-
+		NetworkUtilities.attemptSendProposal(WinIt.getAuthToken(), Integer.toString(promotion_wanted.getPromotionID()), promotion_to_trade);
 	}
 
 	@Override
