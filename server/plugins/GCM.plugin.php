@@ -60,7 +60,7 @@
 
 		public static function sendUser($uid, array $values)
 		{
-			if( !is_null( $user ) && !is_null( $values) )
+			if( !is_null( $uid ) && !is_null( $values) )
 			{
 				$gcms = null;
 
