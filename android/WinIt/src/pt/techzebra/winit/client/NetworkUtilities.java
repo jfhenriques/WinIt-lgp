@@ -963,7 +963,6 @@ public class NetworkUtilities {
 		gcm_token_register.add(new BasicNameValuePair("token", auth_token));
 		gcm_token_register.add(new BasicNameValuePair("token_gcm", gcm_token));
 		JSONObject response = post(uri, gcm_token_register);
-		Log.i("PUTA QUE PARIU", response.toString());
 		//String r = getResponseMessage(response);
 
 	}
@@ -1010,4 +1009,22 @@ public class NetworkUtilities {
 		Log.i("Debug", response.toString());
 	}
 
+	public static Thread attemptFetchTradeProposals(final String auth_token, final String pcid)
+	{
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				fetchTradeProposals(auth_token, pcid);
+			}
+		};
+		return NetworkUtilities.performOnBackgroundThread(runnable);
+	}
+
+	private static void fetchTradeProposals(String auth_token, String pcid) {
+		String uri = BASE_URL + "/trading/" + pcid + ".json?token=" + auth_token;
+		JSONObject response = get(uri);
+		Log.i("Fetch Trade Proposals", response.toString());
+		
+		return;
+	}
 }
