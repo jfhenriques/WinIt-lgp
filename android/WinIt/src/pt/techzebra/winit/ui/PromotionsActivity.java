@@ -192,6 +192,7 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 			Intent intent = new Intent(activity_, PromotionActivity.class);
 			intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, PromotionActivity.PROPOSABLE_PROMOTION);
 			intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
+			intent.putExtra("pcid", promotion.getPcid());
 			activity_.startActivity(intent);
 		}
 

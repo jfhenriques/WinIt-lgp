@@ -10,6 +10,9 @@ import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.Promotion;
+import pt.techzebra.winit.games.quiz.QuizActivity;
+import pt.techzebra.winit.platform.FetchPromotionInfoTask;
+import pt.techzebra.winit.platform.FetchPromotionsTask;
 import pt.techzebra.winit.staggeredgridview.ImageLoader;
 import pt.techzebra.winit.staggeredgridview.ScaleImageView;
 import pt.techzebra.winit.ui.ProposePromotionDialogFragment.ProposePromotionListener;
@@ -21,7 +24,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,9 +50,11 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 	HashMap<String, String> map_ = new HashMap<String, String>();
 	private BinderData binding_data_;
 	private Promotion promotion_wanted;
-	private String promotion_to_trade;
+	private String promotion_to_trade_id;
 	View layout_ = null;
 	ListView list_ = null;
+	
+	private Handler handler_ = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +81,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
 				SherlockDialogFragment dialog = new ProposePromotionDialogFragment();
-				promotion_to_trade = binding_data_.objects.get(position).get("id");
+				promotion_to_trade_id = binding_data_.objects.get(position).get("pcid");
 				dialog.show(getSupportFragmentManager(), "ProposePromotionDialogFragment");
 			}
 		});
@@ -132,6 +139,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 							map_.put("id", Integer.toString(result.get(i).getPromotionID()));
 							map_.put("name", result.get(i).getName());
 							map_.put("image", result.get(i).getImageUrl());
+							map_.put("pcid", Integer.toString(result.get(i).getPcid()));
 							promotions_.add(map_);
 						}
 					}
@@ -228,7 +236,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 
 	@Override
 	public void onDialogPositiveClick(DialogFragment dialog) {
-		NetworkUtilities.attemptSendProposal(WinIt.getAuthToken(), Integer.toString(promotion_wanted.getPromotionID()), promotion_to_trade);
+		NetworkUtilities.attemptSendProposal(WinIt.getAuthToken(), Integer.toString(promotion_wanted.getPcid()), promotion_to_trade_id);
 	}
 
 	@Override
