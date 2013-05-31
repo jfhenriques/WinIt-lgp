@@ -77,6 +77,8 @@
 
 				return  $sth->execute();
 			}
+
+			return false;
 		}
 		
 		public static function findByUID($uid)
@@ -98,14 +100,14 @@
 			return $userpoints;
 		}
 		
-		public static function showUserPoints($uid) {
+		// public static function showUserPoints($uid) {
 		
-			$result = static::query( 'SELECT SUM(xp_points) AS pts FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
-									  array( $uid ) );
+		// 	$result = static::query( 'SELECT SUM(xp_points) AS pts FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
+		// 							  array( $uid ) );
 			
-			return $result;
+		// 	return $result;
 			
-		}
+		// }
 
 	}
 
