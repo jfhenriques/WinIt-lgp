@@ -210,8 +210,8 @@
 									$userPoints = UserPoints::instantiate( $user, $promo, $ratio, $time );
 									
 									$pointsWon = $userPoints->getXPPoints();
-									if( $pointsWon > 0)
-										$hasError = $userPoints->save();
+									if( $pointsWon > 0 )
+										$hasError = !$userPoints->save();
 								}
 							}
 							else

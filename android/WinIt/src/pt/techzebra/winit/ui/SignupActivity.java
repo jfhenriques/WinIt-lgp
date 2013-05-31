@@ -154,8 +154,8 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
                 ((SignupActivity) activity).birthday_edit_ = (EditText) activity.findViewById(R.id.birthday_edit);
                 ((SignupActivity) activity).pc4_edit_ = (EditText) activity.findViewById(R.id.pc4_edit);
                 ((SignupActivity) activity).pc3_edit_ = (EditText) activity.findViewById(R.id.pc3_edit);
-                ((SignupActivity) activity).location_text_ = (TextView) activity.findViewById(R.id.location_text);
-                ((SignupActivity) activity).house_number_edit_ = (EditText) activity.findViewById(R.id.house_number_edit);
+                ((SignupActivity) activity).location_text_ = (TextView) activity.findViewById(R.id.address1_text);
+                ((SignupActivity) activity).house_number_edit_ = (EditText) activity.findViewById(R.id.address2_edit);
             }
 	    }
 	}

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
+import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.NetworkUtilities.SendAddressToActivity;
+import pt.techzebra.winit.client.User;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -19,6 +21,8 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class EditProfileActivity extends SherlockActivity implements
 		SendAddressToActivity {
@@ -27,23 +31,23 @@ public class EditProfileActivity extends SherlockActivity implements
 
 	private final Handler handler_ = new Handler();
 
-	private ActionBar action_bar_edit_;
+	private ActionBar action_bar_;
 
-	// variables edit profile
 	EditText name_edit_text_;
 	EditText email_edit_text_;
-	EditText pass_edit_text_;
-	EditText pass_old_edit_text_;
-	EditText birth_edit_text_;
+	EditText password_edit__;
+	EditText old_password_edit_;
+	EditText birthday_edit_text_;
 	EditText cp4_edit_text_;
 	EditText cp3_edit_text_;
-	EditText house_edit_text_;
-	TextView location_text_view_;
+	TextView address1_text_;
+	EditText address2_edit_;
 
 	String[] addresses_ = null;
 	ArrayList<Integer> addresses_ids_ = null;
 
-	String auth_token_;
+	private User user_;
+	
 	String address_;
 	int address_id_ = -1;
 
@@ -51,39 +55,42 @@ public class EditProfileActivity extends SherlockActivity implements
 		super.onCreate(saved_instance_state);
 		setContentView(R.layout.edit_profile_activity);
 
-		action_bar_edit_ = getSupportActionBar();
-		action_bar_edit_.setTitle(R.string.edit);
-
-		// Edit profile
+		action_bar_ = getSupportActionBar();
+		action_bar_.setTitle(R.string.edit);
+		action_bar_.setDisplayHomeAsUpEnabled(true);
+		
 		name_edit_text_ = (EditText) findViewById(R.id.name_edit_text);
 		email_edit_text_ = (EditText) findViewById(R.id.email_edit_text);
-		pass_edit_text_ = (EditText) findViewById(R.id.pass_edit_text);
-		pass_old_edit_text_ = (EditText) findViewById(R.id.pass_old_edit_text);
-		birth_edit_text_ = (EditText) findViewById(R.id.birth_edit_text);
+		password_edit__ = (EditText) findViewById(R.id.pass_edit_text);
+		old_password_edit_ = (EditText) findViewById(R.id.pass_old_edit_text);
+		birthday_edit_text_ = (EditText) findViewById(R.id.birth_edit_text);
 		cp4_edit_text_ = (EditText) findViewById(R.id.pc4_edit);
 		cp3_edit_text_ = (EditText) findViewById(R.id.pc3_edit);
-		house_edit_text_ = (EditText) findViewById(R.id.house_number_edit);
-		location_text_view_ = (TextView) findViewById(R.id.location_text);
-
-		Bundle bun = getIntent().getExtras();
-		name_edit_text_.setText(bun.getString("name"));
-		email_edit_text_.setText(bun.getString("email"));
-		String birthString = Utilities.convertUnixTimestamp(bun.getInt("birthday"));
-		birth_edit_text_.setText(birthString);
-		cp4_edit_text_.setText(String.valueOf(bun.getInt("cp4")));
-		cp3_edit_text_.setText(String.valueOf(bun.getInt("cp3")));
-		address_ = bun.getString("address");
-		auth_token_ = bun.getString("token");
+		address1_text_ = (TextView) findViewById(R.id.address1_text);
+		address2_edit_ = (EditText) findViewById(R.id.address2_edit); 
+		
+		user_ = (User) getIntent().getSerializableExtra(ProfileActivity.KEY_USER_BUNDLE);
+		address_ = user_.getAddress();
+		address_id_ = user_.getAddressId();
+		
+		name_edit_text_.setText(user_.getName());
+		email_edit_text_.setText(user_.getEmail());
+		birthday_edit_text_.setText(Utilities.convertUnixTimestamp(user_.getBirthday()));
+		cp4_edit_text_.setText(String.valueOf(user_.getCp4()));
+		cp3_edit_text_.setText(String.valueOf(user_.getCp3()));
+		address1_text_.setText(address_);
+		if (user_.getAddress2() != null) {
+		    address2_edit_.setText(user_.getAddress2());
+		}
 	}
 
-	public void handleSubmitEditProfile(View view) {
-
+	private void saveChanges() {
 		String name = name_edit_text_.getText().toString();
 		String email = email_edit_text_.getText().toString();
-		String new_password = pass_edit_text_.getText().toString();
-		String old_password = pass_old_edit_text_.getText().toString();
-		String birthday = birth_edit_text_.getText().toString();
-		String address_2 = house_edit_text_.getText().toString();
+		String new_password = password_edit__.getText().toString();
+		String old_password = old_password_edit_.getText().toString();
+		String birthday = birthday_edit_text_.getText().toString();
+		String address2 = address2_edit_.getText().toString();
 
 		if ((!new_password.equals("") && old_password.equals(""))
 				|| (!old_password.equals("") && new_password.equals(""))) {
@@ -92,22 +99,20 @@ public class EditProfileActivity extends SherlockActivity implements
 			return;
 		}
 
-		NetworkUtilities.attemptEditProfile(auth_token_, name, email,
+		NetworkUtilities.attemptEditProfile(WinIt.getAuthToken(), name, email,
 				new_password, old_password, birthday,
-				String.valueOf(address_id_), address_2, handler_, this);
-
-		return;
+				String.valueOf(address_id_), address2, handler_, this);
 	}
 
-	public void getResponse(String r) {
-		Utilities.showToast(this, r);
-		if(r == null){
-			Utilities.showToast(this, "Modifyed with success");
-		}else{
-			Utilities.showToast(this, r);
-		}
-		finish();
-	}
+    public void getResponse(String r) {
+        if (r.equals("null")) {
+            Utilities.showToast(this, "Modified with success");
+            finish();
+        } else {
+            Utilities.showToast(this, r);
+        }
+        
+    }
 
 	public void handlePostalCode(View view) {
 		String pc4 = cp4_edit_text_.getText().toString();
@@ -140,7 +145,7 @@ public class EditProfileActivity extends SherlockActivity implements
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Log.i(TAG, String.valueOf(which));
-				location_text_view_.setText(addresses_[which]);
+				address1_text_.setText(addresses_[which]);
 				address_id_ = addresses_ids_.get(which);
 				dialog.dismiss();
 			}
@@ -148,5 +153,27 @@ public class EditProfileActivity extends SherlockActivity implements
 		adb.setNegativeButton("Cancel", null);
 		adb.setTitle("Which one?");
 		adb.show();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    getSupportMenuInflater().inflate(R.menu.menu_edit_profile, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case android.R.id.home:
+	            onBackPressed();
+	            break;
+	        case R.id.menu_submit:
+	            saveChanges();
+	            break;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	    
+	    return true;
 	}
 }

@@ -33,7 +33,6 @@
                 style="@style/BlueSectionHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
                 android:text="@string/address"
                 android:textAllCaps="true" />
 
@@ -41,10 +40,10 @@
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
                 android:text="Postal Code"
                 android:textColor="@color/dark_gray"
-                android:textStyle="italic" />
+                android:textStyle="italic"
+                android:layout_marginTop="10dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -82,13 +81,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:fontFamily="sans-serif-light"
                 android:text="Address (Street)"
                 android:textColor="@color/dark_gray"
                 android:textStyle="italic" />
 
             <TextView
-                android:id="@+id/location_text"
+                android:id="@+id/address1_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
@@ -99,18 +97,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif-light"
                 android:text="Address 2 (House/Building number)"
                 android:textColor="@color/dark_gray"
                 android:textStyle="italic" />
 
             <EditText
-                android:id="@+id/house_number_edit"
+                android:id="@+id/address2_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:ems="8"
-                android:inputType="text" >
+                android:ems="10"
+                android:inputType="textPostalAddress" >
             </EditText>
         </LinearLayout>
     </ScrollView>

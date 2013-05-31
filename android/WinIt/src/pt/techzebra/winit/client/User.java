@@ -53,7 +53,7 @@ public class User implements Serializable {
         return name_;
     }
 
-    public int getAdid() {
+    public int getAddressId() {
         return adid_;
     }
 
@@ -109,7 +109,7 @@ public class User implements Serializable {
         return address_;
     }
 
-    public int getBirthday() {
+    public long getBirthday() {
         return birthday_;
     }
 
@@ -144,8 +144,8 @@ public class User implements Serializable {
             final int adid = user.getInt("adid");
             final int cp4 = !user.isNull("cp4") ? user.getInt("cp4") : -1;
             final int cp3 = !user.isNull("cp3") ? user.getInt("cp3") : -1;
-            final String address = user.getString("address"); // address/ street
-            final String address2 = user.getString("address2"); // porta/bloco/andar
+            final String address = user.getString("address"); 
+            final String address2 = !user.isNull("address2") ? user.getString("address2") : null;
             final String locality = user.getString("locality");
             final String district = user.getString("district");
             final int birthday = user.getInt("birth");

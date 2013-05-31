@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 		
 		ArrayList<ArrayList<Promotion>> tmp = new ArrayList<ArrayList<Promotion>>();
 		tmp = (ArrayList<ArrayList<Promotion>>) getIntent().getSerializableExtra("Promotions");
+		
 		promotions_in_trading_ = tmp.get(0);
 		promotions_won_ = tmp.get(1);
 		promotions_tradeable_ = tmp.get(2);
@@ -74,8 +76,6 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 		switch (item.getItemId()) {
     		case android.R.id.home:
     			onBackPressed();
-    			break;
-    		case R.id.menu_settings:
     			break;
     		case R.id.menu_log_out:
     			WinIt.logOut(this);
@@ -189,6 +189,7 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
                     Intent intent = new Intent(activity_, PromotionActivity.class);
                     intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, affinity_);
                     intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
+                    intent.putExtra("pcid", promotion.getPcid());
                     activity_.startActivity(intent);
                 }
             });

@@ -52,6 +52,7 @@
                 android:visibility="gone" >
 
                 <TextView
+                    android:id="@+id/end_date_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/gap"

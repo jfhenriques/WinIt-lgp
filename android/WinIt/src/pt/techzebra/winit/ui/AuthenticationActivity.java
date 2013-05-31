@@ -262,11 +262,6 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
 
     @Override
     public void onFinishForgotPasswordDialog(String email) {
-        Utilities.showToast(this, "Yeah");
+        NetworkUtilities.attemptForgotPassword(email);
     }
-
-//    public void getResultSentToAuthentication(String message) {
-//        Toast.makeText(this, "AQUI", Toast.LENGTH_LONG).show();
-//    }
-
 }

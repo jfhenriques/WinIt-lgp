@@ -92,9 +92,6 @@ public class DashboardActivity extends SherlockActivity {
             LoadingUserInfo lui = new LoadingUserInfo(this);
             lui.execute();
             break;
-        case R.id.menu_settings:
-            Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
-            break;
         case R.id.menu_log_out:
             WinIt.logOut(this);
             break;
@@ -126,8 +123,6 @@ public class DashboardActivity extends SherlockActivity {
             intent.putExtra(PromotionsActivity.KEY_SHOWCASE_MODE,
                     PromotionsActivity.PromotionsShowcaseMode.TRADING_SHOWCASE);
             startActivity(intent);
-            // TODO added transition animations, wainting feedback
-            // Utilities.addActivityAnimations(this);
             break;
         }
 

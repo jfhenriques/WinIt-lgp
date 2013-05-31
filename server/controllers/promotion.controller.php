@@ -39,8 +39,11 @@
 
 				foreach( $promos as $p )
 				{
+					$active = $p->getActiveUPID();
+
 					$resp[] = array( 'pid' => $p->getPID(),
 									 'name' => $p->getName(),
+									 'active_upid' => ( $active <= 0 ) ? null : $active ,
 									 'image' => Controller::formatURL( $p->getImageSRC() ) );
 				}
 				$this->respond->setJSONResponse( $resp );

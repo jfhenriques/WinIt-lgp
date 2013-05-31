@@ -44,7 +44,7 @@
 
 			if( !is_null( $user ) && !is_null( $promotion ) && !is_null( $ratio ) )
 			{
-				$this->isInsert = true;
+				$userPoints->isInsert = true;
 
 				$userPoints->data['uid'] = $user->getUID();
 				$userPoints->data['pid'] = $promotion->getPID();
@@ -77,6 +77,8 @@
 
 				return  $sth->execute();
 			}
+
+			return false;
 		}
 		
 		public static function findByUID($uid)
@@ -98,14 +100,14 @@
 			return $userpoints;
 		}
 		
-		public static function showUserPoints($uid) {
+		// public static function showUserPoints($uid) {
 		
-			$result = static::query( 'SELECT SUM(xp_points) AS pts FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
-									  array( $uid ) );
+		// 	$result = static::query( 'SELECT SUM(xp_points) AS pts FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
+		// 							  array( $uid ) );
 			
-			return $result;
+		// 	return $result;
 			
-		}
+		// }
 
 	}
 
