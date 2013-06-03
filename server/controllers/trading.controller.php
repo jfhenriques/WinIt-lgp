@@ -252,7 +252,7 @@
 						$this->respond->setJSONCode( R_STATUS_OK );
 
 						GCMPlugin::sendUserSuggest(
-										$pSuggest->getUID(),
+										$pSuggest->getOwnerUID(),
 										GCMPlugin::STATE_REJECT,
 										$pSuggest->getPCID(),
 										$pSuggest->getPID(),
@@ -370,7 +370,7 @@
 				{
 
 					GCMPlugin::sendUserSuggest(
-									$pWant->getUID(),
+									$pWant->getOwnerUID(),
 									GCMPlugin::STATE_REJECT,
 									$pWant->getPCID(),
 									$pWant->getPID(),
