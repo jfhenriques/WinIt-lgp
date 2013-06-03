@@ -58,6 +58,7 @@ public class WinIt extends Application {
 		preferences_editor.remove(Constants.PREF_FB_LOGGED_IN);
 		preferences_editor.remove(Constants.PREF_AUTH_TOKEN);
 		preferences_editor.remove(Constants.GCM_REG_ID);
+		preferences_editor.remove(Constants.PREF_UID);
 		preferences_editor.commit();
 
 

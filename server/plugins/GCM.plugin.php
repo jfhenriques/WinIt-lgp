@@ -51,6 +51,8 @@
 				$return = @curl_exec($ch);
 				curl_close($ch);
 
+				var_dump($return);
+
 				return ( $return !== false );
 			}
 
