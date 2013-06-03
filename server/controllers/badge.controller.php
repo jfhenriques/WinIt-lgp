@@ -4,8 +4,6 @@
 	DEFINE( 'R_BADGE_ERR_USER_NOT_FOUND'	, 0x20 );
 
 
-
-
 	class BadgeController extends Controller {
 	
 		private static $status = array(
@@ -73,5 +71,3 @@
 		
 	
 	}
-
-?>

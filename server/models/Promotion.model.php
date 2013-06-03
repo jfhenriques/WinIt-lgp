@@ -3,27 +3,14 @@
 
 
 	class Promotion extends ActiveRecord {
-	
-		// private $pid = null;
-		// private $name;
-		// private $init_date;
-		// private $end_date;
-		// private $user_limit;
-		// private $valid_coord;
-		// private $valid_coord_radius;
-		// private $transferable;
-		// private $active;
-		// private $win_points;
-		// private $rid;
-		// private $ptid;
-		// private $func_type;
-		// private $grand_limit;
+
 		
 		const TABLE_NAME = 'promotion' ;
 		const TABLE_NAME_RET = 'retailer' ;
 		const TABLE_NAME_TYPE = 'promotiontype' ;
 
-		const KEY_PROMOTIONS = "sql.promotions";
+		const KEY_PROMOTIONS_ACT = "sql.promotions.1";
+		const KEY_PROMOTIONS_NAC = "sql.promotions.0";
 
 		const TYPE_QUIZ_GAME = 1;
 		const TYPE_PROXIMITY_ALERT = 2;
@@ -53,29 +40,17 @@
 		{
 			return $this->getData('name');
 		}
-		// public function setName($name)
-		// {
-		// 	$this->data['name'] = $name;
-		// }
 
 		
 		public function getInitDate()
 		{
 			return (int)$this->getData('init_date');
 		}
-		// public function setInitDate($init_date)
-		// {
-		// 	$this->data['init_date'] = $init_date;
-		// }
 		
 		public function getEndDate()
 		{
 			return (int)$this->getData('end_date');
 		}
-		// public function setEndDate($end_date)
-		// {
-		// 	$this->data['end_date'] = $end_date;
-		// }
 
 		public function getMaxUtilizationDate()
 		{
@@ -86,84 +61,48 @@
 		{
 			return (int)$this->getData('grand_limit');
 		}
-		// public function setGrandLimit($grand_limit)
-		// {
-		// 	$this->data['grand_limit'] = $grand_limit;
-		// }
 
 		public function getUserLimit()
 		{
 			return (int)$this->getData('user_limit');
 		}
-		// public function setUserLimit($user_limit)
-		// {
-		// 	$this->data['user_limit'] = $user_limit;
-		// }
 		
 		public function getValidCoord()
 		{
 			return $this->getData('valid_coord');
 		}
-		// public function setValidCoord($valid_coord)
-		// {
-		// 	$this->data['valid_coord'] = $valid_coord;
-		// }
 		
 		public function getValidCoordRadius()
 		{
 			return $this->getData('valid_coord_radius');
 		}
-		// public function setValidCoordRadius($valid_coord_radius)
-		// {
-		// 	$this->data['valid_coord_radius'] = $valid_coord_radius;
-		// }
 		
 		public function isTransferable()
 		{
 			return (boolean)$this->getData('transferable');
 		}
-		// public function setTransferable($transferable)
-		// {
-		// 	$this->data['transferable'] = $transferable;
-		// }
-		
 
 		public function isActive()
 		{
 			return (boolean)$this->getData('active');
 		}
-		// public function setActive($active)
-		// {
-		// 	$this->data['active'] = $active;
-		// }
+
 		
 		public function getWinPoints()
 		{
 			return (int)$this->getData('win_points');
 		}
-		// public function setWinPoints($win_points)
-		// {
-		// 	$this->data['win_points'] = $win_points;
-		// }
 		
 		public function getPTID()
 		{
 			return $this->getData('ptid');
 		}
-		// public function setPtid($ptid)
-		// {
-		// 	$this->data['ptid'] = $ptid;
-		// }
-		
+
 		
 		public function getFuncType()
 		{
 			return (int)$this->getData('func_type');
 		}
-		// public function setFuncType($func_type)
-		// {
-		// 	$this->data['func_type'] = $func_type;
-		// }
 
 
 		public function getDescription()
@@ -223,10 +162,13 @@
 
 
 		
-		public static function findByPID($pid)
+		public static function findByPID($pid, $time = null, $active = true)
 		{
 			$cc = CommonCache::getInstance();
-			$sql = $cc->get( self::KEY_PROMOTIONS );
+			$time = is_null( $time ) ? time() : $time ;
+			
+			$key = $active ? self::KEY_PROMOTIONS_ACT : self::KEY_PROMOTIONS_NAC ;
+			$sql = $cc->get( $key );
 
 			if( $sql === false )
 			{
@@ -239,13 +181,12 @@
 					   ' FROM ' . self::TABLE_NAME . ' AS p ' .
 					   ' INNER JOIN ' . self::TABLE_NAME_RET . ' AS r ON(r.rid = p.rid) ' .
 					   ' INNER JOIN ' . self::TABLE_NAME_TYPE . ' AS t ON(t.ptid = p.ptid) ' .
-					   ' WHERE p.pid = ? AND p.active = 1 LIMIT 1;' ;
+					   ' WHERE p.pid = ? AND p.active = ? AND ( p.end_date = 0 OR p.end_date >= ? ) LIMIT 1;' ;
 
-				$cc->set(self::KEY_PROMOTIONS, $sql);
+				$cc->set( $key, $sql );
 			}
 
-
-			$result = static::query( $sql, array( $pid ) );
+			$result = static::query( $sql, array( $pid, $active ? 1 : 0, $time ) );
 
 			return static::fillModel( $result, new Promotion() );
 		}
@@ -268,5 +209,3 @@
 			return $promos;
 		}
 	}
-
-?>

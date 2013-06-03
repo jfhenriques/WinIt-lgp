@@ -1,6 +1,5 @@
 <?php
 
-
 	class Badge
 		extends ActiveRecord {
 		
@@ -103,5 +102,3 @@
 			return $badges;	
 		}
 	}
-
-?>

@@ -20,6 +20,7 @@
 					: "Please contact the system administrator" ;
 		
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,4 +59,7 @@ pre {
 </div>
 </body>
 </html>
-<?php }?>
+
+
+
+<?php }

@@ -9,10 +9,10 @@
 		
 		public static function getInstance()
 		{
-			if( is_null( static::$instance ) )
-				static::$instance = new AuthenticatorPlugin();
+			if( is_null( self::$instance ) )
+				self::$instance = new AuthenticatorPlugin();
 				
-			return static::$instance;
+			return self::$instance;
 		}
 		
 		
@@ -41,7 +41,7 @@
 			if( !is_null( $this->session ) )
 				return $this->session->getToken();
 				
-			return false;
+			return null;
 		}
 		
 		public function getUID()
@@ -49,7 +49,7 @@
 			if( !is_null( $this->session ) )
 				return $this->session->getUID();
 				
-			return false;
+			return 0;
 		}
 
 		public function getUser()
@@ -73,6 +73,3 @@
 		}
 	
 	}
-
-
-?>

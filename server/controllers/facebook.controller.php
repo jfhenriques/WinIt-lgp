@@ -151,7 +151,7 @@
 				&& !is_null( $user_id = valid_var( 'user_id', $request ) )
 				&& !is_null( $user = User::findByFacebookUID( $user_id ) ) )
 			{
-				Session::resetUserTokens( $user->getUID() );
+				//Session::resetUserTokens( $user->getUID() );
 				
 				if( $user->isActive() )
 				{
@@ -188,4 +188,3 @@
 
 	
 	}
-?>

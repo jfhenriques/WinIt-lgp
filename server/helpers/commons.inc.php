@@ -328,5 +328,3 @@
 		$al->loadClass( $className );
 		
 	});
-	
-?>

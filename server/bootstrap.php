@@ -28,5 +28,3 @@
 
 	$router = Router::getInstance();
 	$router->route();
-
-?>

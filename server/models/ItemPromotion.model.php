@@ -1,6 +1,5 @@
 <?php
 
-
 	class ItemPromotion extends ActiveRecord {
 
 
@@ -61,5 +60,3 @@
 
 
 	}
-
-?>

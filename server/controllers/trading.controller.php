@@ -66,16 +66,18 @@
 		}
 
 
+
 		public function index()
 		{
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+			//$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 
-			if( is_null( $user ) )
+			if( $uid <= 0 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
 
 			else
 			{
-				$prizes = PrizeCode::findOthersTrading( $user->getUID() );
+				$prizes = PrizeCode::findOthersTrading( $uid );
 
 				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
 				$this->respond->setJSONCode( R_STATUS_OK );
@@ -93,15 +95,16 @@
 			$pcid = (int)valid_request_var( 'prizecode' );
 			$time = time();
 		
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+			//$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			$prizeCodeArr = null;
 
 			$sugestions = null;
 			
-			if( is_null( $user ) || $pcid <= 0 )
+			if( $uid <= 0 || $pcid <= 0 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
 
-			else if(	is_null( $prizeCodeArr = PrizeCode::findOwnTrading( $user->getUID(), $time, $pcid ) )
+			else if(	is_null( $prizeCodeArr = PrizeCode::findOwnTrading( $uid, $time, $pcid ) )
 					 || !is_array( $prizeCodeArr ) || count( $prizeCodeArr ) !== 1 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_NOT_AVAIL );
 			
@@ -141,25 +144,26 @@
 			$suggestId = (int)valid_request_var( 'suggest' );
 			$time = time();
 
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+			//$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 
 			$suggestion = null;
 			$prizeMine = null;
 			$prizeSuggest = null;
 			
-			if( is_null( $user ) || $pcid <= 0 || $suggestId <= 0 )
+			if( $uid <= 0 || $pcid <= 0 || $suggestId <= 0 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
 
 			else if( $pcid == $suggestId )
 				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SAME );
 
-			else if( 	is_null( $prizeMine = PrizeCode::findOwnTrading( $user->getUID(), $time, $pcid ) )
+			else if( 	is_null( $prizeMine = PrizeCode::findOwnTrading( $uid, $time, $pcid ) )
 					 || !is_array( $prizeMine ) || count( $prizeMine ) !== 1
 					 || is_null( $suggestion = TradingSuggestion::findByTransaction(
 					 													$pcid,
 					 													$prizeMine[0]->getTransactionID(),
 					 													$suggestId ) )
-					 || is_null( $prizeSuggest = PrizeCode::findOthersTradable( $user->getUID(), $time, $suggestId ) )
+					 || is_null( $prizeSuggest = PrizeCode::findOthersTradable( $uid, $time, $suggestId ) )
 					 || !is_array( $prizeSuggest ) || count( $prizeSuggest ) !== 1 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SELECT );
 
@@ -193,7 +197,7 @@
 						$prizeMine[0]->setOwnerUID( $prizeSuggest[0]->getOwnerUID() );
 						$prizeMine[0]->setTrading(false);
 
-						$prizeSuggest[0]->setOwnerUID( $user->getUID() );
+						$prizeSuggest[0]->setOwnerUID( $uid );
 						$prizeSuggest[0]->setTrading(false);
 
 						$suggestion->setState( self::STATE_ACCEPTED );
@@ -213,8 +217,6 @@
 											$prizeSuggest[0]->getPromotionName(),
 											$prizeSuggest[0]->getPromotionImageSRC(),
 											$time );
-
-							
 						}
 
 						else
@@ -228,7 +230,6 @@
 
 						$this->respond->setJSONCode( R_GLOB_ERR_SAVE_UNABLE );
 					}
-
 
 				}
 				else
@@ -277,21 +278,21 @@
 			$suggestId = (int)valid_request_var( 'suggest' );
 			$time = time();
 
-		
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+			//$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 
 			$prizeWanted = null;
 			$prizeMine = null;
 			
-			if( is_null( $user ) || $pcid <= 0 || $suggestId <= 0 )
+			if( $uid <= 0 || $pcid <= 0 || $suggestId <= 0 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
 
 			else if( $pcid == $suggestId )
 				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SAME );
 
-			else if( 	is_null( $prizeWanted  = PrizeCode::findOthersTrading( $user->getUID(), $time, $pcid ) )
+			else if( 	is_null( $prizeWanted  = PrizeCode::findOthersTrading( $uid, $time, $pcid ) )
 					 || !is_array( $prizeWanted ) || count( $prizeWanted ) !== 1
-					 || is_null( $prizeMine = PrizeCode::findOwnTradable( $user->getUID(), $time, $suggestId ) )
+					 || is_null( $prizeMine = PrizeCode::findOwnTradable( $uid, $time, $suggestId ) )
 					 || !is_array( $prizeMine ) || count( $prizeMine ) !== 1 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SELECT );
 
@@ -378,25 +379,26 @@
 			$suggestId = (int)valid_request_var( 'suggest' );
 			$time = time();
 
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+			//$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 
 			$suggestion = null;
 			$prizeWanted = null;
 			$prizeMine = null;
 			
-			if( is_null( $user ) || $pcid <= 0 || $suggestId <= 0 )
+			if( $uid <= 0 || $pcid <= 0 || $suggestId <= 0 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
 
 			else if( $pcid == $suggestId )
 				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SAME );
 
-			else if( 	is_null( $prizeWanted = PrizeCode::findOthersTrading( $user->getUID(), $time, $pcid ) )
+			else if( 	is_null( $prizeWanted = PrizeCode::findOthersTrading( $uid, $time, $pcid ) )
 					 || !is_array( $prizeWanted ) || count( $prizeWanted ) !== 1
 					 || is_null( $suggestion = TradingSuggestion::findByTransaction(
 					 													$pcid,
 					 													$prizeWanted[0]->getTransactionID(),
 					 													$suggestId ) )
-					 || is_null( $prizeMine = PrizeCode::findOwnTradable( $user->getUID(), $time, $suggestId ) )
+					 || is_null( $prizeMine = PrizeCode::findOwnTradable( $uid, $time, $suggestId ) )
 					 || !is_array( $prizeMine ) || count( $prizeMine ) !== 1 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PROMO_SELECT );
 
@@ -442,10 +444,11 @@
 		
 			$pcid = (int)valid_request_var( 'prizecode' );
 		
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+			//$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			$time = time();
 
-			if( is_null( $user ) || $pcid <= 0 )
+			if( $uid <= 0 || $pcid <= 0 )
 				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
 
 			else
@@ -456,13 +459,13 @@
 				// Search only if needed, in this case, if not not found in first condition, saving one new database connection
 				if( $sendTo )
 				{
-					if( !only_one_arr( PrizeCode::findOwnTradable( $user->getUID(), $time, $pcid ) , $not) )
-						only_one_arr( PrizeCode::findOwnTrading ( $user->getUID(), $time, $pcid ) , $in );
+					if( !only_one_arr( PrizeCode::findOwnTradable( $uid, $time, $pcid ) , $not) )
+						only_one_arr( PrizeCode::findOwnTrading ( $uid, $time, $pcid ) , $in );
 				}
 				else
 				{
-					if( !only_one_arr( PrizeCode::findOwnTrading( $user->getUID(), $time, $pcid ) , $in) )
-						only_one_arr( PrizeCode::findOwnTradable ( $user->getUID(), $time, $pcid ) , $not );	
+					if( !only_one_arr( PrizeCode::findOwnTrading( $uid, $time, $pcid ) , $in) )
+						only_one_arr( PrizeCode::findOwnTradable ( $uid, $time, $pcid ) , $not );	
 				}
 
 
@@ -505,6 +508,3 @@
 		}
 		
 	}
-
-
-?>

@@ -38,16 +38,16 @@
 
 
 
-		public static function instantiate(User $user, Promotion $promotion, $ratio, $time = null)
+		public static function instantiate($uid, $pid, $ratio, $time = null)
 		{
 			$userPoints = new UserPoints();
 
-			if( !is_null( $user ) && !is_null( $promotion ) && !is_null( $ratio ) )
+			if( !is_null( $uid ) && !is_null( $promotion ) && !is_null( $ratio ) )
 			{
 				$userPoints->isInsert = true;
 
-				$userPoints->data['uid'] = $user->getUID();
-				$userPoints->data['pid'] = $promotion->getPID();
+				$userPoints->data['uid'] = $uid;
+				$userPoints->data['pid'] = $pid;
 
 				$userPoints->data['aquis_date'] = is_null( $time ) ? time() : $time ;
 
@@ -100,15 +100,4 @@
 			return $userpoints;
 		}
 		
-		// public static function showUserPoints($uid) {
-		
-		// 	$result = static::query( 'SELECT SUM(xp_points) AS pts FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
-		// 							  array( $uid ) );
-			
-		// 	return $result;
-			
-		// }
-
 	}
-
-?>

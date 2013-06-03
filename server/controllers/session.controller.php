@@ -143,17 +143,32 @@
 			{
 				$user = null;
 				$errorCode = R_GLOB_ERR_UNDEFINED;
+				$canContinue = false;
 
-				if( $isInHouse && is_null( $user = User::findByCredentials( $mail, $pass ) ) )
-					$this->respond->setJSONCode( R_SESS_ERR_USER_NOT_FOUND );
+				
+				if( $isInHouse )
+				{
+					if(    is_null( $user = User::findByCredentials( $mail, $pass ) )
+						|| !$user->isActive() )
+						$this->respond->setJSONCode( R_SESS_ERR_USER_NOT_FOUND );
 
-				else if( !$isInHouse && is_null( $user = $this->facebook_open_session( $token_fb, $errorCode ) ) )
-					$this->respond->setJSONCode( $errorCode );
+					else if( $isInHouse && !is_null( $user->getFacebookUID() ) )
+						$this->respond->setJSONCode( R_SESS_FACEBOOK_USER_LOGIN ); // Só chega aqui, se for definida uma password manualmente na base de dados
 
-				else if( $isInHouse && !is_null( $user->getFacebookUID() ) )
-					$this->respond->setJSONCode( R_SESS_FACEBOOK_USER_LOGIN ); // Só chega aqui, se for definida uma password manualmente na base de dados
-
+					else
+						$canContinue = true;
+				}
 				else
+				{
+					if( is_null( $user = $this->facebook_open_session( $token_fb, $errorCode ) ) )
+						$this->respond->setJSONCode( $errorCode );
+
+					else
+						$canContinue = true;
+				}
+
+				
+				if( $canContinue )
 				{
 					$userId = $user->getUID();
 
@@ -220,4 +235,3 @@
 	
 	
 	}
-?>

@@ -127,5 +127,3 @@
 	interface DeletableActiveRecord {
 		public function delete();
 	}
-
-?>
