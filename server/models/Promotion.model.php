@@ -9,8 +9,7 @@
 		const TABLE_NAME_RET = 'retailer' ;
 		const TABLE_NAME_TYPE = 'promotiontype' ;
 
-		const KEY_PROMOTIONS_ACT = "sql.promotions.1";
-		const KEY_PROMOTIONS_NAC = "sql.promotions.0";
+		const KEY_PROMOTIONS = "sql.promotions";
 
 		const TYPE_QUIZ_GAME = 1;
 		const TYPE_PROXIMITY_ALERT = 2;
@@ -167,8 +166,7 @@
 			$cc = CommonCache::getInstance();
 			$time = is_null( $time ) ? time() : $time ;
 			
-			$key = $active ? self::KEY_PROMOTIONS_ACT : self::KEY_PROMOTIONS_NAC ;
-			$sql = $cc->get( $key );
+			$sql = $cc->get( self::KEY_POMOTIONS );
 
 			if( $sql === false )
 			{
@@ -183,7 +181,7 @@
 					   ' INNER JOIN ' . self::TABLE_NAME_TYPE . ' AS t ON(t.ptid = p.ptid) ' .
 					   ' WHERE p.pid = ? AND p.active = ? AND ( p.end_date = 0 OR p.end_date >= ? ) LIMIT 1;' ;
 
-				$cc->set( $key, $sql );
+				$cc->set( self::KEY_POMOTIONS, $sql );
 			}
 
 			$result = static::query( $sql, array( $pid, $active ? 1 : 0, $time ) );
