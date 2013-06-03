@@ -291,7 +291,7 @@
 			$user = null;
 
 			if(    !is_null( $user = self::findByEmail( $email ) )
-				&& !is_null( $user->getFacebookUID() )
+				&& is_null( $user->getFacebookUID() )
 				&& !is_null( $user->getPassword() )
 				&& self::compareWithHashedPass( $pass, $user->getPassword() ) !== false )
 				return $user;
