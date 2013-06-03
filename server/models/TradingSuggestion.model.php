@@ -7,7 +7,7 @@
 		const TABLE_NAME = "tradingsuggestion";
 
 		const KEY_PRIZESUGGESTIONS = "sql.prizesuggestions";
-		const KEY_SENT_PRIZESUGGESTIONS = "sql.sent.prizesuggestions";
+		const KEY_SENT_PRIZESUGGESTIONS = "sql.sr.prizesuggestions.";
 
 		
 
@@ -105,19 +105,19 @@
 
 			public function getPIDDest()
 			{
-				return (int)$this->getData('pid_dest');
+				return (int)$this->getData('pid_o');
 			}
 			public function getMaxUtilizationDateDest()
 			{
-				return (int)$this->getData('p_util_date_dest');
+				return (int)$this->getData('p_util_date_o');
 			}
 			public function getPromotionNameDest()
 			{
-				return $this->getData('p_name_dest');
+				return $this->getData('p_name_o');
 			}
 			public function getPromotionImageSRCDest()
 			{
-				$img = $this->getData('p_image_dest');
+				$img = $this->getData('p_image_o');
 				return is_null( $img ) ? null : ( Promotion::PROM_IMG_SRC_DIR . $img );
 			}
 
@@ -156,96 +156,103 @@
 		}
 
 
+
+		public static function findPrizeSuggestions( $uid, $state = 0, $sent = true, $time = null )
+		{
+			$prizes = array();
+			$time = is_null( $time ) ? time() : $time ;
+
+			if( !is_array( $state ) )
+				$state = array( $state );
+
+			$totalQ = count( $state );
+
+			$params = array_merge( array( $time, $time, $uid ), $state );
+
+			$base = 1000 + $totalQ;
+
+			if( $sent )
+				$base += 100;
+
+			$key = self::KEY_SENT_PRIZESUGGESTIONS . $base ;
+
+			$cc = CommonCache::getInstance();
+			$sql = $cc->get( $key );
+
+			if( $sql === false )
+			{
+				$qMarks = str_repeat( '?, ', ( $totalQ - 1 ) ) . '?';
+
+				$sql = null;
+
+				if( $sent )
+				{
+					$sql =  'SELECT pcs.pcid_orig AS pcid_orig, pcs.pcid_dest AS pcid_dest, pcs.date AS date, ' .
+							' pcs.transaction AS transaction, pcs.state AS state,  ' .
+							' p_my.pid AS pid, p_my.name AS p_name, p_my.util_date AS p_util_date, p_my.image AS p_image, ' .
+							' p_o.pid AS pid_o, p_o.name AS p_name_o, p_o.util_date AS p_util_date_o, p_o.image AS p_image_o ' .
+							' FROM ' . self::TABLE_NAME .' AS pcs ' .
+							' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pc_my ON (pc_my.pcid = pcs.pcid_orig) ' .
+							' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pc_o ON (pc_o.pcid = pcs.pcid_dest AND pc_o.transaction = pcs.transaction) ' .
+							' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up_my ON (up_my.upid = pc_my.upid) ' .
+							' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up_o ON (up_o.upid = pc_o.upid) ' .
+							' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p_my ON (p_my.pid = up_my.pid) ' .
+							' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p_o ON (p_o.pid = up_o.pid) ' .
+							' WHERE p_my.transferable = 1 AND p_my.active = 1 AND ( p_my.util_date = 0 OR p_my.util_date > ? ) ' .
+							' AND p_o.transferable = 1 AND p_o.active = 1 AND ( p_o.util_date = 0 OR p_o.util_date > ? ) ' .
+							' AND pc_my.util_date = 0 AND pc_o.util_date = 0 ' .
+							' AND pc_my.cur_uid = ? AND pc_my.in_trading = 0 AND pc_o.in_trading = 1 ' .
+							' AND pcs.state IN ( ' . $qMarks . ' ) ' .
+							' ORDER BY pcs.state DESC ;' ;
+				}
+				else
+				{
+					$sql =  'SELECT pcs.pcid_orig AS pcid_orig, pcs.pcid_dest AS pcid_dest, pcs.date AS date, ' .
+							' pcs.transaction AS transaction, pcs.state AS state,  ' .
+							' p_my.pid AS pid, p_my.name AS p_name, p_my.util_date AS p_util_date, p_my.image AS p_image, ' .
+							' p_o.pid AS pid_o, p_o.name AS p_name_o, p_o.util_date AS p_util_date_o, p_o.image AS p_image_o ' .
+							' FROM ' . self::TABLE_NAME .' AS pcs ' .
+							' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pc_my ON (pc_my.pcid = pcs.pcid_dest AND pc_my.transaction = pcs.transaction) ' .
+							' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pc_o ON (pc_o.pcid = pcs.pcid_orig) ' .
+							' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up_my ON (up_my.upid = pc_my.upid) ' .
+							' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up_o ON (up_o.upid = pc_o.upid) ' .
+							' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p_my ON (p_my.pid = up_my.pid) ' .
+							' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p_o ON (p_o.pid = up_o.pid) ' .
+							' WHERE p_my.transferable = 1 AND p_my.active = 1 AND ( p_my.util_date = 0 OR p_my.util_date > ? ) ' .
+							' AND p_o.transferable = 1 AND p_o.active = 1 AND ( p_o.util_date = 0 OR p_o.util_date > ? ) ' .
+							' AND pc_my.util_date = 0 AND pc_o.util_date = 0 ' .
+							' AND pc_my.cur_uid = ? AND pc_my.in_trading = 1 AND pc_o.in_trading = 0 ' .
+							' AND pcs.state IN ( ' . $qMarks . ' ) ' .
+							' ORDER BY pcs.state DESC ;' ;
+				}
+
+				$cc->set( $key, $sql );
+			}
+
+			$return = static::executeQuery( $sql, $params , $stmt );
+			
+			if( $stmt !== null && $return !== false )
+			{
+				while( $row = $stmt->fetch() )
+				{
+					if( !is_null( $res = static::fillModel( $row, new TradingSuggestion() ) ) )
+						$prizes[] = $res ;
+				}
+			}
+
+			return $prizes;
+		}
+
 		public static function findSentPrizeSuggestions( $uid, $state = 0, $time = null )
 		{
-			$prizes = array();
-			$time = is_null( $time ) ? time() : $time ;
-
-			$cc = CommonCache::getInstance();
-			$sql = $cc->get( self::KEY_SENT_PRIZESUGGESTIONS );
-
-			if( $sql === false )
-			{
-				$sql =  'SELECT pcs.pcid_orig AS pcid_orig, pcs.pcid_dest AS pcid_dest, pcs.date AS date, ' .
-						' pcs.transaction AS transaction, pcs.state AS state,  ' .
-						' p_my.pid AS pid, p_my.name AS p_name, p_my.util_date AS p_util_date, p_my.image AS p_image, ' .
-						' p_want.pid AS pid_dest, p_want.name AS p_name_dest, p_want.util_date AS p_util_date_dest, p_want.image AS p_image_dest ' .
-						' FROM ' . self::TABLE_NAME .' AS pcs ' .
-						' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pc_my ON (pc_my.pcid = pcs.pcid_orig) ' .
-						' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pc_want ON (pc_want.pcid = pcs.pcid_dest AND pc_want.transaction = pcs.transaction) ' .
-						' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up_my ON (up_my.upid = pc_my.upid) ' .
-						' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up_want ON (up_want.upid = pc_want.upid) ' .
-						' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p_my ON (p_my.pid = up_my.pid) ' .
-						' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p_want ON (p_want.pid = up_want.pid) ' .
-						' WHERE p_my.transferable = 1 AND p_my.active = 1 AND ( p_my.util_date = 0 OR p_my.util_date > ? ) ' .
-						' AND p_want.transferable = 1 AND p_want.active = 1 AND ( p_want.util_date = 0 OR p_want.util_date > ? ) ' .
-						' AND pc_my.util_date = 0 AND pc_my.in_trading = 0 AND pc_my.cur_uid = ? ' .
-						' AND pc_want.util_date = 0 AND pc_want.in_trading = 1 ' .
-						' AND pcs.state = ? ' .
-						' ORDER BY pcs.state DESC ;' ;
-
-				$cc->set(self::KEY_SENT_PRIZESUGGESTIONS, $sql);
-			}
-
-			$return = static::executeQuery( $sql, array( $time, $time, $uid, $state ) , $stmt );
-			
-			if( $stmt !== null && $return !== false )
-			{
-				while( $row = $stmt->fetch() )
-				{
-					if( !is_null( $res = static::fillModel( $row, new TradingSuggestion() ) ) )
-						$prizes[] = $res ;
-				}
-			}
-
-			return $prizes;
+			return TradingSuggestion::findPrizeSuggestions( $uid, $state, true, $time );
 		}
-
-
-
-
-
-
-		public static function findPrizeSuggestions($pcid, $time = null)
+		public static function findReceivedPrizeSuggestions( $uid, $state = 0, $time = null )
 		{
-			$prizes = array();
-			$time = is_null( $time ) ? time() : $time ;
-
-			$cc = CommonCache::getInstance();
-			$sql = $cc->get( self::KEY_PRIZESUGGESTIONS );
-
-			if( $sql === false )
-			{
-				$sql =  'SELECT pcs.pcid_orig AS pcid_orig, pcs.pcid_dest AS pcid_dest, pcs.date AS date, ' .
-						' pcs.transaction AS transaction, pc.in_trading AS in_trading, ' .
-						' pc.upid AS upid, up.uid AS o_uid, up.pid AS pid, p.util_date AS p_util_date, ' .
-						' p.name AS p_name, p.image AS p_image ' .
-						' FROM ' . self::TABLE_NAME .' AS pcs ' .
-						' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pcF ON (pcF.pcid = pcs.pcid_dest AND pcF.transaction = pcs.transaction) ' .
-						' INNER JOIN ' . PrizeCode::TABLE_NAME . ' AS pc ON (pc.pcid = pcs.pcid_orig) ' .
-						' INNER JOIN ' . UserPromotion::TABLE_NAME . ' AS up ON (up.upid = pc.upid) ' .
-						' INNER JOIN ' . Promotion::TABLE_NAME . ' AS p ON (p.pid = up.pid) ' .
-						' WHERE p.transferable = 1 AND p.active = 1 AND ( p.util_date = 0 OR p.util_date > ? ) ' .
-						' AND pcs.pcid_dest = ? AND pcs.state = 0 AND pcs.end_date = 0 ' . 
-						' AND pc.util_date  = 0 AND pc.in_trading  = 0 ' .
-						' AND pcF.util_date = 0 AND pcF.in_trading = 1  ;' ;
-
-				$cc->set(self::KEY_PRIZESUGGESTIONS, $sql);
-			}
-
-			$return = static::executeQuery( $sql, array( $time, $pcid ) , $stmt );
-			
-			if( $stmt !== null && $return !== false )
-			{
-				while( $row = $stmt->fetch() )
-				{
-					if( !is_null( $res = static::fillModel( $row, new TradingSuggestion() ) ) )
-						$prizes[] = $res ;
-				}
-			}
-
-			return $prizes;
+			return TradingSuggestion::findPrizeSuggestions( $uid, $state, true, $time );
 		}
+
+
 
 		public static function findByTransaction($trading, $transaction, $suggestion)
 		{

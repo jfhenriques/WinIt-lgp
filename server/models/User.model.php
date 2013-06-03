@@ -239,7 +239,7 @@
 
 		public static function findByEmail( $email )
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE AND email = ? LIMIT 1;',
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE email = ? LIMIT 1;',
 									  array( $email ) );
 
 							
@@ -291,6 +291,7 @@
 			$user = null;
 
 			if(    !is_null( $user = self::findByEmail( $email ) )
+				&& is_null( $user->getFacebookUID() )
 				&& !is_null( $user->getPassword() )
 				&& self::compareWithHashedPass( $pass, $user->getPassword() ) !== false )
 				return $user;

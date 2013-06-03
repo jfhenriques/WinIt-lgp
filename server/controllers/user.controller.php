@@ -21,6 +21,7 @@
 	DEFINE( 'R_USER_RESET_FACE_USER'	, 0x60 );
 
 	DEFINE( 'R_USER_NO_SENT_SUGGESTIONS', 0x70 );
+	DEFINE( 'R_USER_NO_REC_SUGGESTIONS'	, 0x71 );
 
 
 
@@ -54,7 +55,8 @@
 
 				R_USER_RESET_FACE_USER	=> 'Não é possível fazer reset à password de um user registado pelo facebook',
 
-				R_USER_NO_SENT_SUGGESTIONS	=> 'Sem propostas de promoções feitas',
+				R_USER_NO_SENT_SUGGESTIONS	=> 'Sem propostas de promoção feitas',
+				R_USER_NO_REC_SUGGESTIONS	=> 'Sem propostas de promoção recebidas',
 			);
 
 		
@@ -314,7 +316,7 @@
 
 			else
 			{
-				$resp = Badge::findByUID( $user->getUID() );
+				$resp = Badge::findByUID( $uid );
 				$response = array();
 					
 				foreach ( $resp as $b)
@@ -598,7 +600,7 @@
 		}
 
 
-		public function sent_trading_suggestions()
+		private function sent_received_trading_suggestions( $isSent )
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
@@ -610,9 +612,9 @@
 			if( $uid <= 0 )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
-			else if(    !is_array( $sugestions = TradingSuggestion::findSentPrizeSuggestions( $uid, 0 ) )
+			else if(    !is_array( $sugestions = TradingSuggestion::findPrizeSuggestions( $uid, array(0), $isSent ) )
 					 || count( $sugestions) <= 0 )
-				$this->respond->setJSONCode( R_USER_NO_SENT_SUGGESTIONS );
+				$this->respond->setJSONCode( $isSent ? R_USER_NO_SENT_SUGGESTIONS : R_USER_NO_REC_SUGGESTIONS );
 
 			else
 			{
@@ -641,6 +643,16 @@
 			}
 
 			$this->respond->renderJSON( static::$status );
+		}
+
+		public function sent_trading_suggestions()
+		{
+			$this->sent_received_trading_suggestions( true );
+		}
+
+		public function received_trading_suggestions()
+		{
+			$this->sent_received_trading_suggestions( false );
 		}
 
 	}
