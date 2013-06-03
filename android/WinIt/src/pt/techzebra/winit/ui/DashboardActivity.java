@@ -118,7 +118,7 @@ public class DashboardActivity extends SherlockActivity {
             Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
             break;
         case R.id.trading_layout:
-            new LoadTradingPromotionsInfo(this).execute();
+            new LoadTradingPromotionsInfo().setContext(this).execute();
             break;
         }
     }

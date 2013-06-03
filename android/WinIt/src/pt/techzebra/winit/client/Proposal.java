@@ -1,8 +1,12 @@
 package pt.techzebra.winit.client;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
-public class Proposal {
+public class Proposal implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private int my_pcid_;
     private int my_pid_;
     private long my_max_util_date_;

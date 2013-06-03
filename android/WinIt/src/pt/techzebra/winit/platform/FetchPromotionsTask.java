@@ -24,7 +24,7 @@ public class FetchPromotionsTask extends AsyncTask<Void, Void, ArrayList<Promoti
 	}
 
 	public static final int PLAYABLE_PROMOTIONS = 1;
-	public static final int PROPOSABLE_PROMOTIONS = 2;
+//	public static final int PROPOSABLE_PROMOTIONS = 2;
 
 	private ArrayList<Promotion> promotions_ = null;
 	private ProgressDialog progress_dialog_;
@@ -50,9 +50,9 @@ public class FetchPromotionsTask extends AsyncTask<Void, Void, ArrayList<Promoti
 		case PLAYABLE_PROMOTIONS:
 			promotions_ = NetworkUtilities.fetchAvailablePromotions(auth_token);
 			break;
-		case PROPOSABLE_PROMOTIONS:
-			promotions_ = NetworkUtilities.fetchProposableTradings(auth_token);
-			break;
+//		case PROPOSABLE_PROMOTIONS:
+//			promotions_ = NetworkUtilities.fetchProposableTradings();
+//			break;
 		}
 		return promotions_;
 	}

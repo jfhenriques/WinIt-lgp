@@ -1,19 +1,16 @@
 package pt.techzebra.winit.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.client.Proposal;
+import pt.techzebra.winit.client.TradingContainer;
 import pt.techzebra.winit.platform.FetchPromotionsTask;
 import pt.techzebra.winit.staggeredgridview.StaggeredAdapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,11 +20,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -41,7 +34,11 @@ import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
 public class TradingActivity extends SherlockFragmentActivity {
     private static final String TAG = "TradingActivity";
     
+    public static final String KEY_EXTRA_TRADING_CONTAINER = "trading_container";
+    
     public static final String KEY_EXTRA_PROMOTIONS = "promotions";
+    public static final String KEY_EXTRA_RECEIVED_PROPOSALS = "received_proposals";
+    public static final String KEY_EXTRA_SENT_PROPOSALS = "sent_proposals";
     
     private Activity activity_;
     
@@ -52,8 +49,8 @@ public class TradingActivity extends SherlockFragmentActivity {
     private TradingPromotionsPagerAdapter adapter_;
     
     static ArrayList<Promotion> proposable_promotions_ = new ArrayList<Promotion>();
-    static ArrayList<Promotion> received_proposals_ = new ArrayList<Promotion>();
-    static ArrayList<Promotion> sent_proposals_ = new ArrayList<Promotion>();
+    static ArrayList<Proposal> received_proposals_ = new ArrayList<Proposal>();
+    static ArrayList<Proposal> sent_proposals_ = new ArrayList<Proposal>();
 
     @Override
     protected void onCreate(Bundle saved_instance_state) {
@@ -69,12 +66,11 @@ public class TradingActivity extends SherlockFragmentActivity {
         action_bar_.setDisplayHomeAsUpEnabled(true);
         action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_trading));
         
-        ArrayList<ArrayList<Promotion>> temp = new ArrayList<ArrayList<Promotion>>();
-        temp = (ArrayList<ArrayList<Promotion>>) getIntent().getSerializableExtra(KEY_EXTRA_PROMOTIONS);
-        proposable_promotions_ = temp.get(0);
-        //received_proposals_ = temp.get(1);
-        //sent_proposals_ = temp.get(2);
+        TradingContainer container = (TradingContainer) getIntent().getSerializableExtra(KEY_EXTRA_TRADING_CONTAINER);
         
+        proposable_promotions_ = container.PROPOSABLE_PROMOTIONS;
+        received_proposals_ = container.RECEIVED_PROPOSALS;
+        sent_proposals_ = container.SENT_PROPOSALS;
         
         pager_.setAdapter(adapter_);
         
@@ -84,19 +80,10 @@ public class TradingActivity extends SherlockFragmentActivity {
     }
     
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.menu_logout, menu);
-        return true;
-    }
-    
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                break;
-            case R.id.menu_log_out:
-                WinIt.logOut(this);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -230,15 +217,15 @@ public class TradingActivity extends SherlockFragmentActivity {
     public static class ReceivedProposals extends SherlockFragment {
         ListView list_view_;
         
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle saved_instance_state) {
-            View view_root = inflater.inflate(R.layout.proposals_fragment, container, false);
-            
-            list_view_ = (ListView) view_root.findViewById(R.id.list);
-            
-            return view_root;
-        }
+//        @Override
+//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                Bundle saved_instance_state) {
+//            View view_root = inflater.inflate(R.layout.proposals_fragment, container, false);
+//            
+//            list_view_ = (ListView) view_root.findViewById(R.id.list);
+//            
+//            return view_root;
+//        }
         
 //        private class ProposalsAdapter extends BaseAdapter {
 //            private ArrayList<HashMap<String, String>> proposals_;
