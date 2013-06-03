@@ -181,7 +181,8 @@
 						' AND p_want.transferable = 1 AND p_want.active = 1 AND ( p_want.util_date = 0 OR p_want.util_date > ? ) ' .
 						' AND pc_my.util_date = 0 AND pc_my.in_trading = 0 AND pc_my.cur_uid = ? ' .
 						' AND pc_want.util_date = 0 AND pc_want.in_trading = 1 ' .
-						' AND pcs.state = ? ;' ;
+						' AND pcs.state = ? ' .
+						' ORDER BY pcs.state DESC ;' ;
 
 				$cc->set(self::KEY_SENT_PRIZESUGGESTIONS, $sql);
 			}
@@ -257,5 +258,3 @@
 
 
 	}
-
-?>

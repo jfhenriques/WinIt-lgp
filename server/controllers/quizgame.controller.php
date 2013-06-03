@@ -94,14 +94,16 @@
 			$upid = (int)valid_request_var( 'upid' );
 			$answers = valid_request_var( 'answer' );
 
+			$user = AuthenticatorPlugin::getInstance()->getUser();
 
-			if( $pid <= 0 || $upid <= 0 || is_null( $answers ) || !is_array($answers) )
+
+			if( us_null( $user ) || $pid <= 0 || $upid <= 0 || is_null( $answers ) || !is_array($answers) )
 				$this->respond->setJSONCode( R_QUIZ_ERR_PARAM_2 );
 
 			else
 			{
-				//$authUID = (int)AuthenticatorPlugin::getInstance()->getUserId();
-				$user = AuthenticatorPlugin::getInstance()->getUser();
+				$uid = $user->getUID();
+				
 				$userProm = null;
 				$promo = null;
 				$time = time();
@@ -109,25 +111,19 @@
 
 
 				// UserPromotion participation not found
-				if( is_null( $user ) || is_null( $userProm = UserPromotion::findByUPID( $upid ) )
-					|| $userProm->getUID() !== $user->getUID() )
-						$this->respond->setJSONCode( R_QUIZ_ERR_USERPROM_NOT_FOUND );
+				if(    is_null( $userProm = UserPromotion::findActiveUserUPID( $upid, $uid ) ) 
+					|| $pid !== $userProm->getPID() )
+					$this->respond->setJSONCode( R_QUIZ_ERR_USERPROM_NOT_FOUND );
 
 				// Check promotion expiration date
-				elseif( is_null( $promo = $userProm->getPromotion() )
-						|| !$promo->isActive() || $pid !== $promo->getPID()
-						|| ( $promo->getEndDate() > 0 && $promo->getEndDate() < $time ) )
-							$this->respond->setJSONCode( R_QUIZ_ERR_PROM_AUTOFVALID );
-
-				// UserPromotion not available to be answered
-				elseif( !$userProm->inMotion() )
-					$this->respond->setJSONCode( R_QUIZ_ERR_USERPROM_PARTIC );
+				else if( is_null( $promo = Promotion::findByPID( $pid, $time, true ) ) )
+					$this->respond->setJSONCode( R_QUIZ_ERR_PROM_AUTOFVALID );
 
 				// QuizGame or quizgame questions not found
-				elseif( is_null( $quiz = QuizGame::findByPID( $pid ) )
+				else if( is_null( $quiz = QuizGame::findByPID( $pid ) )
 						|| is_null( $questions = $quiz->getQuestions() )
-						|| !is_array( $questions ) || count( $questions ) == 0
-						|| $userProm->getPID() !== $pid )
+						|| !is_array( $questions )
+						|| count( $questions ) == 0 )
 							$this->respond->setJSONCode( R_QUIZ_ERR_QUEST_NOT_FOUND );
 
 				else
@@ -191,8 +187,8 @@
 								{
 									$pc = new PrizeCode();
 									$pc->setEmissionDate( $time );
-									$pc->setUPID( $userProm->getUPID() );
-									$pc->setOwnerUID( $user->getUID() );
+									$pc->setUPID( $upid );
+									$pc->setOwnerUID( $uid );
 
 									$pc->genValidCode( $user->getSeed() );
 									$prizecode = $pc->getCode();
@@ -207,7 +203,7 @@
 								
 									$ratio = ( $rightAnswers / $totalQuestions );
 									
-									$userPoints = UserPoints::instantiate( $user, $promo, $ratio, $time );
+									$userPoints = UserPoints::instantiate( $uid, $promo, $ratio, $time );
 									
 									$pointsWon = $userPoints->getXPPoints();
 									if( $pointsWon > 0 )
@@ -256,6 +252,3 @@
 
 
 	}
-
-
-?>

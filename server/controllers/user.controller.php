@@ -82,12 +82,10 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$uid = (int)AuthenticatorPlugin::getInstance()->getUID();
-			$user = null;
-			//$auth = AuthenticatorPlugin::getInstance(); // retorna uma class com o id do user logado
-			//$userId = $auth->getUserId();
 
-			//$user = User::findByUID($userId);
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
+			$user = null;
+
 			
 			if( $uid <= 0 || is_null( $user = User::findByUIDWithPoints( $uid ) ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -135,6 +133,9 @@
 
 			$this->respond->renderJSON( static::$status );
 		}
+
+
+
 		
 		public function edit()
 		{
@@ -142,12 +143,8 @@
 
 
 			$user = AuthenticatorPlugin::getInstance()->getUser();
-			//$auth = AuthenticatorPlugin::getInstance(); // retorna o id do user logado
-			//$userId = $auth->getUserId();
 
 			$resp = array();
-			
-			//$user = User::findByUID($userId);
 			
 			if( is_null( $user ) )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
@@ -278,42 +275,41 @@
 			
 			$this->respond->renderJSON( static::$status );
 		}
+
+
 		
 		public function list_promotions_won()
 		{
 			$this->requireAuth();
 			
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			$wonPrizes = null;
-			//$auth = AuthenticatorPlugin::getInstance(); // retorna o id do user logado
-			//$userId = $auth->getUserId();
-			
-			//$user = User::findByUID($userId);
-			
-			if( is_null( $user ) )
+
+			if( $uid <= 0 )
 				$this->respond->setJSONCode ( R_USER_ERR_USER_NOT_FOUND );
 
 			else
 			{
-				$prizes = PrizeCode::findOwnUnused( $user->getUID() );
+				$prizes = PrizeCode::findOwnUnused( $uid );
 
 				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
 				$this->respond->setJSONCode( R_STATUS_OK );
 			}
+
 			$this->respond->renderJSON( static::$status );
 		}
+
+
 
 		public function list_badges_won()
 		{
 			$this->requireAuth();
 
-			$user = AuthenticatorPlugin::getInstance()->getUser();
-			//$userId = $auth->getUID();
 
-			// $user = User::findByUID($userId);
-
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			
-			if( is_null( $user ) )
+			if( $uid <= 0 )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
 			else
@@ -343,24 +339,24 @@
 		{
 			$this->requireAuth();
 			
+
 			$pid = (int)valid_request_var('promotion');
 
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			$promo = null;
-
 			
-			if( is_null( $user ) || is_null( $pid ) )
+			if( $uid <= 0 || is_null( $pid ) )
 				$this->respond->setJSONCode ( R_USER_ERR_PARAMS );
 
-			elseif( is_null( $promo = Promotion::findByPID($pid) ) )
+			elseif( is_null( $promo = Promotion::findByPID( $pid ) ) )
 				$this->respond->setJSONCode ( R_USER_BAD_PROMO );
 			
 			else
 			{
 				$userProm = new UserPromotion();
 
-				$userProm->participate($pid, $user->getUID() );
-				$userProm->setInitDate(time());
+				$userProm->participate( $pid, $uid );
+				$userProm->setInitDate( time() );
 
 				try {
 					if( $success = $userProm->save() )
@@ -383,14 +379,15 @@
 		{
 			$this->requireAuth();
 
-			$user = AuthenticatorPlugin::getInstance()->getUser();
 
-			if( is_null( $user ) )
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
+
+			if( $uid <= 0 )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
 			else
 			{
-				$prizes = PrizeCode::findOwnTrading( $user->getUID() );
+				$prizes = PrizeCode::findOwnTrading( $uid );
 
 				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
 				$this->respond->setJSONCode( R_STATUS_OK );
@@ -398,19 +395,24 @@
 
 			$this->respond->renderJSON( static::$status );
 		}
+
+
+
+
 		
 		public function list_prizes_tradable()
 		{
 			$this->requireAuth();
 
-			$user = AuthenticatorPlugin::getInstance()->getUser();
 
-			if( is_null( $user ) )
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
+
+			if( $uid <= 0 )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
 			else
 			{
-				$prizes = PrizeCode::findOwnTradable( $user->getUID() );
+				$prizes = PrizeCode::findOwnTradable( $uid );
 
 				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
 				$this->respond->setJSONCode( R_STATUS_OK );
@@ -466,29 +468,6 @@
 
 		public function reset_password_confirmation()
 		{
-			// function dump()
-			// {
-			//     $memcache = new Memcache();
-			//     $memcache->connect('127.0.0.1', 11211) or die ("Could not connect to memcache server");
-
-			//     $list = array();
-			//     $allSlabs = $memcache->getExtendedStats('slabs');
-			//     $items = $memcache->getExtendedStats('items');
-			//     foreach($allSlabs as $server => $slabs) {
-			//         foreach($slabs AS $slabId => $slabMeta) {
-			//            $cdump = $memcache->getExtendedStats('cachedump',(int)$slabId);
-			//             foreach($cdump AS $keys => $arrVal) {
-			//                 if (!is_array($arrVal)) continue;
-			//                 foreach($arrVal AS $k => $v) {                   
-			//                     $list[] = $k;
-			//                 }
-			//            }
-			//         }
-			//     }
-
-			//     var_dump($list);
-			// }
-
 			$this->requireNoAuth();
 
 
@@ -505,8 +484,7 @@
 				if( is_null( $user ) )
 					$renderText = "Token de reset inválido";
 
-				else
-				if( $user->getResetTokenValidity() < time() )
+				else if( $user->getResetTokenValidity() < time() )
 					$renderText = "Excedeu o tempo permitido para fazer reset à password";
 
 				else
@@ -531,6 +509,7 @@
 
 						if( !$ret )
 							$renderText = static::$status[R_USER_SENDMAIL_ERROR];
+
 						else
 							$renderText = "Nova password de acesso temporária enviada para o seu e-mail.\r\n<br>".
 										  "Atenção: Deve alterá-la de imediato, logo após o login.";
@@ -542,7 +521,7 @@
 			
 			}
 
-			$this->respond->renderHTML( $renderText );
+			$this->respond->renderText( $renderText );
 		}
 
 
@@ -552,11 +531,13 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+
+			//$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			$token_gcm = valid_request_var('token_gcm');
 			$gcm = null;
 
-			if( is_null( $user ) )
+			if( $uid <= 0 )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
 			else if( is_null( $token_gcm ) )
@@ -566,7 +547,7 @@
 			{
 				if ( !is_null( $gcm = UserGCM::findByToken( $token_gcm ) ) )
 				{
-					if( $gcm->getUID() !== $user->getUID() )
+					if( $gcm->getUID() !== $uid )
 						$this->respond->setJSONCode( R_USER_DONT_OWN_GCM );
 
 					else
@@ -574,7 +555,7 @@
 				}
 				else
 				{
-					$gcm = UserGCM::instantiate( $user, $token_gcm );
+					$gcm = UserGCM::instantiate( $uid, $token_gcm );
 
 					$this->respond->setJSONCode( $gcm->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
 				}
@@ -591,11 +572,13 @@
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+
+			//$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			$token_gcm = valid_request_var('token_gcm');
 			$gcm = null;
 
-			if( is_null( $user ) )
+			if( $uid <= 0 )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
 			else if( is_null( $token_gcm ) )
@@ -604,7 +587,7 @@
 			else if ( is_null( $gcm = UserGCM::findByToken( $token_gcm ) ) )
 				$this->respond->setJSONCode( R_USER_GCM_NOT_FOUND );
 
-			else if( $gcm->getUID() !== $user->getUID() )
+			else if( $gcm->getUID() !== $uid )
 				$this->respond->setJSONCode( R_USER_DONT_OWN_GCM );
 
 			else
@@ -613,44 +596,21 @@
 			$this->respond->renderJSON( static::$status );
 
 		}
-		
-		
-/*		public function showPoints() {
-			
-			$this->requireAuth();
-
-			$user = AuthenticatorPlugin::getInstance()->getUser();
-
-			$u = $user->getUID();
-			var_dump($u);
-			
-			if( is_null( $user ) )
-				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
-
-			else
-			{
-				$points = UserPoints::showUserPoints( $user->getUID() );
-
-				$this->respond->setJSONResponse( $points );
-				$this->respond->setJSONCode( R_STATUS_OK );
-			}
-
-			$this->respond->renderJSON( static::$status );
-		
-		}*/
 
 
 		public function sent_trading_suggestions()
 		{
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
-			$user = AuthenticatorPlugin::getInstance()->getUser();
+
+			//$user = AuthenticatorPlugin::getInstance()->getUser();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			$sugestions = array();
 			
-			if( is_null( $user ) )
+			if( $uid <= 0 )
 				$this->respond->setJSONCode( R_USER_ERR_USER_NOT_FOUND );
 
-			else if(    !is_array( $sugestions = TradingSuggestion::findSentPrizeSuggestions( $user->getUID(), 0 ) )
+			else if(    !is_array( $sugestions = TradingSuggestion::findSentPrizeSuggestions( $uid, 0 ) )
 					 || count( $sugestions) <= 0 )
 				$this->respond->setJSONCode( R_USER_NO_SENT_SUGGESTIONS );
 
@@ -660,7 +620,9 @@
 
 				foreach($sugestions as $s)
 				{
-					$ret[] = array('pcid_my' => $s->getPCIDOrig(),
+					$ret[] = array('state' => $s->getState(),
+								   'date' => $s->getDate(),
+								   'pcid_my' => $s->getPCIDOrig(),
 								   'pid_my' => $s->getPID(),
 								   'max_util_date_my' => $s->getMaxUtilizationDate(),
 								   'name_my' => $s->getPromotionName(),
@@ -682,6 +644,3 @@
 		}
 
 	}
-	
-	
-?>

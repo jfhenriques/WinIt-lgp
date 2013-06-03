@@ -52,17 +52,12 @@
 		}
 
 
-		public function inMotion()
-		{
-			return ( $this->getInitDate() > 0 && $this->getEndDate() === 0 ) ;
-		}
-
-		public function getPromotion()
+/*		public function getPromotion()
 		{
 			$pid = $this->getPid();
 
 			return $pid > 0 ? Promotion::findByPID( $pid ) : null ;
-		}
+		}*/
 
 		public function participate($pid, $uid)
 		{
@@ -76,6 +71,13 @@
 
 		
 
+		public static function findActiveUserUPID($upid, $uid)
+		{
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE upid = ? AND uid = ? AND end_date = 0 LIMIT 1 ;',
+									  array( $upid, $uid ) );
+							
+			return static::fillModel( $result, new UserPromotion() );
+		}
 
 		public static function findByUPID($upid)
 		{
@@ -100,8 +102,7 @@
 
 			if( $isInsert )
 			{
-				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (uid,pid,init_date,end_date,state) ' .
-												' VALUES(:uid,:pid,:init,:end,:state); ');
+				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (uid,pid,init_date,end_date,state)  VALUES(:uid,:pid,:init,:end,:state); ');
 
 				$pid = $this->getPID();
 				$uid = $this->getUID();
@@ -131,5 +132,3 @@
 
 
 	}
-
-?>

@@ -8,15 +8,15 @@
 
 		private $isInsert = false;
 
-		public static function instantiate(User $user, $token, $time = null)
+		public static function instantiate($uid, $token, $time = null)
 		{
 			$gcm = new UserGCM();
 
-			if( !is_null( $user ) && !is_null( $token ) )
+			if( !is_null( $uid ) && !is_null( $token ) )
 			{
 				$gcm->isInsert = true;
 
-				$gcm->data['uid'] = $user->getUID();
+				$gcm->data['uid'] = $uid;
 				$gcm->data['gcm'] = $token;
 
 				$gcm->data['date'] = is_null( $time ) ? time() : $time ;
@@ -116,4 +116,3 @@
 
 
 	}
-?>

@@ -92,5 +92,3 @@ function parse_raw_http_request()
         }
     }
   }
-
-  ?>

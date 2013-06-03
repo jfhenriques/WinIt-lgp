@@ -168,4 +168,3 @@
 			Controller::$authFunction = &$func;
 		}
 	}
-?>

@@ -94,4 +94,3 @@
 			$this->data[$key] = $value ;
 		}
 	}
-?>

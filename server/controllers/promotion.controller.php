@@ -27,10 +27,10 @@
 		public function index()
 		{
 
-			$authUID = (int)AuthenticatorPlugin::getInstance()->getUID();
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			$promos = null;
 
-			if( $authUID <= 0 || is_null( $promos = Promotion::findValidPromotions( $authUID ) ) || !is_array( $promos ) )
+			if( $uid <= 0 || is_null( $promos = Promotion::findValidPromotions( $uid ) ) || !is_array( $promos ) )
 				$this->respond->setJSONCode( R_PROM_ERR_USER_NOT_FOUND );
 
 			else
@@ -53,6 +53,8 @@
 			$this->respond->renderJSON( static::$status );
 
 		}
+
+		
 		
 		public function show()
 		{
@@ -106,5 +108,3 @@
 		}
 		
 	}
-
-?>

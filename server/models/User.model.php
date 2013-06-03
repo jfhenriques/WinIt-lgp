@@ -10,6 +10,8 @@
 
 		const KEY_USER_POINTS = "sql.userwithpoints";
 
+		private $resetTokens = false;
+
 
 		//public function __construct() {}
 
@@ -134,6 +136,8 @@
 		}
 		public function setActive($state)
 		{
+			$this->resetTokens = $this->isActive() && !$state ;
+
 			$this->data['active'] = $state;
 		}
 
@@ -206,19 +210,23 @@
 			
 			$ret = $sth->execute();
 			
-			if( $ret && $isInsert )
-				$this->data['uid'] = $dbh->lastInsertId();
+			if( $ret )
+			{
+				if( $isInsert )
+					$this->data['uid'] = $dbh->lastInsertId();
+
+				else
+				{
+					if( $this->resetTokens )
+						Session::resetUserTokens( $uid );
+				}
+			}
 
 			return $ret;
 		}
 
 
 
-		public static function saltPass( $pass, $salt = null )
-		{
-			$salt = is_null($salt) ? md5(uniqid(mt_rand(), true)) : $salt ;
-			return ":${salt}:" . hash( 'sha256', $salt.$pass ) . ':';
-		}
 
 		public static function findByResetToken( $token )
 		{
@@ -231,7 +239,7 @@
 
 		public static function findByEmail( $email )
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE active = 1 AND email = ? LIMIT 1;',
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE AND email = ? LIMIT 1;',
 									  array( $email ) );
 
 							
@@ -240,7 +248,7 @@
 
 		public static function findByUID($id)
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE active = 1 AND uid = ? LIMIT 1;',
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE AND uid = ? LIMIT 1;',
 									  array( $id ) );
 
 			return static::fillModel( $result, new User() );
@@ -256,8 +264,9 @@
 				$sql =  'SELECT u.uid AS uid, u.active AS active, u.name AS name, u.email AS email, ' .
 						' u.password AS password, u.birth AS birth, u.adid AS adid, u.address2 AS address2, ' .
 						' u.facebook_uid AS facebook_uid, u.reset_token AS reset_token, u.ui_seed AS ui_seed, ' .
-						' u.reset_token_validity AS reset_token_validity, IFNULL(SUM(xp_points), 0) AS points FROM '. self::TABLE_NAME .
-						' AS u LEFT JOIN xppoints AS xp ON (xp.uid = u.uid) WHERE u.active = 1 AND u.uid = ? LIMIT 1; ' ;
+						' u.reset_token_validity AS reset_token_validity, IFNULL(SUM(xp_points), 0) AS points ' .
+						' FROM '. self::TABLE_NAME .
+						' AS u LEFT JOIN xppoints AS xp ON (xp.uid = u.uid) WHERE u.uid = ? LIMIT 1; ' ;
 
 				$cc->set( self::KEY_USER_POINTS, $sql );
 			}
@@ -267,6 +276,7 @@
 			return static::fillModel( $result, new User() );
 		}
 
+
 		public static function findByFacebookUID($facebook_uid)
 		{
 			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE facebook_uid = ? LIMIT 1;',
@@ -275,7 +285,31 @@
 			return static::fillModel( $result, new User() );
 		}
 
-		public static function compareWithHashedPass($newPass, $oldHashedPass)
+
+		public static function findByCredentials( $email, $pass )
+		{
+			$user = null;
+
+			if(    !is_null( $user = self::findByEmail( $email ) )
+				&& !is_null( $user->getPassword() )
+				&& self::compareWithHashedPass( $pass, $user->getPassword() ) !== false )
+				return $user;
+
+			return null;
+		}
+
+
+
+
+
+		public static function saltPass( $pass, $salt = null )
+		{
+			$salt = is_null($salt) ? md5(uniqid(mt_rand(), true)) : $salt ;
+			return ":${salt}:" . hash( 'sha256', $salt.$pass ) . ':';
+		}
+
+
+		public static function compareWithHashedPass( $newPass, $oldHashedPass )
 		{
 			if( is_null( $newPass ) || is_null( $oldHashedPass ) )
 				return false;
@@ -286,17 +320,5 @@
 						static::saltPass( $newPass , $exp[1] ) === $oldHashedPass ) ;
 		}
 
-		public static function findByCredentials($email, $pass)
-		{
-			$user = static::findByEmail( $email );
-
-			if(   !is_null( $user ) && !is_null( $user->getPassword() )
-				&& self::compareWithHashedPass( $pass, $user->getPassword() ) !== false )
-				return $user;
-
-			return null;
-		}
 
 	}
-
-?>

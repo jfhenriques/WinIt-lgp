@@ -88,4 +88,3 @@
 	 */
 	DEFINE( 'BASE_STATIC_URI', '' );
 
-?>

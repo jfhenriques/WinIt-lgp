@@ -109,4 +109,3 @@
 			return static::fillModel( $result, new Session() );
 		}
 	}
-?>
