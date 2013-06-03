@@ -35,7 +35,7 @@ public class ForgotPasswordDialogFragment extends SherlockDialogFragment  {
         
         View view = inflater.inflate(R.layout.forgot_password_fragment, null);
         
-        email_edit_ = (EditText) view.findViewById(R.id.email_edit);
+        email_edit_ = (EditText) view.findViewById(R.id.email_section);
         
         builder.setView(view)
             .setPositiveButton("Submit", new DialogInterface.OnClickListener() {

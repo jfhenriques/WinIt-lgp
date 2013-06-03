@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="@style/Theme.Sherlock.Light.DarkActionBar">
+
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
         <item name="android:editTextStyle">@style/EditTextAppTheme</item>
-
         <item name="android:buttonStyle">@style/ButtonAppTheme</item>
-
         <item name="android:imageButtonStyle">@style/ImageButtonAppTheme</item>
-        
         <item name="android:progressBarStyleHorizontal">@style/ProgressBarAppTheme</item>
-
     </style>
+
     <style name="Theme.VPI" parent="AppBaseTheme">
         <item name="vpiTabPageIndicatorStyle">@style/CustomTabPageIndicator</item>
         <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
@@ -26,7 +25,7 @@
         <item name="vpiLinePageIndicatorStyle">@style/CustomLinePageIndicator</item>
         <item name="vpiUnderlinePageIndicatorStyle">@style/CustomUnderlinePageIndicator</item>
     </style>
-    
+
     <style name="CustomTitlePageIndicator">
         <item name="android:background">@color/belize_hole</item>
         <item name="footerColor">@color/peter_river</item>
@@ -61,7 +60,7 @@
         <item name="android:textSize">16sp</item>
         <item name="android:divider">@drawable/custom_tab_indicator_divider</item>
         <!-- item name="android:dividerPadding">10dp</item -->
-        <!--  item name="android:showDividers">middle</item -->
+        <!-- item name="android:showDividers">middle</item -->
         <item name="android:paddingLeft">8dp</item>
         <item name="android:paddingRight">8dp</item>
         <item name="android:fadingEdge">horizontal</item>
@@ -78,9 +77,16 @@
         <item name="fadeLength">1000</item>
         <item name="fadeDelay">1000</item>
     </style>
-    
+
+    <!--  style name="AppTheme" parent="android:Theme.Light">
+        <item name="android:spinnerStyle">@style/SpinnerAppTheme</item>
+        <item name="android:dropDownSpinnerStyle">@style/SpinnerAppTheme.DropDown</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemAppTheme</item>
+    </style -->
+
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+
 </resources>

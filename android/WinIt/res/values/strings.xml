@@ -67,5 +67,6 @@
 
     <string name="you_won">You won!</string>
     <string name="you_lost">You lost!</string>
+    <string name="loading">Loading...</string>
     
 </resources>

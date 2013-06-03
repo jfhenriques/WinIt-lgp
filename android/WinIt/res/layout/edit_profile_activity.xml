@@ -12,7 +12,7 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/name_edit"
+            android:id="@+id/name_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/name"
@@ -28,7 +28,7 @@
             android:inputType="textPersonName" />
 
         <TextView
-            android:id="@+id/email_edit"
+            android:id="@+id/email_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/email"
@@ -44,7 +44,7 @@
             android:inputType="textEmailAddress" />
 
         <TextView
-            android:id="@+id/pass_edit"
+            android:id="@+id/password_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/password"
@@ -60,7 +60,7 @@
             android:inputType="textPassword" />
 
         <TextView
-            android:id="@+id/pass_old_edit"
+            android:id="@+id/old_password_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/password_old"
@@ -76,27 +76,27 @@
             android:inputType="textPassword" />
 
         <TextView
-            android:id="@+id/birth_edit"
+            android:id="@+id/birthday_section"
+            style="@style/BlueSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/birthday"
-            android:textAllCaps="true"
-            style="@style/BlueSectionHeader" />
+            android:textAllCaps="true" />
 
-        <EditText
-            android:id="@+id/birth_edit_text"
+        <TextView
+            android:id="@+id/birthday_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gap"
-            android:ems="10"
-            android:inputType="date" />
+            style="@style/Widget.Sherlock.Spinner.DropDown.ActionBar"  />
 
         <TextView
+            android:id="@+id/address_section"
+            style="@style/BlueSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/address"
-            android:textAllCaps="true"
-            style="@style/BlueSectionHeader" />
+            android:textAllCaps="true" />
 
         <TextView
 	        android:layout_width="wrap_content"

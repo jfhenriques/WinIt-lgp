@@ -63,23 +63,15 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 	}
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu_logout, menu);
-		return true;
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
     		case android.R.id.home:
     			onBackPressed();
     			break;
-    		case R.id.menu_log_out:
-    			WinIt.logOut(this);
-    			break;
     		default:
     			return super.onOptionsItemSelected(item);
 		}
+		
 		return true;
 	}
 

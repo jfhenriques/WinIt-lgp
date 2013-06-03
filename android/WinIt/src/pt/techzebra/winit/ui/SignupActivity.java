@@ -7,6 +7,10 @@ import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.NetworkUtilities.SendAddressToActivity;
+import pt.techzebra.winit.platform.DatePickerFragment;
+import pt.techzebra.winit.platform.DateUtilities;
+import android.app.Activity;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,11 +20,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.format.Time;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -51,12 +58,15 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
     private EditText email_edit_;
     private EditText password_edit_;
     
-    private EditText birthday_edit_;
+    private TextView birthday_text_;
     private EditText pc4_edit_;
     private EditText pc3_edit_;
     private TextView location_text_;
     private EditText house_number_edit_;
-	    
+    
+    private Time birthday_time_;
+	private OnDateSetListener on_date_set_listener_;
+    
     private Thread postal_code_thread_;
     
     String[] addresses_ = null;
@@ -69,6 +79,8 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
 		super.onCreate(saved_instance_state);
 		setContentView(R.layout.signup_activity);
 
+		birthday_time_ = new Time();
+		
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle("Sign up");
 		action_bar_.setDisplayHomeAsUpEnabled(true);
@@ -106,10 +118,10 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
         public int getCount() {
             return NUM_STEPS_;
         }
-	    
 	}
 	
 	public static class SignupStepFragment extends SherlockFragment {
+	    private SignupActivity activity_;
 	    
 	    private int step_;
 	    
@@ -121,6 +133,12 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
 	        f.setArguments(args);
 	        
 	        return f;
+	    }
+	    
+	    @Override
+	    public void onAttach(Activity activity) {
+	        super.onAttach(activity);
+	        activity_ = (SignupActivity) activity;
 	    }
 	    
 	    @Override
@@ -143,20 +161,51 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
 	    @Override
 	    public void onActivityCreated(Bundle saved_instance_state) {
 	        super.onActivityCreated(saved_instance_state);
-	        SherlockFragmentActivity activity = getSherlockActivity();
 	        
             if (step_ == 0) {
-                ((SignupActivity) activity).name_edit_ = (EditText) activity.findViewById(R.id.name_edit);
-                ((SignupActivity) activity).email_edit_ = (EditText) activity.findViewById(R.id.email_edit);
-                ((SignupActivity) activity).password_edit_= (EditText) activity.findViewById(R.id.password_edit);
-                ((SignupActivity) activity).password_edit_.setTypeface(Typeface.DEFAULT);
-                ((SignupActivity) activity).password_edit_.setTransformationMethod(new PasswordTransformationMethod());
+                activity_.name_edit_ = (EditText) activity_.findViewById(R.id.name_section);
+                activity_.email_edit_ = (EditText) activity_.findViewById(R.id.email_section);
+                activity_.password_edit_= (EditText) activity_.findViewById(R.id.password_edit);
+                activity_.password_edit_.setTypeface(Typeface.DEFAULT);
+                activity_.password_edit_.setTransformationMethod(new PasswordTransformationMethod());
             } else {
-                ((SignupActivity) activity).birthday_edit_ = (EditText) activity.findViewById(R.id.birthday_edit);
-                ((SignupActivity) activity).pc4_edit_ = (EditText) activity.findViewById(R.id.pc4_edit);
-                ((SignupActivity) activity).pc3_edit_ = (EditText) activity.findViewById(R.id.pc3_edit);
-                ((SignupActivity) activity).location_text_ = (TextView) activity.findViewById(R.id.address1_text);
-                ((SignupActivity) activity).house_number_edit_ = (EditText) activity.findViewById(R.id.address2_edit);
+                activity_.birthday_text_ = (TextView) activity_.findViewById(R.id.birthday_text);
+                activity_.on_date_set_listener_ = new OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month,
+                            int day) {
+                        Time birthday = activity_.birthday_time_;
+                        Long birthday_millis;
+                        
+                        birthday.year = year;
+                        birthday.month = month;
+                        birthday.monthDay = day;
+                        
+                        birthday_millis = birthday.normalize(true);
+                        
+                        DateUtilities.setDate(activity_.birthday_text_, birthday_millis);
+                        
+                    }
+                };
+                activity_.birthday_text_.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int year = activity_.birthday_time_.year;
+                        int month = activity_.birthday_time_.month;
+                        int day = activity_.birthday_time_.monthDay;
+                        DatePickerFragment fragment = DatePickerFragment
+                                .newInstance(
+                                        activity_.on_date_set_listener_,
+                                        year, month, day);
+                        fragment.show(getFragmentManager(),
+                                "DatePickerFragment");
+                    }
+                });
+                
+                activity_.pc4_edit_ = (EditText) activity_.findViewById(R.id.pc4_edit);
+                activity_.pc3_edit_ = (EditText) activity_.findViewById(R.id.pc3_edit);
+                activity_.location_text_ = (TextView) activity_.findViewById(R.id.address1_text);
+                activity_.house_number_edit_ = (EditText) activity_.findViewById(R.id.address2_edit);
             }
 	    }
 	}
@@ -165,7 +214,7 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
 	    String name = name_edit_.getText().toString();
         String email = email_edit_.getText().toString();
         String password = password_edit_.getText().toString();
-        String birthday = birthday_edit_.getText().toString();
+        String birthday = birthday_text_.getText().toString();
         String pc4 = pc4_edit_.getText().toString();
         String pc3 = pc3_edit_.getText().toString();
         String house_number = house_number_edit_.getText().toString();
@@ -177,8 +226,9 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
             Utilities.showToast(this, R.string.empty_fields);
         } else {
             registration_thread_ = NetworkUtilities.attemptRegister(name,
-                    email, password, birthday, String.valueOf(address_id_), house_number,
-                    handler_, this);
+                    email, password,
+                    String.valueOf(birthday_time_.toMillis(false)),
+                    String.valueOf(address_id_), house_number, handler_, this);
         }
 	}
 	

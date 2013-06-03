@@ -45,7 +45,7 @@
                 android:layout_height="2dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
-                android:background="@color/silver" />
+                android:background="@color/belize_hole" />
 
             <TextView
                 android:id="@+id/email_text"
@@ -109,7 +109,8 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:progressDrawable="@drawable/progress_bar_color" />
+                    android:progressDrawable="@drawable/progress_bar_color"
+                    android:layout_marginTop="5dp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

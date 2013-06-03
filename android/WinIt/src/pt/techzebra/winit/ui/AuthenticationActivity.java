@@ -9,6 +9,7 @@ import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.platform.FontUtils;
+import pt.techzebra.winit.platform.LoginTask;
 import pt.techzebra.winit.ui.ForgotPasswordDialogFragment.ForgotPasswordDialogListener;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.facebook.FacebookException;
@@ -53,7 +53,6 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
     private LoginButton auth_button_;
 
     private Handler handler_;
-    private boolean double_back_to_exit_pressed_once_ = false;
 
     private UiLifecycleHelper ui_helper_;
 
@@ -107,7 +106,7 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
 
         getSupportActionBar().hide();
 
-        email_edit_ = (EditText) findViewById(R.id.email_edit);
+        email_edit_ = (EditText) findViewById(R.id.email_section);
         password_edit_ = (EditText) findViewById(R.id.password_edit);
 
         password_edit_.setTypeface(Typeface.DEFAULT);
@@ -181,25 +180,12 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
 
     @Override
     public void onBackPressed() {
-        if (double_back_to_exit_pressed_once_) {
-            super.onBackPressed();
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            return;
-        }
+        super.onBackPressed();
         
-        this.double_back_to_exit_pressed_once_ = true;
-        Toast.makeText(this, "Please click BACK again to exit",
-                Toast.LENGTH_SHORT).show();
-        
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                double_back_to_exit_pressed_once_ = false;
-            }
-        }, 2000);
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     public void handleLogin(View view) {
@@ -210,10 +196,9 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
             Log.i(TAG, "Empty fields");
             Utilities.showToast(this, R.string.empty_fields);
         } else {
-            Log.i(TAG, "Inicialize login with email: " + email + " password: "
+            Log.i(TAG, "email: " + email + " password: "
                     + password);
-            Utilities.showToast(this, "Loading...");
-            NetworkUtilities.attemptAuth(email, password, handler_, this);
+            new LoginTask().setContext(this).execute(email, password);
         }
     }
 

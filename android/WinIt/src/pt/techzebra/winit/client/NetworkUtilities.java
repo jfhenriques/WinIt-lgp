@@ -47,7 +47,6 @@ import pt.techzebra.winit.games.quiz.QuizActivity;
 import pt.techzebra.winit.ui.AuthenticationActivity;
 import pt.techzebra.winit.ui.EditProfileActivity;
 import pt.techzebra.winit.ui.PromotionActivity;
-import pt.techzebra.winit.ui.PromotionsActivity;
 import pt.techzebra.winit.ui.SignupActivity;
 
 import android.content.Context;
@@ -112,6 +111,12 @@ public class NetworkUtilities {
 	public static final String QUIZ_URI = "/quizgame.json";
 	public static final String RECOVER_URI = BASE_URL
 			+ "/user/reset_password.json";
+	
+	/*
+	 * Trading
+	 */
+	public static final String RECEIVED_PROPOSALS = BASE_URL + "/trading/";
+	public static final String SENT_PROPOSALS = BASE_URL + "";
 
 	private static final String PARAM_ADDRESS_ID = "adid";
 
@@ -158,7 +163,7 @@ public class NetworkUtilities {
 		ClientConnectionManager connection_manager = client
 				.getConnectionManager();
 		SchemeRegistry scheme_registry = connection_manager.getSchemeRegistry();
-		scheme_registry.register(new Scheme("https", ssl_socket_factory, 443));
+		scheme_registry.register(new Scheme(SCHEME, ssl_socket_factory, PORT));
 
 		return new DefaultHttpClient(connection_manager, client.getParams());
 	}
@@ -341,8 +346,7 @@ public class NetworkUtilities {
 	 *         successfully authenticated.
 	 * @throws JSONException
 	 */
-	public static boolean authenticate(String username, String password,
-			Handler handler, final Context context) {
+	public static boolean authenticate(String username, String password) {
 		final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair(PARAM_EMAIL, username));
 		params.add(new BasicNameValuePair(PARAM_PASSWORD, password));
@@ -350,8 +354,10 @@ public class NetworkUtilities {
 		JSONObject json_response = post(AUTH_URI, params);
 
 		JSONObject r = getResponseContent(json_response);
+
 		if (r == null) {
-			sendResultToAuthenticationActivity(false, handler, context);
+		    Log.d("login", "r null");
+			return false;
 		} else {
 			SharedPreferences.Editor preferences_editor = WinIt
 					.getAppContext()
@@ -366,16 +372,14 @@ public class NetworkUtilities {
 				preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN,
 						false);
 				preferences_editor.commit();
-				sendResultToAuthenticationActivity(true, handler, context);
 
 				return true;
 			} catch (JSONException e) {
+			    Log.d("login", "oops");
 				e.printStackTrace();
-				sendResultToAuthenticationActivity(false, handler, context);
+				return false;
 			}
 		}
-
-		return false;
 	}
 
 	/**
@@ -420,18 +424,6 @@ public class NetworkUtilities {
 		});
 	}
 
-	public static Thread attemptAuth(final String username,
-			final String password, final Handler handler, final Context context) {
-		final Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				authenticate(username, password, handler, context);
-			}
-		};
-
-		return NetworkUtilities.performOnBackgroundThread(runnable);
-	}
-
 	public static User fetchUserInformation(String auth_token, Date last_updated) {
 		String uri = USER_URI + "?token=" + auth_token;
 		JSONObject json_response = get(uri);
@@ -468,13 +460,12 @@ public class NetworkUtilities {
 
 		JSONObject json_response = post(USER_URI, params);
 
-		Log.d("RESPOSTA", getResponseMessage(json_response));
+		//Log.d("RESPOSTA", getResponseMessage(json_response));
 		if (validResponse(json_response)) {
 			// attemptAuth(email, password, handler, context);
 			Log.v(TAG, "Successful register");
 			return true;
 		} else {
-
 			return false;
 		}
 	}
@@ -908,8 +899,8 @@ public class NetworkUtilities {
 				sendEmailForgotPassword(email);
 			}
 		};
+		
 		return NetworkUtilities.performOnBackgroundThread(runnable);
-
 	}
 	
 	protected static void sendEmailForgotPassword(String email) {
@@ -1024,6 +1015,15 @@ public class NetworkUtilities {
 		return NetworkUtilities.performOnBackgroundThread(runnable);
 	}
 
+	
+	public static void fetchReceivedProposals() {
+	    
+	}
+	
+	public static void fetchSentProposals() {
+	    
+	}
+	
 	private static void fetchTradeProposals(String auth_token, String pcid) {
 		String uri = BASE_URL + "/trading/" + pcid + ".json?token=" + auth_token;
 		JSONObject response = get(uri);
