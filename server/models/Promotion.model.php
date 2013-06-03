@@ -166,7 +166,7 @@
 			$cc = CommonCache::getInstance();
 			$time = is_null( $time ) ? time() : $time ;
 			
-			$sql = $cc->get( self::KEY_POMOTIONS );
+			$sql = $cc->get( self::KEY_PROMOTIONS );
 
 			if( $sql === false )
 			{
@@ -181,7 +181,7 @@
 					   ' INNER JOIN ' . self::TABLE_NAME_TYPE . ' AS t ON(t.ptid = p.ptid) ' .
 					   ' WHERE p.pid = ? AND p.active = ? AND ( p.end_date = 0 OR p.end_date >= ? ) LIMIT 1;' ;
 
-				$cc->set( self::KEY_POMOTIONS, $sql );
+				$cc->set( self::KEY_PROMOTIONS, $sql );
 			}
 
 			$result = static::query( $sql, array( $pid, $active ? 1 : 0, $time ) );
