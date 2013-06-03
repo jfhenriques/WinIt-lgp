@@ -92,6 +92,9 @@ public class ProfileActivity extends SherlockActivity {
 		points_text_ = (TextView) findViewById(R.id.points_text);
 
 		progress_bar_ = (ProgressBar) findViewById(R.id.experience_bar);
+		
+		preferences_ = getApplicationContext().getSharedPreferences(
+								Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
 
 		auth_token = WinIt.getAuthToken();
 		Log.d(TAG, "auth token");

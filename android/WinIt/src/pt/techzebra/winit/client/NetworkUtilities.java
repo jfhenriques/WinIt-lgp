@@ -371,6 +371,7 @@ public class NetworkUtilities {
 				preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
 				preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN,
 						false);
+				preferences_editor.putInt(Constants.PREF_UID, r.optInt("uid", 0));
 				preferences_editor.commit();
 
 				return true;
@@ -876,6 +877,7 @@ public class NetworkUtilities {
 				preferences_editor.putString(Constants.PREF_AUTH_TOKEN,
 						r.getString("token"));
 				preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
+				preferences_editor.putInt(Constants.PREF_UID, r.optInt("uid", 0));
 				preferences_editor
 				.putBoolean(Constants.PREF_FB_LOGGED_IN, true);
 				preferences_editor.commit();

@@ -71,6 +71,11 @@
 			return static::fillModel( $result, new UserGCM() );
 		}
 
+		public static function deleteByUID($uid)
+		{
+			return static::query( 'DELETE FROM '. self::TABLE_NAME . ' WHERE uid = ? ;', array( $uid ) );
+		}
+
 
 		public function save()
 		{

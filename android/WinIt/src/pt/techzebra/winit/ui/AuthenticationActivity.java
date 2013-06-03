@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
+import android.telephony.TelephonyManager;
 import android.text.Html;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
@@ -71,6 +72,33 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
         }
     };
 
+    private void printHash()
+    {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "pt.techzebra.winit", PackageManager.GET_SIGNATURES);
+
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                
+                Log.d(TAG, "Hash: " + Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+    
+//    private void printUUID()
+//    {
+//    	TelephonyManager TelephonyMgr = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+//    	String szImei = TelephonyMgr.getDeviceId(); // Requires READ_PHONE_STATE
+//    	
+//    	Log.d(TAG, "UIID: " + szImei);
+//    }
+    
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         Log.i(TAG, "onCreate(" + saved_instance_state + ")");
@@ -81,20 +109,9 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
 
         go_to_dashboard_ = false;
 
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "pt.techzebra.winit", PackageManager.GET_SIGNATURES);
-
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d(TAG, Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (NameNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        printHash();
+        
+        //printUUID();
 
         setContentView(R.layout.authentication_activity);
 

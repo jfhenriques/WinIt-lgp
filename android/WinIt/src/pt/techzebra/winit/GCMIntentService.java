@@ -10,6 +10,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -57,18 +58,33 @@ public class GCMIntentService extends GCMBaseIntentService {
 		NetworkUtilities.attemptUnRegisterGCMToken(auth_token, arg1);
 	}
 
-	private void generateNotification(Context arg0, Intent msg) {
-        mNotificationManager = (NotificationManager) arg0.getSystemService(Context.NOTIFICATION_SERVICE);
-        
-        PendingIntent contentIntent = PendingIntent.getActivity(arg0, 0,
-            new Intent(arg0, DashboardActivity.class), 0);
-        
-        NotificationCompat.Builder mBuilder =
-            new NotificationCompat.Builder(arg0)
-            .setSmallIcon(R.drawable.ic_trading)
-            .setContentTitle("WinIt")
-            .setContentText("New trading proposal");
-       mBuilder.setContentIntent(contentIntent);
-       mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+	private void generateNotification(Context arg0, Intent msg)
+	{
+		
+		if( preferences_ == null || msg == null )
+			return;
+		
+		Bundle extras = msg.getExtras();
+		
+		int uid_logged = preferences_.getInt(Constants.PREF_UID, 0); 
+		int uid = extras.getInt("uid", 0);
+		
+		if( uid > 0 && uid == uid_logged )
+		{
+		
+	        mNotificationManager = (NotificationManager) arg0.getSystemService(Context.NOTIFICATION_SERVICE);
+	        
+	        PendingIntent contentIntent = PendingIntent.getActivity(arg0, 0,
+	            new Intent(arg0, DashboardActivity.class), 0);
+	        
+	        NotificationCompat.Builder mBuilder =
+	            new NotificationCompat.Builder(arg0)
+		            .setSmallIcon(R.drawable.ic_trading)
+		            .setContentTitle("WinIt")
+		            .setContentText("New trading proposal");
+	       mBuilder.setContentIntent(contentIntent);
+	       mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+	       
+		}
 	}
 }
