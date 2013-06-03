@@ -314,7 +314,7 @@
 
 			else
 			{
-				$resp = Badge::findByUID( $user->getUID() );
+				$resp = Badge::findByUID( $uid );
 				$response = array();
 					
 				foreach ( $resp as $b)
