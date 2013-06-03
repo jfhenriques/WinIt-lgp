@@ -557,6 +557,8 @@
 				}
 				else
 				{
+					UserGCM::deleteByUID( $uid ); // Quick fix!
+
 					$gcm = UserGCM::instantiate( $uid, $token_gcm );
 
 					$this->respond->setJSONCode( $gcm->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
