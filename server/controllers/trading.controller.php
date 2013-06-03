@@ -184,6 +184,9 @@
 
 				$suggestion->setEndDate( $time );
 
+				$pMine = $prizeMine[0];
+				$pSuggest = $prizeSuggest[0];
+
 				if( $accept )
 				{
 
@@ -192,17 +195,17 @@
 
 					try {
 
-						$sendUID = $prizeSuggest[0]->getOwnerUID();
+						$sendUID = $pSuggest->getOwnerUID();
 
-						$prizeMine[0]->setOwnerUID( $prizeSuggest[0]->getOwnerUID() );
-						$prizeMine[0]->setTrading(false);
+						$pMine->setOwnerUID( $pSuggest->getOwnerUID() );
+						$pMine->setTrading(false);
 
-						$prizeSuggest[0]->setOwnerUID( $uid );
-						$prizeSuggest[0]->setTrading(false);
+						$pSuggest->setOwnerUID( $uid );
+						$pSuggest->setTrading(false);
 
 						$suggestion->setState( self::STATE_ACCEPTED );
 
-						$success = $prizeMine[0]->save() && $prizeSuggest[0]->save() && $suggestion->save() ;
+						$success = $pMine->save() && $pSuggest->save() && $suggestion->save() ;
 
 						if( $success )
 						{
@@ -210,12 +213,17 @@
 
 							$this->respond->setJSONCode( R_STATUS_OK );
 
-							GCMPlugin::sendAccept(
+							GCMPlugin::sendUserSuggest(
 											$sendUID,
-											$prizeSuggest[0]->getPCID(),
-											$prizeSuggest[0]->getPID(),
-											$prizeSuggest[0]->getPromotionName(),
-											$prizeSuggest[0]->getPromotionImageSRC(),
+											GCMPlugin::STATE_ACCEPT,
+											$pSuggest->getPCID(),
+											$pSuggest->getPID(),
+											$pSuggest->getPromotionName(),
+											Controller::formatURL( $pSuggest->getPromotionImageSRC() ),
+											$pMine->getPCID(),
+											$pMine->getPID(),
+											$pMine->getPromotionName(),
+											Controller::formatURL( $pMine->getPromotionImageSRC() ),
 											$time );
 						}
 
@@ -243,12 +251,17 @@
 					{
 						$this->respond->setJSONCode( R_STATUS_OK );
 
-						GCMPlugin::sendReject(
-										$prizeSuggest[0]->getOwnerUID(),
-										$prizeSuggest[0]->getPCID(),
-										$prizeSuggest[0]->getPID(),
-										$prizeSuggest[0]->getPromotionName(),
-										$prizeSuggest[0]->getPromotionImageSRC(),
+						GCMPlugin::sendUserSuggest(
+										$pSuggest->getUID(),
+										GCMPlugin::STATE_REJECT,
+										$pSuggest->getPCID(),
+										$pSuggest->getPID(),
+										$pSuggest->getPromotionName(),
+										Controller::formatURL( $pSuggest->getPromotionImageSRC() ),
+										$pMine->getPCID(),
+										$pMine->getPID(),
+										$pMine->getPromotionName(),
+										Controller::formatURL( $pMine->getPromotionImageSRC() ),
 										$time );
 					}
 				}
@@ -304,10 +317,14 @@
 
 				$success = false;
 
+				$pMine = $prizeMine[0];
+				$pWant = $prizeWanted[0];
+
+
 				if( !is_null( $suggestion = TradingSuggestion::findByTransaction(
-																		$prizeWanted[0]->getPCID(),
-																		$prizeWanted[0]->getTransactionID(),
-																		$prizeMine[0]->getPCID() ) ) )
+																		$pWant->getPCID(),
+																		$pWant->getTransactionID(),
+																		$pMine->getPCID() ) ) )
 				{
 
 					switch( $suggestion->getState() )
@@ -342,7 +359,7 @@
 				else
 				{
 
-					$traddSuggest = TradingSuggestion::instantiate($prizeMine[0], $prizeWanted[0]);
+					$traddSuggest = TradingSuggestion::instantiate($pMine, $pWant);
 					$traddSuggest->setDate( $time );
 
 					$this->respond->setJSONCode( ( $success = $traddSuggest->save() ) ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
@@ -352,16 +369,17 @@
 				if( $success )
 				{
 
-					GCMPlugin::sendNewSuggestion(
-									$prizeWanted[0]->getOwnerUID(),
-									$prizeMine[0]->getPCID(),
-									$prizeMine[0]->getPID(),
-									$prizeMine[0]->getPromotionName(),
-									$prizeMine[0]->getPromotionImageSRC(),
-									$prizeWanted[0]->getPCID(),
-									$prizeWanted[0]->getPID(),
-									$prizeWanted[0]->getPromotionName(),
-									$prizeWanted[0]->getPromotionImageSRC(),
+					GCMPlugin::sendUserSuggest(
+									$pWant->getUID(),
+									GCMPlugin::STATE_REJECT,
+									$pWant->getPCID(),
+									$pWant->getPID(),
+									$pWant->getPromotionName(),
+									Controller::formatURL( $pWant->getPromotionImageSRC() ),
+									$pMine->getPCID(),
+									$pMine->getPID(),
+									$pMine->getPromotionName(),
+									Controller::formatURL( $pMine->getPromotionImageSRC() ),
 									$time );
 
 				}

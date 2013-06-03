@@ -90,7 +90,7 @@
 		}
 
 
-		private static function sendAcceptReject( $uid, $type, $pcid, $pid, $name, $image, $time = null )
+		/*private static function sendAcceptReject( $uid, $type, $pcid, $pid, $name, $image, $time = null )
 		{
 			$arr = array( 'type' => $type,
 						  'time' => is_null( $time ) ? time() : $time ,
@@ -111,21 +111,21 @@
 		public static function sendReject( $uid, $pcid, $pid, $name, $image, $time = null )
 		{
 			return GCMPlugin::sendAcceptReject( $uid, self::STATE_REJECT, $pcid, $pid, $name, $image, $time );
-		}
+		}*/
 
-		public static function sendNewSuggestion( $uid, $pcid_my, $pid_my, $name_my, $image_my, $pcid_w, $pid_w, $name_w, $image_w, $time = null )
+		public static function sendUserSuggest( $uid, $type, $pcid_my, $pid_my, $name_my, $image_my, $pcid_w, $pid_w, $name_w, $image_w, $time = null )
 		{
-			$arr = array( 'type' =>self::STATE_NEW_SUGGEST ,
-						  'time' => is_null( $time ) ? time() : $time ,
+			$arr = array( 'type' => $type,
 						  'uid' => $uid,
+						  'time' => ( is_null( $time ) ? time() : $time ) ,
 						  'pcid_my' => $pcid_my,
 						  'pid_my' => $pid_my,
 						  'name_my' => $name_my,
 						  'image_my' => $image_my,
-						  'pcid_w' => $pcid_w,
-						  'pid_w' => $pid_w,
-						  'name_w' => $name_w,
-						  'image_w' => $image_w );
+						  'pcid_o' => $pcid_w,
+						  'pid_o' => $pid_w,
+						  'name_o' => $name_w,
+						  'image_o' => $image_w );
 
 			return GCMPlugin::sendUser( $uid, $arr );
 		}
