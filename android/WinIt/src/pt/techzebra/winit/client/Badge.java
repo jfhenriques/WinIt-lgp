@@ -1,63 +1,66 @@
 package pt.techzebra.winit.client;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
 import android.util.Log;
 
-public class Badge{
+public class Badge implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private int badge_id_;
+	private String name_;
+	private String image_;
+	private String description_;
+	private String date_;
 
-	private int badge_id;
-	private String name;
-	private String image;
-	private String description;
-	private String date;
-
-	public Badge(int bid, String name, String image, String desc, String date){
-		this.badge_id = bid;
-		this.name = name;
-		this.image = image;
-		this.description = desc;
-		this.date = date;
+	public Badge(int bid, String name, String image, String desc, String date) {
+		badge_id_ = bid;
+		name_ = name;
+		image_ = image;
+		description_ = desc;
+		date_ = date;
 	}
 
 	public int getBadgeID() {
-		return badge_id;
+		return badge_id_;
 	}
 
 	public void setBadgeID(int badge_id) {
-		this.badge_id = badge_id;
+		badge_id_ = badge_id;
 	}
 
 	public String getName() {
-		return name;
+		return name_;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		name_ = name;
 	}
 
 	public String getImage() {
-		return image;
+		return image_;
 	}
 
 	public void setImage(String image) {
-		this.image = image;
+		image_ = image;
 	}
 
 	public String getDescription() {
-		return description;
+		return description_;
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		description_ = description;
 	}
 	
 	public String getDate() {
-		return date;
+		return date_;
 	}
 
 	public void setDate(String date) {
-		this.date = date;
+		date_ = date;
 	}
 
 	public static Badge valueOf(JSONObject badge) {
@@ -76,7 +79,4 @@ public class Badge{
 		return null;
 		
 	}
-
-
-
 }

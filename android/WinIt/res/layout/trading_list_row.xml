@@ -1,48 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/list_selector"
-    android:orientation="horizontal"
-    android:padding="5dip" >
-
-    <!-- ListRow Left side Thumbnail image -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
     <LinearLayout
-        android:id="@+id/thumbnail"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true" >
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:background="@drawable/card_bg_play" >
 
         <pt.techzebra.winit.staggeredgridview.ScaleImageView
             android:id="@+id/list_image"
-            android:layout_width="150dip"
-            android:layout_height="fill_parent"
-            android:contentDescription="@string/app_name"
-            android:scaleType="centerCrop"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:contentDescription=""
+            android:scaleType="centerCrop" />
 
-        <View
-            android:id="@+id/separator_list_row"
-            android:layout_width="3dp"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="5dp"
-            android:background="@color/dark_gray" />
+        <TextView
+            android:id="@+id/list_item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/gap"
+            android:layout_marginRight="@dimen/gap"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/promotion"
+            android:textColor="@color/dark_gray"
+            android:textSize="20sp" />
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/list_item_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/gap"
-        android:layout_marginRight="@dimen/gap"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:fontFamily="sans-serif"
-        android:text="@string/promotion"
-        android:textColor="@color/dark_gray"
-        android:textSize="15sp"
-        android:textStyle="italic" />
-
-</RelativeLayout>
+</FrameLayout>

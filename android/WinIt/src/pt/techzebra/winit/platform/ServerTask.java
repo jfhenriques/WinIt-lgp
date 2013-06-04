@@ -20,6 +20,7 @@ public abstract class ServerTask<Params, Progress, Result> extends AsyncTask<Par
         progress_dialog_ = new ProgressDialog(context_);
         progress_dialog_.setIndeterminate(true);
         progress_dialog_.setCancelable(false);
+        progress_dialog_.setCanceledOnTouchOutside(false);
         progress_dialog_.setMessage(context_.getString(R.string.loading));
         progress_dialog_.show();
     }

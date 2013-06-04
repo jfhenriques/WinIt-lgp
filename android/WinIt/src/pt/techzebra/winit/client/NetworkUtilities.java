@@ -48,6 +48,7 @@ import pt.techzebra.winit.games.quiz.QuizActivity;
 import pt.techzebra.winit.ui.AuthenticationActivity;
 import pt.techzebra.winit.ui.EditProfileActivity;
 import pt.techzebra.winit.ui.PromotionActivity;
+import pt.techzebra.winit.ui.ReceivedProposalDialogFragment;
 import pt.techzebra.winit.ui.SignupActivity;
 
 import android.content.Context;
@@ -118,7 +119,7 @@ public class NetworkUtilities {
 	 */
 	public static final String RECEIVED_PROPOSALS = BASE_URL + "/user/promotions/suggestions/received.json";
 	public static final String SENT_PROPOSALS = BASE_URL + "/user/promotions/suggestions/sent.json";
-
+	
 	private static final String PARAM_ADDRESS_ID = "adid";
 
 	private static final String PARAM_ADDRESS_2 = "address2";
@@ -1027,23 +1028,25 @@ public class NetworkUtilities {
 	    if (type == FETCH_RECEIVED_PROPOSALS) {
 	        uri = RECEIVED_PROPOSALS + "?token=" + WinIt.getAuthToken();
 	    } else if (type == FETCH_SENT_PROPOSALS) {
+	        Log.d("proposals", "fetching sent proposals");
 	        uri =  SENT_PROPOSALS + "?token=" + WinIt.getAuthToken();
 	    } else {
 	        throw new InvalidParameterException();
 	    }
 	    
+	    ArrayList<Proposal> proposals = new ArrayList<Proposal>();
+	    
 	    JSONObject response = get(uri);
-        JSONArray r = getResponseContentArray(response);
-
-        ArrayList<Proposal> proposals = new ArrayList<Proposal>();
-        
-        for (int i = 0; i < r.length(); i++) {
-            try {
-                proposals.add(Proposal.valueOf(r.getJSONObject(i)));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+	    if (validResponse(response)) {
+	        JSONArray r = getResponseContentArray(response);
+	        for (int i = 0; i < r.length(); i++) {
+	            try {
+	                proposals.add(Proposal.valueOf(r.getJSONObject(i)));
+	            } catch (JSONException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
 	    
 	    return proposals;
 	}
@@ -1055,4 +1058,34 @@ public class NetworkUtilities {
 		
 		return;
 	}
+	
+	public static boolean answerReceivedProposal(int my_pcid, int want_pcid, int answer) {
+	    String uri = BASE_URL + "/trading/" + my_pcid + "/suggested/" + want_pcid + ".json?token=" + WinIt.getAuthToken();
+	    JSONObject response = null;
+	    switch (answer) {
+	        case ReceivedProposalDialogFragment.ACCEPT_PROPOSAL:
+	            response = get(uri);
+	            break;
+	        case ReceivedProposalDialogFragment.REFUSE_PROPOSAL:
+	            response = delete(uri);
+	            break;
+	        default:
+	            throw new IllegalArgumentException();
+	    }
+	    
+	    try {
+            Log.d("proposal answer", response.toString(2));
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	    
+	    return validResponse(response);
+	}
+
+    public static boolean revokeSentProposal(int my_pcid, int want_pcid) {
+        String uri = BASE_URL + "/trading/" + want_pcid + "/suggest/" + my_pcid + ".json?token=" + WinIt.getAuthToken();
+        JSONObject response = delete(uri);
+        return validResponse(response);
+    }
 }
