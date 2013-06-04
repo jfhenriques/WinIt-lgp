@@ -81,11 +81,10 @@ public class WinIt extends Application {
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(intent);
 		
-		if(context instanceof SherlockFragmentActivity)
-			((SherlockFragmentActivity) context).finish();
-		
-		else
+		if(context instanceof SherlockFragmentActivity) {
+		    ((SherlockFragmentActivity) context).finish();
+		} else {
 			((SherlockActivity) context).finish();
-	
+		}
 	}
 }

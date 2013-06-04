@@ -131,7 +131,8 @@ public class PromotionActivity extends SherlockActivity {
 	    }
 	    
 	    public void fetchPromotion(int id) {
-	        FetchPromotionInfoTask fetch_promotion_info_task = new FetchPromotionInfoTask(activity_, getAffinity());
+	        FetchPromotionInfoTask fetch_promotion_info_task = new FetchPromotionInfoTask(getAffinity());
+	        fetch_promotion_info_task.setContext(activity_);
 	        fetch_promotion_info_task.setDelegate(this);
 	        fetch_promotion_info_task.execute(id);
 	    }
