@@ -22,6 +22,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -43,9 +44,7 @@ public class TradingActivity extends SherlockFragmentActivity {
     public static final String KEY_EXTRA_PROMOTIONS = "promotions";
     public static final String KEY_EXTRA_RECEIVED_PROPOSALS = "received_proposals";
     public static final String KEY_EXTRA_SENT_PROPOSALS = "sent_proposals";
-    
-    private Activity activity_;
-    
+        
     private ActionBar action_bar_;
     
     private PagerSlidingTabStrip tabs_;
@@ -79,8 +78,6 @@ public class TradingActivity extends SherlockFragmentActivity {
         pager_.setAdapter(adapter_);
         
         tabs_.setViewPager(pager_);
-        
-        activity_ = this;
     }
     
     @Override
@@ -229,6 +226,7 @@ public class TradingActivity extends SherlockFragmentActivity {
         private int mode_;
         private ListView list_view_;
         private ProposalsAdapter adapter_;
+        private AdapterView.OnItemClickListener listener_;
         
         @Override
         public void onAttach(Activity activity) {
@@ -247,18 +245,36 @@ public class TradingActivity extends SherlockFragmentActivity {
             
             View view_root = inflater.inflate(R.layout.proposals_fragment, container, false);
             
+            if (mode_ == MODE_RECEIVED_PROPOSALS) {
+                listener_ = new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        
+                    }
+                };
+            } else {
+                listener_ = new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                                                
+                    }
+                };
+            }
+            
             list_view_ = (ListView) view_root.findViewById(R.id.list);
             adapter_ = new ProposalsAdapter(context_, mode_ == MODE_RECEIVED_PROPOSALS ? received_proposals_ : sent_proposals_);
             list_view_.setAdapter(adapter_);
-            
+            list_view_.setOnItemClickListener(listener_);
             
             
             return view_root;
         }
         
         private static class ProposalsAdapter extends BaseAdapter {
-            private ImageLoader image_loader_;
             private ArrayList<Proposal> proposals_;
+            private ImageLoader image_loader_;
             
             public ProposalsAdapter(Context context, ArrayList<Proposal> proposals) {
                 proposals_ = proposals;

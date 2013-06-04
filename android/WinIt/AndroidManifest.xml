@@ -82,6 +82,11 @@
             android:name="pt.techzebra.winit.ui.BadgesActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="pt.techzebra.winit.ui.BadgeActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name="pt.techzebra.winit.ui.ProfileActivity"
             android:configChanges="orientation"

@@ -12,6 +12,7 @@ import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.User;
 import pt.techzebra.winit.platform.DownloadImageTask;
+import pt.techzebra.winit.platform.LoadBadgesTask;
 import pt.techzebra.winit.platform.LoadMyPromotionsInfo;
 import pt.techzebra.winit.platform.MD5Util;
 import pt.techzebra.winit.platform.RoundedImageView;
@@ -134,22 +135,16 @@ public class ProfileActivity extends SherlockActivity {
 	}
 
 	public void handleProfileSelection(View view) {
-		Class<?> cls = null;
 		switch (view.getId()) {
-		case R.id.promotions_button:
-			new LoadMyPromotionsInfo(this).execute();
-			break;
-		case R.id.badges_button:
-			cls = BadgesActivity.class;
-			break;
-		case R.id.tags_button:
-			cls = null;
-			Toast.makeText(this, "Comming soon!", Toast.LENGTH_SHORT).show();
-			break;
-		}
-		if (cls != null) {
-			Intent intent = new Intent(this, cls);
-			startActivity(intent);
+    		case R.id.promotions_button:
+    			new LoadMyPromotionsInfo(this).execute();
+    			break;
+    		case R.id.badges_button:
+    			new LoadBadgesTask().setContext(this).execute();
+    			break;
+    		case R.id.tags_button:
+    			Toast.makeText(this, "Comming soon!", Toast.LENGTH_SHORT).show();
+    			break;
 		}
 	}
 }

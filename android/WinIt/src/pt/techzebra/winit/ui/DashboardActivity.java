@@ -3,7 +3,6 @@ package pt.techzebra.winit.ui;
 import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
-import pt.techzebra.winit.platform.LoadMyPromotionsInfo;
 import pt.techzebra.winit.platform.LoadTradingPromotionsInfo;
 import pt.techzebra.winit.platform.LoadingUserInfo;
 import android.content.Context;

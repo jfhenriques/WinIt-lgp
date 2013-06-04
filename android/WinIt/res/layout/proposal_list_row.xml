@@ -1,45 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:weightSum="1"
-    android:baselineAligned="false"
-    android:background="@drawable/card_bg_play">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_weight="0.5" >
-        <pt.techzebra.winit.staggeredgridview.ScaleImageView
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="125dp"
+        android:padding="10dp"
+        android:background="@drawable/card_bg_play" >
+
+        <ImageView
             android:id="@+id/my_image"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:contentDescription=""
-            android:scaleType="fitCenter" />
-        
+            android:scaleType="centerCrop"
+            android:layout_marginRight="5dp" />
+
         <TextView
             android:id="@+id/my_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        android:orientation="vertical" >
-        <pt.techzebra.winit.staggeredgridview.ScaleImageView
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/my_image"
+            android:fontFamily="sans-serif-light"
+            android:text="Super Preço"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+        
+        <TextView
+            android:id="@+id/outgoing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/my_image"
+            android:layout_below="@+id/my_name"
+            android:fontFamily="sans-serif-light"
+            android:textStyle="italic"
+            android:textColor="@color/asbestos"
+            android:textSize="12sp"
+            android:text="@string/outgoing"
+            android:drawableRight="@drawable/ic_outgoing"
+            android:drawablePadding="5dp" />
+
+        <ImageView
             android:id="@+id/want_image"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="5dp"
             android:contentDescription=""
-            android:scaleType="fitCenter" />
+            android:scaleType="centerCrop" />
+
         <TextView
             android:id="@+id/want_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/want_image"
+            android:fontFamily="sans-serif-light"
+            android:gravity="right"
+            android:text="Consola Nintendo 3DS"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+        
+        <TextView
+            android:id="@+id/incoming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/want_image"
+            android:layout_above="@+id/want_name"
+            android:fontFamily="sans-serif-light"
+            android:textStyle="italic"
+            android:gravity="right"
+            android:textColor="@color/asbestos"
+            android:textSize="12sp"
+            android:text="@string/incoming"
+            android:drawableLeft="@drawable/ic_incoming"
+            android:drawablePadding="5dp" />
+    </RelativeLayout>
 
-</LinearLayout>
+</FrameLayout>
