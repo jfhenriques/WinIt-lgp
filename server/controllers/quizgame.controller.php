@@ -202,12 +202,14 @@
 									// perguntas_certas/total_perguntas*pontos da promoção
 								
 									$ratio = ( $rightAnswers / $totalQuestions );
-									
-									$userPoints = UserPoints::instantiate( $uid, $promo, $ratio, $time );
-									
-									$pointsWon = $userPoints->getXPPoints();
+									$pointsWon = (int)( $ratio * $promo->getWinPoints() );
+
 									if( $pointsWon > 0 )
+									{
+										$userPoints = UserPoints::instantiate( $uid, $pid, $pointsWon, $time );
+									
 										$hasError = !$userPoints->save();
+									}
 								}
 							}
 							else
