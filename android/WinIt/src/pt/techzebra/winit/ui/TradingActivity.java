@@ -1,15 +1,14 @@
 package pt.techzebra.winit.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.client.Proposal;
+import pt.techzebra.winit.client.TradingContainer;
 import pt.techzebra.winit.platform.FetchPromotionsTask;
+import pt.techzebra.winit.staggeredgridview.ImageLoader;
 import pt.techzebra.winit.staggeredgridview.StaggeredAdapter;
 
 import android.app.Activity;
@@ -26,13 +25,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.origamilabs.library.views.StaggeredGridView;
@@ -41,7 +38,11 @@ import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
 public class TradingActivity extends SherlockFragmentActivity {
     private static final String TAG = "TradingActivity";
     
+    public static final String KEY_EXTRA_TRADING_CONTAINER = "trading_container";
+    
     public static final String KEY_EXTRA_PROMOTIONS = "promotions";
+    public static final String KEY_EXTRA_RECEIVED_PROPOSALS = "received_proposals";
+    public static final String KEY_EXTRA_SENT_PROPOSALS = "sent_proposals";
     
     private Activity activity_;
     
@@ -52,8 +53,8 @@ public class TradingActivity extends SherlockFragmentActivity {
     private TradingPromotionsPagerAdapter adapter_;
     
     static ArrayList<Promotion> proposable_promotions_ = new ArrayList<Promotion>();
-    static ArrayList<Promotion> received_proposals_ = new ArrayList<Promotion>();
-    static ArrayList<Promotion> sent_proposals_ = new ArrayList<Promotion>();
+    static ArrayList<Proposal> received_proposals_ = new ArrayList<Proposal>();
+    static ArrayList<Proposal> sent_proposals_ = new ArrayList<Proposal>();
 
     @Override
     protected void onCreate(Bundle saved_instance_state) {
@@ -69,12 +70,11 @@ public class TradingActivity extends SherlockFragmentActivity {
         action_bar_.setDisplayHomeAsUpEnabled(true);
         action_bar_.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_bg_trading));
         
-        ArrayList<ArrayList<Promotion>> temp = new ArrayList<ArrayList<Promotion>>();
-        temp = (ArrayList<ArrayList<Promotion>>) getIntent().getSerializableExtra(KEY_EXTRA_PROMOTIONS);
-        proposable_promotions_ = temp.get(0);
-        //received_proposals_ = temp.get(1);
-        //sent_proposals_ = temp.get(2);
+        TradingContainer container = (TradingContainer) getIntent().getSerializableExtra(KEY_EXTRA_TRADING_CONTAINER);
         
+        proposable_promotions_ = container.PROPOSABLE_PROMOTIONS;
+        received_proposals_ = container.RECEIVED_PROPOSALS;
+        sent_proposals_ = container.SENT_PROPOSALS;
         
         pager_.setAdapter(adapter_);
         
@@ -84,19 +84,10 @@ public class TradingActivity extends SherlockFragmentActivity {
     }
     
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.menu_logout, menu);
-        return true;
-    }
-    
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                break;
-            case R.id.menu_log_out:
-                WinIt.logOut(this);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -116,13 +107,14 @@ public class TradingActivity extends SherlockFragmentActivity {
             SherlockFragment fragment = null;
             switch (position) {
                 case 0:
-                    fragment = new ProposablePromotions();
+                    fragment = new ProposablePromotionsFragment();
                     break;
-                case 1:
-                    fragment = new ReceivedProposals();
-                    break;
+                case 1: // breakthrough
                 case 2:
-                    fragment = new SentProposals();
+                    fragment = new ProposalsFragment();
+                    Bundle arguments = new Bundle();
+                    arguments.putInt(ProposalsFragment.KEY_VIEW_MODE, position);
+                    fragment.setArguments(arguments);
                     break;
             }
             return fragment;
@@ -153,7 +145,7 @@ public class TradingActivity extends SherlockFragmentActivity {
         }
     }
     
-    public static class ProposablePromotions extends SherlockFragment implements FetchPromotionsTask.AsyncResponse, OnItemClickListener {
+    public static class ProposablePromotionsFragment extends SherlockFragment implements FetchPromotionsTask.AsyncResponse, OnItemClickListener {
         private Activity activity_;
         
         private StaggeredGridView staggered_grid_view_;
@@ -227,87 +219,103 @@ public class TradingActivity extends SherlockFragmentActivity {
         }
     }
     
-    public static class ReceivedProposals extends SherlockFragment {
-        ListView list_view_;
+    public static class ProposalsFragment extends SherlockFragment {
+        public static final String KEY_VIEW_MODE = "view_mode";
+        
+        public static final int MODE_RECEIVED_PROPOSALS = 1;
+        public static final int MODE_SENT_PROPOSALS = 2;
+        
+        private Context context_;
+        private int mode_;
+        private ListView list_view_;
+        private ProposalsAdapter adapter_;
+        
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            context_ = activity;
+        }
         
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle saved_instance_state) {
+            Bundle arguments = getArguments();
+            mode_ = arguments.getInt(KEY_VIEW_MODE);
+            if (mode_ == 0) {
+                throw new IllegalArgumentException();
+            }
+            
             View view_root = inflater.inflate(R.layout.proposals_fragment, container, false);
             
             list_view_ = (ListView) view_root.findViewById(R.id.list);
+            adapter_ = new ProposalsAdapter(context_, mode_ == MODE_RECEIVED_PROPOSALS ? received_proposals_ : sent_proposals_);
+            list_view_.setAdapter(adapter_);
+            
+            
             
             return view_root;
         }
         
-//        private class ProposalsAdapter extends BaseAdapter {
-//            private ArrayList<HashMap<String, String>> proposals_;
-//            
-//            public ProposalsAdapter(ArrayList<HashMap<String, String>> proposals) {
-//                proposals_ = proposals;
-//            }
-//            
-//            public void setProposals(ArrayList<HashMap<String, String>> proposals) {
-//                proposals_ = proposals;
-//                notifyDataSetChanged();
-//            }
-//            
-//            @Override
-//            public int getCount() {
-//                return proposals_.size();
-//            }
-//            
-//            @Override
-//            public Object getItem(int position) {
-//                return proposals_.get(position);
-//            }
-//            
-//            @Override
-//            public long getItemId(int position) {
-//                return Long.valueOf(proposals_.get(position).get("my_id"));
-//            }
-//            
-//            @Override
-//            public View getView(int position, View convert_view, ViewGroup parent) {
-//                ViewHolder holder;
-//                
-//                View view = convert_view;
-//                
-//                if (convert_view == null) {
-//                    LayoutInflater inflater = LayoutInflater.from(getActivity());
-//                    
-//                    view = inflater.inflate(R.layout.proposal_list_row, null);
-//                    holder = new ViewHolder();
-//                    holder.my_image = (ImageView) view.findViewById(R.id.my_image);
-//                    holder.my_name = (TextView) view.findViewById(R.id.my_name);
-//                    holder.want_image = (ImageView) view.findViewById(R.id.want_image);
-//                    holder.want_name = (TextView) view.findViewById(R.id.want_name);
-//                    
-//                    view.setTag(holder);
-//                } else {
-//                    holder = (ViewHolder) view.getTag();
-//                }
-//                
-//                holder.my_name.setText(proposals_.get(position).get("my_name"));
-//                holder.my_image = proposals_.get(position).get("my_name");
-//                holder.want_name.setText(proposals_.get(position).get("my_name"));
-//                holder.want_image = proposals_.get(position).get("my_name");
-//                
-//                return view;
-//            }
-//            
-//            public class ViewHolder {
-//                TextView my_name;
-//                ImageView my_image;
-//                TextView want_name;
-//                ImageView want_image;
-//            }
-//
-//            
-//        }
-    }
-    
-    public static class SentProposals extends SherlockFragment {
-        // TODO
+        private static class ProposalsAdapter extends BaseAdapter {
+            private ImageLoader image_loader_;
+            private ArrayList<Proposal> proposals_;
+            
+            public ProposalsAdapter(Context context, ArrayList<Proposal> proposals) {
+                proposals_ = proposals;
+                image_loader_ = new ImageLoader(context);
+            }
+            
+            @Override
+            public int getCount() {
+                return proposals_.size();
+            }
+            
+            @Override
+            public Object getItem(int position) {
+                return proposals_.get(position);
+            }
+            
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+            
+            @Override
+            public View getView(int position, View convert_view, ViewGroup parent) {
+                ViewHolder holder;
+                
+                View view = convert_view;
+                
+                if (convert_view == null) {
+                    LayoutInflater inflater = LayoutInflater.from(WinIt.getAppContext());
+                    
+                    view = inflater.inflate(R.layout.proposal_list_row, null);
+                    holder = new ViewHolder();
+                    holder.my_image = (ImageView) view.findViewById(R.id.my_image);
+                    holder.my_name = (TextView) view.findViewById(R.id.my_name);
+                    holder.want_image = (ImageView) view.findViewById(R.id.want_image);
+                    holder.want_name = (TextView) view.findViewById(R.id.want_name);
+                    
+                    view.setTag(holder);
+                } else {
+                    holder = (ViewHolder) view.getTag();
+                }
+                
+                Proposal proposal = proposals_.get(position);
+                holder.my_name.setText(proposal.getMyName());
+                image_loader_.DisplayImage(proposal.getMyImage(), holder.my_image);
+                holder.want_name.setText(proposal.getWantName());
+                image_loader_.DisplayImage(proposal.getWantImage(), holder.want_image);
+                
+                return view;
+            }
+            
+            public class ViewHolder {
+                TextView my_name;
+                ImageView my_image;
+                TextView want_name;
+                ImageView want_image;
+            }
+        }
     }
 }

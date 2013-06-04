@@ -4,32 +4,38 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:weightSum="1"
-    android:baselineAligned="false" >
+    android:baselineAligned="false"
+    android:background="@drawable/card_bg_play">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_weight="0.5" >
-        <ImageView
+        <pt.techzebra.winit.staggeredgridview.ScaleImageView
             android:id="@+id/my_image"
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
+            android:layout_height="100dp"
+            android:contentDescription=""
+            android:scaleType="fitCenter" />
+        
         <TextView
             android:id="@+id/my_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
-
+    
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0.5"
         android:orientation="vertical" >
-        <ImageView
+        <pt.techzebra.winit.staggeredgridview.ScaleImageView
             android:id="@+id/want_image"
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
+            android:layout_height="100dp"
+            android:contentDescription=""
+            android:scaleType="fitCenter" />
         <TextView
             android:id="@+id/want_name"
             android:layout_width="match_parent"

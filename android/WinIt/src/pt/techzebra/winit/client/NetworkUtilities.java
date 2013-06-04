@@ -2,6 +2,7 @@ package pt.techzebra.winit.client;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidParameterException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -115,8 +116,8 @@ public class NetworkUtilities {
 	/*
 	 * Trading
 	 */
-	public static final String RECEIVED_PROPOSALS = BASE_URL + "/trading/";
-	public static final String SENT_PROPOSALS = BASE_URL + "";
+	public static final String RECEIVED_PROPOSALS = BASE_URL + "/user/promotions/suggestions/received.json";
+	public static final String SENT_PROPOSALS = BASE_URL + "/user/promotions/suggestions/sent.json";
 
 	private static final String PARAM_ADDRESS_ID = "adid";
 
@@ -700,10 +701,10 @@ public class NetworkUtilities {
 		return promos;
 	}
 
-	public static ArrayList<Promotion> fetchProposableTradings(String token) {
+	public static ArrayList<Promotion> fetchProposableTradings() {
 
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
-		String uri = TRADING_URI + "?token=" + token;
+		String uri = TRADING_URI + "?token=" + WinIt.getAuthToken();
 		JSONObject response = get(uri);
 		JSONArray r = getResponseContentArray(response);
 
@@ -1018,12 +1019,33 @@ public class NetworkUtilities {
 	}
 
 	
-	public static void fetchReceivedProposals() {
-	    
-	}
+	public static int FETCH_RECEIVED_PROPOSALS = 1;
+	public static int FETCH_SENT_PROPOSALS = 2;
 	
-	public static void fetchSentProposals() {
+	public static ArrayList<Proposal> fetchProposals(int type) {
+	    String uri = null;
+	    if (type == FETCH_RECEIVED_PROPOSALS) {
+	        uri = RECEIVED_PROPOSALS + "?token=" + WinIt.getAuthToken();
+	    } else if (type == FETCH_SENT_PROPOSALS) {
+	        uri =  SENT_PROPOSALS + "?token=" + WinIt.getAuthToken();
+	    } else {
+	        throw new InvalidParameterException();
+	    }
 	    
+	    JSONObject response = get(uri);
+        JSONArray r = getResponseContentArray(response);
+
+        ArrayList<Proposal> proposals = new ArrayList<Proposal>();
+        
+        for (int i = 0; i < r.length(); i++) {
+            try {
+                proposals.add(Proposal.valueOf(r.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+	    
+	    return proposals;
 	}
 	
 	private static void fetchTradeProposals(String auth_token, String pcid) {
