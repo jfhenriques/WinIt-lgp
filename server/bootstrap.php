@@ -8,11 +8,15 @@
 	// e sendo enviado para o browser do utulizador apenas no final.
 	ob_start();
 	
-	header('Content-type: text/html; charset=utf-8', true);
+	//header('Content-type: text/html; charset=utf-8', true);
 		
 	DEFINE('ROOT',  dirname(__FILE__));
 	
-	require_once(ROOT .'/config/environment.conf.php');
+	if( defined('ENVIRONMENT_CONFIG') )
+		require_once( ENVIRONMENT_CONFIG );
+	else
+		require_once(ROOT .'/config/environment.conf.php');
+	
 	require_once(ROOT .'/helpers/commons.inc.php');
 	
 	include_once(ROOT .'/helpers/router.inc.php');

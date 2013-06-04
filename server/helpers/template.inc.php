@@ -43,10 +43,14 @@
 
 		public function renderHTML( $html )
 		{
+			header('Content-type: text/html; charset=utf-8', true);
+
 			echo $html;
 		}
 		public function renderText( $text )
 		{
+			header('Content-type: text/plain; charset=utf-8', true);
+
 			echo $text;
 		}
 
