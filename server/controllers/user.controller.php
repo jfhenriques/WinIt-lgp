@@ -523,7 +523,7 @@
 			
 			}
 
-			$this->respond->renderText( $renderText );
+			$this->respond->renderHTML( $renderText );
 		}
 
 
@@ -557,7 +557,7 @@
 				}
 				else
 				{
-					UserGCM::deleteByUID( $uid ); // Quick fix!
+					UserGCM::deleteAllByUID( $uid ); // Quick fix!
 
 					$gcm = UserGCM::instantiate( $uid, $token_gcm );
 

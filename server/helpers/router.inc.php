@@ -336,22 +336,25 @@
 			recursiveArrayClean( $cached );
 			
 		}
+
+
+
+
+		private function is_root( $url )
+		{
+			return strlen( str_replace(array('/', ' ', "\t"), '', $url) ) == 0 ;
+		}
+		private function is_default_root_valid($where)
+		{
+			return @(isset( $where['root'] )
+						&& is_string( $where['root'] )
+						&& ( strlen( $where['root'] ) > 0 )) ;
+		}
 		
 		public function route()
 		{
 		
-			function is_root( $url )
-			{
-				return strlen( str_replace(array('/', ' ', "\t"), '', $url) ) == 0 ;
-			}
-			function is_default_root_valid($where)
-			{
-				return @(isset( $where['root'] )
-							&& is_string( $where['root'] )
-							&& ( strlen( $where['root'] ) > 0 )) ;
-			}
-			
-			if(  is_default_root_valid( $this->cachedRoutes ) && is_root( $this->url ) )
+			if( $this->is_default_root_valid( $this->cachedRoutes ) && $this->is_root( $this->url ) )
 			{
 				header('Location: ' . $this->cachedRoutes['root'], true);
 			
@@ -464,6 +467,7 @@
 			else
 			{
 				header("HTTP/1.0 404 Not Found");
+				header('Content-type: text/html; charset=utf-8', true);
 				
 				include_once( NOT_FOUND_PAGE );
 			}

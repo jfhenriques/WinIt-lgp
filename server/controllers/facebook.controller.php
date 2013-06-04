@@ -39,7 +39,7 @@
 			}
 			else
 			{
-				$this->respond->renderText( $challenge );
+				$this->respond->renderHTML( $challenge );
 			}
 		}
 

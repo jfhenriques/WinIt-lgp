@@ -118,10 +118,10 @@
 		
 		public static function getInstance()
 		{
-			if( is_null( static::$instance ) )
-				static::$instance = new CommonCache();
+			if( is_null( self::$instance ) )
+				self::$instance = new CommonCache();
 				
-			return static::$instance;
+			return self::$instance;
 		}
 
 		public static function buildVarName($var_pref, $var)
