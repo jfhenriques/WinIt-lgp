@@ -73,7 +73,7 @@
 
 		public static function deleteAllByUID($uid)
 		{
-			return static::query( 'DELETE FROM '. self::TABLE_NAME . ' WHERE uid = ? ;', array( $uid ) );
+			return static::executeQuery( 'DELETE FROM '. self::TABLE_NAME . ' WHERE uid = ? ;', array( $uid ) );
 		}
 
 

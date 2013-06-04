@@ -248,7 +248,7 @@
 
 		public static function findByUID($id)
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE AND uid = ? LIMIT 1;',
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE uid = ? LIMIT 1;',
 									  array( $id ) );
 
 			return static::fillModel( $result, new User() );

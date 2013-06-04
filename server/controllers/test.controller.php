@@ -15,9 +15,9 @@
 			var_dump( GCMPlugin::send( $sig, $payload ) );
 */
 
-    
+    	UserGCM::deleteAllByUID(1);
 
-			$time_start = microtime(true);
+		/*	$time_start = microtime(true);
 
 			$forceTransferable = false;
 			$owned = true;
@@ -25,7 +25,7 @@
 
 			$key = 'cenas.estupidas';
 
-			for($i = 0; $i < 100000; $i++)
+			for($i = 0; $i < 1000000; $i++)
 			{
 
 				
@@ -57,7 +57,7 @@
 			$time_end = microtime(true) - $time_start;
 
 			echo "Took: {$time_end}";
-
+*/
 
 		}
 
