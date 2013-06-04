@@ -25,10 +25,12 @@
 	set_exception_handler("my_exception_handler");
 	
 	set_error_handler(function($errno, $errstr, $errfile, $errline ) {
+		
 		$exc = new ErrorException($errstr, $errno, 0, $errfile, $errline);
 
 		if ( (ini_get('error_reporting') & $errno) !== 0 )
 			my_exception_handler( $exc );
+
 		else
 			error_log($exc);
 	});

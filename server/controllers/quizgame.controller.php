@@ -97,7 +97,7 @@
 			$user = AuthenticatorPlugin::getInstance()->getUser();
 
 
-			if( us_null( $user ) || $pid <= 0 || $upid <= 0 || is_null( $answers ) || !is_array($answers) )
+			if( is_null( $user ) || $pid <= 0 || $upid <= 0 || is_null( $answers ) || !is_array($answers) )
 				$this->respond->setJSONCode( R_QUIZ_ERR_PARAM_2 );
 
 			else
