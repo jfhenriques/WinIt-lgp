@@ -35,6 +35,46 @@ public class Proposal implements Serializable {
         want_image_ = want_image;
     }
     
+    public int getMyPcid() {
+        return my_pcid_;
+    }
+
+    public int getMyPid() {
+        return my_pid_;
+    }
+
+    public long getMyMaxUtilDate() {
+        return my_max_util_date_;
+    }
+
+    public String getMyName() {
+        return my_name_;
+    }
+
+    public String getMyImage() {
+        return my_image_;
+    }
+
+    public int getWantPcid() {
+        return want_pcid_;
+    }
+
+    public int getWantPid() {
+        return want_pid_;
+    }
+
+    public long getWantMaxUtilDate() {
+        return want_max_util_date_;
+    }
+
+    public String getWantName() {
+        return want_name_;
+    }
+
+    public String getWantImage() {
+        return want_image_;
+    }
+
     public static Proposal valueOf(JSONObject proposal) {
         int my_pcid = proposal.optInt("pcid_my");
         int my_pid = proposal.optInt("pid_my");
