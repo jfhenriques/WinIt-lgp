@@ -38,11 +38,11 @@
 
 
 
-		public static function instantiate($uid, $pid, $ratio, $time = null)
+		public static function instantiate($uid, $pid, $points, $time = null)
 		{
 			$userPoints = new UserPoints();
 
-			if( !is_null( $uid ) && !is_null( $promotion ) && !is_null( $ratio ) )
+			if( !is_null( $uid ) && !is_null( $pid ) && !is_null( $points ) )
 			{
 				$userPoints->isInsert = true;
 
@@ -51,7 +51,7 @@
 
 				$userPoints->data['aquis_date'] = is_null( $time ) ? time() : $time ;
 
-				$userPoints->data['xp_points'] = (int)( $ratio * $promotion->getWinPoints() ) ;
+				$userPoints->data['xp_points'] = $points ;
 			}
 
 			return $userPoints;
