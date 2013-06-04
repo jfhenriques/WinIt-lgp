@@ -332,7 +332,7 @@ public class PromotionActivity extends SherlockActivity {
         public void populateFields() {
             super.populateFields();
             
-            owner_text_.setText("Hello World");
+            //owner_text_.setText(promotion_.get);
         }
 	    
         @Override
