@@ -1060,7 +1060,7 @@ public class NetworkUtilities {
 	}
 	
 	public static boolean answerReceivedProposal(int my_pcid, int want_pcid, int answer) {
-	    String uri = BASE_URL + "/trading/" + my_pcid + "/suggested" + want_pcid + ".json?token=" + WinIt.getAuthToken();
+	    String uri = BASE_URL + "/trading/" + my_pcid + "/suggested/" + want_pcid + ".json?token=" + WinIt.getAuthToken();
 	    JSONObject response = null;
 	    switch (answer) {
 	        case ReceivedProposalDialogFragment.ACCEPT_PROPOSAL:
@@ -1072,6 +1072,13 @@ public class NetworkUtilities {
 	        default:
 	            throw new IllegalArgumentException();
 	    }
+	    
+	    try {
+            Log.d("proposal answer", response.toString(2));
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 	    
 	    return validResponse(response);
 	}
