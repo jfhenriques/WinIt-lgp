@@ -3,7 +3,7 @@ package pt.techzebra.winit.ui;
 import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
-import pt.techzebra.winit.platform.LoadTradingPromotionsInfo;
+import pt.techzebra.winit.platform.LoadTradingTask;
 import pt.techzebra.winit.platform.LoadingUserInfo;
 import android.content.Context;
 import android.content.Intent;
@@ -117,7 +117,7 @@ public class DashboardActivity extends SherlockActivity {
             Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
             break;
         case R.id.trading_layout:
-            new LoadTradingPromotionsInfo().setContext(this).execute();
+            new LoadTradingTask().setContext(this).execute();
             break;
         }
     }

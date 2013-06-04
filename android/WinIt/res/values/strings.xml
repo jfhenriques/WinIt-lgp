@@ -71,5 +71,16 @@
     
     <string name="outgoing">Outgoing</string>
     <string name="incoming">Incoming</string>
+    <string name="answer_proposal">Answer proposal</string>
+    <string name="choose_to_do_with_the_proposal">Choose what to do with the proposal.</string>
+    <string name="ok">OK</string>
     
+    <string name="promotion_successfully_exchanged">Promotion successfully exchanged.</string>
+    <string name="proposal_successfully_revoked">Proposal successfully revoked.</string>
+    <string name="an_error_has_occured">An error has occurred.</string>
+    <string name="revoke_sent_proposal">Revoke sent proposal?</string>
+    <string name="revoke">Revoke</string>
+    <string name="you_will_lose_the_opportunity_to_trade_your_promotion">You\'ll lose the opportunity to trade your promotion.</string>
+    
+    <string name="no_proposals">No proposals</string>
 </resources>

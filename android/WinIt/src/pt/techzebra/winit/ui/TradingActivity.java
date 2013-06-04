@@ -250,7 +250,16 @@ public class TradingActivity extends SherlockFragmentActivity {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
-                        
+                        ReceivedProposalDialogFragment dialog_fragment = new ReceivedProposalDialogFragment();
+                        Proposal proposal = (Proposal) adapter_.getItem(position);
+                        Bundle arguments = new Bundle();
+                        arguments.putInt(ReceivedProposalDialogFragment.KEY_EXTRA_PROPOSAL_MY_PCID, proposal.getMyPcid());
+                        arguments.putInt(ReceivedProposalDialogFragment.KEY_EXTRA_PROPOSAL_WANT_PCID, proposal.getWantPcid());
+                        dialog_fragment.setArguments(arguments);
+                        dialog_fragment.show(
+                                ((SherlockFragmentActivity) context_)
+                                        .getSupportFragmentManager(),
+                                "ReceivedProposalDialogFragment");
                     }
                 };
             } else {
@@ -258,16 +267,25 @@ public class TradingActivity extends SherlockFragmentActivity {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
-                                                
+                        SentProposalDialogFragment dialog_fragment = new SentProposalDialogFragment();
+                        Proposal proposal = (Proposal) adapter_.getItem(position);
+                        Bundle arguments = new Bundle();
+                        arguments.putInt(ReceivedProposalDialogFragment.KEY_EXTRA_PROPOSAL_MY_PCID, proposal.getMyPcid());
+                        arguments.putInt(ReceivedProposalDialogFragment.KEY_EXTRA_PROPOSAL_WANT_PCID, proposal.getWantPcid());
+                        dialog_fragment.setArguments(arguments);
+                        dialog_fragment.show(
+                                ((SherlockFragmentActivity) context_)
+                                        .getSupportFragmentManager(),
+                                "SentProposalDialogFragment");
                     }
                 };
             }
             
             list_view_ = (ListView) view_root.findViewById(R.id.list);
+            list_view_.setEmptyView(view_root.findViewById(R.id.empty));
             adapter_ = new ProposalsAdapter(context_, mode_ == MODE_RECEIVED_PROPOSALS ? received_proposals_ : sent_proposals_);
             list_view_.setAdapter(adapter_);
             list_view_.setOnItemClickListener(listener_);
-            
             
             return view_root;
         }

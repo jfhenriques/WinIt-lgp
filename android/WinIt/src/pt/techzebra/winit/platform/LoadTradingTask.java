@@ -10,7 +10,7 @@ import pt.techzebra.winit.client.TradingContainer;
 import pt.techzebra.winit.ui.TradingActivity;
 import android.content.Intent;
 
-public class LoadTradingPromotionsInfo extends ServerTask<Void,Void,TradingContainer> {
+public class LoadTradingTask extends ServerTask<Void, Void, TradingContainer> {
 	@Override
 	protected TradingContainer doInBackground(Void... params) {
 		ArrayList<Promotion> proposable_promotions = NetworkUtilities.fetchProposableTradings();
