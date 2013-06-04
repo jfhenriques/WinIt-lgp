@@ -13,12 +13,14 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 public class ReceivedProposalDialogFragment extends SherlockDialogFragment {
     public static final String KEY_EXTRA_PROPOSAL_MY_PCID = "my_pcid";
     public static final String KEY_EXTRA_PROPOSAL_WANT_PCID = "want_pcid";
+    public static final String KEY_EXTRA_PROPOSAL_POSITION = "position";
     
     public static final int ACCEPT_PROPOSAL = 1;
     public static final int REFUSE_PROPOSAL = 2;
     
     private int my_pcid_;
     private int want_pcid_;
+    private int proposal_position_;
     
     private TradingActivity activity_;
     private DialogInterface.OnClickListener listener_;
@@ -36,7 +38,8 @@ public class ReceivedProposalDialogFragment extends SherlockDialogFragment {
         Bundle arguments = getArguments();
         my_pcid_ = arguments.getInt(KEY_EXTRA_PROPOSAL_MY_PCID, -1);
         want_pcid_ = arguments.getInt(KEY_EXTRA_PROPOSAL_WANT_PCID, -1);
-        if (my_pcid_ == -1 || want_pcid_ == -1) {
+        proposal_position_ = arguments.getInt(KEY_EXTRA_PROPOSAL_POSITION, -1);
+        if (my_pcid_ == -1 || want_pcid_ == -1 || proposal_position_ == -1) {
             throw new IllegalArgumentException();
         }
         
@@ -52,7 +55,7 @@ public class ReceivedProposalDialogFragment extends SherlockDialogFragment {
                     throw new IllegalArgumentException();
                 }
                 
-                new AnswserReceivedProposalTask().setContext(activity_).execute(my_pcid_, want_pcid_, answer);
+                new AnswserReceivedProposalTask().setContext(activity_).execute(my_pcid_, want_pcid_, proposal_position_, answer);
             }
         };
     }

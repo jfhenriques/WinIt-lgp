@@ -1,6 +1,8 @@
 package pt.techzebra.winit.ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.WinIt;
@@ -19,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +58,18 @@ public class TradingActivity extends SherlockFragmentActivity {
     static ArrayList<Proposal> received_proposals_ = new ArrayList<Proposal>();
     static ArrayList<Proposal> sent_proposals_ = new ArrayList<Proposal>();
 
+    public ArrayList<Promotion> getProposablePromotions() {
+        return proposable_promotions_;
+    }
+    
+    public ArrayList<Proposal> getReceivedProposals()  {
+        return received_proposals_;
+    }
+    
+    public ArrayList<Proposal> getSentProposals() {
+        return sent_proposals_;
+    }
+    
     @Override
     protected void onCreate(Bundle saved_instance_state) {
         super.onCreate(saved_instance_state);
@@ -92,8 +107,14 @@ public class TradingActivity extends SherlockFragmentActivity {
         return true;
     }
     
-    private static class TradingPromotionsPagerAdapter extends FragmentStatePagerAdapter {
+    public ViewPager getViewPager() {
+        return pager_;
+    }
+    
+    public static class TradingPromotionsPagerAdapter extends FragmentStatePagerAdapter {
         private final String[] TITLES = {"Available", "Received Proprosals", "Sent Proposals"};
+        
+        private SparseArray<SherlockFragment> page_reference_map_ = new SparseArray<SherlockFragment>();
         
         public TradingPromotionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -114,7 +135,20 @@ public class TradingActivity extends SherlockFragmentActivity {
                     fragment.setArguments(arguments);
                     break;
             }
+            
+            page_reference_map_.put(position, fragment);
+            
             return fragment;
+        }
+        
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            super.destroyItem(container, position, object);
+            page_reference_map_.remove(position);
+        }
+        
+        public SherlockFragment getFragment(int position) {
+            return page_reference_map_.get(position);
         }
         
         @Override
@@ -234,6 +268,11 @@ public class TradingActivity extends SherlockFragmentActivity {
             context_ = activity;
         }
         
+        public ProposalsAdapter getAdapter() {
+            return adapter_;
+        }
+        
+        
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle saved_instance_state) {
@@ -255,6 +294,7 @@ public class TradingActivity extends SherlockFragmentActivity {
                         Bundle arguments = new Bundle();
                         arguments.putInt(ReceivedProposalDialogFragment.KEY_EXTRA_PROPOSAL_MY_PCID, proposal.getMyPcid());
                         arguments.putInt(ReceivedProposalDialogFragment.KEY_EXTRA_PROPOSAL_WANT_PCID, proposal.getWantPcid());
+                        arguments.putInt(ReceivedProposalDialogFragment.KEY_EXTRA_PROPOSAL_POSITION, position);
                         dialog_fragment.setArguments(arguments);
                         dialog_fragment.show(
                                 ((SherlockFragmentActivity) context_)
@@ -270,8 +310,9 @@ public class TradingActivity extends SherlockFragmentActivity {
                         SentProposalDialogFragment dialog_fragment = new SentProposalDialogFragment();
                         Proposal proposal = (Proposal) adapter_.getItem(position);
                         Bundle arguments = new Bundle();
-                        arguments.putInt(ReceivedProposalDialogFragment.KEY_EXTRA_PROPOSAL_MY_PCID, proposal.getMyPcid());
-                        arguments.putInt(ReceivedProposalDialogFragment.KEY_EXTRA_PROPOSAL_WANT_PCID, proposal.getWantPcid());
+                        arguments.putInt(SentProposalDialogFragment.KEY_EXTRA_PROPOSAL_MY_PCID, proposal.getMyPcid());
+                        arguments.putInt(SentProposalDialogFragment.KEY_EXTRA_PROPOSAL_WANT_PCID, proposal.getWantPcid());
+                        arguments.putInt(SentProposalDialogFragment.KEY_EXTRA_PROPOSAL_POSITION, position);
                         dialog_fragment.setArguments(arguments);
                         dialog_fragment.show(
                                 ((SherlockFragmentActivity) context_)
@@ -290,7 +331,7 @@ public class TradingActivity extends SherlockFragmentActivity {
             return view_root;
         }
         
-        private static class ProposalsAdapter extends BaseAdapter {
+        public static class ProposalsAdapter extends BaseAdapter {
             private ArrayList<Proposal> proposals_;
             private ImageLoader image_loader_;
             
