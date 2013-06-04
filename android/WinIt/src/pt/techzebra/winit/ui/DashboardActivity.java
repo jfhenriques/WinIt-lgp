@@ -1,8 +1,10 @@
 package pt.techzebra.winit.ui;
 
 import pt.techzebra.winit.Constants;
+import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
+import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.platform.LoadTradingTask;
 import pt.techzebra.winit.platform.LoadingUserInfo;
 import android.content.Context;
@@ -71,7 +73,6 @@ public class DashboardActivity extends SherlockActivity {
 
                 return;
             }
-
         }
         setContentView(R.layout.dashboard_activity);
     }
@@ -101,6 +102,11 @@ public class DashboardActivity extends SherlockActivity {
     }
 
     public void handleRoomSelection(View view) {
+        if (!Utilities.hasInternetConnection(this)) {
+            Utilities.showInternetConnectionAlert(this);
+            return;
+        }
+        
         Intent intent = null;
         switch (view.getId()) {
         case R.id.single_player_layout:

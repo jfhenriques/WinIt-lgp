@@ -17,29 +17,33 @@ import android.widget.Toast;
 public class Utilities {
 	public static boolean hasInternetConnection(Context context) {
 		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+		NetworkInfo net_info = cm.getActiveNetworkInfo();
+		if (net_info != null && net_info.isConnectedOrConnecting()) {
 			return true;
 		}
 		return false;
 	}
 
-	
-	public static void showInternetConnectionAlert(final Context context) {
-	    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-	    builder.setMessage("No Internet connection. Do you wish to open Settings?");
-	    builder.setPositiveButton("Sure", new DialogInterface.OnClickListener() {
-	        public void onClick(DialogInterface dialog, int id) {
-	            context.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
-	        }
-	    });
-	    builder.setNegativeButton("No, thanks", new DialogInterface.OnClickListener() {
-	        public void onClick(DialogInterface dialog, int id) {
-	        }
-	    });
-	    AlertDialog dialog = builder.create();
-	    dialog.show();
-	}
+    public static void showInternetConnectionAlert(final Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.no_internet_connection)
+            .setMessage(
+                "Do you wish to open Settings?")
+                .setPositiveButton("Sure",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                context.startActivity(new Intent(
+                                        android.provider.Settings.ACTION_SETTINGS));
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+
+        builder.create().show();
+    }
 	
 	public static boolean hasGPSConnections(Context context) {
 		LocationManager manager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
