@@ -820,7 +820,7 @@ public class NetworkUtilities {
 		profile_edited.add(new BasicNameValuePair("name", name));
 		profile_edited.add(new BasicNameValuePair("email", email));
 		profile_edited.add(new BasicNameValuePair("password", new_password));
-		profile_edited.add(new BasicNameValuePair("password", old_password));
+		profile_edited.add(new BasicNameValuePair("old_password", old_password));
 		profile_edited.add(new BasicNameValuePair("birth", birthday));
 		profile_edited.add(new BasicNameValuePair("adid", address_id));
 		profile_edited.add(new BasicNameValuePair("address2", address_2));
