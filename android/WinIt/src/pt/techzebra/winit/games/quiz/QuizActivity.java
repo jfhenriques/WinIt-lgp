@@ -78,24 +78,20 @@ public class QuizActivity extends SherlockFragmentActivity implements
 		promotion_id_ = String.valueOf(promotion.getPromotionID());
 		Log.i(TAG, "Question: " + promotion_id_);
 
-		FetchQuizTask fetch_quiz_task = new FetchQuizTask(this);
+		FetchQuizTask fetch_quiz_task = new FetchQuizTask();
+		fetch_quiz_task.setContext(this);
 		fetch_quiz_task.setDelegate(this);
 		fetch_quiz_task.execute(promotion_id_);
 		
 		Log.i(TAG, "PRE ACTIVE_UPID: " + promotion.getActiveUPID());
 		
-		if(promotion.getActiveUPID() == -1)
-		{
+		if(promotion.getActiveUPID() == -1) {
 			Log.i(TAG, "ACTIVE_UPID: NO");
 			new UserPromotionID().execute(promotion_id_, authen_token_);
-		}
-		else
-		{
+		} else {
 			Log.i(TAG, "ACTIVE_UPID: YES, " + promotion.getActiveUPID());
 			user_promotion_id_ = Integer.toString(promotion.getActiveUPID());
 		}
-			
-		
 	}
 
 	@Override

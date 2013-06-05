@@ -307,8 +307,8 @@ public class PromotionActivity extends SherlockActivity {
 	}
 	
 	public static class ProposablePromotion extends PromotionView {
-	    private TextView owner_text_;
 		private int pcid_;
+		
 	    public ProposablePromotion(SherlockActivity activity, int id, int pcid) {
             super(activity, R.string.promotion, id, R.menu.menu_proposable);
             pcid_ = pcid;
@@ -319,22 +319,7 @@ public class PromotionActivity extends SherlockActivity {
 	        super.initializeActionBar();
 	        action_bar_.setBackgroundDrawable(activity_.getResources().getDrawable(R.drawable.action_bar_bg_trading));
 	    }
-
-	    @Override
-        public void initializeFields() {
-	        super.initializeFields();
-	        
-	        owner_text_ = (TextView) activity_.findViewById(R.id.owner_name_text);
-	        
-	        activity_.findViewById(R.id.proposable_promotion_details).setVisibility(View.VISIBLE);
-        }
 	    
-        @Override
-        public void populateFields() {
-            super.populateFields();
-            
-            //owner_text_.setText(promotion_.get);
-        }
 	    
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
