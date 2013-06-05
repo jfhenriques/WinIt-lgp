@@ -16,6 +16,7 @@ import pt.techzebra.winit.platform.LoadBadgesTask;
 import pt.techzebra.winit.platform.LoadMyPromotionsInfo;
 import pt.techzebra.winit.platform.MD5Util;
 import pt.techzebra.winit.platform.RoundedImageView;
+import pt.techzebra.winit.ui.EditProfileActivity.UserHolder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,6 +45,14 @@ public class ProfileActivity extends SherlockActivity {
 	User user_ = null;
 	String auth_token;
 
+	public void updateUser(UserHolder user_holder) {
+	    user_.setName(user_holder.name);
+	    user_.setEmail(user_holder.email);
+	    user_.setBirthday(Long.valueOf(user_holder.birthday));
+	    user_.setAdid(Integer.valueOf(user_holder.address_id));
+	    user_.setAddress2(user_holder.address2);
+	}
+	
 	/**
 	 * Set up user data that is displayed on this activity
 	 */
@@ -98,15 +107,16 @@ public class ProfileActivity extends SherlockActivity {
 								Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
 
 		auth_token = WinIt.getAuthToken();
-		Log.d(TAG, "auth token");
-		try {
-			user_ = (User) getIntent().getSerializableExtra("User");
-			setUserData(user_);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		user_ = (User) getIntent().getSerializableExtra("User");
 	}
 
+	@Override
+	protected void onResume() {
+	    super.onResume();
+	    setUserData(user_);
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.menu_profile, menu);
@@ -120,6 +130,7 @@ public class ProfileActivity extends SherlockActivity {
 			onBackPressed();
 			break;
 		case R.id.menu_edit_profile:
+		    EditProfileActivity.profile_activity_ = this;
 			Intent intent = new Intent(this, EditProfileActivity.class);
 			intent.putExtra(KEY_USER_BUNDLE, user_);
 			startActivity(intent);

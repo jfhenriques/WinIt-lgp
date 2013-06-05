@@ -75,6 +75,7 @@
     <string name="choose_to_do_with_the_proposal">Choose what to do with the proposal.</string>
     <string name="ok">OK</string>
     
+    <string name="profile_successfully_updated">Profile successfully updated.</string>
     <string name="promotion_successfully_exchanged">Promotion successfully exchanged.</string>
     <string name="proposal_successfully_revoked">Proposal successfully revoked.</string>
     <string name="an_error_has_occured">An error has occurred.</string>

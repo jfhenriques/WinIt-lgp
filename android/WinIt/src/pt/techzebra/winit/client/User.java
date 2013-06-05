@@ -7,12 +7,10 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class User implements Serializable {
-    /**
-	 * 
-	 */
     private static final long serialVersionUID = 1L;
-    private final int user_id_;
-    private final String name_;
+    
+    private int user_id_;
+    private String name_;
     private String address_; // address/ street
     private int adid_;
     private int cp3_;
@@ -20,15 +18,15 @@ public class User implements Serializable {
     private String address2_; // porta/bloco/andar
     private String locality_;
     private String district_;
-    private final int birthday_;
-    private final String email_;
-    private final String level_;
-    private final String points_;
-    private final String user_fb_id_;
+    private long birthday_;
+    private String email_;
+    private String level_;
+    private String points_;
+    private String user_fb_id_;
     private int next_level_points_;
 
     public User(int user_id, String name, int adid, int cp4, int cp3, String address, String address2,
-            String locality, String district, int birthday, String email,
+            String locality, String district, long birthday, String email,
             String level, String points, String user_fb_id, int next_level_points) {
         adid_ = adid;
         cp4_ = cp4;
@@ -51,6 +49,14 @@ public class User implements Serializable {
         return user_id_;
     }
 
+    public void setName(String name) {
+        name_ = name;
+    }
+    
+    public void setEmail(String email) {
+        email_ = email;
+    }
+    
     public String getName() {
         return name_;
     }
@@ -160,7 +166,7 @@ public class User implements Serializable {
             final String address2 = !user.isNull("address2") ? user.getString("address2") : null;
             final String locality = user.getString("locality");
             final String district = user.getString("district");
-            final int birthday = user.getInt("birth");
+            final long birthday = user.getInt("birth");
             final String level = user.getString("level");
             final String points = user.getString("points");
             final String fb_id = !user.isNull("facebook_uid") ? user.getString("facebook_uid") : "";
@@ -172,6 +178,10 @@ public class User implements Serializable {
         }
 
         return null;
+    }
+
+    public void setBirthday(long birthday) {
+        birthday_ = birthday;
     }
 
 }

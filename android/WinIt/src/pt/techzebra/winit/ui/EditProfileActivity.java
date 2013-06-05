@@ -11,6 +11,7 @@ import pt.techzebra.winit.client.NetworkUtilities.SendAddressToActivity;
 import pt.techzebra.winit.client.User;
 import pt.techzebra.winit.platform.DatePickerFragment;
 import pt.techzebra.winit.platform.DateUtilities;
+import pt.techzebra.winit.platform.EditProfileTask;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
@@ -37,6 +38,8 @@ public class EditProfileActivity extends SherlockFragmentActivity implements
 
 	private static final String TAG = "EditProfileActivity";
 
+	public static ProfileActivity profile_activity_;
+	
 	private final Handler handler_ = new Handler();
 
 	private ActionBar action_bar_;
@@ -151,12 +154,31 @@ public class EditProfileActivity extends SherlockFragmentActivity implements
 		}
 	}
 
+	public static class UserHolder {
+	    public final String name;
+	    public final String email;
+	    public final String old_password;
+	    public final String new_password;
+	    public final String birthday;
+	    public final String address_id;
+	    public final String address2;
+	    
+	    public UserHolder(String name, String email, String old_password, String new_password, String birthday, String address_id, String address2) {
+	        this.name = name;
+	        this.email = email;
+	        this.old_password = old_password;
+	        this.new_password = new_password;
+	        this.birthday = birthday;
+	        this.address_id = address_id;
+	        this.address2 = address2;
+	    }
+	}
+	
 	private void saveChanges() {
 		String name = name_edit_text_.getText().toString();
 		String email = email_edit_text_.getText().toString();
 		String new_password = password_edit_.getText().toString();
 		String old_password = old_password_edit_.getText().toString();
-		String birthday = birthday_text_.getText().toString();
 		String address2 = address2_edit_.getText().toString();
 
 		if ((!new_password.equals("") && old_password.equals(""))
@@ -165,20 +187,16 @@ public class EditProfileActivity extends SherlockFragmentActivity implements
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
-
-		NetworkUtilities.attemptEditProfile(WinIt.getAuthToken(), name, email,
-				new_password, old_password, String.valueOf(birthday_time_.toMillis(false) / 1000),
-				String.valueOf(address_id_), address2, handler_, this);
+		
+        UserHolder holder = new UserHolder(name, email, old_password,
+                new_password,
+                String.valueOf(birthday_time_.toMillis(false) / 1000),
+                String.valueOf(address_id_), address2);
+        
+        new EditProfileTask().setContext(this).execute(holder);
 	}
-
-	public void getResponse(String r) {
-		if (r.equals("null")) {
-			Utilities.showToast(this, "Modified with success");
-			finish();
-		} else {
-			Utilities.showToast(this, r);
-		}
-	}
+	
+	
 
 	public void handlePostalCode(View view) {
 		String pc4 = cp4_edit_text_.getText().toString();

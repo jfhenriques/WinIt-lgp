@@ -47,6 +47,7 @@ import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.games.quiz.QuizActivity;
 import pt.techzebra.winit.ui.AuthenticationActivity;
 import pt.techzebra.winit.ui.EditProfileActivity;
+import pt.techzebra.winit.ui.EditProfileActivity.UserHolder;
 import pt.techzebra.winit.ui.PromotionActivity;
 import pt.techzebra.winit.ui.ReceivedProposalDialogFragment;
 import pt.techzebra.winit.ui.SignupActivity;
@@ -796,59 +797,21 @@ public class NetworkUtilities {
 		return badges;
 	}
 
-	public static Thread attemptEditProfile(final String auth_token,
-			final String name, final String email, final String new_password,
-			final String old_password, final String birthday,
-			final String address_id, final String address_2,
-			final Handler handler, final Context context) {
-
-		final Runnable runnable = new Runnable() {
-
-			@Override
-			public void run() {
-				editProfile(auth_token, name, email, new_password,
-						old_password, birthday, address_id, address_2, handler,
-						context);
-			}
-		};
-		return NetworkUtilities.performOnBackgroundThread(runnable);
-
-	}
-
-	public static void editProfile(String auth_token, String name,
-			String email, String new_password, String old_password,
-			String birthday, String address_id, String address_2,
-			Handler handler, Context context) {
-		String uri = USER_URI + "?token=" + auth_token;
+	public static int editProfile(UserHolder user_holder, Context context) {
+		String uri = USER_URI + "?token=" + WinIt.getAuthToken();
 
 		ArrayList<NameValuePair> profile_edited = new ArrayList<NameValuePair>();
-		profile_edited.add(new BasicNameValuePair("name", name));
-		profile_edited.add(new BasicNameValuePair("email", email));
-		profile_edited.add(new BasicNameValuePair("password", new_password));
-		profile_edited.add(new BasicNameValuePair("old_password", old_password));
-		profile_edited.add(new BasicNameValuePair("birth", birthday));
-		profile_edited.add(new BasicNameValuePair("adid", address_id));
-		profile_edited.add(new BasicNameValuePair("address2", address_2));
+		profile_edited.add(new BasicNameValuePair("name", user_holder.name));
+		profile_edited.add(new BasicNameValuePair("email", user_holder.email));
+		profile_edited.add(new BasicNameValuePair("password", user_holder.new_password));
+		profile_edited.add(new BasicNameValuePair("password_old", user_holder.old_password));
+		profile_edited.add(new BasicNameValuePair("birth", user_holder.birthday));
+		profile_edited.add(new BasicNameValuePair("adid", user_holder.address_id));
+		profile_edited.add(new BasicNameValuePair("address2", user_holder.address2));
 
 		JSONObject response = put(uri, profile_edited);
-		String r = getResponseMessage(response);
-
-		sendResponseToEditProfileActivity(r, handler, context);
-	}
-
-	public static void sendResponseToEditProfileActivity(final String r,
-			Handler handler, final Context context) {
-		if (handler == null || context == null) {
-			return;
-		}
-
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				((EditProfileActivity) context).getResponse(r);
-			}
-		});
-
+		
+		return response.optInt("s");
 	}
 
 	public static Thread attemptFacebookLogin(final String token_fb,
