@@ -141,6 +141,10 @@
 							   	),
 						),
 
+
+						array( 'match' => '/naive_redeem/:prizecode', 'controller' => 'promotion', 'via' => 'post', 'action' => 'naive_redeem'),
+
+
 						array( 'match' => '/address/:cp4/:cp3', 'controller' => 'address', 'via' => 'get', 'action' => 'list_cp' ),
 
 
@@ -153,8 +157,6 @@
 
 									array( 'match' => '/:prizecode',
 										   'matches' => array(
-
-										   		array( 'match' => '/naive_redeem', 'controller' => 'trading', 'via' => 'post', 'action' => 'naive_redeem'),
 							
 												array( 'match' => '/suggest/:suggest', 'controller' => 'trading', 'via' => 'post', 'action' => 'suggest_trading'),
 												array( 'match' => '/suggest/:suggest', 'controller' => 'trading', 'via' => 'delete', 'action' => 'unsuggest_trading'),

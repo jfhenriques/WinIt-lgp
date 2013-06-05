@@ -3,6 +3,8 @@
 	DEFINE( 'R_PROM_ERR_PARAMS'			, 0x10 );
 
 	DEFINE( 'R_PROM_ERR_USER_NOT_FOUND'	, 0x20 );
+
+	DEFINE( 'R_PROM_CANNOT_REDEEM'		, 0x30 );
 	
 
 
@@ -12,6 +14,8 @@
 		private static $status = array(
 			R_PROM_ERR_PARAMS			=> 'Parâmetros não definidos',
 			R_PROM_ERR_USER_NOT_FOUND	=> 'Promoção não encontrada',
+
+			R_PROM_CANNOT_REDEEM		=> 'Impossível utilizar a promoção selecionada',
 		);
 	
 		/*
@@ -105,6 +109,42 @@
 
 			$this->respond->renderJSON( static::$status );
 
+		}
+
+
+
+
+		public function naive_redeem()
+		{
+			$pcid = (int)valid_request_var( 'prizecode' );
+		
+
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
+			$time = time();
+
+			if( $uid <= 0 || $pcid <= 0 )
+				$this->respond->setJSONCode( R_PROM_ERR_PARAMS );
+
+			else
+			{
+				$unused = null;
+
+				if(    !TradingController::only_one_arr( PrizeCode::findOwnUnused( $uid, $time, $pcid ) , $unused )
+					|| is_null( $unused ) )
+					$this->respond->setJSONCode( R_PROM_CANNOT_REDEEM );
+
+				else
+				{
+
+					$unused->setUtilizationDate( $time );
+					$unused->setTrading(false);
+
+					$this->respond->setJSONCode( $unused->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+
+				}
+			}
+
+			$this->respond->renderJSON( static::$status );
 		}
 		
 	}

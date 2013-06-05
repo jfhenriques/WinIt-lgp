@@ -445,7 +445,7 @@
 		}
 
 
-		private static function only_one_arr( $arr, &$out )
+		public static function only_one_arr( $arr, &$out )
 		{
 			if( is_array( $arr ) && count( $arr ) == 1 )
 			{
@@ -524,37 +524,5 @@
 		}
 
 
-		public function naive_redeem()
-		{
-			$pcid = (int)valid_request_var( 'prizecode' );
-		
-
-			$uid = AuthenticatorPlugin::getInstance()->getUID();
-			$time = time();
-
-			if( $uid <= 0 || $pcid <= 0 )
-				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
-
-			else
-			{
-				$unused = null;
-
-				if(    !self::only_one_arr( PrizeCode::findOwnUnused( $uid, $time, $pcid ) , $unused )
-					|| is_null( $unused ) )
-					$this->respond->setJSONCode( R_TRAD_ERR_PROMO_NOT_AVAIL );
-
-				else
-				{
-
-					$unused->setUtilizationDate( $time );
-					$unused->setTrading(false);
-
-					$this->respond->setJSONCode( $unused->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
-
-				}
-			}
-
-			$this->respond->renderJSON( static::$status );
-		}
 		
 	}
