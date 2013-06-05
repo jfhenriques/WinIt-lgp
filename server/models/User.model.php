@@ -230,7 +230,7 @@
 
 		public static function findByResetToken( $token )
 		{
-			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE active = 1 AND facebook_uid = NULL AND reset_token = ? LIMIT 1;',
+			$result = static::query( 'SELECT * FROM '. self::TABLE_NAME . ' WHERE active = 1 AND facebook_uid IS NULL AND reset_token = ? LIMIT 1;',
 									  array( $token ) );
 
 							

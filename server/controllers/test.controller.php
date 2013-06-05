@@ -6,7 +6,8 @@
 		public function test()
 		{
 
-/*			var_dump( GCMPlugin::send( array('APA91bFN5scyCp9K8TMJE_6eJ4X1Rmox2QzDTr3_U4RQAW1sOr1VYjsPR8awRbDeMAuYTAxUlJMC81ifDEP7rt50RV1c5eHWZgkZK8BxFQV9zURccer-q4CcZwub6j7Qos2fsMCbLWph332vRP6cJ9r3FXGxHTL_Pw', 'APA91bFN5scyCp9K8TMJE_6eJ4X1Rmox2QzDTr3_U4RQAW1sOr1VYjsPR8awRbDeMAuYTAxUlJMC81ifDEP7rt50RV1c5eHWZgkZK8BxFQV9zURccer-q4CcZwub6j7Qos2fsMCbLWph332vRP6cJ9r3FXGxHTL_Pw'), array( 'data' => 'merdinhas' ) ) );
+			var_dump( GCMPlugin::send( array('APA91bHugamPoeOVXhnMPN8CMWccz2TWoS4n9_iJ1eK3zGLVD1Q-HV6NkxKpZU2S1lYOjMzuRA9nH7WEtt0lcj2KMKDFvpimszYEbWlG58ZfoUHE1MC66wz69ugJoIfR4LbujLUeBV3oJ1ddYJ61MmUwiwlJvPPTug' ),
+										array('cenas' => 'estupidas')) );
 
 			/*$sig = 'sha1=ce9827cce81a40db0f27ac93c111feffe6de7730';
 			$payload = '{"object":"user","entry":[{"uid":"100005987078533","id":"100005987078533","time":1369811224,"changed_fields":["first_name"]}]}';

@@ -141,6 +141,10 @@
 							   	),
 						),
 
+
+						array( 'match' => '/naive_redeem/:prizecode', 'controller' => 'promotion', 'via' => 'post', 'action' => 'naive_redeem'),
+
+
 						array( 'match' => '/address/:cp4/:cp3', 'controller' => 'address', 'via' => 'get', 'action' => 'list_cp' ),
 
 
