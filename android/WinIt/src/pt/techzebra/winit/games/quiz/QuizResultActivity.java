@@ -49,7 +49,8 @@ public class QuizResultActivity extends SherlockActivity {
         Bundle extras = getIntent().getExtras();
         boolean result = extras.getBoolean(KEY_QUIZ_RESULT);
         int num_correct_answers = extras.getInt(KEY_QUIZ_NUM_CORRECT_ANSWERS);
-        int points = extras.getInt(KEY_QUIZ_POINTS);
+        @SuppressWarnings("unused")
+		int points = extras.getInt(KEY_QUIZ_POINTS);
         promotion_ = (Promotion) extras.getSerializable("Promotion");
         result_text_.setText(result ? R.string.you_won : R.string.you_lost);
         details_text_.setText(getResources().getQuantityString(R.plurals.numberOfQuestionsCorrectlyAnswered, num_correct_answers, num_correct_answers));

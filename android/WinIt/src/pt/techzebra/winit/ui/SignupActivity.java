@@ -47,6 +47,7 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
 	
 	private static final int NUM_STEPS_ = 2;
 
+	@SuppressWarnings("unused")
 	private Thread registration_thread_;
 	private final Handler handler_ = new Handler();
 
@@ -67,7 +68,8 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
     private Time birthday_time_;
 	private OnDateSetListener on_date_set_listener_;
     
-    private Thread postal_code_thread_;
+    @SuppressWarnings("unused")
+	private Thread postal_code_thread_;
     
     String[] addresses_ = null;
     ArrayList<Integer> addresses_ids_ = null;

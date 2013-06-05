@@ -38,7 +38,8 @@ import com.origamilabs.library.views.StaggeredGridView;
 import com.origamilabs.library.views.StaggeredGridView.OnItemClickListener;
 
 public class TradingActivity extends SherlockFragmentActivity {
-    private static final String TAG = "TradingActivity";
+    @SuppressWarnings("unused")
+	private static final String TAG = "TradingActivity";
     
     public static final String KEY_EXTRA_TRADING_CONTAINER = "trading_container";
     

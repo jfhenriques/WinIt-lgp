@@ -60,8 +60,7 @@ BEGIN
     FROM userpromotion
     WHERE
       uid = uid_in AND
-      ( end_date = NULL OR end_date = 0 )
-    LIMIT 1
+      ( end_date IS NULL OR end_date = 0 )
   ) AS aup ON (aup.pid = p.pid AND aup.uid = up.uid)
   LEFT JOIN (
     SELECT
@@ -518,7 +517,7 @@ CREATE TRIGGER `tg_userpromotion_limit` BEFORE INSERT ON `userpromotion`
 
   SELECT count(*) INTO tmp2
   FROM userpromotion
-  WHERE pid = NEW.pid AND uid = NEW.uid AND (end_date = NULL OR end_date = 0)
+  WHERE pid = NEW.pid AND uid = NEW.uid AND (end_date IS NULL OR end_date = 0)
   GROUP BY pid;
 
   IF tmp2 IS NOT NULL AND tmp2 > 0 THEN

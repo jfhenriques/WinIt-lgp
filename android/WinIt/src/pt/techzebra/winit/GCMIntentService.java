@@ -1,8 +1,6 @@
 package pt.techzebra.winit;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 
 import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.GCMUtils;
@@ -18,7 +16,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;

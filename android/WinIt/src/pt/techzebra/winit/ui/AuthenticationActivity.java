@@ -145,12 +145,23 @@ public class AuthenticationActivity extends SherlockFragmentActivity implements
 
         handler_ = new Handler();
     }
+    
+    public static void forceCloseSession(Session sess)
+    {
+    	if( sess != null )
+    	{
+    		sess.closeAndClearTokenInformation();
+    		sess.close();
+    	}
+    	Session.setActiveSession(null);
+    }
 
     public static Session forceGetActiveSession(Context ctx) {
         Session session = Session.getActiveSession();
 
         if (session == null) {
-            session = new Session.Builder(ctx.getApplicationContext()).build();
+        	session = Session.openActiveSessionFromCache(ctx);
+            //session = new Session.Builder(ctx.getApplicationContext()).build();
             Session.setActiveSession(session);
         }
 

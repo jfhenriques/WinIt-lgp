@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import pt.techzebra.winit.ui.AuthenticationActivity;
+
 import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -28,8 +30,8 @@ import com.facebook.Session;
 public class FacebookPublisher {
 	
 	private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
-	private static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
-	private static boolean pendingPublishReauthorization = false;
+//	private static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
+//	private static boolean pendingPublishReauthorization = false;
 	private static Activity activity_;
 	
 	public String generateHashKey(Activity a_){
@@ -57,16 +59,19 @@ public class FacebookPublisher {
 
 
 	public static boolean publishStory(String name, String caption, String description, String link, String picture, Activity activity) {
-		Session session = Session.getActiveSession();
-		if (session != null){
-			activity_ = activity;
+		//Session session = Session.getActiveSession();
+		activity_ = activity;
+		
+		Session session = AuthenticationActivity.forceGetActiveSession(activity_);
+		if (session != null && session.isOpened()){
+			
 			// Check for publish permissions    
 			List<String> permissions = session.getPermissions();
 			if (!isSubsetOf(PERMISSIONS, permissions)) {
-				pendingPublishReauthorization = true;
+				//pendingPublishReauthorization = true;
 				Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(activity_, PERMISSIONS);
 				session.requestNewPublishPermissions(newPermissionsRequest);
-				return false;
+				//return false;
 			}
 
 			Bundle postParams = new Bundle();
@@ -76,7 +81,7 @@ public class FacebookPublisher {
 			postParams.putString("link", link);
 			postParams.putString("picture", picture);
 
-			Request.Callback callback= new Request.Callback() {
+			Request.Callback callback = new Request.Callback() {
 				public void onCompleted(Response response) {
 					JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
 					String postId = null;

@@ -55,11 +55,9 @@ public class DashboardActivity extends SherlockActivity {
                 editor.putBoolean(Constants.PREF_FB_LOGGED_IN, true);
 
                 editor.commit();
-            } else {
-                session.closeAndClearTokenInformation();
-                session.close();
-                Session.setActiveSession(null);
             }
+            else
+            	AuthenticationActivity.forceCloseSession(session);
         }
 
         if (!logged_in) {

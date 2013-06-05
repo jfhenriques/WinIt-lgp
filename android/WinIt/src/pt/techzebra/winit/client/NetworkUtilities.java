@@ -46,7 +46,6 @@ import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.games.quiz.QuizActivity;
 import pt.techzebra.winit.ui.AuthenticationActivity;
-import pt.techzebra.winit.ui.EditProfileActivity;
 import pt.techzebra.winit.ui.EditProfileActivity.UserHolder;
 import pt.techzebra.winit.ui.PromotionActivity;
 import pt.techzebra.winit.ui.ReceivedProposalDialogFragment;
@@ -898,7 +897,8 @@ public class NetworkUtilities {
 		ArrayList<NameValuePair> gcm_token_register = new ArrayList<NameValuePair>();
 		gcm_token_register.add(new BasicNameValuePair("token", auth_token));
 		gcm_token_register.add(new BasicNameValuePair("token_gcm", gcm_token));
-		JSONObject response = post(uri, gcm_token_register);
+		//JSONObject response = 
+				post(uri, gcm_token_register);
 		//String r = getResponseMessage(response);
 
 	}

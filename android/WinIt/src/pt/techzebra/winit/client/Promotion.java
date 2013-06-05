@@ -2,10 +2,7 @@ package pt.techzebra.winit.client;
 
 import java.io.Serializable;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.util.Log;
 
 public class Promotion implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -26,7 +23,8 @@ public class Promotion implements Serializable {
     private int retailer_id_;
     private int promotion_type_id_;
     private boolean transferable_;
-    private int max_util_date_;
+    @SuppressWarnings("unused")
+	private int max_util_date_;
     private int pcid;
     private int active_upid_;
     
