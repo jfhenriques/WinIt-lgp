@@ -121,9 +121,9 @@ public class GCMIntentService extends GCMBaseIntentService {
 		
 			int type = safeInt(extras, "type", 0);
 			
-			String name_my = extras.getString("name_my", ""),
-					name_o = extras.getString("name_o", ""),
-					image_o = extras.getString("image_o", null),
+			String name_my = extras.getString("name_my"),
+					name_o = extras.getString("name_o"),
+					image_o = extras.getString("image_o"),
 					message = "";
 
 			

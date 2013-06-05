@@ -34,12 +34,12 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 public class EditProfileActivity extends SherlockFragmentActivity implements
-        SendAddressToActivity {
+		SendAddressToActivity {
 
 	private static final String TAG = "EditProfileActivity";
 
 	public static ProfileActivity profile_activity_;
-	
+
 	private final Handler handler_ = new Handler();
 
 	private ActionBar action_bar_;
@@ -60,7 +60,7 @@ public class EditProfileActivity extends SherlockFragmentActivity implements
 
 	private Time birthday_time_;
 	private OnDateSetListener on_date_set_listener_;
-	
+
 	private User user_;
 
 	String address_;
@@ -71,7 +71,7 @@ public class EditProfileActivity extends SherlockFragmentActivity implements
 		setContentView(R.layout.edit_profile_activity);
 
 		birthday_time_ = new Time();
-		
+
 		action_bar_ = getSupportActionBar();
 		action_bar_.setTitle(R.string.edit);
 		action_bar_.setDisplayHomeAsUpEnabled(true);
@@ -90,7 +90,7 @@ public class EditProfileActivity extends SherlockFragmentActivity implements
 				Context.MODE_PRIVATE);
 
 		if (preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false)) {
-		    findViewById(R.id.name_section).setVisibility(View.GONE);
+			findViewById(R.id.name_section).setVisibility(View.GONE);
 			name_edit_text_.setVisibility(View.GONE);
 			findViewById(R.id.email_section).setVisibility(View.GONE);
 			email_edit_text_.setVisibility(View.GONE);
@@ -110,70 +110,70 @@ public class EditProfileActivity extends SherlockFragmentActivity implements
 		name_edit_text_.setText(user_.getName());
 		email_edit_text_.setText(user_.getEmail());
 		Log.d(TAG, Utilities.convertUnixTimestamp(user_.getBirthday()));
-		
+
 		birthday_time_.set(user_.getBirthday() * 1000);
 		DateUtilities.setDate(birthday_text_, birthday_time_.toMillis(false));
-		
+
 		on_date_set_listener_ = new OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month,
-                    int day) {
-                Time birthday = birthday_time_;
-                
-                long birthday_millis;
-                
-                birthday.year = year;
-                birthday.month = month;
-                birthday.monthDay = day;
-                
-                birthday_millis = birthday.normalize(true);
-                    
-                DateUtilities.setDate(birthday_text_, birthday_millis);
-            }
-        };
-		
-        birthday_text_.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerFragment fragment = DatePickerFragment
-                        .newInstance(
-                                on_date_set_listener_,
-                                birthday_time_.year, birthday_time_.month, birthday_time_.monthDay);
-                fragment.show(getSupportFragmentManager(),
-                        "DatePickerFragment");
-            }
-        });
-        
-		if (!preferences_.getBoolean(Constants.PREF_FB_LOGGED_IN, false)) {
-			cp4_edit_text_.setText(String.valueOf(user_.getCp4()));
-			cp3_edit_text_.setText(String.valueOf(user_.getCp3()));
-			address1_text_.setText(address_);
-			if (user_.getAddress2() != null) {
-				address2_edit_.setText(user_.getAddress2());
+			@Override
+			public void onDateSet(DatePicker view, int year, int month, int day) {
+				Time birthday = birthday_time_;
+
+				long birthday_millis;
+
+				birthday.year = year;
+				birthday.month = month;
+				birthday.monthDay = day;
+
+				birthday_millis = birthday.normalize(true);
+
+				DateUtilities.setDate(birthday_text_, birthday_millis);
 			}
-		}
+		};
+
+		birthday_text_.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DatePickerFragment fragment = DatePickerFragment.newInstance(
+						on_date_set_listener_, birthday_time_.year,
+						birthday_time_.month, birthday_time_.monthDay);
+				fragment.show(getSupportFragmentManager(), "DatePickerFragment");
+			}
+		});
+
+		if(user_.getCp4() != -1)
+			cp4_edit_text_.setText(String.valueOf(user_.getCp4()));
+		if(user_.getCp3() != -1)
+			cp3_edit_text_.setText(String.valueOf(user_.getCp3()));
+		if(!address_.isEmpty())
+			address1_text_.setText(address_);
+		if(user_.getAddress2() != null)
+			address2_edit_.setText(user_.getAddress2());
+
 	}
 
 	public static class UserHolder {
-	    public final String name;
-	    public final String email;
-	    public final String old_password;
-	    public final String new_password;
-	    public final String birthday;
-	    public final String address_id;
-	    public final String address2;
-	    
-	    public UserHolder(String name, String email, String old_password, String new_password, String birthday, String address_id, String address2) {
-	        this.name = name;
-	        this.email = email;
-	        this.old_password = old_password;
-	        this.new_password = new_password;
-	        this.birthday = birthday;
-	        this.address_id = address_id;
-	        this.address2 = address2;
-	    }
+		public final String name;
+		public final String email;
+		public final String old_password;
+		public final String new_password;
+		public final String birthday;
+		public final String address_id;
+		public final String address2;
+
+		public UserHolder(String name, String email, String old_password,
+				String new_password, String birthday, String address_id,
+				String address2) {
+			this.name = name;
+			this.email = email;
+			this.old_password = old_password;
+			this.new_password = new_password;
+			this.birthday = birthday;
+			this.address_id = address_id;
+			this.address2 = address2;
+		}
 	}
-	
+
 	private void saveChanges() {
 		String name = name_edit_text_.getText().toString();
 		String email = email_edit_text_.getText().toString();
@@ -187,16 +187,14 @@ public class EditProfileActivity extends SherlockFragmentActivity implements
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
-		
-        UserHolder holder = new UserHolder(name, email, old_password,
-                new_password,
-                String.valueOf(birthday_time_.toMillis(false) / 1000),
-                String.valueOf(address_id_), address2);
-        
-        new EditProfileTask().setContext(this).execute(holder);
+
+		UserHolder holder = new UserHolder(name, email, old_password,
+				new_password,
+				String.valueOf(birthday_time_.toMillis(false) / 1000),
+				String.valueOf(address_id_), address2);
+
+		new EditProfileTask().setContext(this).execute(holder);
 	}
-	
-	
 
 	public void handlePostalCode(View view) {
 		String pc4 = cp4_edit_text_.getText().toString();
