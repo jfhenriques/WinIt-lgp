@@ -220,17 +220,19 @@ public class NetworkUtilities {
 		try {
 			response = http_client_.execute(http_host_, request);
 			int status_code = response.getStatusLine().getStatusCode();
-			Log.d(TAG, "status code: " + status_code);
+			
+			
 			
 			if (status_code == HttpStatus.SC_OK) {
 				
 				String str = EntityUtils.toString(response.getEntity());
-				Log.d(TAG, "Response: " + str);
+				Log.d(TAG, "Response[ " + status_code + "]: " + str);
+				
 				JSONObject json_response = new JSONObject(str);
 
 				return json_response;
 			} else {
-				Log.i(TAG, "Request Error");
+				Log.d(TAG, "Response[ " + status_code + "]");
 				return null;
 			}
 		} catch (IOException e) {
@@ -262,7 +264,7 @@ public class NetworkUtilities {
 		request.addHeader(entity.getContentType());
 		request.setEntity(entity);
 
-		Log.d(TAG, "REQUEST: " + request.getURI() + ", entity: " + parameters.toString());
+		Log.d(TAG, "Request[" + request.getURI() + "], Entity[" + parameters.toString() + "]");
 		return executeRequest(request);
 	}
 
@@ -467,7 +469,7 @@ public class NetworkUtilities {
 		//Log.d("RESPOSTA", getResponseMessage(json_response));
 		if (validResponse(json_response)) {
 			// attemptAuth(email, password, handler, context);
-			Log.v(TAG, "Successful register");
+			//Log.v(TAG, "Successful register");
 			return true;
 		} else {
 			return false;
@@ -568,15 +570,14 @@ public class NetworkUtilities {
 
 		JSONObject json_response = post(uri, params);
 
-		Log.i(TAG, json_response.toString());
+		//Log.i(TAG, json_response.toString());
 		if (validResponse(json_response)) {
 			PromotionActivity.a_upid = -1;
 			sendResponseToQuizGameActivity(getResponseContent(json_response),
 					handler, context);
-		} else {
-			Log.i(TAG, "Error to get response: "
-					+ getResponseMessage(json_response));
 		}
+//		else
+//			Log.i(TAG, "Error to get response: " + getResponseMessage(json_response));
 	}
 
 	public static String getUserPromotionId(final String promotion_id,
@@ -586,7 +587,7 @@ public class NetworkUtilities {
 		ArrayList<NameValuePair> paramstemp = new ArrayList<NameValuePair>();
 		paramstemp.add(new BasicNameValuePair("token", auth_token));
 		JSONObject json_response_temp = post(uritemp, paramstemp);
-		Log.i(TAG, json_response_temp.toString());
+		//Log.i(TAG, json_response_temp.toString());
 		if (validResponse(json_response_temp)) {
 			json_response_temp = getResponseContent(json_response_temp);
 			try {
@@ -679,7 +680,7 @@ public class NetworkUtilities {
 		ArrayList<Promotion> promos = new ArrayList<Promotion>();
 		String uri = PROMOTION_URI + ".json?token=" + token;
 		JSONObject response = get(uri);
-		Log.i("AQUI", response.toString());
+		//Log.i("AQUI", response.toString());
 		JSONArray r = getResponseContentArray(response);
 
 		if (r == null) {
@@ -826,7 +827,7 @@ public class NetworkUtilities {
 
 		JSONObject json_response = post(uri, params);
 		JSONObject r = getResponseContent(json_response);
-		Log.i(TAG, json_response.toString());
+		//Log.i(TAG, json_response.toString());
 		if (validResponse(json_response)) {
 			SharedPreferences.Editor preferences_editor = WinIt
 					.getAppContext()
@@ -846,8 +847,8 @@ public class NetworkUtilities {
 				e.printStackTrace();
 			}
 		} else {
-			Log.i(TAG, "Error to get response: "
-					+ getResponseMessage(json_response));
+			//Log.i(TAG, "Error to get response: " + getResponseMessage(json_response));
+			
 			sendResultToAuthenticationActivity(false, handler, context);
 		}
 	}

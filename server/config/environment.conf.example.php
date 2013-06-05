@@ -1,7 +1,7 @@
 <?php
 
 	/* 
-	 *	Must always be set to false on prodution environment
+	 *	Must always be set to false on prodution environments
 	 */
 	DEFINE('DEVELOPMENT_ENVIRONMENT', false);
 	
@@ -9,9 +9,9 @@
 	/*
 	 *	PDO configuration
 	 */
-	DEFINE('PDO_DATABASE', 'mysql:host=localhost;dbname=DB_NAME_HERE;charset=UTF-8' );
-	DEFINE('PDO_USERNAME', 'DB_USER_HERE');
-	DEFINE('PDO_PASSWORD', 'DB_PASS_HERE');
+	DEFINE('PDO_DATABASE', 'mysql:host=localhost;dbname=!!DB_NAME_HERE!!;charset=UTF-8' );
+	DEFINE('PDO_USERNAME', '!!DB_USER_HERE!!');
+	DEFINE('PDO_PASSWORD', '!!DB_PASS_HERE!!');
 	
 	
 	/*
@@ -19,7 +19,7 @@
 	 *
 	 *	!! Do not edit this values !!
 	 */
-	DEFINE( 'COMMON_CACHE_DISABLED'	, 0 );	/* It should never be used */
+	DEFINE( 'COMMON_CACHE_DISABLED'	, 0 );	/* Should never be used */
 	DEFINE( 'COMMON_CACHE_AUTO'		, 1 );	/* Automatic choose between APC e Memcache(d) */
 	DEFINE( 'COMMON_CACHE_APC'		, 2 );	/* Force PHP APC */
 	DEFINE( 'COMMON_CACHE_MEMCACHED', 3 );	/* Force Memcache(d) */
@@ -27,9 +27,7 @@
 	/*
 	 *	Which type of cache in use
 	 *
-	 *	Do not ever use COMMON_CACHE_DISABLED, some things may break,
-	 *	and there would be so much overhead in every call to the server
-	 *	that the performance would be really bad
+	 *	Do not ever use COMMON_CACHE_DISABLED or you will suffer from very bad performance.
 	 *
 	 *	COMMON_CACHE_AUTO will search first for memcache(d) and then for APC
 	 *
@@ -46,21 +44,22 @@
 	
 	
 	/*
-	 *	Forces flush of memcache(d) or APC. This is usefull for test purposes
+	 *	Forces flush of memcache(d) or APC. Usefull for test purposes
 	 */
 	DEFINE( 'COMMON_CACHE_FORCE_FLUSH'	,	false );
 
 	
 	/*
-	 *	This variable could be used when is needed some prefix to distinguish
-	 *	memcached variable names from other common names
+	 *	This variable should be set to something unique, so that
+	 * 	cached variables/arrays/etc can be distinguished from other applications
+	 * 	who are using the cache
 	 */
 	 
 	DEFINE( 'COMMON_CACHE_VAR_PREFIX'	,	'cc_' );
 	
 	
 	/*
-	 *	Validity of tokens until they die
+	 *	Validity of authentication tokens until they die
 	 */
 	DEFINE( 'TOKEN_VALIDITY', 604800 ); // 3600*24*7
 
@@ -78,13 +77,17 @@
 
 
 	/*
-	 *	If there is an alternative path to access static content, se this to true
+	 *	If there is an alternative path to access static content, set this to true
+	 *
+	 *		If the framework is being used as an API (for ex: Android),
+	 *		you must set this to true and define BASE_STATIC_URI
+	 *		or yon't be able to access content like images.
 	 */
-	DEFINE( 'USE_STATIC_URI', false );
+	DEFINE( 'USE_STATIC_URI', true );
 
 
 	/*
-	 *	The base uri or schema+host+uri to access the static content
+	 *	The base uri or schema+host+uri to access the content
 	 */
-	DEFINE( 'BASE_STATIC_URI', '' );
+	DEFINE( 'BASE_STATIC_URI', "http://{$_SERVER['SERVER_NAME']}/" . BASE_URI . ( strlen(BASE_URI) > 0 ?  ';' : '' ) );
 

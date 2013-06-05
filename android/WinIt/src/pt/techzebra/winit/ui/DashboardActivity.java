@@ -4,7 +4,6 @@ import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.Utilities;
 import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
-import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.platform.LoadTradingTask;
 import pt.techzebra.winit.platform.LoadingUserInfo;
 import android.content.Context;

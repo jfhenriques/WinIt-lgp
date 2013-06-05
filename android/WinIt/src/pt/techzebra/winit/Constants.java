@@ -10,6 +10,4 @@ public class Constants {
     public static final String AUTHTOKEN_TYPE = "pt.techzebra.promgamemobile";
     public static final String PREF_FB_LOGGED_IN = "logged_fb_in";
     public static final String GCM_REG_ID = "registration_id";
-    
-    public static final String INTENT_EXTRAS_JUST_LOGIN = "extra_just_login";
 }
