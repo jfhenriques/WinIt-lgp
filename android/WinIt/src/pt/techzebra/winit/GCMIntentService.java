@@ -1,14 +1,24 @@
 package pt.techzebra.winit;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+
 import pt.techzebra.winit.Constants;
 import pt.techzebra.winit.GCMUtils;
 import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.ui.DashboardActivity;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -16,12 +26,17 @@ import android.util.Log;
 import com.google.android.gcm.GCMBaseIntentService;
 
 public class GCMIntentService extends GCMBaseIntentService {
-	private SharedPreferences preferences_;
+	private static SharedPreferences preferences_;
 	private static String auth_token;
 	private static String TAG = "GCMIntent";
 	public static final int NOTIFICATION_ID = 1;
-	private NotificationManager mNotificationManager;
+	private NotificationManager mNotificationManager = null;
 	NotificationCompat.Builder builder;
+	
+	private static int not_width = -1,
+					   not_height = -1;
+	
+	private static Integer notCounter = 0;
 
 	public GCMIntentService() {
 		super(GCMUtils.SENDER_ID);
@@ -37,12 +52,17 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.d(TAG, "RECIEVED A MESSAGE");
 		generateNotification(arg0, arg1);
 	}
+	
+	private SharedPreferences getPreferences()
+	{
+		return getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
+	}
 
 	@Override
-	protected void onRegistered(Context arg0, String arg1) {
+	protected void onRegistered(Context arg0, String arg1)
+	{
 		Log.d(TAG, "REGISTERED ON SERVICE");
-		preferences_ = getSharedPreferences(Constants.USER_PREFERENCES,
-				Context.MODE_PRIVATE);
+		preferences_ = this.getPreferences();
 		SharedPreferences.Editor editor = preferences_.edit();
 		editor.putString(Constants.GCM_REG_ID, arg1);
 		editor.commit();
@@ -52,48 +72,130 @@ public class GCMIntentService extends GCMBaseIntentService {
 	}
 
 	@Override
-	protected void onUnregistered(Context arg0, String arg1) {
+	protected void onUnregistered(Context arg0, String arg1)
+	{
 		Log.d(TAG, "UNREGISTERED OF SERVICE");
 		NetworkUtilities.attemptUnRegisterGCMToken(auth_token, arg1);
 	}
 
-	private void generateNotification(Context arg0, Intent msg) {
-
-		if (preferences_ == null || msg == null)
-			return;
-
-		Bundle extras = msg.getExtras();
-
-		int uid_logged = preferences_.getInt(Constants.PREF_UID, 0);
-		int uid = extras.getInt("uid", 0);
-		int type = extras.getInt("type");
-		String message = "";
-		if(type == 1){
-			message += "This promotion was accepted!";
-		}else if (type == 2) {
-			message += "This promotion was not accepted!";
-		}else if (type == 3) {
-			message += "New promotion was suggested!";
-		}else{
-			Log.d(TAG, "Erro!");
+	
+	private static void pushNotification(NotificationManager manager, NotificationCompat.Builder mBuilder)
+	{
+		Notification noti = mBuilder.build();
+		
+		noti.flags |= Notification.FLAG_AUTO_CANCEL;
+		
+		int notId;
+		
+		synchronized (notCounter) {
+			notId = ++notCounter;
 		}
 		
-		if (uid > 0 && uid == uid_logged) {
+		manager.notify(notId, noti);
+	}
+	
+	private void generateNotification(Context arg0, Intent msg)
+	{
+		
+		if ( arg0 == null || msg == null )
+			return;
+		
+		if( preferences_ == null )
+			preferences_ = this.getPreferences();
+
+		Bundle extras = msg.getExtras();
+		
+		int uid = extras.getInt("uid", 0),
+			uid_logged = preferences_.getInt(Constants.PREF_UID, 0);
 			
+
+		
+		
+		//if (uid > 0 && uid == uid_logged) {
+		
+			int type = extras.getInt("type", 0);
 			
-			mNotificationManager = (NotificationManager) arg0
-					.getSystemService(Context.NOTIFICATION_SERVICE);
+			String name_my = extras.getString("name_my", ""),
+					name_o = extras.getString("name_o", ""),
+					image_o = extras.getString("image_oa", null),
+					message = "";
+
+			
+			if(type == 1)
+				message = "A sua promoção '" + name_my + "' foi trocada por '" + name_o + "'";
+
+			else if (type == 2)
+				message = "A sua proposta de troca da promoção '" + name_my + "' por '" + name_o + "' foi rejeitada";
+			
+			else if (type == 3)
+				message = "Recebeu uma proposta de troca da promoção '" + name_my + "' por '" + name_o + "'";
+			
+			else
+			{
+				Log.d(TAG, "Erro!");
+				//return;
+			}
+			
+			if( not_width < 0 || not_height < 0 )
+			{
+				Resources res = getResources();
+				
+				not_height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+				not_width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
+			}
+				
+			if( mNotificationManager == null )
+				mNotificationManager = (NotificationManager) arg0.getSystemService(Context.NOTIFICATION_SERVICE);
 
 			PendingIntent contentIntent = PendingIntent.getActivity(arg0, 0,
 					new Intent(arg0, DashboardActivity.class), 0);
+			
+			final NotificationCompat.Builder mBuilder =
+					new NotificationCompat.Builder(arg0)
+						.setSmallIcon(R.drawable.ic_trading)
+						.setContentTitle("WinIt")
+						.setContentIntent(contentIntent)
+						.setContentText(message)
+						.addAction(android.R.drawable.arrow_up_float, "Call", contentIntent)
+						.setDefaults(Notification.DEFAULT_SOUND | 
+										Notification.DEFAULT_VIBRATE | 
+										Notification.DEFAULT_LIGHTS);
+			
+			if( image_o == null )
+				pushNotification(mNotificationManager, mBuilder);
+			
+			else
+				(new AsyncTask<String, Void, Bitmap>() {
+					
+					private String img = null;
+	
+					@Override
+					protected Bitmap doInBackground(String... params)
+					{
+						try {
+							InputStream in = new java.net.URL(params[0]).openStream();
+							return BitmapFactory.decodeStream(in);
+						} catch (Exception e) { }
+						
+						return null;
+					}
 
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-					arg0).setSmallIcon(R.drawable.ic_trading)
-					.setContentTitle("WinIt")
-					.setContentText(message);
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+					@Override
+					protected void onPostExecute(Bitmap result)
+					{
+						if( result != null )
+							mBuilder.setLargeIcon(Bitmap.createScaledBitmap(result, not_width, not_height, false) );
+						
+						pushNotification(mNotificationManager, mBuilder);
+					}
+					
+				}).execute(image_o);
+			
 
-		}
+
+			
+
+
+		//}
 	}
 }

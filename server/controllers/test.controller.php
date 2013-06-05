@@ -6,8 +6,9 @@
 		public function test()
 		{
 
-			var_dump( GCMPlugin::send( array('APA91bHugamPoeOVXhnMPN8CMWccz2TWoS4n9_iJ1eK3zGLVD1Q-HV6NkxKpZU2S1lYOjMzuRA9nH7WEtt0lcj2KMKDFvpimszYEbWlG58ZfoUHE1MC66wz69ugJoIfR4LbujLUeBV3oJ1ddYJ61MmUwiwlJvPPTug' ),
-										array('cenas' => 'estupidas')) );
+			$token = 'APA91bHptmI-ncsEDrou7XVMMKyX_1pbjLbcxhOP550rJ77jqdSy881zYcyDh_q2HsnW3ROUHgO66I7Un4aC0Q9I_W9QR72CicGLPl8HrOmkBFhjUzVCteoihej8fPDq9sPu8v5NxqHhryqPXk-SEIs7WO3ye3PNJw';
+			var_dump( GCMPlugin::send( array($token ),
+										array('image_o' => 'http://static.techzebra.pt/tl/img/0bb53157538fde36def76790f3d674969cba5218/promo9.png')) );
 
 			/*$sig = 'sha1=ce9827cce81a40db0f27ac93c111feffe6de7730';
 			$payload = '{"object":"user","entry":[{"uid":"100005987078533","id":"100005987078533","time":1369811224,"changed_fields":["first_name"]}]}';

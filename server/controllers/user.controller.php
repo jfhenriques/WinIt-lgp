@@ -26,7 +26,7 @@
 
 
 	DEFINE( 'MAIL_SUBJECT_RESET_PASS' , 'Tlantic PromGame Mobile - Password Reset' );
-	DEFINE( 'MAIL_SIGNATURE'   , "\r\n\r\n\r\nAtenciosamente,\nA Equipa Tlantic PromGame Mobile" );
+	DEFINE( 'MAIL_SIGNATURE'   , "\r\n\r\n\r\nAtenciosamente,\nEquipa da WinIt" );
 
 
 

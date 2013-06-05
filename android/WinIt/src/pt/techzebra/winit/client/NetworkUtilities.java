@@ -255,7 +255,7 @@ public class NetworkUtilities {
 			ArrayList<NameValuePair> parameters) {
 		HttpEntity entity = null;
 		try {
-			entity = new UrlEncodedFormEntity(parameters);
+			entity = new UrlEncodedFormEntity(parameters, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
