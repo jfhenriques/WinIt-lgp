@@ -153,6 +153,8 @@
 
 									array( 'match' => '/:prizecode',
 										   'matches' => array(
+
+										   		array( 'match' => '/naive_redeem', 'controller' => 'trading', 'via' => 'post', 'action' => 'naive_redeem'),
 							
 												array( 'match' => '/suggest/:suggest', 'controller' => 'trading', 'via' => 'post', 'action' => 'suggest_trading'),
 												array( 'match' => '/suggest/:suggest', 'controller' => 'trading', 'via' => 'delete', 'action' => 'unsuggest_trading'),

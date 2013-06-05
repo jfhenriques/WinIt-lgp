@@ -175,7 +175,7 @@
 		}
 
 
-		public static function _fillTradablePrizes($prizArr)
+		public static function _fillTradablePrizes($prizArr, $isOwner = false)
 		{
 			$ret = array();
 
@@ -188,7 +188,7 @@
 								   'max_util_date' => $p->getMaxUtilizationDate(),
 								   'name' => $p->getPromotionName(),
 								   'image' => Controller::formatURL( $p->getPromotionImageSRC() ),
-						);
+								   'code' => $isOwner ? $p->getCode() : null );
 
 				}
 

@@ -295,7 +295,7 @@
 			{
 				$prizes = PrizeCode::findOwnUnused( $uid );
 
-				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes ) );
+				$this->respond->setJSONResponse( PrizeCode::_fillTradablePrizes( $prizes, true ) );
 				$this->respond->setJSONCode( R_STATUS_OK );
 			}
 

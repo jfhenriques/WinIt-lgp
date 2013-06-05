@@ -445,24 +445,23 @@
 		}
 
 
+		private static function only_one_arr( $arr, &$out )
+		{
+			if( is_array( $arr ) && count( $arr ) == 1 )
+			{
+				$out = $arr[0];
+
+				return true;
+			}
+
+			return false;
+		}
 
 		private function _send_remove_trading( $sendTo )
 		{
-			function only_one_arr( $arr, &$out )
-			{
-				if( is_array( $arr ) && count( $arr ) == 1 )
-				{
-					$out = $arr[0];
-
-					return true;
-				}
-
-				return false;
-			}
-		
 			$pcid = (int)valid_request_var( 'prizecode' );
 		
-			//$user = AuthenticatorPlugin::getInstance()->getUser();
+
 			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			$time = time();
 
@@ -477,13 +476,13 @@
 				// Search only if needed, in this case, if not not found in first condition, saving one new database connection
 				if( $sendTo )
 				{
-					if( !only_one_arr( PrizeCode::findOwnTradable( $uid, $time, $pcid ) , $not) )
-						only_one_arr( PrizeCode::findOwnTrading ( $uid, $time, $pcid ) , $in );
+					if( !self::only_one_arr( PrizeCode::findOwnTradable( $uid, $time, $pcid ) , $not) )
+						self::only_one_arr( PrizeCode::findOwnTrading ( $uid, $time, $pcid ) , $in );
 				}
 				else
 				{
-					if( !only_one_arr( PrizeCode::findOwnTrading( $uid, $time, $pcid ) , $in) )
-						only_one_arr( PrizeCode::findOwnTradable ( $uid, $time, $pcid ) , $not );	
+					if( !self::only_one_arr( PrizeCode::findOwnTrading( $uid, $time, $pcid ) , $in) )
+						self::only_one_arr( PrizeCode::findOwnTradable ( $uid, $time, $pcid ) , $not );	
 				}
 
 
@@ -512,7 +511,6 @@
 			}
 
 			$this->respond->renderJSON( static::$status );
-		
 		}
 
 		public function send_to_trading()
@@ -523,6 +521,40 @@
 		public function remove_from_trading()
 		{
 			$this->_send_remove_trading( false );
+		}
+
+
+		public function naive_redeem()
+		{
+			$pcid = (int)valid_request_var( 'prizecode' );
+		
+
+			$uid = AuthenticatorPlugin::getInstance()->getUID();
+			$time = time();
+
+			if( $uid <= 0 || $pcid <= 0 )
+				$this->respond->setJSONCode( R_TRAD_ERR_PARAM );
+
+			else
+			{
+				$unused = null;
+
+				if(    !self::only_one_arr( PrizeCode::findOwnUnused( $uid, $time, $pcid ) , $unused )
+					|| is_null( $unused ) )
+					$this->respond->setJSONCode( R_TRAD_ERR_PROMO_NOT_AVAIL );
+
+				else
+				{
+
+					$unused->setUtilizationDate( $time );
+					$unused->setTrading(false);
+
+					$this->respond->setJSONCode( $unused->save() ? R_STATUS_OK : R_GLOB_ERR_SAVE_UNABLE );
+
+				}
+			}
+
+			$this->respond->renderJSON( static::$status );
 		}
 		
 	}
