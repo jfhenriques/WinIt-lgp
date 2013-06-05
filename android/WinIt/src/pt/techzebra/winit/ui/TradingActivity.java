@@ -1,8 +1,6 @@
 package pt.techzebra.winit.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.WinIt;

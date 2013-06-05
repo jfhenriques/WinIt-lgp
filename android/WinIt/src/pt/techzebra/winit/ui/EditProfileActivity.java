@@ -167,7 +167,7 @@ public class EditProfileActivity extends SherlockFragmentActivity implements
 		}
 
 		NetworkUtilities.attemptEditProfile(WinIt.getAuthToken(), name, email,
-				new_password, old_password, String.valueOf(birthday_time_.toMillis(false)),
+				new_password, old_password, String.valueOf(birthday_time_.toMillis(false) / 1000),
 				String.valueOf(address_id_), address2, handler_, this);
 	}
 

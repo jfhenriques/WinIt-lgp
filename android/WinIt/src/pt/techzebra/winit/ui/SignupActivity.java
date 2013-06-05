@@ -227,7 +227,7 @@ public class SignupActivity extends SherlockFragmentActivity implements Addresse
         } else {
             registration_thread_ = NetworkUtilities.attemptRegister(name,
                     email, password,
-                    String.valueOf(birthday_time_.toMillis(false)),
+                    String.valueOf(birthday_time_.toMillis(false) / 1000),
                     String.valueOf(address_id_), house_number, handler_, this);
         }
 	}
