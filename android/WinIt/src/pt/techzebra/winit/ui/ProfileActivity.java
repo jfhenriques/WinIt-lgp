@@ -13,7 +13,7 @@ import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.User;
 import pt.techzebra.winit.platform.DownloadImageTask;
 import pt.techzebra.winit.platform.LoadBadgesTask;
-import pt.techzebra.winit.platform.LoadMyPromotionsInfo;
+import pt.techzebra.winit.platform.LoadMyPromotionsTask;
 import pt.techzebra.winit.platform.MD5Util;
 import pt.techzebra.winit.platform.RoundedImageView;
 import pt.techzebra.winit.ui.EditProfileActivity.UserHolder;
@@ -148,7 +148,7 @@ public class ProfileActivity extends SherlockActivity {
 	public void handleProfileSelection(View view) {
 		switch (view.getId()) {
     		case R.id.promotions_button:
-    			new LoadMyPromotionsInfo(this).execute();
+    			new LoadMyPromotionsTask().setContext(this).execute();
     			break;
     		case R.id.badges_button:
     			new LoadBadgesTask().setContext(this).execute();

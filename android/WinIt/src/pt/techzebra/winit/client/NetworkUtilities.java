@@ -364,7 +364,6 @@ public class NetworkUtilities {
 		JSONObject r = getResponseContent(json_response);
 
 		if (r == null) {
-		    Log.d("login", "r null");
 			return false;
 		} else {
 			SharedPreferences.Editor preferences_editor = WinIt
@@ -374,8 +373,6 @@ public class NetworkUtilities {
 			try {
 				preferences_editor.putString(Constants.PREF_AUTH_TOKEN,
 						r.getString("token"));
-				Log.d("LOGIN DERP NetworkUtilities",
-						"auth_token: " + r.getString("token"));
 				preferences_editor.putBoolean(Constants.PREF_LOGGED_IN, true);
 				preferences_editor.putBoolean(Constants.PREF_FB_LOGGED_IN,
 						false);
@@ -384,7 +381,6 @@ public class NetworkUtilities {
 
 				return true;
 			} catch (JSONException e) {
-			    Log.d("login", "oops");
 				e.printStackTrace();
 				return false;
 			}
@@ -662,12 +658,6 @@ public class NetworkUtilities {
 			}
 		}
 
-		try {
-			Log.d("TAG", r.toString(2));
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-
 		String[] addresses_array = Arrays.copyOf(addresses.toArray(),
 				addresses.size(), String[].class);
 		sendAddressesToActivity(addresses_array, addresses_ids, handler,
@@ -880,38 +870,17 @@ public class NetworkUtilities {
 		post(uri,  new ArrayList<NameValuePair>());
 	}
 
-	public static Thread attemptPutPromotionForTrading(final int pricecodeid) {
-		final Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				putPromotionForTrading(pricecodeid);
-			}
-		};
-		return NetworkUtilities.performOnBackgroundThread(runnable);
-	}
-
-	protected static void putPromotionForTrading(int pricecodeid) {
+	public static void putPromotionForTrading(int pricecodeid) {
 		String uri = EDIT_TRADING_URI + "/"+ pricecodeid + ".json?token=" + WinIt.getAuthToken();
 		put(uri, new ArrayList<NameValuePair>());
 	}
-
-	public static Thread attemptDeletePromotionInTrading(final int pricecodeid) {
-		final Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				deletePromotionInTrading(pricecodeid);
-			}
-		};
-		return NetworkUtilities.performOnBackgroundThread(runnable);
-	}
 	
-	protected static void deletePromotionInTrading(int pricecodeid) {
+	public static void deletePromotionInTrading(int pricecodeid) {
 		String uri = EDIT_TRADING_URI + "/"+ pricecodeid + ".json?token=" + WinIt.getAuthToken();
 		delete(uri);
 	}
 
-	public static Thread attemptRegisterGCMToken(final String auth_token, final String gcm_token)
-	{
+	public static Thread attemptRegisterGCMToken(final String auth_token, final String gcm_token) {
 
 		final Runnable runnable = new Runnable() {
 
@@ -1041,19 +1010,20 @@ public class NetworkUtilities {
 	            throw new IllegalArgumentException();
 	    }
 	    
-	    try {
-            Log.d("proposal answer", response.toString(2));
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-	    
 	    return validResponse(response);
 	}
 
     public static boolean revokeSentProposal(int my_pcid, int want_pcid) {
         String uri = BASE_URL + "/trading/" + want_pcid + "/suggest/" + my_pcid + ".json?token=" + WinIt.getAuthToken();
         JSONObject response = delete(uri);
+        return validResponse(response);
+    }
+    
+    public static boolean redeemPromotion(int prize_code) {
+        String uri = BASE_URL + "/naive_redeem/" + prize_code + ".json";
+        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("token", WinIt.getAuthToken()));
+        JSONObject response = post(uri, params);
         return validResponse(response);
     }
 }

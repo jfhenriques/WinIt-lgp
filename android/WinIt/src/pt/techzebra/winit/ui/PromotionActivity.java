@@ -2,14 +2,15 @@ package pt.techzebra.winit.ui;
 
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;
-import pt.techzebra.winit.client.NetworkUtilities;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.games.quiz.QuizActivity;
+import pt.techzebra.winit.platform.CancelPromotionInTradingTask;
 import pt.techzebra.winit.platform.DownloadImageTask;
 import pt.techzebra.winit.platform.FetchPromotionInfoTask;
+import pt.techzebra.winit.platform.PutPromotionForTradingTask;
+import pt.techzebra.winit.platform.RedeemTask;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,7 +22,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class PromotionActivity extends SherlockActivity {
     private static final String TAG = "PromotionActivity";
-    
+        
     public static String KEY_PROMOTION_AFFINITY = "promotion_affinity";
     public static String KEY_PROMOTION_ID = "promotion_id";
     public static String KEY_ACTIVE_UPID = "active_upid";
@@ -44,10 +45,10 @@ public class PromotionActivity extends SherlockActivity {
 		Bundle extras = getIntent().getExtras();
 		int affinity = extras.getInt(KEY_PROMOTION_AFFINITY);
 		int id = extras.getInt(KEY_PROMOTION_ID);
-		int pcid = extras.getInt("pcid");
+
 		a_upid = extras.getInt(KEY_ACTIVE_UPID);
-		Log.i(TAG, "pcid: " + String.valueOf(pcid));
-		promotion_view_ = PromotionView.createView(this, affinity, id, pcid);
+		
+		promotion_view_ = PromotionView.createView(this, affinity, id, extras);
 	}
    	
 
@@ -82,7 +83,6 @@ public class PromotionActivity extends SherlockActivity {
         private int title_id_;
         private int menu_id_;
         
-        
 	    public PromotionView(SherlockActivity activity, int title_id, int promotion_id, int menu_id) {
 	        activity_ = activity;
 	        title_id_ = title_id;
@@ -102,24 +102,24 @@ public class PromotionActivity extends SherlockActivity {
 	    
 	    protected abstract int getAffinity();
 	    
-	    public static PromotionView createView(SherlockActivity activity, int promotion_affinity, int promotion_id, int pcid) {
+	    public static PromotionView createView(SherlockActivity activity, int promotion_affinity, int promotion_id, Bundle extras) {
 	        PromotionView promotion_factory = null;
 	        
 	        switch (promotion_affinity) {
 	            case WON_PROMOTION:
-	                promotion_factory = new WonPromotion(activity, promotion_id);
+	                promotion_factory = new WonPromotion(activity, promotion_id, extras);
 	                break;
 	            case IN_TRADING_PROMOTION:
-	                promotion_factory = new InTradingPromotion(activity, promotion_id, pcid);
+	                promotion_factory = new InTradingPromotion(activity, promotion_id, extras);
 	                break;
 	            case TRADEABLE_PROMOTION:
-	                promotion_factory = new TradeablePromotion(activity, promotion_id, pcid);
+	                promotion_factory = new TradeablePromotion(activity, promotion_id, extras);
 	                break;
 	            case PLAYABLE_PROMOTION:
-	                promotion_factory = new PlayablePromotion(activity, promotion_id);
+	                promotion_factory = new PlayablePromotion(activity, promotion_id, extras);
 	                break;
 	            case PROPOSABLE_PROMOTION:
-	                promotion_factory = new ProposablePromotion(activity, promotion_id, pcid);
+	                promotion_factory = new ProposablePromotion(activity, promotion_id, extras);
 	                break;
 	        }
 	        return promotion_factory;
@@ -160,25 +160,21 @@ public class PromotionActivity extends SherlockActivity {
 	}
 	
 	public static class WonPromotion extends PromotionView {
-	    public WonPromotion(SherlockActivity activity, int id) {
+	    private int pcid_;
+	    private String code_;
+	    
+	    public WonPromotion(SherlockActivity activity, int id, Bundle extras) {
             super(activity, R.string.promotions, id, R.menu.menu_won_promotion);
+            pcid_ = extras.getInt("pcid");
+            code_ = extras.getString("code");
         }
 
-	    @Override
-        public void initializeFields() {
-            super.initializeFields();
-        }
-	    
-        @Override
-        public void populateFields() {
-            super.populateFields();
-        }
 	    
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.menu_show:
-                    Utilities.showToast(activity_, "Show");
+                case R.id.menu_redeem:
+                    new RedeemTask().setContext(activity_).execute(pcid_, code_);
                     break;
             }
             
@@ -192,20 +188,19 @@ public class PromotionActivity extends SherlockActivity {
 	}
 	
 	public static class InTradingPromotion extends PromotionView {
-		
 		private int pcid_;
 		
-        public InTradingPromotion(SherlockActivity activity, int id, int pcid) {
+        public InTradingPromotion(SherlockActivity activity, int id, Bundle extras) {
             super(activity, R.string.promotion, id, R.menu.menu_in_trading);
-            pcid_ = pcid;
+            
+            pcid_ = extras.getInt("pcid");
         }
 
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.menu_cancel:
-                    Utilities.showToast(activity_, "Cancel");
-                    NetworkUtilities.attemptDeletePromotionInTrading(pcid_);
+                    new CancelPromotionInTradingTask().setContext(activity_).execute(pcid_);
                     break;
             }
             activity_.finish();
@@ -221,23 +216,18 @@ public class PromotionActivity extends SherlockActivity {
 	
 	public static class TradeablePromotion extends PromotionView {
 		private int pcid_;
-        public TradeablePromotion(SherlockActivity activity, int id, int pcid) {
+        public TradeablePromotion(SherlockActivity activity, int id, Bundle extras) {
             super(activity, R.string.promotions, id, R.menu.menu_tradeable);
-            pcid_ = pcid;
+            pcid_ = extras.getInt("pcid");
         }
 
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.menu_redeem:
-                    Utilities.showToast(activity_, "Redeem");
-                    break;
                 case R.id.menu_trade:
-                    Utilities.showToast(activity_, "Trade");
-                    NetworkUtilities.attemptPutPromotionForTrading(pcid_);
+                    new PutPromotionForTradingTask().setContext(activity_).execute(pcid_);
                     break;
             }
-            activity_.finish();
             return true;
         }
 
@@ -251,7 +241,7 @@ public class PromotionActivity extends SherlockActivity {
         private TextView end_date_text_;
 	    private TextView win_points_text_;
 	    
-	    public PlayablePromotion(SherlockActivity activity, int id) {
+	    public PlayablePromotion(SherlockActivity activity, int id, Bundle extras) {
             super(activity, R.string.promotion, id, R.menu.menu_playable);
         }
 
@@ -309,9 +299,9 @@ public class PromotionActivity extends SherlockActivity {
 	public static class ProposablePromotion extends PromotionView {
 		private int pcid_;
 		
-	    public ProposablePromotion(SherlockActivity activity, int id, int pcid) {
+	    public ProposablePromotion(SherlockActivity activity, int id, Bundle extras) {
             super(activity, R.string.promotion, id, R.menu.menu_proposable);
-            pcid_ = pcid;
+            pcid_ = extras.getInt("pcid");
         }
 	    
 	    @Override
@@ -319,7 +309,6 @@ public class PromotionActivity extends SherlockActivity {
 	        super.initializeActionBar();
 	        action_bar_.setBackgroundDrawable(activity_.getResources().getDrawable(R.drawable.action_bar_bg_trading));
 	    }
-	    
 	    
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
@@ -339,7 +328,5 @@ public class PromotionActivity extends SherlockActivity {
         protected int getAffinity() {
             return PROPOSABLE_PROMOTION;
         }
-	}
-
-	
+	}	
 }

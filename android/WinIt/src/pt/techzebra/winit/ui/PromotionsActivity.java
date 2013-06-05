@@ -77,9 +77,6 @@ public class PromotionsActivity extends SherlockActivity implements OnItemClickL
 			activity_ = activity;
 			initializeActionBar();
 			initializeFields();
-
-//			fetchPromotions();
-//			populateFields();
 		}
 
 		public static PromotionsShowcase createShowcase(SherlockActivity activity, int showcase_mode) {

@@ -2,7 +2,10 @@ package pt.techzebra.winit.client;
 
 import java.io.Serializable;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.util.Log;
 
 public class Promotion implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -26,6 +29,8 @@ public class Promotion implements Serializable {
     private int max_util_date_;
     private int pcid;
     private int active_upid_;
+    
+    private String code_;
 
     public Promotion(int pid, String name, String image_url) {
         promotion_id_ = pid;
@@ -45,7 +50,7 @@ public class Promotion implements Serializable {
     public Promotion(int pid, String name, String description,
             String image_url, long init_date, long end_date, int user_limit,
             boolean transferable, int win_points, int retailer_id,
-            int promotion_type_id, int max_util_date, int active_upid, int pc_id) {
+            int promotion_type_id, int max_util_date, int active_upid, int pc_id, String code) {
         promotion_id_ = pid;
         name_ = name;
         description_ = description;
@@ -61,10 +66,15 @@ public class Promotion implements Serializable {
         max_util_date_ = max_util_date;
         active_upid_ = active_upid;
         pcid = pc_id;
+        code_ = code;
     }
 
     public int getPcid() {
         return pcid;
+    }
+    
+    public String getCode() {
+        return code_;
     }
 
     public void setPcid(int pcid) {
@@ -186,10 +196,12 @@ public class Promotion implements Serializable {
                 : promotion.optInt("active_upid");
         final int pcid = promotion.optInt("pcid");
 
+        final String code = promotion.optString("code");
+        
         return new Promotion(promotion_id, name, description, image_url,
                 init_date, end_date, user_limit, transferable, win_points,
                 retailer_id, promotion_type_id, max_util_date, active_upid,
-                pcid);
+                pcid, code);
     }
 
     public static Promotion valueOfTrading(JSONObject promotion) {
