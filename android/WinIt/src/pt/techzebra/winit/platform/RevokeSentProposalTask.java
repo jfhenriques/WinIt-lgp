@@ -1,7 +1,5 @@
 package pt.techzebra.winit.platform;
 
-import com.actionbarsherlock.app.SherlockFragment;
-
 import android.support.v4.view.ViewPager;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.Utilities;

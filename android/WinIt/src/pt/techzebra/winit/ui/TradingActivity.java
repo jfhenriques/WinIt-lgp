@@ -270,7 +270,6 @@ public class TradingActivity extends SherlockFragmentActivity {
             return adapter_;
         }
         
-        
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle saved_instance_state) {

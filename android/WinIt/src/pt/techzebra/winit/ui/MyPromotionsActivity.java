@@ -3,6 +3,7 @@ package pt.techzebra.winit.ui;
 import java.util.ArrayList;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.Promotion;
+import pt.techzebra.winit.platform.LoadMyPromotionsTask;
 import pt.techzebra.winit.staggeredgridview.StaggeredAdapter;
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +37,24 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 	static ArrayList<Promotion> promotions_won_ = new ArrayList<Promotion>();
 	static ArrayList<Promotion> promotions_tradeable_ = new ArrayList<Promotion>();
 	static ArrayList<Promotion> promotions_in_trading_ = new ArrayList<Promotion>();
+	
+	public static boolean need_update = false;
+	
+	public void setPromotionsWon(ArrayList<Promotion> promotions) {
+	    promotions_won_ = promotions;
+	}
+	
+	public void setPromotionsTradeable(ArrayList<Promotion> promotions) {
+        promotions_tradeable_ = promotions;
+    }
+	
+	public void setPromotionsInTrading(ArrayList<Promotion> promotions) {
+        promotions_in_trading_ = promotions;
+    }
+	
+	public ViewPager getViewPager() {
+	    return pager_;
+	}
 	
 	protected void onCreate(Bundle saved_instance_state) {  
 		super.onCreate(saved_instance_state);  
@@ -63,6 +83,18 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 	}
 	
 	@Override
+	protected void onResume() {
+	    super.onResume();
+	    
+	    if (need_update) {
+	        new LoadMyPromotionsTask().setContext(this).execute(true);
+	        need_update = false;
+	    }
+	}
+	
+	
+	
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
     		case android.R.id.home:
@@ -75,8 +107,10 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 		return true;
 	}
 
-	private static class MyPromotionsPagerAdapter extends FragmentStatePagerAdapter {
+	public static class MyPromotionsPagerAdapter extends FragmentStatePagerAdapter {
 	    private final String[] TITLES = {"Won", "Tradeable", "In Trading"};
+	    
+	    private SparseArray<SherlockFragment> page_reference_map_ = new SparseArray<SherlockFragment>();
 	    
 		public MyPromotionsPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -88,9 +122,23 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 		    Bundle args = new Bundle();
             args.putInt("step", position);
             fragment.setArguments(args);
+            
+            page_reference_map_.put(position, fragment);
+            
             return fragment;
 		}
 
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+		    super.destroyItem(container, position, object);
+		    
+		    page_reference_map_.remove(position);
+		}
+		
+		public SherlockFragment getFragment(int position) {
+            return page_reference_map_.get(position);
+        }
+		
 		@Override
 		public CharSequence getPageTitle(int position) {
 		    return TITLES[position];
@@ -130,6 +178,10 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 	    public void onAttach(Activity activity) {
 	        super.onAttach(activity);
 	        activity_ = activity;
+	    }
+	    
+	    public StaggeredAdapter getAdapter() {
+	        return staggered_adapter_;
 	    }
 	    
 		@Override
@@ -173,11 +225,15 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
                 public void onItemClick(StaggeredGridView parent, View view, int position,
                         long id) {
                     Promotion promotion = staggered_adapter_.getItem(position);
-                    
+                                        
                     Intent intent = new Intent(activity_, PromotionActivity.class);
                     intent.putExtra(PromotionActivity.KEY_PROMOTION_AFFINITY, affinity_);
                     intent.putExtra(PromotionActivity.KEY_PROMOTION_ID, promotion.getPromotionID());
                     intent.putExtra("pcid", promotion.getPcid());
+                    if (affinity_ == PromotionActivity.WON_PROMOTION) {
+                        intent.putExtra("code", promotion.getCode());
+                    }
+                    
                     activity_.startActivity(intent);
                 }
             });
