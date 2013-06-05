@@ -87,30 +87,6 @@
                     android:textSize="14sp" />
 
             </LinearLayout>
-            
-            <LinearLayout
-                android:id="@+id/proposable_promotion_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/gap"
-                    android:text="@string/owner"
-                    android:textAllCaps="true"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/owner_name_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
 
             <TextView
                 android:id="@+id/description_text"
