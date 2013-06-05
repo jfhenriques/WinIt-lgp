@@ -371,7 +371,7 @@
 
 					GCMPlugin::sendUserSuggest(
 									$pWant->getOwnerUID(),
-									GCMPlugin::STATE_REJECT,
+									GCMPlugin::STATE_NEW_SUGGEST,
 									$pWant->getPCID(),
 									$pWant->getPID(),
 									$pWant->getPromotionName(),
