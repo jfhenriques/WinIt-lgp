@@ -58,7 +58,7 @@ public class QuizResultActivity extends SherlockActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getSupportMenuInflater();
-        inflater.inflate(R.menu.menu_quiz_result, menu);
+        inflater.inflate(R.menu.menu_share, menu);
         return true;
     }
     

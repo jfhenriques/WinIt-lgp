@@ -1,7 +1,6 @@
 package pt.techzebra.winit.ui;
 
 import java.util.ArrayList;
-import pt.techzebra.winit.WinIt;
 import pt.techzebra.winit.R;
 import pt.techzebra.winit.client.Promotion;
 import pt.techzebra.winit.staggeredgridview.StaggeredAdapter;
@@ -20,7 +19,6 @@ import android.view.ViewGroup;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.origamilabs.library.views.StaggeredGridView;

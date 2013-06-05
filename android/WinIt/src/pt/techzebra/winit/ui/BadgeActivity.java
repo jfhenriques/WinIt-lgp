@@ -65,7 +65,7 @@ public class BadgeActivity extends SherlockActivity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.menu_badge, menu);
+        getSupportMenuInflater().inflate(R.menu.menu_share, menu);
         return true;
     }
     
