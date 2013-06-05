@@ -534,9 +534,10 @@
 			$this->requireAuth(); // nao passa daqui se o user nao estiver logado
 
 
-			//$user = AuthenticatorPlugin::getInstance()->getUser();
 			$uid = AuthenticatorPlugin::getInstance()->getUID();
 			$token_gcm = valid_request_var('token_gcm');
+
+
 			$gcm = null;
 
 			if( $uid <= 0 )

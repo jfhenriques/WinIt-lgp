@@ -83,7 +83,7 @@
 			{
 				$dbh = DbConn::getInstance()->getDB();
 
-				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (uid,gcm,date) VALUES (:uid, :gcm, :date);');
+				$sth = $dbh->prepare('INSERT INTO ' . self::TABLE_NAME . ' (uid, gcm, date) VALUES (:uid, :gcm, :date);');
 
 				$uid = $this->getUID();
 				$gcm = $this->getTokenGCM();
