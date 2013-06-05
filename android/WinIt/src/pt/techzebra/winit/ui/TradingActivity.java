@@ -28,6 +28,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -299,6 +300,7 @@ public class TradingActivity extends SherlockFragmentActivity {
                                 "ReceivedProposalDialogFragment");
                     }
                 };
+
             } else {
                 listener_ = new AdapterView.OnItemClickListener() {
                     @Override
@@ -318,7 +320,7 @@ public class TradingActivity extends SherlockFragmentActivity {
                     }
                 };
             }
-            
+                        
             list_view_ = (ListView) view_root.findViewById(R.id.list);
             list_view_.setEmptyView(view_root.findViewById(R.id.empty));
             adapter_ = new ProposalsAdapter(context_, mode_ == MODE_RECEIVED_PROPOSALS ? received_proposals_ : sent_proposals_);

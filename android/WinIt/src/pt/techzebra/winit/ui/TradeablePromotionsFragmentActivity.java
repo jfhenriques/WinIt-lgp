@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -175,6 +176,8 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 					dialog.show();
 				}
 			}
+
+            Toast.makeText(TradeablePromotionsFragmentActivity.this, "Promosal was sended!", Toast.LENGTH_SHORT).show();
 		}
 
 	}
