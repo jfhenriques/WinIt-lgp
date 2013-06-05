@@ -40,6 +40,8 @@ public class LoadMyPromotionsInfo extends AsyncTask<Void,Void,ArrayList<ArrayLis
 		promotions.add(temp);
 		temp = NetworkUtilities.fetchMyPromotionsTradeable(auth_token);
 		promotions.add(temp);
+		temp = NetworkUtilities.fetchMyPromotionsInTrading(auth_token);
+		promotions.add(temp);
 		return promotions;
 	}
 

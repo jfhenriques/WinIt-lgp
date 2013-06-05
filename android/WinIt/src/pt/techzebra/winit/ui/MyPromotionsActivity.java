@@ -36,6 +36,7 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 	
 	static ArrayList<Promotion> promotions_won_ = new ArrayList<Promotion>();
 	static ArrayList<Promotion> promotions_tradeable_ = new ArrayList<Promotion>();
+	static ArrayList<Promotion> promotions_in_trading_ = new ArrayList<Promotion>();
 	
 	protected void onCreate(Bundle saved_instance_state) {  
 		super.onCreate(saved_instance_state);  
@@ -51,6 +52,7 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 		
 		promotions_won_ = tmp.get(0);
 		promotions_tradeable_ = tmp.get(1);
+		promotions_in_trading_ = tmp.get(2);
 		
 		action_bar_.setTitle(R.string.my_promotions);
 		action_bar_.setDisplayHomeAsUpEnabled(true);
@@ -76,7 +78,7 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
 	}
 
 	private static class MyPromotionsPagerAdapter extends FragmentStatePagerAdapter {
-	    private final String[] TITLES = {"Won", "Tradeable"};
+	    private final String[] TITLES = {"Won", "Tradeable", "In Trading"};
 	    
 		public MyPromotionsPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -148,6 +150,9 @@ public class MyPromotionsActivity extends SherlockFragmentActivity {
                     promotions = promotions_tradeable_;
                     affinity_ = PromotionActivity.TRADEABLE_PROMOTION;
                     break;
+                case 2:
+                	promotions = promotions_in_trading_;
+                	affinity_ = PromotionActivity.IN_TRADING_PROMOTION;
 			}
 			staggered_adapter_ = new StaggeredAdapter(getActivity(), R.id.list_image, promotions);
 		}
