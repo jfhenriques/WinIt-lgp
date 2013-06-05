@@ -94,6 +94,15 @@ public class GCMIntentService extends GCMBaseIntentService {
 		manager.notify(notId, noti);
 	}
 	
+	private static int safeInt(Bundle b, String key, int d)
+	{
+		try {
+			return Integer.valueOf( b.getString(key) );
+		} catch(NumberFormatException e) {
+			return d;
+		}
+	}
+	
 	private void generateNotification(Context arg0, Intent msg)
 	{
 		
@@ -104,51 +113,48 @@ public class GCMIntentService extends GCMBaseIntentService {
 			preferences_ = this.getPreferences();
 
 		Bundle extras = msg.getExtras();
-		
-		int uid = extras.getInt("uid", 0),
+
+		int uid = safeInt(extras, "uid", 0),
 			uid_logged = preferences_.getInt(Constants.PREF_UID, 0);
 			
 
 		
 		
-		//if (uid > 0 && uid == uid_logged) {
+		if (uid > 0 && uid == uid_logged) {
 		
-			int type = extras.getInt("type", 0);
+			int type = safeInt(extras, "type", 0);
 			
 			String name_my = extras.getString("name_my", ""),
 					name_o = extras.getString("name_o", ""),
-					image_o = extras.getString("image_oa", null),
+					image_o = extras.getString("image_o", null),
 					message = "";
 
 			
 			if(type == 1)
-				message = "A sua promoção '" + name_my + "' foi trocada por '" + name_o + "'";
+				message = "Recebeu '" + name_o + "' em troca de '" + name_my + "'";
 
 			else if (type == 2)
-				message = "A sua proposta de troca da promoção '" + name_my + "' por '" + name_o + "' foi rejeitada";
+				message = "Rejeitada a troca de '" + name_o + "' por '" + name_my + "'";
 			
 			else if (type == 3)
-				message = "Recebeu uma proposta de troca da promoção '" + name_my + "' por '" + name_o + "'";
+				message = "Proposta de troca de '" + name_o + "' por '" + name_my + "'";
 			
 			else
 			{
 				Log.d(TAG, "Erro!");
-				//return;
+				return;
 			}
 			
-			if( not_width < 0 || not_height < 0 )
-			{
-				Resources res = getResources();
-				
-				not_height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-				not_width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-			}
+
 				
 			if( mNotificationManager == null )
 				mNotificationManager = (NotificationManager) arg0.getSystemService(Context.NOTIFICATION_SERVICE);
+			
+			Intent intent = new Intent(arg0, DashboardActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-			PendingIntent contentIntent = PendingIntent.getActivity(arg0, 0,
-					new Intent(arg0, DashboardActivity.class), 0);
+			PendingIntent contentIntent = PendingIntent.getActivity(arg0, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
 			
 			final NotificationCompat.Builder mBuilder =
 					new NotificationCompat.Builder(arg0)
@@ -156,7 +162,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 						.setContentTitle("WinIt")
 						.setContentIntent(contentIntent)
 						.setContentText(message)
-						.addAction(android.R.drawable.arrow_up_float, "Call", contentIntent)
+						//.addAction(android.R.drawable.arrow_up_float, "Call", contentIntent)
 						.setDefaults(Notification.DEFAULT_SOUND | 
 										Notification.DEFAULT_VIBRATE | 
 										Notification.DEFAULT_LIGHTS);
@@ -166,8 +172,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 			
 			else
 				(new AsyncTask<String, Void, Bitmap>() {
-					
-					private String img = null;
 	
 					@Override
 					protected Bitmap doInBackground(String... params)
@@ -184,7 +188,17 @@ public class GCMIntentService extends GCMBaseIntentService {
 					protected void onPostExecute(Bitmap result)
 					{
 						if( result != null )
+						{
+							if( not_width < 0 || not_height < 0 )
+							{
+								Resources res = getResources();
+								
+								not_height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+								not_width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
+							}
+							
 							mBuilder.setLargeIcon(Bitmap.createScaledBitmap(result, not_width, not_height, false) );
+						}
 						
 						pushNotification(mNotificationManager, mBuilder);
 					}
@@ -196,6 +210,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 			
 
 
-		//}
+		}
 	}
 }
