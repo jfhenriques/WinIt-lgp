@@ -221,9 +221,12 @@ public class NetworkUtilities {
 			response = http_client_.execute(http_host_, request);
 			int status_code = response.getStatusLine().getStatusCode();
 			Log.d(TAG, "status code: " + status_code);
+			
 			if (status_code == HttpStatus.SC_OK) {
-				JSONObject json_response = new JSONObject(
-						EntityUtils.toString(response.getEntity()));
+				
+				String str = EntityUtils.toString(response.getEntity());
+				Log.d(TAG, "Response: " + str);
+				JSONObject json_response = new JSONObject(str);
 
 				return json_response;
 			} else {
@@ -242,6 +245,7 @@ public class NetworkUtilities {
 	}
 
 	private static JSONObject simpleRequest(HttpRequestBase request) {
+		Log.d(TAG, "REQUEST: " + request.getURI());
 		return executeRequest(request);
 	}
 
@@ -258,6 +262,7 @@ public class NetworkUtilities {
 		request.addHeader(entity.getContentType());
 		request.setEntity(entity);
 
+		Log.d(TAG, "REQUEST: " + request.getURI() + ", entity: " + parameters.toString());
 		return executeRequest(request);
 	}
 

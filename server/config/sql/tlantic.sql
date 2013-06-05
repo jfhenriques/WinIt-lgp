@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 05, 2013 at 12:58 AM
+-- Generation Time: Jun 05, 2013 at 02:14 AM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -448,7 +448,7 @@ CREATE TABLE IF NOT EXISTS `userbadges` (
 DROP TABLE IF EXISTS `usergcm`;
 CREATE TABLE IF NOT EXISTS `usergcm` (
   `uid` int(11) NOT NULL,
-  `gcm` int(11) NOT NULL,
+  `gcm` varchar(200) NOT NULL,
   `date` int(11) NOT NULL,
   PRIMARY KEY (`uid`,`gcm`),
   UNIQUE KEY `uq_usergcm_gcm` (`gcm`)
