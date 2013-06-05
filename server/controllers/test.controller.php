@@ -6,9 +6,14 @@
 		public function test()
 		{
 
-			$token = 'APA91bHptmI-ncsEDrou7XVMMKyX_1pbjLbcxhOP550rJ77jqdSy881zYcyDh_q2HsnW3ROUHgO66I7Un4aC0Q9I_W9QR72CicGLPl8HrOmkBFhjUzVCteoihej8fPDq9sPu8v5NxqHhryqPXk-SEIs7WO3ye3PNJw';
+			$token = 'APA91bFPodnJBujVy0gq39ppY3I6Nc9spRXUDj5f3DaHodwAac9QvCs4GPD4iScx0PMrIsut5WmRQ7nFEfEWUpdbsNML877XRhAF4NfZo705riwl8Oj_RuuCGTUu9fRPi3VocRFoQvalKuGXQZgPAxFoLxXVxr4lKg';
 			var_dump( GCMPlugin::send( array($token ),
-										array('image_o' => 'http://static.techzebra.pt/tl/img/0bb53157538fde36def76790f3d674969cba5218/promo9.png')) );
+										array(
+											'uid' => (int)4,
+											'type' => (int)2,
+											'name_my' => 'cenas',
+											'name_o' => 'cenas 2',
+											'image_o' => 'http://static.techzebra.pt/tl/img/0bb53157538fde36def76790f3d674969cba5218/promo9.png')) );
 
 			/*$sig = 'sha1=ce9827cce81a40db0f27ac93c111feffe6de7730';
 			$payload = '{"object":"user","entry":[{"uid":"100005987078533","id":"100005987078533","time":1369811224,"changed_fields":["first_name"]}]}';
