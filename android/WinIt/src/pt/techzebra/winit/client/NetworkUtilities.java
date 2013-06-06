@@ -55,6 +55,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Provides utility methods for communicating with the server.
@@ -226,13 +227,13 @@ public class NetworkUtilities {
 			if (status_code == HttpStatus.SC_OK) {
 				
 				String str = EntityUtils.toString(response.getEntity());
-				Log.d(TAG, "Response[ " + status_code + "]: " + str);
+				Log.d(TAG, "Response[" + status_code + "]: " + str);
 				
 				JSONObject json_response = new JSONObject(str);
 
 				return json_response;
 			} else {
-				Log.d(TAG, "Response[ " + status_code + "]");
+				Log.d(TAG, "Response[" + status_code + "]");
 				return null;
 			}
 		} catch (IOException e) {
@@ -925,25 +926,43 @@ public class NetworkUtilities {
 
 	}
 
-	public static Thread attemptSendProposal(final String auth_token, final String wanted_pcid, final String sugest_pcid)
+	public static Thread attemptSendProposal(final String auth_token, final String wanted_pcid, final String sugest_pcid, final Handler handler, final Context ctx)
 	{
+		if (handler == null || ctx == null)
+			return null;
+		
 		final Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
-				sendProposal(auth_token, wanted_pcid, sugest_pcid);
+				sendProposal(auth_token, wanted_pcid, sugest_pcid, handler, ctx);
 			}
 		};
 		return NetworkUtilities.performOnBackgroundThread(runnable);
 	}
 
 	private static void sendProposal(String auth_token, String wanted_pcid,
-			String sugest_pcid) {
+			String sugest_pcid, Handler handler, final Context ctx) {
+		
 		String uri = BASE_URL + "/trading/" + wanted_pcid + "/suggest/" + sugest_pcid + ".json";
 		ArrayList<NameValuePair> send_proposal_info = new ArrayList<NameValuePair>();
 		send_proposal_info.add(new BasicNameValuePair("token", auth_token));
-		Log.i("Debug", uri);
+		//Log.i("Debug", uri);
 		JSONObject response = post(uri, send_proposal_info);
-		Log.i("Debug", response.toString());
+		final boolean isValid = validResponse( response );
+		
+		
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(ctx, isValid ?
+										"Poposal sent!" :
+										"You can only propose one promotion to another once!",
+										Toast.LENGTH_SHORT).show();
+			}
+		});
+
+			
+		//Log.i("Debug", response.toString());
 	}
 
 	public static Thread attemptFetchTradeProposals(final String auth_token, final String pcid)

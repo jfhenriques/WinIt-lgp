@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -48,7 +48,7 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 	View layout_ = null;
 	ListView list_ = null;
 	
-	//private Handler handler_ = new Handler();
+	private Handler handler_ = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +170,6 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 				}
 			}
 
-            Toast.makeText(TradeablePromotionsFragmentActivity.this, "Promosal was sended!", Toast.LENGTH_SHORT).show();
 		}
 
 	}
@@ -236,7 +235,11 @@ public class TradeablePromotionsFragmentActivity extends SherlockFragmentActivit
 
 	@Override
 	public void onDialogPositiveClick(DialogFragment dialog) {
-		NetworkUtilities.attemptSendProposal(WinIt.getAuthToken(), Integer.toString(promotion_wanted.getPcid()), promotion_to_trade_pcid);
+		NetworkUtilities.attemptSendProposal(WinIt.getAuthToken(),
+				Integer.toString(promotion_wanted.getPcid()),
+				promotion_to_trade_pcid,
+				handler_,
+				this);
 	}
 
 	@Override
