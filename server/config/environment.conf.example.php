@@ -89,5 +89,5 @@
 	/*
 	 *	The base uri or schema+host+uri to access the content
 	 */
-	DEFINE( 'BASE_STATIC_URI', "http://{$_SERVER['SERVER_NAME']}/" . BASE_URI . ( strlen(BASE_URI) > 0 ?  ';' : '' ) );
+	DEFINE( 'BASE_STATIC_URI', "http://{$_SERVER['SERVER_NAME']}/" . BASE_URI );
 
